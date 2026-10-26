@@ -1,0 +1,39 @@
+name: Autonomous B2B SaaS Factory
+
+on:
+  schedule:
+    # Runs automatically at 02:15 UTC and 14:15 UTC every single day
+    - cron: '15 2,14 * * *'
+  workflow_dispatch: # Allows you to trigger a build manually with 1 click
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Google GenAI SDK
+        run: pip install google-genai
+
+      - name: Run Autonomous Tool Builder
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CHECKOUT_URL: ${{ secrets.CHECKOUT_URL }}
+          SITE_BASE_URL: ${{ secrets.SITE_BASE_URL }}
+        run: python factory_agent.py
+
+      - name: Commit and Deploy New Software Tool
+        run: |
+          git config --global user.name "Autonomous SaaS Bot"
+          git config --global user.email "bot@users.noreply.github.com"
+          git add docs/ tools_registry.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-deploy new B2B web tool" && git push)
