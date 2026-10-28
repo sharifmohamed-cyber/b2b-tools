@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overtime & GOSI Payroll Estimator | حاسبة العمل الإضافي والتأمينات</title>
+    <meta name="description" content="Calculate accurate monthly payroll including overtime compensation and GOSI social insurance deductions for employees in the GCC region. Instant results.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Cairo', sans-serif; }
+        .rtl { direction: rtl; font-family: 'Cairo', 'Inter', sans-serif; }
+        .ltr { direction: ltr; font-family: 'Inter', 'Cairo', sans-serif; }
+        @media print {
+            body * { visibility: hidden; }
+            #printable-area, #printable-area * { visibility: visible; }
+            #printable-area { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <!-- Navigation & Language Toggle -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 text-white p-2 rounded-lg font-bold text-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold text-slate-900 data-title-en">Payroll & GOSI Pro</h1>
+                    <p class="text-xs text-slate-500 data-subtitle-en">SME Human Resources & Accounting Tool</p>
+                </div>
+            </div>
+            <button id="langToggle" onclick="toggleLanguage()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold transition">
+                العربية / English
+            </button>
+        </div>
+    </header>
+
+    <!-- High-Converting Sticky Banner -->
+    <div class="bg-gradient-to-r from-indigo-900 to-purple-900 text-white py-3 px-4 text-center text-sm font-medium sticky top-16 z-40 shadow-md no-print">
+        <span class="data-banner-text">🚀 Need complete multi-employee payroll batching? Get the Complete Offline Automated Excel & VBA Master Template!</span>
+        <a href="https://gumroad.com" target="_blank" class="ml-3 underline font-bold bg-white text-indigo-900 px-3 py-1 rounded hover:bg-indigo-50 transition inline-block mt-1 sm:mt-0">
+            <span class="data-banner-cta">Download ($29)</span>
+        </a>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        <!-- Intro Heading -->
+        <div class="text-center max-w-3xl mx-auto mb-10">
+            <h2 class="text-3xl font-extrabold text-slate-900 sm:text-4xl data-main-heading">
+                Overtime & GOSI Payroll Estimator
+            </h2>
+            <p class="mt-3 text-lg text-slate-600 data-main-desc">
+                Calculate precise monthly salaries, legal overtime compensations, and mandatory social insurance (GOSI) contributions instantly.
+            </p>
+        </div>
+
+        <!-- Calculator Container -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Input Form Section -->
+            <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200">
+                <h3 class="text-xl font-bold text-slate-900 mb-6 pb-2 border-b border-slate-100 data-section-inputs">
+                    Employee & Salary Parameters
+                </h3>
+
+                <form id="payrollForm" class="space-y-5" onsubmit="return false;">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1 data-lbl-basic">Basic Salary (Monthly)</label>
+                            <input type="number" id="basicSalary" value="8000" min="0" step="any" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1 data-lbl-housing">Housing Allowance</label>
+                            <input type="number" id="housingAllowance" value="2000" min="0" step="any" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1 data-lbl-other">Other Allowances (Transportation, etc.)</label>
+                            <input type="number" id="otherAllowances" value="1000" min="0" step="any" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1 data-lbl-hours">Overtime Hours Worked (Monthly)</label>
+                            <input type="number" id="overtimeHours" value="15" min="0" step="0.5" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1 data-lbl-rate">Overtime Rate Multiplier</label>
+                            <select id="overtimeRate" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                <option value="1.5">1.5x (Standard Labor Law)</option>
+                                <option value="2.0">2.0x (Rest Days / Holidays)</option>
+                                <option value="1.25">1.25x (Shift-based)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1 data-lbl-nationality">Employee Nationality / Category</label>
+                            <select id="nationalityType" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                                <option value="gcc">GCC National (Standard GOSI)</option>
+                                <option value="expat">Expatriate (Annuities branch only / Occupational hazards)</option>
+                                <option value="exempt">Exempt from GOSI</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1 data-lbl-deductions">Other Deductions (Loans, Advances)</label>
+                            <input type="number" id="otherDeductions" value="0" min="0" step="any" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1 data-lbl-currency">Currency Symbol</label>
+                            <input type="text" id="currencySymbol" value="SAR" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Section -->
+            <div class="lg:col-span-5">
+                <div id="printable-area" class="bg-indigo-900 text-white p-6 sm:p-8 rounded-2xl shadow-lg relative">
+                    <h3 class="text-xl font-bold mb-6 pb-2 border-b border-indigo-800 data-section-results">
+                        Payroll Breakdown & Summary
+                    </h3>
+
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-indigo-200 data-res-gross">Gross Comprehensive Salary:</span>
+                            <span id="resGross" class="font-semibold text-lg">0.00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-indigo-200 data-res-ot">Overtime Compensation:</span>
+                            <span id="resOvertime" class="font-semibold text-lg">0.00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-indigo-200 data-res-gosi-emp">Employee GOSI Deduction:</span>
+                            <span id="resGosiEmp" class="font-semibold text-lg text-rose-300">-0.00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-indigo-200 data-res-gosi-comp">Employer GOSI Contribution:</span>
+                            <span id="resGosiComp" class="font-semibold text-lg text-indigo-200">0.00</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-indigo-200 data-res-deductions">Other Deductions:</span>
+                            <span id="resDeductions" class="font-semibold text-lg text-rose-300">-0.00</span>
+                        </div>
+
+                        <div class="pt-4 border-t border-indigo-800 flex justify-between items-center">
+                            <span class="text-xl font-bold text-white data-res-net">Net Payable Salary:</span>
+                            <span id="resNet" class="text-2xl font-black text-emerald-400">0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-8 space-y-3 no-print">
+                        <button onclick="window.print()" class="w-full bg-indigo-800 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl transition flex items-center justify-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                            </svg>
+                            <span class="data-btn-print">Print / Export PDF Summary</span>
+                        </button>
+
+                        <!-- Gumroad High-Converting CTA Box -->
+                        <div class="bg-white/10 p-4 rounded-xl border border-white/20 text-center">
+                            <p class="text-xs text-indigo-100 mb-2 data-cta-box-text">
+                                Tired of manual calculations for dozens of employees? Automate your entire HR department with our fully locked Excel & VBA Master Template.
+                            </p>
+                            <a href="https://gumroad.com" target="_blank" class="block w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 px-4 rounded-lg transition data-cta-box-btn">
+                                Get Complete Excel & VBA Template ($29)
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Bilingual Disclaimer -->
+                <div class="mt-4 text-xs text-slate-500 leading-relaxed data-disclaimer">
+                    <strong>Disclaimer:</strong> This tool provides estimates for informational and planning purposes only. Calculations must be verified against current labor laws, regulations, and official authorities (such as GOSI / MOL) before finalizing company payroll.
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Comprehensive SEO Guide & FAQ Section -->
+        <section class="mt-20 bg-white p-8 sm:p-12 rounded-2xl border border-slate-200 shadow-sm">
+            <h3 class="text-2xl font-bold text-slate-900 mb-6 data-guide-title">
+                Comprehensive Guide to Overtime & GOSI Payroll Management in GCC SMEs
+            </h3>
+            
+            <div class="prose max-w-none text-slate-600 space-y-6 leading-relaxed">
+                <p class="data-guide-p1">
+                    Managing payroll accurately is one of the most critical responsibilities for small and medium-sized enterprises (SMEs) operating in the GCC. Compliance with regional labor laws—such as the Saudi Labor Law or UAE Labor Law—requires precise calculation of working hours, overtime compensation, allowances, and social insurance deductions like GOSI (General Organization for Social Insurance).
+                </p>
+
+                <h4 class="text-xl font-semibold text-slate-800 mt-6 data-guide-h4-1">1. How Overtime is Calculated Under Labor Laws</h4>
+                <p class="data-guide-p2">
+                    Under standard regional regulations, normal working hours are typically capped at 8 hours per day or 48 hours per week. Any hours worked beyond this threshold must be compensated at a higher rate. The standard overtime hourly rate is calculated based on the employee's basic salary plus mandatory allowances (depending on local statutory interpretations, though frequently calculated against basic wage). The multiplier is usually set at a minimum of 1.5 times the hourly rate for standard overtime work, and up to 2.0 times for work performed on weekly rest days or official public holidays.
+                </p>
+
+                <h4 class="text-xl font-semibold text-slate-800 mt-6 data-guide-h4-2">2. Understanding GOSI Contributions</h4>
+                <p class="data-guide-p3">
+                    The General Organization for Social Insurance (GOSI) administers social insurance schemes that provide retirement pensions, occupational hazard protection, and unemployment insurance (SANED). For GCC nationals, the standard contribution rate is typically split between the employer (approx. 12% for annuities + 2% for occupational hazards) and the employee (approx. 9% to 10% for annuities). Expatriate workers are generally only subject to the occupational hazard branch (typically 2% paid entirely by the employer). Ensuring correct wage caps and contribution brackets prevents compliance penalties and audit risks.
+                </p>
+
+                <h4 class="text-xl font-semibold text-slate-800 mt-6 data-guide-h4-3">Frequently Asked Questions (FAQ)</h4>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h5 class="font-bold text-slate-800 data-faq-q1">Q: Are housing and transport allowances included in GOSI wage calculations?</h5>
+                        <p class="data-faq-a1">A: In many GCC frameworks (such as Saudi Arabia), GOSI contributions are calculated based on the monthly basic wage plus housing allowance (up to specific regulatory caps or housing provided in-kind), whereas other allowances may be excluded. Always check current statutory updates.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-slate-800 data-faq-q2">Q: Can an employee agree to waive overtime compensation in lieu of extra days off?</h5>
+                        <p class="data-faq-a2">A: In most jurisdictions, labor laws strictly mandate monetary compensation for overtime hours unless specific mutual written agreements comply with local labor ministry executive regulations regarding time-in-lieu.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-slate-800 data-faq-q3">Q: How can I manage payroll for more than 50 employees efficiently?</h5>
+                        <p class="data-faq-a3">A: While online web calculators are great for quick estimates, managing multi-employee payroll sheets requires automated Excel templates with built-in VBA macros, tax tables, bank WPS (Wage Protection System) file generation, and payslip printers. Check out our $29 Master Template above!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-20 py-8 text-center text-sm text-slate-500">
+        <p class="data-footer">© 2025 Payroll & GOSI Pro Micro-SaaS. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript Calculation Engine & Bilingual Toggle -->
+    <script>
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                'data-title-en': 'Payroll & GOSI Pro',
+                'data-subtitle-en': 'SME Human Resources & Accounting Tool',
+                'data-banner-text': '🚀 Need complete multi-employee payroll batching? Get the Complete Offline Automated Excel & VBA Master Template!',
+                'data-banner-cta': 'Download ($29)',
+                'data-main-heading': 'Overtime & GOSI Payroll Estimator',
+                'data-main-desc': 'Calculate precise monthly salaries, legal overtime compensations, and mandatory social insurance (GOSI) contributions instantly.',
+                'data-section-inputs': 'Employee & Salary Parameters',
+                'data-lbl-basic': 'Basic Salary (Monthly)',
+                'data-lbl-housing': 'Housing Allowance',
+                'data-lbl-other': 'Other Allowances (Transportation, etc.)',
+                'data-lbl-hours': 'Overtime Hours Worked (Monthly)',
+                'data-lbl-rate': 'Overtime Rate Multiplier',
+                'data-lbl-nationality': 'Employee Nationality / Category',
+                'data-lbl-deductions': 'Other Deductions (Loans, Advances)',
+                'data-lbl-currency': 'Currency Symbol',
+                'data-section-results': 'Payroll Breakdown & Summary',
+                'data-res-gross': 'Gross Comprehensive Salary:',
+                'data-res-ot': 'Overtime Compensation:',
+                'data-res-gosi-emp': 'Employee GOSI Deduction:',
+                'data-res-gosi-comp': 'Employer GOSI Contribution:',
+                'data-res-deductions': 'Other Deductions:',
+                'data-res-net': 'Net Payable Salary:',
+                'data-btn-print': 'Print / Export PDF Summary',
+                'data-cta-box-text': 'Tired of manual calculations for dozens of employees? Automate your entire HR department with our fully locked Excel & VBA Master Template.',
+                'data-cta-box-btn': 'Get Complete Excel & VBA Template ($29)',
+                'data-disclaimer': 'Disclaimer: This tool provides estimates for informational and planning purposes only. Calculations must be verified against current labor laws, regulations, and official authorities (such as GOSI / MOL) before finalizing company payroll.',
+                'data-guide-title': 'Comprehensive Guide to Overtime & GOSI Payroll Management in GCC SMEs',
+                'data-guide-p1': 'Managing payroll accurately is one of the most critical responsibilities for small and medium-sized enterprises (SMEs) operating in the GCC. Compliance with regional labor laws—such as the Saudi Labor Law or UAE Labor Law—requires precise calculation of working hours, overtime compensation, allowances, and social insurance deductions like GOSI (General Organization for Social Insurance).',
+                'data-guide-h4-1': '1. How Overtime is Calculated Under Labor Laws',
+                'data-guide-p2': 'Under standard regional regulations, normal working hours are typically capped at 8 hours per day or 48 hours per week. Any hours worked beyond this threshold must be compensated at a higher rate. The standard overtime hourly rate is calculated based on the employee\'s basic salary plus mandatory allowances (depending on local statutory interpretations, though frequently calculated against basic wage). The multiplier is usually set at a minimum of 1.5 times the hourly rate for standard overtime work, and up to 2.0 times for work performed on weekly rest days or official public holidays.',
+                'data-guide-h4-2': '2. Understanding GOSI Contributions',
+                'data-guide-p3': 'The General Organization for Social Insurance (GOSI) administers social insurance schemes that provide retirement pensions, occupational hazard protection, and unemployment insurance (SANED). For GCC nationals, the standard contribution rate is typically split between the employer (approx. 12% for annuities + 2% for occupational hazards) and the employee (approx. 9% to 10% for annuities). Expatriate workers are generally only subject to the occupational hazard branch (typically 2% paid entirely by the employer). Ensuring correct wage caps and contribution brackets prevents compliance penalties and audit risks.',
+                'data-guide-h4-3': 'Frequently Asked Questions (FAQ)',
+                'data-faq-q1': 'Q: Are housing and transport allowances included in GOSI wage calculations?',
+                'data-faq-a1': 'A: In many GCC frameworks (such as Saudi Arabia), GOSI contributions are calculated based on the monthly basic wage plus housing allowance (up to specific regulatory caps or housing provided in-kind), whereas other allowances may be excluded. Always check current statutory updates.',
+                'data-faq-q2': 'Q: Can an employee agree to waive overtime compensation in lieu of extra days off?',
+                'data-faq-a2': 'A: In most jurisdictions, labor laws strictly mandate monetary compensation for overtime hours unless specific mutual written agreements comply with local labor ministry executive regulations regarding time-in-lieu.',
+                'data-faq-q3': 'Q: How can I manage payroll for more than 50 employees efficiently?',
+                'data-faq-a3': 'A: While online web calculators are great for quick estimates, managing multi-employee payroll sheets requires automated Excel templates with built-in VBA macros, tax tables, bank WPS (Wage Protection System) file generation, and payslip printers. Check out our $29 Master Template above!',
+                'data-footer': '© 2025 Payroll & GOSI Pro Micro-SaaS. All rights reserved.'
+            },
+            ar: {
+                'data-title-en': 'برنامج الرواتب والتأمينات برو',
+                'data-subtitle-en': 'أداة الموارد البشرية والمحاسبة للمنشآت الصغيرة والمتوسطة',
+                'data-banner-text': '🚀 هل تحتاج إلى نظام رواتب شامل لعدة موظفين؟ احصل على قالب إكسل وماكرو VBA المتقدم للاستخدام دون إنترنت!',
+                'data-banner-cta': 'تحميل (29 دولار)',
+                'data-main-heading': 'حاسبة العمل الإضافي وتقدير أجور التأمينات الاجتماعية',
+                'data-main-desc': 'احسب الرواتب الشهرية بدقة، وتعويضات العمل الإضافي القانونية، واشتراكات التأمينات الاجتماعية الإلزامية (غوسي) فوراً.',
+                'data-section-inputs': 'بيانات الموظف والراتب',
+                'data-lbl-basic': 'الراتب الأساسي (شهري)',
+                'data-lbl-housing': 'بدل السكن',
+                'data-lbl-other': 'بدلات أخرى (نقل، إلخ)',
+                'data-lbl-hours': 'ساعات العمل الإضافي (شهرياً)',
+                'data-lbl-rate': 'مضاعف معدل العمل الإضافي',
+                'data-lbl-nationality': 'جنسية الموظف / الفئة',
+                'data-lbl-deductions': 'خصومات أخرى (سلف، قروض)',
+                'data-lbl-currency': 'رمز العملة',
+                'data-section-results': 'تفاصيل وملخص الراتب',
+                'data-res-gross': 'إجمالي الراتب الشامل:',
+                'data-res-ot': 'تعويض العمل الإضافي:',
+                'data-res-gosi-emp': 'حصة الموظف من التأمينات:',
+                'data-res-gosi-comp': 'حصة المنشأة من التأمينات:',
+                'data-res-deductions': 'الخصومات الأخرى:',
+                'data-res-net': 'صافي الراتب المستحق:',
+                'data-btn-print': 'طباعة / تصدير ملخص PDF',
+                'data-cta-box-text': 'هل مللت من الحسابات اليدوية لعشرات الموظفين؟ قم بأتمتة قسم الموارد البشرية بالكامل باستخدام قالب Excel و VBA الجاهز.',
+                'data-cta-box-btn': 'احصل على قالب الإكسل الشامل (29 دولار)',
+                'data-disclaimer': 'إخلاء المسؤولية: توفر هذه الأداة تقديرات لأغراض المعلومات والتخطيط فقط. يجب التحقق من الحسابات مقابل قوانين العمل واللوائح والجهات الرسمية الحالية (مثل التأمينات الاجتماعية / وزارة العمل) قبل اعتماد الرواتب النهائية.',
+                'data-guide-title': 'الدليل الشامل لإدارة الرواتب والعمل الإضافي والتأمينات في منشآت الخليج',
+                'data-guide-p1': 'تعد إدارة الرواتب بدقة إحدى أهم مسؤوليات الشركات الصغيرة والمتوسطة العاملة في دول مجلس التعاون الخليجي. يتطلب الامتثال لقوانين العمل الإقليمية - مثل نظام العمل السعودي أو الإماراتي - حساباً دقيقاً لساعات العمل، وتعويضات العمل الإضافي، والبدلات، واخصومات التأمينات الاجتماعية مثل التأمينات الاجتماعية (GOSI).',
+                'data-guide-h4-1': '1. كيف يتم احتساب العمل الإضافي بموجب قوانين العمل',
+                'data-guide-p2': 'بموجب اللوائح القياسية، تقتصر ساعات العمل العادية عادةً على 8 ساعات في اليوم أو 48 ساعة في الأسبوع. يجب تعويض أي ساعات عمل تتجاوز هذا الحد بمعدل أعلى. يتم احتساب معدل الأجر الإضافي للساعة بناءً على الراتب الأساسي للموظف مضافاً إليه البدلات الإلزامية (حسب التفسيرات القانونية المحلية). وغالباً ما يتم تعيين المضاعف بحد أدنى 1.5 مرة لأيام العمل العادية، و يصل إلى 2.0 مرة لأيام الراحة الأسبوعية أو العطل الرسمية.',
+                'data-guide-h4-2': '2. فهم اشتراكات التأمينات الاجتماعية (غوسي)',
+                'data-guide-p3': 'تدير المؤسسة العامة للتأمينات الاجتماعية (GOSI) أنظمة توفر معاشات التقاعد، وحماية الأخطار المهنية، وتأمين التعطل عن العمل (ساند). بالنسبة لمواطني دول مجلس التعاون الخليجي، يتم تقسيم معدل الاشتراكات عادةً بين صاحب العمل (حوالي 12% للمعاشات + 2% أخطار مهنية) والموظف (حوالي 9% إلى 10% للمعاشات). أما العمال الوافدون فيخضعون عادةً لفرع الأخطار المهنية فقط (بنسبة 2% يتحملها صاحب العمل بالكامل).',
+                'data-guide-h4-3': 'الأسئلة الشائعة (FAQ)',
+                'data-faq-q1': 'س: هل يتم تضمين بدلات السكن والنقل في حساب أجور التأمينات؟',
+                'data-faq-a1': 'ج: في العديد من أنظمة دول مجلس التعاون الخليجي (مثل المملكة العربية السعودية)، يتم احتساب اشتراكات التأمينات على أساس الأجر الأساسي الشهري مضافاً إليه بدل السكن (حسب الحدود التنظيمية المحددة)، بينما قد يتم استثناء البدلات الأخرى. تحقق دائماً من التحديثات التنظيمية الحالية.',
+                'data-faq-q2': 'س: هل يمكن للموظف الموافقة على التنازل عن تعويض العمل الإضافي مقابل أيام إجازة إضافية؟',
+                'data-faq-a2': 'ج: في معظم السلطات القضائية، تفرض قوانين العمل بصرامة تعويضاً مالياً لساعات العمل الإضافي ما لم تكن هناك اتفاقيات خطية متبادلة تتوافق مع اللوائح التنفيذية لوزارة العمل.',
+                'data-faq-q3': 'س: كيف يمكنني إدارة الرواتب لأكثر من 50 موظفاً بكفاءة؟',
+                'data-faq-a3': 'ج: بينما تعتبر الآلات الحاسبة عبر الإنترنت رائعة التقديرات السريعة، فإن إدارة كشوف مرتبات متعددة الموظفين تتطلب قوالب إكسل آلية تحتوي على وحدات ماكرو VBA مدمجة، وجداول ضريبية، وملفات حماية الأجور (WPS). راجع قالبنا الرئيسي بقيمة 29 دولاراً أعلاه!',
+                'data-footer': '© 2025 برنامج الرواتب والتأمينات برو. جميع الحقوق محفوظة.'
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const htmlEl = document.documentElement;
+            if (currentLang === 'ar') {
+                htmlEl.setAttribute('lang', 'ar');
+                htmlEl.setAttribute('dir', 'rtl');
+                htmlEl.classList.remove('ltr');
+                htmlEl.classList.add('rtl');
+            } else {
+                htmlEl.setAttribute('lang', 'en');
+                htmlEl.setAttribute('dir', 'ltr');
+                htmlEl.classList.remove('rtl');
+                htmlEl.classList.add('ltr');
+            }
+
+            // Update all translatable elements
+            for (const [key, text] of Object.entries(translations[currentLang])) {
+                const elements = document.querySelectorAll('.' + key);
+                elements.forEach(el => {
+                    el.textContent = text;
+                });
+            }
+            calculatePayroll();
+        }
+
+        function calculatePayroll() {
+            const basic = parseFloat(document.getElementById('basicSalary').value) || 0;
+            const housing = parseFloat(document.getElementById('housingAllowance').value) || 0;
+            const other = parseFloat(document.getElementById('otherAllowances').value) || 0;
+            const otHours = parseFloat(document.getElementById('overtimeHours').value) || 0;
+            const otRate = parseFloat(document.getElementById('overtimeRate').value) || 1.5;
+            const nationality = document.getElementById('nationalityType').value;
+            const deductions = parseFloat(document.getElementById('otherDeductions').value) || 0;
+            const currency = document.getElementById('currencySymbol').value || 'SAR';
+
+            // Gross comprehensive salary (Basic + Housing + Other)
+            const grossSalary = basic + housing + other;
+
+            // Overtime calculation: standard monthly hours approx 240 (or basic / 240 * otHours * otRate)
+            // Standard labor calculation uses basic wage for hourly rate calculation in many GCC states
+            const hourlyRate = basic / 240;
+            const overtimePay = hourlyRate * otHours * otRate;
+
+            // GOSI Calculation Rules
+            // GCC National: Employee pays ~9.75% on (Basic + Housing up to certain limits, here simplified to Basic + Housing), Employer pays ~11.75% + 2% occupational hazard.
+            // Expat: Employer pays 2% occupational hazard on basic salary, employee pays 0%.
+            let gosiEmp = 0;
+            let gosiComp = 0;
+
+            const gosiWageBase = basic + housing;
+
+            if (nationality === 'gcc') {
+                gosiEmp = gosiWageBase * 0.0975;
+                gosiComp = gosiWageBase * 0.1375; // 11.75 + 2
+            } else if (nationality === 'expat') {
+                gosiEmp = 0;
+                gosiComp = basic * 0.02;
+            } else {
+                gosiEmp = 0;
+                gosiComp = 0;
+            }
+
+            // Net Payable Salary = Gross + Overtime - Employee GOSI - Other Deductions
+            const netSalary = grossSalary + overtimePay - gosiEmp - deductions;
+
+            // Display formatted results
+            document.getElementById('resGross').textContent = grossSalary.toFixed(2) + ' ' + currency;
+            document.getElementById('resOvertime').textContent = overtimePay.toFixed(2) + ' ' + currency;
+            document.getElementById('resGosiEmp').textContent = '-' + gosiEmp.toFixed(2) + ' ' + currency;
+            document.getElementById('resGosiComp').textContent = gosiComp.toFixed(2) + ' ' + currency;
+            document.getElementById('resDeductions').textContent = '-' + deductions.toFixed(2) + ' ' + currency;
+            document.getElementById('resNet').textContent = netSalary.toFixed(2) + ' ' + currency;
+        }
+
+        // Attach live calculation listeners
+        document.querySelectorAll('#payrollForm input, #payrollForm select').forEach(element => {
+            element.addEventListener('input', calculatePayroll);
+            element.addEventListener('change', calculatePayroll);
+        });
+
+        // Initial run
+        calculatePayroll();
+    </script>
+</body>
+</html>
