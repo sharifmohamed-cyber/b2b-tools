@@ -1,23 +1,28 @@
 import os
 import json
 import re
-from datetime import datetime
+import time
+from datetime import datetime, timezone
 from google import genai
 from google.genai import types
 
 # =====================================================================
 # CONFIGURATION (Set via GitHub Secrets or Edit Default Links Below)
 # =====================================================================
-CHECKOUT_URL = os.environ.get(
-    "CHECKOUT_URL", 
-    "https://your-store.gumroad.com/l/b2b-excel-automation-bundle"
-)
-SITE_BASE_URL = os.environ.get(
-    "SITE_BASE_URL", 
-    "https://your-username.github.io/b2b-tools"
-)
+# "or" is used so that EMPTY secrets (which GitHub passes as "") still
+# fall back to the defaults below.
+CHECKOUT_URL = os.environ.get("CHECKOUT_URL") or "https://your-store.gumroad.com/l/b2b-excel-automation-bundle"
+SITE_BASE_URL = os.environ.get("SITE_BASE_URL") or "https://your-username.github.io/b2b-tools"
 REGISTRY_FILE = "tools_registry.json"
 DOCS_DIR = "docs"
+
+# Main model first, fallback second. Change names here if Google retires them.
+MODELS_TO_TRY = [
+    os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash",
+    "gemini-3.8-flash-lite",
+]
+REQUIRED_KEYS = ["slug", "title_en", "title_ar", "description_en", "html_code"]
+
 
 def load_registry():
     if os.path.exists(REGISTRY_FILE):
@@ -25,9 +30,11 @@ def load_registry():
             return json.load(f)
     return []
 
+
 def save_registry(registry):
     with open(REGISTRY_FILE, "w", encoding="utf-8") as f:
         json.dump(registry, f, ensure_ascii=False, indent=2)
+
 
 def discover_and_build_tool(client, existing_slugs):
     prompt = f"""
@@ -47,22 +54,38 @@ def discover_and_build_tool(client, existing_slugs):
       2. 100% working vanilla JavaScript calculation engine with instant live results, printable/exportable CSV or PDF summary button.
       3. A high-converting sticky banner and results-card CTA button linking to `{CHECKOUT_URL}` offering the "Complete Offline Automated Excel & VBA Master Template ($29)".
       4. A comprehensive 800-word SEO guide, formula breakdown, and FAQ section below the calculator so Google ranks the page.
+      5. A clearly visible bilingual disclaimer near the results stating that outputs are estimates only and must be verified against current laws, regulations, and official sources before use.
     """
 
-    response = client.models.generate_content(
-    model="gemini-3.8-flash",   # was "gemini-2.5-flash"
+    last_error = None
+    for model_name in MODELS_TO_TRY:
+        for attempt in range(1, 4):
+            try:
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json",
+                        temperature=0.7,
+                        max_output_tokens=32000,
+                    ),
+                )
+                data = json.loads(response.text)
+                missing = [k for k in REQUIRED_KEYS if not data.get(k)]
+                if missing:
+                    raise ValueError(f"Model output missing keys: {missing}")
+                return data
+            except Exception as e:
+                last_error = e
+                print(f"{model_name} attempt {attempt} failed: {e}")
+                time.sleep(20 * attempt)  # wait 20s, 40s, 60s
 
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            response_mime_type="application/json",
-            temperature=0.7,
-        ),
-    )
-    return json.loads(response.text)
+    raise last_error
+
 
 def rebuild_portal_and_sitemap(registry):
     os.makedirs(DOCS_DIR, exist_ok=True)
-    
+
     # Build Directory Cards
     cards_html = ""
     for item in reversed(registry):
@@ -106,7 +129,7 @@ def rebuild_portal_and_sitemap(registry):
     urls = [f"<url><loc>{SITE_BASE_URL}/</loc></url>"]
     for item in registry:
         urls.append(f"<url><loc>{SITE_BASE_URL}/tools/{item['slug']}.html</loc></url>")
-    
+
     sitemap_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     {"".join(urls)}
@@ -114,6 +137,7 @@ def rebuild_portal_and_sitemap(registry):
 
     with open(os.path.join(DOCS_DIR, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write(sitemap_xml)
+
 
 def main():
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -128,6 +152,11 @@ def main():
     new_tool = discover_and_build_tool(client, existing_slugs)
 
     slug = re.sub(r"[^a-z0-9-]", "", new_tool["slug"].lower())
+    if not slug:
+        raise ValueError("Model returned an empty or invalid slug.")
+    if slug in existing_slugs:
+        raise ValueError(f"Slug '{slug}' already exists; skipping to avoid overwriting.")
+
     tools_folder = os.path.join(DOCS_DIR, "tools")
     os.makedirs(tools_folder, exist_ok=True)
 
@@ -140,12 +169,13 @@ def main():
         "title_en": new_tool["title_en"],
         "title_ar": new_tool["title_ar"],
         "description_en": new_tool["description_en"],
-        "date": datetime.utcnow().strftime("%Y-%m-%d")
+        "date": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
     })
 
     save_registry(registry)
     rebuild_portal_and_sitemap(registry)
     print(f"Successfully deployed: {slug}.html")
+
 
 if __name__ == "__main__":
     main()
