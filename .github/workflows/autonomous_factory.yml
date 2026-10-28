@@ -34,9 +34,9 @@ jobs:
       - name: Commit and Deploy New Software Tool
         run: |
           git config --global user.name "Autonomous SaaS Bot"
-  git config --global user.email "bot@users.noreply.github.com"
-  git add docs/ tools_registry.json
-  if ! git diff --staged --quiet; then
-    git commit -m "Auto-deploy new B2B web tool"
-    git push
-  fi
+          git config --global user.email "bot@users.noreply.github.com"
+          git add docs/ tools_registry.json
+          if ! git diff --staged --quiet; then
+            git commit -m "Auto-deploy new B2B web tool"
+            git push
+          fi
