@@ -9,19 +9,45 @@ from google.genai import types
 # =====================================================================
 # CONFIGURATION (Set via GitHub Secrets or Edit Default Links Below)
 # =====================================================================
-# "or" is used so that EMPTY secrets (which GitHub passes as "") still
-# fall back to the defaults below.
 CHECKOUT_URL = os.environ.get("CHECKOUT_URL") or "https://your-store.gumroad.com/l/b2b-excel-automation-bundle"
 SITE_BASE_URL = os.environ.get("SITE_BASE_URL") or "https://your-username.github.io/b2b-tools"
 REGISTRY_FILE = "tools_registry.json"
 DOCS_DIR = "docs"
 
-# Main model first, fallback second. Change names here if Google retires them.
-MODELS_TO_TRY = [
-    os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash",
-    "gemini-3.8-flash-lite",
-]
+PREFERRED_MODEL = os.environ.get("GEMINI_MODEL") or "gemini-3.8-flash"
 REQUIRED_KEYS = ["slug", "title_en", "title_ar", "description_en", "html_code"]
+# Skip model types that can't do plain text/JSON generation
+SKIP_WORDS = ["image", "tts", "audio", "live", "embedding", "imagen", "veo",
+              "robotics", "computer-use", "vision", "aqa", "learnlm", "gemma"]
+
+
+def get_model_candidates(client):
+    """Preferred model first, then every other text-capable Gemini model
+    the API key can actually use (so we never rely on guessed names)."""
+    candidates = [PREFERRED_MODEL]
+    try:
+        discovered = []
+        for m in client.models.list():
+            name = (m.name or "").replace("models/", "")
+            actions = getattr(m, "supported_actions", None) or []
+            if "generateContent" not in actions:
+                continue
+            if not name.startswith("gemini"):
+                continue
+            if any(w in name for w in SKIP_WORDS):
+                continue
+            discovered.append(name)
+        # Prefer flash-type models (cheaper, higher limits), newest names first
+        discovered.sort(key=lambda n: ("flash" not in n, n), reverse=False)
+        flash = sorted([n for n in discovered if "flash" in n], reverse=True)
+        others = sorted([n for n in discovered if "flash" not in n], reverse=True)
+        for n in flash + others:
+            if n not in candidates:
+                candidates.append(n)
+    except Exception as e:
+        print(f"Could not list models ({e}); using preferred model only.")
+    print("Models to try, in order:", candidates)
+    return candidates
 
 
 def load_registry():
@@ -58,7 +84,8 @@ def discover_and_build_tool(client, existing_slugs):
     """
 
     last_error = None
-    for model_name in MODELS_TO_TRY:
+    for model_name in get_model_candidates(client)[:6]:   # try at most 6 models
+        not_found = False
         for attempt in range(1, 4):
             try:
                 response = client.models.generate_content(
@@ -74,11 +101,18 @@ def discover_and_build_tool(client, existing_slugs):
                 missing = [k for k in REQUIRED_KEYS if not data.get(k)]
                 if missing:
                     raise ValueError(f"Model output missing keys: {missing}")
+                print(f"Success with model: {model_name}")
                 return data
             except Exception as e:
                 last_error = e
                 print(f"{model_name} attempt {attempt} failed: {e}")
-                time.sleep(20 * attempt)  # wait 20s, 40s, 60s
+                msg = str(e)
+                if "404" in msg or "NOT_FOUND" in msg:
+                    not_found = True
+                    break                      # no point retrying a missing model
+                time.sleep(30 * attempt)       # 30s, 60s, 90s for 503/overload
+        if not_found:
+            continue
 
     raise last_error
 
@@ -86,7 +120,6 @@ def discover_and_build_tool(client, existing_slugs):
 def rebuild_portal_and_sitemap(registry):
     os.makedirs(DOCS_DIR, exist_ok=True)
 
-    # Build Directory Cards
     cards_html = ""
     for item in reversed(registry):
         cards_html += f"""
@@ -125,7 +158,6 @@ def rebuild_portal_and_sitemap(registry):
     with open(os.path.join(DOCS_DIR, "index.html"), "w", encoding="utf-8") as f:
         f.write(index_html)
 
-    # Build SEO Sitemap
     urls = [f"<url><loc>{SITE_BASE_URL}/</loc></url>"]
     for item in registry:
         urls.append(f"<url><loc>{SITE_BASE_URL}/tools/{item['slug']}.html</loc></url>")
