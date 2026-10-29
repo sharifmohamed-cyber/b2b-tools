@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi End of Service Gratuity Calculator | حاسبة مكافأة نهاية الخدمة</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            arabic: ['Cairo', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .font-ar { font-family: 'Cairo', sans-serif; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans min-h-screen flex flex-col">
+
+  <!-- Sticky Upsell Banner -->
+  <aside class="no-print bg-gradient-to-r from-emerald-900 via-slate-900 to-indigo-950 text-white px-4 py-2.5 text-xs sm:text-sm sticky top-0 z-50 shadow-md border-b border-emerald-500/30">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2 text-center sm:text-left">
+        <span class="bg-emerald-500 text-slate-950 font-bold px-2 py-0.5 rounded-full text-xs uppercase tracking-wider">B2B Master</span>
+        <span class="font-medium">Need full enterprise batch payroll & multi-employee EOSB settlements?</span>
+      </div>
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="https://gumroad.com" target="_blank" rel="noopener" class="bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-semibold px-3.5 py-1 rounded-md transition shadow-sm text-xs flex items-center gap-1.5">
+          <span>Get Offline Excel & VBA Engine ($29)</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Top Navigation -->
+  <header class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg bg-emerald-600 text-white flex items-center justify-center font-bold text-xl shadow-md">EOS</div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight">KSA End of Service Calculator</h1>
+          <p class="text-xs text-slate-500 font-ar">حاسبة مكافأة نهاية الخدمة - نظام العمل السعودي</p>
+        </div>
+      </div>
+      <!-- Language & Print Toggle -->
+      <div class="flex items-center gap-3 no-print">
+        <button onclick="window.print()" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-50 transition shadow-sm">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          Print Audit / PDF
+        </button>
+        <button id="langToggleBtn" onclick="toggleLanguage()" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-300 transition flex items-center gap-1.5">
+          <span id="langLabel">عربي (RTL)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Left Column: Input Form (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7">
+          <div class="border-b border-slate-100 pb-4 mb-6">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+                <span class="p-1.5 rounded bg-emerald-50 text-emerald-600">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                </span>
+                <span data-i18n="form_heading">Employment & Contract Parameters</span>
+              </h2>
+              <span class="text-xs font-medium bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md">Articles 84, 85 & 87</span>
+            </div>
+            <p class="text-xs text-slate-500 mt-1" data-i18n="form_sub">Enter basic wages, tenure dates, and legal termination clause to calculate statutory indemnity.</p>
+          </div>
+
+          <form id="eosbForm" class="space-y-5" onsubmit="event.preventDefault(); calculateGratuity();">
+            <!-- Contract Type -->
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5" data-i18n="label_contract_type">Contract Type</label>
+              <div class="grid grid-cols-2 gap-3">
+                <label class="flex items-center justify-between p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition border-emerald-500 bg-emerald-50/30" id="ct_unlimited_wrap">
+                  <span class="text-xs font-semibold text-slate-800">
+                    <span class="block">Indefinite / Unlimited</span>
+                    <span class="text-[11px] text-slate-500 font-normal font-ar block">عقد غير محدد المدة</span>
+                  </span>
+                  <input type="radio" name="contractType" value="unlimited" checked onchange="updateContractStyle(); calculateGratuity();" class="text-emerald-600 focus:ring-emerald-500">
+                </label>
+                <label class="flex items-center justify-between p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition border-slate-200" id="ct_fixed_wrap">
+                  <span class="text-xs font-semibold text-slate-800">
+                    <span class="block">Fixed-Term</span>
+                    <span class="text-[11px] text-slate-500 font-normal font-ar block">عقد محدد المدة</span>
+                  </span>
+                  <input type="radio" name="contractType" value="fixed" onchange="updateContractStyle(); calculateGratuity();" class="text-emerald-600 focus:ring-emerald-500">
+                </label>
+              </div>
+            </div>
+
+            <!-- Separation Reason -->
+            <div>
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5" data-i18n="label_reason">Reason for Contract End</label>
+              <select id="reason" onchange="calculateGratuity();" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-slate-800 font-medium">
+                <option value="employer_termination">Employer Termination / Non-Renewal / Mutual Consent (Art. 84 - 100%)</option>
+                <option value="resignation">Employee Resignation (Art. 85 - Tiered 0% / 33% / 66% / 100%)</option>
+                <option value="female_marriage_birth">Female Employee Resignation (Marriage ≤6mo / Childbirth ≤3mo - Art. 87 - 100%)</option>
+                <option value="force_majeure">Force Majeure / Company Liquidation / Total Incapacity (Art. 87 - 100%)</option>
+                <option value="article_80">Termination Under Article 80 (Gross Misconduct - 0%)</option>
+              </select>
+              <p class="text-[11px] text-slate-500 mt-1 font-ar" id="reason_ar_hint">إنهاء من قبل صاحب العمل / انتهاء العقد / استقالة وفق المادة 85 أو 87</p>
+            </div>
+
+            <!-- Wage Inputs (Basic + Housing + Transport) -->
+            <div class="border-t border-slate-100 pt-4">
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700" data-i18n="label_wage_breakdown">Monthly Gross Salary Breakdown (SAR)</label>
+                <span class="text-[11px] text-emerald-600 font-semibold">Wage per Art. 2 (Actual Wage)</span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600 mb-1">Basic Salary (الأساسي)</label>
+                  <input type="number" id="basicSalary" min="0" step="any" value="12000" oninput="calculateGratuity();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600 mb-1">Housing Allowance (سكن)</label>
+                  <input type="number" id="housingSalary" min="0" step="any" value="3000" oninput="calculateGratuity();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600 mb-1">Transport/Other (بدلات)</label>
+                  <input type="number" id="otherSalary" min="0" step="any" value="1000" oninput="calculateGratuity();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                </div>
+              </div>
+              <div class="mt-2 text-right">
+                <span class="text-xs text-slate-500">Recognized Monthly Wage: </span>
+                <span id="totalMonthlyWageDisplay" class="text-xs font-bold text-slate-900">SAR 16,000.00</span>
+              </div>
+            </div>
+
+            <!-- Tenure Dates -->
+            <div class="border-t border-slate-100 pt-4">
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-xs font-bold uppercase tracking-wider text-slate-700" data-i18n="label_service_duration">Employment Duration</label>
+                <button type="button" onclick="toggleDateDirectMode()" class="text-xs text-indigo-600 hover:text-indigo-800 font-medium underline" id="modeToggleText">Switch to direct Years/Months</button>
+              </div>
+
+              <!-- Date Range Inputs -->
+              <div id="dateInputsSection" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600 mb-1" data-i18n="label_start_date">Hire Date (تاريخ التعيين)</label>
+                  <input type="date" id="startDate" value="2018-03-01" onchange="calculateGratuity();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600 mb-1" data-i18n="label_end_date">Last Working Day (تاريخ الانتهاء)</label>
+                  <input type="date" id="endDate" value="2024-03-01" onchange="calculateGratuity();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                </div>
+              </div>
+
+              <!-- Direct Number Inputs (Hidden by default) -->
+              <div id="directInputsSection" class="hidden grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600 mb-1">Years (سنوات)</label>
+                  <input type="number" id="directYears" min="0" value="6" oninput="calculateGratuity();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600 mb-1">Months (أشهر)</label>
+                  <input type="number" id="directMonths" min="0" max="11" value="0" oninput="calculateGratuity();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-medium text-slate-600 mb-1">Days (أيام)</label>
+                  <input type="number" id="directDays" min="0" max="30" value="0" oninput="calculateGratuity();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+                </div>
+              </div>
+
+              <!-- Unpaid Leave / Deductions -->
+              <div class="mt-3 pt-3 border-t border-dashed border-slate-200">
+                <label class="flex items-center justify-between text-[11px] font-medium text-slate-600 cursor-pointer">
+                  <span>Unpaid Leave / Service Interruption (Days to deduct - إجازة غير مدفوعة):</span>
+                  <input type="number" id="unpaidDays" min="0" value="0" oninput="calculateGratuity();" class="w-24 px-2 py-1 bg-slate-50 border border-slate-300 rounded text-right text-xs focus:ring-1 focus:ring-emerald-500">
+                </label>
+              </div>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- Additional Adjustments Card (Accrued Vacation, Deductions) -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 flex items-center justify-between">
+            <span>Settlement Adjustments & Balances (تسوية المستحقات)</span>
+            <span class="text-xs normal-case text-slate-400 font-normal">Optional Payroll Clearance</span>
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Unused Annual Leave Balance (Days)</label>
+              <input type="number" id="unusedLeaveDays" min="0" value="14" oninput="calculateGratuity();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+              <p class="text-[10px] text-slate-400 mt-1 font-ar">رصيد الإجازات السنوية المستحقة (أيام)</p>
+            </div>
+            <div>
+              <label class="block text-[11px] font-semibold text-slate-600 mb-1">Company Deductions / Advance Loans (SAR)</label>
+              <input type="number" id="advanceDeductions" min="0" value="0" oninput="calculateGratuity();" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:bg-white">
+              <p class="text-[10px] text-slate-400 mt-1 font-ar">استقطاعات عهد، سلف، أو قروض مستردة</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Audit Summary & Live Results (5 cols) -->
+      <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-16">
+        <div class="bg-slate-900 text-white rounded-2xl shadow-xl p-6 sm:p-7 border border-slate-800 relative overflow-hidden">
+          <div class="absolute -right-12 -top-12 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
+            <span class="text-xs font-semibold tracking-wider uppercase text-emerald-400">Statutory Result Breakdown</span>
+            <span id="ruleBadge" class="text-[11px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded font-mono">Art. 84 (Full)</span>
+          </div>
+
+          <!-- Main Figure -->
+          <div class="mb-6">
+            <p class="text-xs text-slate-400">Total Net Final Settlement (صافي المستحقات)</p>
+            <div class="flex items-baseline gap-2 mt-1">
+              <span class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight" id="netSettlementDisplay">SAR 0.00</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-1 font-ar" id="netInWordsAr">فقط وقدره ...</p>
+          </div>
+
+          <!-- Line Items Breakdown -->
+          <div class="space-y-3 py-3 border-y border-slate-800 text-xs">
+            <div class="flex justify-between text-slate-300">
+              <span class="flex items-center gap-1">
+                <span>Calculated Tenure:</span>
+              </span>
+              <span id="displayTenureYears" class="font-mono font-medium text-white">6.00 Years</span>
+            </div>
+            <div class="flex justify-between text-slate-300">
+              <span>Tier 1 (First 5 Years @ 0.5 wage/yr):</span>
+              <span id="displayTier1" class="font-mono text-white">SAR 40,000.00</span>
+            </div>
+            <div class="flex justify-between text-slate-300">
+              <span>Tier 2 (Post-5 Years @ 1.0 wage/yr):</span>
+              <span id="displayTier2" class="font-mono text-white">SAR 16,000.00</span>
+            </div>
+            <div class="flex justify-between text-slate-300">
+              <span>Gross Raw Gratuity Base:</span>
+              <span id="displayGrossEosb" class="font-mono font-semibold text-emerald-400">SAR 56,000.00</span>
+            </div>
+            <div class="flex justify-between text-slate-300">
+              <span id="labelMultiplier">Resignation Entitlement Ratio:</span>
+              <span id="displayRatio" class="font-mono text-amber-300">100%</span>
+            </div>
+            <div class="flex justify-between text-slate-300 pt-2 border-t border-slate-800/60 font-semibold">
+              <span class="text-emerald-300">Statutory EOSB Gratuity:</span>
+              <span id="displayFinalEosb" class="font-mono text-emerald-300">SAR 56,000.00</span>
+            </div>
+            <div class="flex justify-between text-slate-400">
+              <span>+ Accrued Leave Payout:</span>
+              <span id="displayLeavePayout" class="font-mono text-slate-200">SAR 7,466.67</span>
+            </div>
+            <div class="flex justify-between text-slate-400">
+              <span>- Company Deductions:</span>
+              <span id="displayDeductions" class="font-mono text-rose-300">SAR 0.00</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="mt-5 grid grid-cols-2 gap-2.5 no-print">
+            <button onclick="exportCSV()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-sm">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span>Export CSV</span>
+            </button>
+            <button onclick="window.print()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 py-2.5 px-3 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-sm">
+              <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              <span>Print Slip</span>
+            </button>
+          </div>
+
+          <!-- Direct Gumroad CTA inside results -->
+          <div class="mt-6 bg-gradient-to-br from-emerald-600/30 to-indigo-600/30 border border-emerald-500/40 rounded-xl p-4 text-center">
+            <p class="text-xs font-bold text-white mb-1">Automate Bulk Payroll & GOSI in Excel</p>
+            <p class="text-[11px] text-slate-300 mb-3">Download our production-ready Excel & VBA Template with Article 84-87 multi-tier formulas & automated printable PDF vouchers.</p>
+            <a href="https://gumroad.com" target="_blank" rel="noopener" class="inline-flex items-center justify-center w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2 px-4 rounded-lg text-xs transition duration-150 shadow-md">
+              Download Master Excel Template ($29)
+            </a>
+          </div>
+
+          <!-- Visible Legal Disclaimer -->
+          <div class="mt-4 pt-3 border-t border-slate-800/80 text-[10px] text-slate-400 leading-relaxed">
+            <p class="font-semibold text-slate-300 mb-0.5">Bilingual Legal Disclaimer / إخلاء مسؤولية قانونية:</p>
+            <p>Calculations provided by this engine are estimations based on the standard interpretations of Saudi Labor Law (Royal Decree No. M/51) Articles 84, 85, and 87. They do not constitute binding legal, fiscal, or formal audit counsel. Employers and employees must verify final settlements against their specific employment contracts, internal enterprise bylaws, and current Ministry of Human Resources regulations before execution.</p>
+            <p class="mt-1 font-ar text-[9.5px] text-slate-400">المخرجات الناتجة عن هذه الحاسبة هي تقديرات استرشادية مبنية على المواد 84 و85 و87 من نظام العمل السعودي. ولا تغني عن الاستشارة القانونية أو المراجعة المعتمدة للموارد البشرية قبل الصرف النهائي.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comprehensive 800+ Word SEO Guide, Formula Breakdown, & FAQ -->
+    <section class="mt-16 bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-10 text-slate-700 leading-relaxed space-y-10">
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-4">
+          Complete Guide to Saudi End-of-Service Benefits (EOSB) Under Saudi Labor Law
+        </h2>
+        <p class="text-slate-600 text-sm sm:text-base leading-relaxed">
+          The Saudi End of Service Award (مكافأة نهاية الخدمة), governed by <strong>Royal Decree No. M/51 (Saudi Labor Law)</strong>, is a mandatory statutory severance indemnity due to private sector employees upon the termination of their employment contract. Whether you are an HR manager managing corporate payroll reconciliation, a business owner calculating terminal liabilities under IFRS IAS 19, or an expatriate or Saudi professional verifying your final exit clearance, mastering the formulas under <strong>Articles 84, 85, and 87</strong> is vital.
+        </p>
+      </div>
+
+      <!-- Legal Mechanism Breakdown Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs mb-3 font-mono">Art. 84</div>
+          <h3 class="text-base font-bold text-slate-900 mb-2">Standard Statutory Accrual</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Under Article 84, the worker is entitled to an end-of-service award calculated as:
+          </p>
+          <ul class="mt-2 space-y-1 text-xs list-disc list-inside text-slate-600">
+            <li><strong>Half a month's wage</strong> for each of the first 5 years of service.</li>
+            <li><strong>One full month's wage</strong> for each subsequent year beyond 5 years.</li>
+            <li>Fractions of a year are calculated pro-rata according to actual service days.</li>
+          </ul>
+        </div>
+
+        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200">
+          <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-800 font-bold flex items-center justify-center text-xs mb-3 font-mono">Art. 85</div>
+          <h3 class="text-base font-bold text-slate-900 mb-2">Employee Resignation Tiers</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            If the worker resigns voluntarily from an indefinite contract, the statutory award is adjusted by tenure thresholds:
+          </p>
+          <ul class="mt-2 space-y-1 text-xs list-disc list-inside text-slate-600">
+            <li><strong>Less than 2 years:</strong> Zero entitlement (0%).</li>
+            <li><strong>2 to 5 years:</strong> One-third (1/3 or 33.33%) of the statutory award.</li>
+            <li><strong>5 to 10 years:</strong> Two-thirds (2/3 or 66.67%) of the statutory award.</li>
+            <li><strong>10+ years:</strong> Full entitlement (100%).</li>
+          </ul>
+        </div>
+
+        <div class="p-5 bg-slate-50 rounded-2xl border border-slate-200">
+          <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-800 font-bold flex items-center justify-center text-xs mb-3 font-mono">Art. 87</div>
+          <h3 class="text-base font-bold text-slate-900 mb-2">Exemptions & Full Award</h3>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            Article 87 establishes scenarios where a resigning employee receives <strong>100% full gratuity</strong> regardless of tenure:
+          </p>
+          <ul class="mt-2 space-y-1 text-xs list-disc list-inside text-slate-600">
+            <li>Female worker resigning within <strong>6 months of marriage</strong>.</li>
+            <li>Female worker resigning within <strong>3 months of giving birth</strong>.</li>
+            <li>Worker leaving due to <strong>force majeure</strong> or total permanent disability.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Detailed Mathematical Step-by-Step Formula -->
+      <div>
+        <h3 class="text-xl font-bold text-slate-900 mb-4">The Accurate Mathematical Formula for Saudi EOSB</h3>
+        <p class="text-sm text-slate-600 mb-4">
+          Many payroll disputes arise from miscalculating the precise daily wage or applying the wrong wage definition. In Saudi jurisprudence (Article 2 of the Labor Law), the gratuity must be based on the <strong>"Actual Wage" (الأجر الفعلي)</strong>. This encompasses the basic salary plus all regular, recurring allowances—notably fixed housing allowances and fixed transportation stipends.
+        </p>
+        <div class="bg-slate-900 text-slate-100 rounded-xl p-5 font-mono text-xs overflow-x-auto space-y-2 border border-slate-800">
+          <div class="text-emerald-400 font-semibold">// STEP 1: Determine Total Monthly Reference Wage (W)</div>
+          <div>W = Basic_Salary + Housing_Allowance + Transport_Allowance + Recurring_Allowances</div>
+          <div class="text-emerald-400 font-semibold pt-2">// STEP 2: Calculate Exact Service Period in Years (T)</div>
+          <div>Net_Service_Days = Total_Calendar_Days - Unpaid_Leave_Days</div>
+          <div>T = Net_Service_Days / 365.25 (or 360/365 per internal policy standards)</div>
+          <div class="text-emerald-400 font-semibold pt-2">// STEP 3: Compute Base Gratuity (Base_EOSB) per Article 84</div>
+          <div>If T &lt;= 5:</div>
+          <div>&nbsp;&nbsp;Base_EOSB = T * (W / 2)</div>
+          <div>Else (T &gt; 5):</div>
+          <div>&nbsp;&nbsp;Base_EOSB = (5 * (W / 2)) + ((T - 5) * W)</div>
+          <div class="text-emerald-400 font-semibold pt-2">// STEP 4: Apply Separation Reduction Ratio (R) per Article 85/87</div>
+          <div>Final_EOSB = Base_EOSB * R</div>
+          <div class="text-emerald-400 font-semibold pt-2">// STEP 5: Add Terminal Vacation Pay & Deduct Liens</div>
+          <div>Total_Settlement = Final_EOSB + (Accrued_Leave_Days * (W / 30)) - Deductions</div>
+        </div>
+      </div>
+
+      <!-- Fixed-Term vs Indefinite-Term Contracts Analysis -->
+      <div>
+        <h3 class="text-xl font-bold text-slate-900 mb-3">Fixed-Term vs. Indefinite-Term (Unlimited) Contracts</h3>
+        <p class="text-sm text-slate-600 leading-relaxed mb-3">
+          A crucial nuance for non-Saudi employees: Under Article 37 of the Saudi Labor Law, employment contracts for non-Saudis are legally considered <strong>fixed-term contracts</strong> even if silence exists in the text (defaulting to the validity of the work permit/Iqama). If a fixed-term contract expires naturally and is not renewed by either party, the employee is entitled to <strong>100% full end-of-service gratuity</strong> under Article 84, regardless of whether the employer or employee declined renewal.
+        </p>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          However, if a fixed-term contract is terminated prematurely by the employee without a legally sanctioned justification under Article 81, Article 85 or contractual damages under Article 77 may apply.
+        </p>
+      </div>
+
+      <!-- Disqualification: Article 80 -->
+      <div class="bg-rose-50 border border-rose-200 rounded-2xl p-5">
+        <h4 class="text-base font-bold text-rose-900 mb-2">When is Gratuity Completely Forfeited? (Article 80)</h4>
+        <p class="text-xs text-rose-800 leading-relaxed">
+          Under Article 80 of the Saudi Labor Law, an employer may terminate the contract without notice or indemnity (0% EOSB) under strict conditions, including: assault on the employer or managers, material failure to fulfill basic contractual obligations, proven forgery, misconduct during probation, gross deliberate material loss (reported within 24 hours), unexcused absence exceeding 30 intermittent days or 15 consecutive days (following formal written warnings), or disclosure of enterprise trade secrets.
+        </p>
+      </div>
+
+      <!-- Comprehensive FAQ Section -->
+      <div>
+        <h3 class="text-2xl font-bold text-slate-900 mb-6">Frequently Asked Questions (FAQ)</h3>
+        <div class="space-y-4">
+          <details class="group bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer">
+            <summary class="font-bold text-sm text-slate-800 flex justify-between items-center">
+              <span>Is end of service calculated on basic salary or total salary?</span>
+              <span class="text-emerald-600 transition group-open:rotate-180">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              EOSB is calculated on the <strong>last drawn actual wage</strong> (الأجر الفعلي), which includes the basic salary plus any regular, fixed allowances such as housing, transportation, and guaranteed commissions. Discretionary bonuses or variable reimbursements are generally excluded unless stipulated as permanent in the contract.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer">
+            <summary class="font-bold text-sm text-slate-800 flex justify-between items-center">
+              <span>What happens if an employee resigns with 4 years of service?</span>
+              <span class="text-emerald-600 transition group-open:rotate-180">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Under Article 85, a resigning employee with 4 years of service falls into the 2-to-5-year bracket. They are entitled to <strong>one-third (1/3)</strong> of the standard award. Example: For a salary of SAR 10,000, 4 years standard award is 4 * (10,000/2) = SAR 20,000. One-third entitlement equals SAR 6,666.67.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer">
+            <summary class="font-bold text-sm text-slate-800 flex justify-between items-center">
+              <span>Can an employer deduct unpaid loans or damages from the gratuity?</span>
+              <span class="text-emerald-600 transition group-open:rotate-180">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              Yes. Statutory deductions, outstanding salary advances, equipment liability clearances, or adjudicated damages can be offset against final clearance payments, provided there is signed documentation or legal entitlement.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer">
+            <summary class="font-bold text-sm text-slate-800 flex justify-between items-center">
+              <span>How quickly must the employer settle the final payment upon separation?</span>
+              <span class="text-emerald-600 transition group-open:rotate-180">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed">
+              According to Article 88 of the Saudi Labor Law, if the employer terminates the worker, all financial entitlements must be paid within <strong>one week</strong>. If the worker resigns, the employer must settle all entitlements within <strong>two weeks</strong>.
+            </p>
+          </details>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Printable Slip Format (Only visible when printing) -->
+  <div class="print-only hidden p-8 bg-white text-black font-sans">
+    <div class="border-b-2 border-black pb-4 mb-6 flex justify-between items-end">
+      <div>
+        <h1 class="text-2xl font-bold uppercase tracking-wider">Final Settlement & EOSB Clearance Voucher</h1>
+        <p class="text-xs">Kingdom of Saudi Arabia - Labor Law Statutory Audit Slip</p>
+      </div>
+      <div class="text-right text-xs">
+        <p>Generated: <span id="printDate"></span></p>
+        <p>Reference: EOSB-SA-AUDIT</p>
+      </div>
+    </div>
+    <div id="printSlipContent" class="space-y-4 text-xs">
+      <!-- Injected via JavaScript -->
+    </div>
+    <div class="mt-12 pt-8 border-t border-slate-400 grid grid-cols-3 gap-8 text-center text-xs">
+      <div>
+        <p class="font-bold">Prepared By (HR Officer)</p>
+        <div class="mt-10 border-b border-black"></div>
+      </div>
+      <div>
+        <p class="font-bold">Approved By (Finance/GM)</p>
+        <div class="mt-10 border-b border-black"></div>
+      </div>
+      <div>
+        <p class="font-bold">Employee Acknowledgment & Signature</p>
+        <div class="mt-10 border-b border-black"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="no-print bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-12">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <p>© <span id="yearNow"></span> KSA EOSB Calculator. Designed for HR Professionals, Accountants, & SMEs.</p>
+      <div class="flex items-center gap-4">
+        <a href="https://gumroad.com" target="_blank" class="text-emerald-400 hover:underline">Corporate Excel VBA Engine ($29)</a>
+        <span class="text-slate-600">|</span>
+        <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'});" class="hover:text-white">Back to Top ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('yearNow').textContent = new Date().getFullYear();
+
+    let isDirectMode = false;
+    let currentLang = 'en';
+
+    const translations = {
+      en: {
+        form_heading: "Employment & Contract Parameters",
+        form_sub: "Enter basic wages, tenure dates, and legal termination clause to calculate statutory indemnity.",
+        label_contract_type: "Contract Type",
+        label_reason: "Reason for Contract End",
+        label_wage_breakdown: "Monthly Gross Salary Breakdown (SAR)",
+        label_service_duration: "Employment Duration",
+        label_start_date: "Hire Date (تاريخ التعيين)",
+        label_end_date: "Last Working Day (تاريخ الانتهاء)",
+        lang_btn: "عربي (RTL)"
+      },
+      ar: {
+        form_heading: "بيانات العقد ومدة الخدمة",
+        form_sub: "أدخل تفاصيل الأجر وتواريخ الخدمة وسبب انتهاء العلاقة العمالية لاحتساب المكافأة النظامية.",
+        label_contract_type: "نوع عقد العمل",
+        label_reason: "سبب إنهاء العلاقة العمالية",
+        label_wage_breakdown: "تفاصيل الراتب الشهري الخاضع للاحتساب (ريال)",
+        label_service_duration: "مدة الخدمة الفعلية",
+        label_start_date: "تاريخ بداية العمل",
+        label_end_date: "تاريخ نهاية العمل (آخر يوم)",
+        lang_btn: "English (LTR)"
+      }
+    };
+
+    function toggleLanguage() {
+      if (currentLang === 'en') {
+        currentLang = 'ar';
+        document.documentElement.setAttribute('dir', 'rtl');
+        document.documentElement.classList.add('font-ar');
+        document.getElementById('langLabel').textContent = 'English (LTR)';
+      } else {
+        currentLang = 'en';
+        document.documentElement.setAttribute('dir', 'ltr');
+        document.documentElement.classList.remove('font-ar');
+        document.getElementById('langLabel').textContent = 'عربي (RTL)';
+      }
+
+      // Update text nodes
+      const t = translations[currentLang];
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) el.textContent = t[key];
+      });
+    }
+
+    function updateContractStyle() {
+      const unlimited = document.querySelector('input[name="contractType"][value="unlimited"]').checked;
+      const unWrap = document.getElementById('ct_unlimited_wrap');
+      const fixWrap = document.getElementById('ct_fixed_wrap');
+
+      if (unlimited) {
+        unWrap.className = 'flex items-center justify-between p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition border-emerald-500 bg-emerald-50/30';
+        fixWrap.className = 'flex items-center justify-between p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition border-slate-200';
+      } else {
+        fixWrap.className = 'flex items-center justify-between p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition border-emerald-500 bg-emerald-50/30';
+        unWrap.className = 'flex items-center justify-between p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition border-slate-200';
+      }
+    }
+
+    function toggleDateDirectMode() {
+      isDirectMode = !isDirectMode;
+      const dateSec = document.getElementById('dateInputsSection');
+      const directSec = document.getElementById('directInputsSection');
+      const toggleText = document.getElementById('modeToggleText');
+
+      if (isDirectMode) {
+        dateSec.classList.add('hidden');
+        dateSec.classList.remove('grid');
+        directSec.classList.remove('hidden');
+        directSec.classList.add('grid');
+        toggleText.textContent = 'Switch to exact Calendar Dates';
+      } else {
+        directSec.classList.add('hidden');
+        directSec.classList.remove('grid');
+        dateSec.classList.remove('hidden');
+        dateSec.classList.add('grid');
+        toggleText.textContent = 'Switch to direct Years/Months';
+      }
+      calculateGratuity();
+    }
+
+    function parseCurrency(val) {
+      return new Intl.NumberFormat('en-SA', {
+        style: 'currency',
+        currency: 'SAR',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(val);
+    }
+
+    function calculateGratuity() {
+      // Inputs
+      const basic = parseFloat(document.getElementById('basicSalary').value) || 0;
+      const housing = parseFloat(document.getElementById('housingSalary').value) || 0;
+      const other = parseFloat(document.getElementById('otherSalary').value) || 0;
+      const monthlyWage = basic + housing + other;
+      document.getElementById('totalMonthlyWageDisplay').textContent = parseCurrency(monthlyWage);
+
+      const unpaidDays = parseFloat(document.getElementById('unpaidDays').value) || 0;
+      const reason = document.getElementById('reason').value;
+      const contractType = document.querySelector('input[name="contractType"]:checked').value;
+
+      let totalYears = 0;
+      let totalDays = 0;
+
+      if (!isDirectMode) {
+        const startVal = document.getElementById('startDate').value;
+        const endVal = document.getElementById('endDate').value;
+        if (startVal && endVal) {
+          const start = new Date(startVal);
+          const end = new Date(endVal);
+          const diffTime = end - start;
+          if (diffTime > 0) {
+            const totalCalDays = Math.max(0, (diffTime / (1000 * 60 * 60 * 24)) - unpaidDays);
+            totalDays = totalCalDays;
+            totalYears = totalCalDays / 365.25;
+          }
+        }
+      } else {
+        const dy = parseFloat(document.getElementById('directYears').value) || 0;
+        const dm = parseFloat(document.getElementById('directMonths').value) || 0;
+        const dd = parseFloat(document.getElementById('directDays').value) || 0;
+        const netDirectDays = Math.max(0, (dy * 365.25) + (dm * 30.4375) + dd - unpaidDays);
+        totalDays = netDirectDays;
+        totalYears = netDirectDays / 365.25;
+      }
+
+      if (totalYears < 0) totalYears = 0;
+
+      // Tier 1 (First 5 years) and Tier 2 (Beyond 5 years) calculation per Article 84
+      let tier1Wage = 0;
+      let tier2Wage = 0;
+
+      if (totalYears <= 5) {
+        tier1Wage = totalYears * (monthlyWage * 0.5);
+        tier2Wage = 0;
+      } else {
+        tier1Wage = 5 * (monthlyWage * 0.5);
+        tier2Wage = (totalYears - 5) * monthlyWage;
+      }
+
+      const grossEosb = tier1Wage + tier2Wage;
+
+      // Separation Ratio
+      let ratio = 1.0;
+      let ruleText = "Art. 84 (100% Full Award)";
+
+      if (reason === 'article_80') {
+        ratio = 0.0;
+        ruleText = "Art. 80 (Forfeited / 0%)";
+      } else if (reason === 'female_marriage_birth' || reason === 'force_majeure') {
+        ratio = 1.0;
+        ruleText = "Art. 87 (Full Statutory Award)";
+      } else if (reason === 'resignation') {
+        if (contractType === 'fixed') {
+          // In fixed contracts, voluntary departure before expiration without cause may disqualify or follow resignation
+          if (totalYears < 2) ratio = 0.0;
+          else if (totalYears < 5) ratio = 1 / 3;
+          else if (totalYears < 10) ratio = 2 / 3;
+          else ratio = 1.0;
+          ruleText = "Art. 85 (Fixed - Resignation)";
+        } else {
+          // Indefinite resignation
+          if (totalYears < 2) {
+            ratio = 0.0;
+            ruleText = "Art. 85 (<2 yrs: 0% Award)";
+          } else if (totalYears < 5) {
+            ratio = 1 / 3;
+            ruleText = "Art. 85 (2-5 yrs: 1/3 Award)";
+          } else if (totalYears < 10) {
+            ratio = 2 / 3;
+            ruleText = "Art. 85 (5-10 yrs: 2/3 Award)";
+          } else {
+            ratio = 1.0;
+            ruleText = "Art. 85 (10+ yrs: Full Award)";
+          }
+        }
+      } else {
+        // Employer termination or expiry
+        ratio = 1.0;
+        ruleText = "Art. 84 (Full Entitlement)";
+      }
+
+      const finalEosb = grossEosb * ratio;
+
+      // Additional vacation & deductions
+      const unusedLeaveDays = parseFloat(document.getElementById('unusedLeaveDays').value) || 0;
+      const advanceDeductions = parseFloat(document.getElementById('advanceDeductions').value) || 0;
+      const dailyWage = monthlyWage / 30;
+      const leavePayout = unusedLeaveDays * dailyWage;
+      const netSettlement = Math.max(0, finalEosb + leavePayout - advanceDeductions);
+
+      // DOM Updates
+      document.getElementById('ruleBadge').textContent = ruleText;
+      document.getElementById('displayTenureYears').textContent = `${totalYears.toFixed(2)} Years (${Math.round(totalDays)} Days)`;
+      document.getElementById('displayTier1').textContent = parseCurrency(tier1Wage);
+      document.getElementById('displayTier2').textContent = parseCurrency(tier2Wage);
+      document.getElementById('displayGrossEosb').textContent = parseCurrency(grossEosb);
+      document.getElementById('displayRatio').textContent = `${(ratio * 100).toFixed(1)}%`;
+      document.getElementById('displayFinalEosb').textContent = parseCurrency(finalEosb);
+      document.getElementById('displayLeavePayout').textContent = parseCurrency(leavePayout);
+      document.getElementById('displayDeductions').textContent = parseCurrency(advanceDeductions);
+      document.getElementById('netSettlementDisplay').textContent = parseCurrency(netSettlement);
+
+      // Arabic summary string
+      document.getElementById('netInWordsAr').textContent = `صافي مستحقات نهاية الخدمة: ${parseCurrency(netSettlement)} (مكافأة: ${parseCurrency(finalEosb)} + إجازات: ${parseCurrency(leavePayout)})`;
+
+      // Update Print Slip Content
+      const printContent = `
+        <div class="grid grid-cols-2 gap-4 pb-4 border-b border-slate-200">
+          <div>
+            <p><strong>Contract Type:</strong> ${contractType.toUpperCase()}</p>
+            <p><strong>Separation Reason:</strong> ${reason}</p>
+            <p><strong>Calculated Tenure:</strong> ${totalYears.toFixed(2)} Years (${Math.round(totalDays)} days net)</p>
+          </div>
+          <div class="text-right">
+            <p><strong>Basic Salary:</strong> SAR ${basic.toFixed(2)}</p>
+            <p><strong>Allowances (Housing + Trans):</strong> SAR ${(housing + other).toFixed(2)}</p>
+            <p><strong>Recognized Wage (Art. 2):</strong> SAR ${monthlyWage.toFixed(2)}</p>
+          </div>
+        </div>
+        <table class="w-full text-left border border-slate-300 mt-4">
+          <thead class="bg-slate-100 border-b border-slate-300">
+            <tr>
+              <th class="p-2">Settlement Component</th>
+              <th class="p-2">Statutory Basis</th>
+              <th class="p-2 text-right">Amount (SAR)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200">
+            <tr>
+              <td class="p-2">Tier 1 Gratuity (Years 0 to 5)</td>
+              <td class="p-2">0.5 Monthly Wage / Year</td>
+              <td class="p-2 text-right font-mono">${tier1Wage.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td class="p-2">Tier 2 Gratuity (Years &gt; 5)</td>
+              <td class="p-2">1.0 Monthly Wage / Year</td>
+              <td class="p-2 text-right font-mono">${tier2Wage.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td class="p-2">Resignation Adjustment Factor</td>
+              <td class="p-2">${ruleText}</td>
+              <td class="p-2 text-right font-mono">x ${(ratio * 100).toFixed(0)}%</td>
+            </tr>
+            <tr class="bg-slate-50 font-semibold">
+              <td class="p-2">Net Statutory Gratuity</td>
+              <td class="p-2">Labor Law Articles 84-87</td>
+              <td class="p-2 text-right font-mono">SAR ${finalEosb.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td class="p-2">Accrued Leave Encashment</td>
+              <td class="p-2">${unusedLeaveDays} Days @ SAR ${(monthlyWage/30).toFixed(2)}/day</td>
+              <td class="p-2 text-right font-mono">+ ${leavePayout.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td class="p-2">Company Deductions / Offset Loans</td>
+              <td class="p-2">Authorized Internal Liens</td>
+              <td class="p-2 text-right font-mono text-red-600">- ${advanceDeductions.toFixed(2)}</td>
+            </tr>
+            <tr class="bg-slate-200 text-sm font-bold">
+              <td class="p-2">Total Net Clearance Payable</td>
+              <td class="p-2">Final Discharged Sum</td>
+              <td class="p-2 text-right font-mono">SAR ${netSettlement.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+      document.getElementById('printSlipContent').innerHTML = printContent;
+      document.getElementById('printDate').textContent = new Date().toLocaleDateString('en-GB');
+    }
+
+    function exportCSV() {
+      const basic = document.getElementById('basicSalary').value;
+      const housing = document.getElementById('housingSalary').value;
+      const other = document.getElementById('otherSalary').value;
+      const wage = document.getElementById('totalMonthlyWageDisplay').textContent.replace(/[^0-9.]/g, '');
+      const tenure = document.getElementById('displayTenureYears').textContent;
+      const finalEosb = document.getElementById('displayFinalEosb').textContent.replace(/[^0-9.]/g, '');
+      const leave = document.getElementById('displayLeavePayout').textContent.replace(/[^0-9.]/g, '');
+      const ded = document.getElementById('displayDeductions').textContent.replace(/[^0-9.]/g, '');
+      const net = document.getElementById('netSettlementDisplay').textContent.replace(/[^0-9.]/g, '');
+      const rule = document.getElementById('ruleBadge').textContent;
+
+      let csv = "KSA End of Service Benefits Audit Clearance\r\n";
+      csv += "Generated Date," + new Date().toISOString() + "\r\n\r\n";
+      csv += "Metric,Value\r\n";
+      csv += "Basic Salary (SAR)," + basic + "\r\n";
+      csv += "Housing Allowance (SAR)," + housing + "\r\n";
+      csv += "Other Allowances (SAR)," + other + "\r\n";
+      csv += "Total Monthly Wage (SAR)," + wage + "\r\n";
+      csv += "Total Tenure," + tenure.replace(',', '') + "\r\n";
+      csv += "Legal Clause Application," + '"' + rule + '"' + "\r\n";
+      csv += "Net Statutory EOSB (SAR)," + finalEosb + "\r\n";
+      csv += "Accrued Vacation Encashment (SAR)," + leave + "\r\n";
+      csv += "Deductions / Loans (SAR)," + ded + "\r\n";
+      csv += "Total Net Final Settlement (SAR)," + net + "\r\n";
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      link.setAttribute("download", `EOSB_Settlement_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initial calculation on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      calculateGratuity();
+    });
+  </script>
+</body>
+</html>

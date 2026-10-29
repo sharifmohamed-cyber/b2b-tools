@@ -5,5 +5,12 @@
     "title_ar": "حاسبة العمل الإضافي وتقدير أجور التأمينات الاجتماعية (غوسي)",
     "description_en": "Calculate accurate monthly payroll including overtime compensation and GOSI social insurance deductions for employees in the GCC region. Instant results.",
     "date": "2026-10-28"
+  },
+  {
+    "slug": "eosb-gratuity-calculator",
+    "title_en": "Saudi End of Service Gratuity Calculator (Labor Law Art. 84-87)",
+    "title_ar": "حاسبة مكافأة نهاية الخدمة وفق نظام العمل السعودي (المواد 84-87)",
+    "description_en": "Accurately calculate Saudi End of Service Gratuity (EOSB) per Articles 84, 85 & 87 of Saudi Labor Law. Instant calculation, printable audit & CSV export.",
+    "date": "2026-10-29"
   }
 ]
