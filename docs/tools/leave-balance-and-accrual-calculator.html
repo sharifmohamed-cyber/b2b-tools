@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Leave Balance & Accrual Calculator | حاسبة رصيد الإجازات</title>
+    <meta name="description" content="Easily calculate employee annual leave accruals, carry-overs, and final leave encashment balances with this free B2B HR calculator and compliance tool.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .font-en { font-family: 'Inter', sans-serif; }
+        .font-ar { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 font-en text-slate-800" id="bodyTag">
+
+    <!-- Navigation / Header -->
+    <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3 rtl:space-x-reverse">
+                <div class="bg-blue-600 text-white p-2 rounded-lg font-bold text-xl">LB</div>
+                <div>
+                    <h1 class="text-lg font-bold" data-en="LeaveBalance Pro" data-ar="رصيد الإجازات برو">LeaveBalance Pro</h1>
+                    <p class="text-xs text-slate-400" data-en="SME HR & Payroll Toolkit" data-ar="أداة الموارد البشرية والرواتب للشركات الصغيرة">SME HR & Payroll Toolkit</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                <button onclick="toggleLanguage()" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-md text-sm font-medium border border-slate-700 transition">
+                    <span id="langLabel">العربية</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sticky Conversion Banner -->
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-3 px-4 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-center sm:text-left gap-2">
+            <div class="flex items-center space-x-2 rtl:space-x-reverse">
+                <span class="bg-amber-400 text-slate-900 text-xs font-bold px-2 py-0.5 rounded uppercase" data-en="PRO BUNDLE" data-ar="حزمة احترافية">PRO BUNDLE</span>
+                <p class="text-sm font-medium" data-en="Automate your entire HR department with our complete Excel & VBA Leave Management System." data-ar="قم بأتمتة قسم الموارد البشرية بالكامل باستخدام نظام إدارة الإجازات الشامل للإكسل.">Automate your entire HR department with our complete Excel & VBA Leave Management System.</p>
+            </div>
+            <a href="https://gumroad.com" target="_blank" class="bg-white text-blue-700 hover:bg-blue-50 px-4 py-1.5 rounded-md text-sm font-bold shadow transition shrink-0" data-en="Get Master Template ($29)" data-ar="احصل على القالب الرئيسي (29$)">Get Master Template ($29)</a>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Calculator Inputs Form -->
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8">
+            <h2 class="text-2xl font-bold text-slate-900 mb-6 border-b pb-4" data-en="Leave Accrual & Balance Calculator" data-ar="حاسبة استحقاق ورصيد الإجازات">Leave Accrual & Balance Calculator</h2>
+            
+            <form id="leaveForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Hire Date -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2" data-en="Employment Start Date" data-ar="تاريخ بدء العمل">Employment Start Date</label>
+                        <input type="date" id="startDate" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    </div>
+                    
+                    <!-- Calculation Date -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2" data-en="Calculation / End Date" data-ar="تاريخ الحساب / نهاية الخدمة">Calculation / End Date</label>
+                        <input type="date" id="endDate" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Annual Entitlement Rate -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2" data-en="Annual Leave Entitlement (Days)" data-ar="رصيد الإجازة السنوية (أيام)">Annual Leave Entitlement (Days)</label>
+                        <input type="number" id="annualRate" value="21" min="0" max="60" step="0.5" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    </div>
+
+                    <!-- Carried Forward Days -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2" data-en="Carried Forward (Prev. Year)" data-ar="مرحل من العام السابق">Carried Forward (Prev. Year)</label>
+                        <input type="number" id="carriedForward" value="0" min="0" step="0.5" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    </div>
+
+                    <!-- Leaves Taken -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2" data-en="Leaves Taken / Utilized (Days)" data-ar="الإجازات المستهلكة (أيام)">Leaves Taken / Utilized (Days)</label>
+                        <input type="number" id="leavesTaken" value="0" min="0" step="0.5" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-slate-100">
+                    <!-- Basic Monthly Salary -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2" data-en="Monthly Basic Salary (For Encashment)" data-ar="الراتب الأساسي الشهري (لحساب البدل)">Monthly Basic Salary (For Encashment)</label>
+                        <input type="number" id="monthlySalary" value="5000" min="0" step="100" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                    </div>
+
+                    <!-- Salary calculation denominator -->
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2" data-en="Daily Rate Divisor (Days per Month)" data-ar="مقسوم معدل اليوم (أيام في الشهر)">Daily Rate Divisor (Days per Month)</label>
+                        <select id="salaryDivisor" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition">
+                            <option value="30">30 Days (Standard)</option>
+                            <option value="26">26 Days (Working Days)</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Sidebar Card -->
+        <div class="bg-slate-900 text-white rounded-2xl shadow-xl p-6 md:p-8 flex flex-col justify-between">
+            <div>
+                <h3 class="text-xl font-bold border-b border-slate-800 pb-4 mb-6" data-en="Accrual Summary" data-ar="ملخص الاستحقاق">Accrual Summary</h3>
+                
+                <div class="space-y-4 mb-6">
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 text-sm" data-en="Total Service Period:" data-ar="إترة خدمة الموظف:">Total Service Period:</span>
+                        <span id="resServicePeriod" class="font-semibold text-white">0 Years, 0 Months</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 text-sm" data-en="Accrued Leave Earned:" data-ar="الإجازات المكتسبة المستحقة:">Accrued Leave Earned:</span>
+                        <span id="resAccruedDays" class="font-semibold text-blue-400 text-lg">0.00 Days</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 text-sm" data-en="Total Available Pool:" data-ar="إجمالي الرصيد المتاح:">Total Available Pool:</span>
+                        <span id="resTotalPool" class="font-semibold text-white">0.00 Days</span>
+                    </div>
+                    <div class="flex justify-between items-center border-t border-slate-800 pt-3">
+                        <span class="text-slate-300 font-medium" data-en="Net Balance Remaining:" data-ar="صافي الرصيد المتبقي:">Net Balance Remaining:</span>
+                        <span id="resNetBalance" class="font-bold text-emerald-400 text-2xl">0.00 Days</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-slate-400 text-sm" data-en="Encashment Value:" data-ar="قيمة بدل الإجازات النقدي:">Encashment Value:</span>
+                        <span id="resEncashment" class="font-bold text-amber-400 text-xl">0.00</span>
+                    </div>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="bg-slate-800/80 border border-slate-700 rounded-lg p-3 mb-6 text-xs text-slate-400">
+                    <p data-en="* Disclaimer: Estimates are for guidance only and must be verified against local labor laws and employment contracts." data-ar="* إخلاء المسؤولية: النتائج هي تقديرات استرشادية ويجب التحقق منها وفقاً لقوانين العمل المحلية وعقود العمل.">* Disclaimer: Estimates are for guidance only and must be verified against local labor laws and employment contracts.</p>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="space-y-3">
+                <button onclick="exportCSV()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2.5 px-4 rounded-lg border border-slate-700 transition text-sm flex items-center justify-center space-x-2 rtl:space-x-reverse">
+                    <span data-en="Export Summary CSV" data-ar="تصدير ملخص CSV">Export Summary CSV</span>
+                </button>
+                <a href="https://gumroad.com" target="_blank" class="w-full block bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-lg text-center shadow-lg transition text-sm" data-en="Unlock Full Excel Master Template" data-ar="احصل على نموذج إكسل الشامل الكامل">Unlock Full Excel Master Template</a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Comprehensive SEO Guide & FAQ Section -->
+    <section class="max-w-7xl mx-auto px-4 py-12 border-t border-slate-200 mt-12">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+            <h2 class="text-2xl font-bold text-slate-900 mb-6" data-en="Complete Guide to Annual Leave Accrual & Management for SMEs" data-ar="الدليل الشامل لإدارة وحساب استحقاق الإجازات السنوية للشركات">Complete Guide to Annual Leave Accrual & Management for SMEs</h2>
+            
+            <div class="prose max-w-none text-slate-600 space-y-6">
+                <p data-en="Managing employee leave accruals accurately is critical for maintaining healthy cash flows, maintaining compliance with regional labor laws (such as Saudi Labor Law, UAE Labour Law, or standard international codes), and ensuring fair employee compensation upon termination or resignation. Leave liability represents a tangible financial obligation on corporate balance sheets." data-ar="تعد إدارة استحقاقات إجازات الموظفين بدقة أمراً بالغ الأهمية للحفاظ على التدفقات النقدية السليمة، والامتثال لقوانين العمل الإقليمية (مثل نظام العمل السعودي أو قانون العمل الإماراتي)، وضمان تعويض عادل للموظفين عند انتهاء الخدمة."></p>
+                
+                <h3 class="text-xl font-semibold text-slate-800 mt-6" data-en="How Annual Leave Accrual is Calculated" data-ar="كيف يتم حساب استحقاق الإجازة السنوية">How Annual Leave Accrual is Calculated</h3>
+                <p data-en="The standard formula for calculating continuous leave accrual is based on the proportion of service completed within a given year. Most jurisdictions mandate a minimum of 21 to 30 calendar or working days per annum. The daily accrual factor is determined by dividing the annual entitlement by 365 days (or 12 months)." data-ar="تعتمد الصيغة القياسية لحساب استحقاق الإجازة المستمرة على نسبة الخدمة المنجزة خلال العام. تفرض معظم التشريعات حداً أدنى يتراوح بين 21 إلى 30 يوماً سنوياً. يتم تحديد معامل الاستحقاق اليومي عن طريق قسمة الاستحقاق السنوي على 365 يوماً."></p>
+                
+                <div class="bg-slate-50 border-l-4 border-blue-600 p-4 my-4 font-mono text-sm">
+                    <p data-en="Formula: Accrued Days = (Total Days Worked / 365) × Annual Entitlement Rate" data-ar="المعادلة: الأيام المستحقة = (إجمالي أيام العمل / 365) × معدل الاستحقاق السنوي">Formula: Accrued Days = (Total Days Worked / 365) × Annual Entitlement Rate</p>
+                </div>
+
+                <h3 class="text-xl font-semibold text-slate-800 mt-6" data-en="Frequently Asked Questions (FAQ)" data-ar="الأسئلة الشائعة">Frequently Asked Questions (FAQ)</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-bold text-slate-800" data-en="1. Can unused annual leave be carried forward indefinitely?" data-ar="1. هل يمكن ترحيل الإجازات السنوية غير المستخدمة إلى ما لا نهاية؟">1. Can unused annual leave be carried forward indefinitely?</h4>
+                        <p data-en="Most labor regulations dictate specific rules regarding carry-over limits and expiration timelines (e.g., carrying forward for only 1 year or requiring employer consent). Check your local labor code for specifics." data-ar="تفرض معظم لوائح العمل قواعد محددة بشأن حدود الترحيل والجداول الزمنية للصلاحية. راجع قانون العمل المحلي الخاص بك للحصول على التفاصيل.">Most labor regulations dictate specific rules regarding carry-over limits and expiration timelines.</p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-slate-800" data-en="2. How is final leave encashment calculated upon resignation?" data-ar="2. كيف يتم حساب بدل الإجازات عند الاستقالة أو إنهاء الخدمة؟">2. How is final leave encashment calculated upon resignation?</h4>
+                        <p data-en="Upon termination or resignation, any accrued and unused leave balance must typically be paid out based on the employee's final basic salary divided by the standard monthly divisor (usually 30 days)." data-ar="عند إنهاء الخدمة أو الاستقالة، يجب عادةً دفع أي رصيد إجازات مستحق وغير مستخدم بناءً على الراتب الأساسي الأخير مقسوماً على مقسوم الشهر القياسي.">Upon termination or resignation, any accrued and unused leave balance must typically be paid out based on the employee's final basic salary.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 text-center text-sm">
+        <p data-en="&copy; 2025 LeaveBalance Pro. All rights reserved. Built for professional B2B HR Operations." data-ar="&copy; 2025 LeaveBalance Pro. جميع الحقوق محفوظة. صُمم لعمليات الموارد البشرية المهنية.">&copy; 2025 LeaveBalance Pro. All rights reserved. Built for professional B2B HR Operations.</p>
+    </footer>
+
+    <!-- JavaScript Calculation Engine -->
+    <script>
+        let currentLang = 'en';
+
+        // Set default dates on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const today = new Date();
+            const oneYearAgo = new Date(today);
+            oneYearAgo.setFullYear(today.getFullYear() - 1);
+            
+            document.getElementById('startDate').valueAsDate = oneYearAgo;
+            document.getElementById('endDate').valueAsDate = today;
+            
+            calculateLeave();
+            
+            // Add event listeners
+            const inputs = document.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('input', calculateLeave);
+            });
+        });
+
+        function calculateLeave() {
+            const startDateVal = document.getElementById('startDate').value;
+            const endDateVal = document.getElementById('endDate').value;
+            const annualRate = parseFloat(document.getElementById('annualRate').value) || 0;
+            const carriedForward = parseFloat(document.getElementById('carriedForward').value) || 0;
+            const leavesTaken = parseFloat(document.getElementById('leavesTaken').value) || 0;
+            const monthlySalary = parseFloat(document.getElementById('monthlySalary').value) || 0;
+            const salaryDivisor = parseInt(document.getElementById('salaryDivisor').value) || 30;
+
+            if (!startDateVal || !endDateVal) return;
+
+            const start = new Date(startDateVal);
+            const end = new Date(endDateVal);
+
+            if (end < start) {
+                document.getElementById('resNetBalance').innerText = currentLang === 'ar' ? 'تاريخ غير صالح' : 'Invalid Dates';
+                return;
+            }
+
+            // Calculate service duration
+            const diffTime = Math.abs(end - start);
+            const diffDaysTotal = diffTime / (1000 * 60 * 60 * 24);
+            
+            const years = Math.floor(diffDaysTotal / 365.25);
+            const months = Math.floor((diffDaysTotal % 365.25) / 30.44);
+
+            // Accrued calculation
+            const accruedDays = (diffDaysTotal / 365.25) * annualRate;
+            const totalPool = accruedDays + carriedForward;
+            const netBalance = Math.max(0, totalPool - leavesTaken);
+
+            // Encashment calculation
+            const dailyRate = monthlySalary / salaryDivisor;
+            const encashmentValue = netBalance * dailyRate;
+
+            // Update DOM
+            if (currentLang === 'ar') {
+                document.getElementById('resServicePeriod').innerText = `${years} سنة، ${months} شهر`;
+            } else {
+                document.getElementById('resServicePeriod').innerText = `${years} Years, ${months} Months`;
+            }
+            
+            document.getElementById('resAccruedDays').innerText = accruedDays.toFixed(2) + (currentLang === 'ar' ? ' يوم' : ' Days');
+            document.getElementById('resTotalPool').innerText = totalPool.toFixed(2) + (currentLang === 'ar' ? ' يوم' : ' Days');
+            document.getElementById('resNetBalance').innerText = netBalance.toFixed(2) + (currentLang === 'ar' ? ' يوم' : ' Days');
+            document.getElementById('resEncashment').innerText = encashmentValue.toLocaleString('en-US', {style: 'currency', currency: 'USD'});
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const htmlRoot = document.getElementById('htmlRoot');
+            const bodyTag = document.getElementById('bodyTag');
+            const langLabel = document.getElementById('langLabel');
+
+            if (currentLang === 'ar') {
+                htmlRoot.setAttribute('dir', 'rtl');
+                htmlRoot.setAttribute('lang', 'ar');
+                bodyTag.classList.remove('font-en');
+                bodyTag.classList.add('font-ar');
+                langLabel.innerText = 'English';
+            } else {
+                htmlRoot.setAttribute('dir', 'ltr');
+                htmlRoot.setAttribute('lang', 'en');
+                bodyTag.classList.remove('font-ar');
+                bodyTag.classList.add('font-en');
+                langLabel.innerText = 'العربية';
+            }
+
+            // Translate all elements with data-en and data-ar
+            document.querySelectorAll('[data-en]').forEach(el => {
+                const text = el.getAttribute(`data-${currentLang}`);
+                if (text) {
+                    if (el.tagName === 'INPUT' && el.type === 'submit') {
+                        el.value = text;
+                    } else {
+                        el.innerText = text;
+                    }
+                }
+            });
+
+            calculateLeave();
+        }
+
+        function exportCSV() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const accrued = document.getElementById('resAccruedDays').innerText;
+            const net = document.getElementById('resNetBalance').innerText;
+            const encashment = document.getElementById('resEncashment').innerText;
+
+            const csvContent = "data:text/csv;charset=utf-8,"
+                + "Parameter,Value\n"
+                + `Start Date,${startDate}\n`
+                + `End Date,${endDate}\n`
+                + `Accrued Days,${accrued}\n`
+                + `Net Balance,${net}\n`
+                + `Encashment Value,${encashment}\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "leave_balance_summary.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
