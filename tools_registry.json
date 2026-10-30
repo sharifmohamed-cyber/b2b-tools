@@ -19,5 +19,12 @@
     "title_ar": "حاسبة رصيد الإجازات واستحقاق الموظفين",
     "description_en": "Easily calculate employee annual leave accruals, carry-overs, and final leave encashment balances with this free B2B HR calculator and compliance tool.",
     "date": "2026-10-29"
+  },
+  {
+    "slug": "employee-cost-to-company-calculator",
+    "title_en": "Employee Cost to Company (CTC) & True Burden Rate Calculator",
+    "title_ar": "حاسبة التكلفة الإجمالية للموظف (CTC) ومعدل العبء المالي للمنشآت",
+    "description_en": "Calculate the true employee cost to company (CTC) in Saudi & GCC SMEs. Compute GOSI, visa fees, health insurance, EOSB accrual, and burden rates.",
+    "date": "2026-10-30"
   }
 ]

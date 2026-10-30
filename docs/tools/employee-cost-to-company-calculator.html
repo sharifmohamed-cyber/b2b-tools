@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Cost to Company (CTC) & Burden Rate Calculator</title>
+  <meta name="description" content="B2B Employee Cost to Company (CTC) & Burden Rate Calculator. Factor in GOSI, Iqama/work permits, medical insurance, EOSB provisions, and allowances.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#16a34a',
+              600: '#15803d',
+              700: '#166534',
+              900: '#14532d',
+            },
+            navy: {
+              800: '#0f172a',
+              900: '#020617',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    [dir="rtl"] body, [dir="rtl"] .font-arabic { font-family: 'Cairo', sans-serif; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-shadow-none { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 transition-colors duration-200 antialiased min-h-screen flex flex-col">
+
+  <!-- Top Banner CTA -->
+  <div class="no-print bg-gradient-to-r from-emerald-900 via-slate-900 to-navy-900 text-white py-2.5 px-4 sticky top-0 z-50 shadow-md border-b border-emerald-500/20">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-sm">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse">
+        <span class="flex h-2 w-2 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <p class="font-medium">
+          <span class="text-emerald-400 font-semibold" data-i18n="top_banner_tag">HR & CFO Edition:</span>
+          <span data-i18n="top_banner_text">Get our Complete Offline Automated Excel & VBA Master Template ($29)</span>
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3.5 py-1 rounded-md text-xs uppercase tracking-wider transition transform hover:scale-105 shadow-sm inline-flex items-center gap-1.5">
+          <span data-i18n="get_template_now">Download Template ($29)</span>
+          <svg class="w-3.5 h-3.5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="border-b border-slate-200 bg-white/80 backdrop-blur-md sticky top-10 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-lg shadow-emerald-500/30 font-extrabold text-xl">
+          CTC
+        </div>
+        <div>
+          <span class="font-extrabold text-slate-900 text-lg sm:text-xl tracking-tight block" data-i18n="app_brand">LaborBurden Pro™</span>
+          <span class="text-xs text-slate-500 hidden sm:block" data-i18n="app_tagline">B2B Workforce Cost & Burden Ratio Engine</span>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <button id="langToggleBtn" class="flex items-center space-x-1.5 rtl:space-x-reverse border border-slate-300 hover:border-slate-400 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 bg-slate-50 hover:bg-slate-100 transition shadow-sm">
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+          <span id="langLabel">عربي</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Hero & Body -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Intro Heading -->
+    <div class="text-center max-w-3xl mx-auto mb-8">
+      <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight" data-i18n="hero_title">
+        Employee Cost to Company (CTC) & Burden Rate Calculator
+      </h1>
+      <p class="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed" data-i18n="hero_subtitle">
+        Accurately evaluate total annual and monthly employment expenditure beyond gross wages—incorporating GOSI/social insurance, medical tiers, work permits, EOSB statutory provisions, and operational overhead.
+      </p>
+    </div>
+
+    <!-- Calculator Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Form Controls (7 Cols) -->
+      <div class="lg:col-span-7 bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2" data-i18n="params_heading">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            Payroll & Overhead Parameters
+          </h2>
+          <button id="resetBtn" type="button" class="text-xs text-slate-500 hover:text-emerald-700 font-medium underline" data-i18n="btn_reset">
+            Reset Defaults
+          </button>
+        </div>
+
+        <form id="ctcForm" class="space-y-6">
+          
+          <!-- Section 1: Basic Payroll -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600" data-i18n="sec_direct_comp">Direct Compensation (Monthly)</h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1" for="basicSalary" data-i18n="lbl_basic_salary">
+                  Basic Salary (SAR/AED/USD)
+                </label>
+                <div class="relative">
+                  <input type="number" min="0" step="100" id="basicSalary" value="10000" class="w-full rounded-lg border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none border shadow-sm font-semibold text-slate-800">
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1" for="housingAllowance" data-i18n="lbl_housing_allowance">
+                  Housing Allowance (Monthly)
+                </label>
+                <div class="relative">
+                  <input type="number" min="0" step="50" id="housingAllowance" value="2500" class="w-full rounded-lg border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none border shadow-sm font-semibold text-slate-800">
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1" for="transAllowance" data-i18n="lbl_trans_allowance">
+                  Transportation Allowance
+                </label>
+                <input type="number" min="0" step="50" id="transAllowance" value="1000" class="w-full rounded-lg border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none border shadow-sm font-semibold text-slate-800">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1" for="otherAllowances" data-i18n="lbl_other_allowances">
+                  Other Fixed Allowances (Mobile, Shift)
+                </label>
+                <input type="number" min="0" step="50" id="otherAllowances" value="500" class="w-full rounded-lg border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none border shadow-sm font-semibold text-slate-800">
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 2: Statutory & Regulatory Contributions -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600" data-i18n="sec_statutory">Statutory & Social Insurance</h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1" for="nationalityType" data-i18n="lbl_nationality_type">
+                  Employee Category
+                </label>
+                <select id="nationalityType" class="w-full rounded-lg border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none border shadow-sm font-medium text-slate-800">
+                  <option value="expat" selected data-i18n="opt_expat">Expatriate / Non-National</option>
+                  <option value="national" data-i18n="opt_national">National (Saudi/GCC Citizen)</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1" for="employerSocialRate" data-i18n="lbl_employer_social_rate">
+                  Employer Social Insurance % (GOSI/GPSSA)
+                </label>
+                <div class="relative">
+                  <input type="number" min="0" max="30" step="0.25" id="employerSocialRate" value="2" class="w-full rounded-lg border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none border shadow-sm font-semibold text-slate-800">
+                  <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 pr-3 rtl:pl-3 flex items-center text-xs text-slate-400 font-bold">%</span>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-1" data-i18n="hint_social_rate">Standard: 2% Hazard for Expats; 11.75%–12.75% for Saudi Nationals</p>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" for="eosbAccrualRate" data-i18n="lbl_eosb_provision">
+                Statutory End of Service Provision (% of Monthly Gross)
+              </label>
+              <div class="relative">
+                <input type="number" min="0" max="20" step="0.1" id="eosbAccrualRate" value="4.17" class="w-full rounded-lg border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none border shadow-sm font-semibold text-slate-800">
+                <span class="absolute inset-y-0 right-0 rtl:right-auto rtl:left-0 pr-3 rtl:pl-3 flex items-center text-xs text-slate-400 font-bold">%</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1" data-i18n="hint_eosb">4.17% = Half month salary/year; 8.33% = Full month salary/year accrual</p>
+            </div>
+          </div>
+
+          <!-- Section 3: Annualized Recurring Direct Overhead -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 space-y-4">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-600" data-i18n="sec_annual_overhead">Annual Overheads & Recurring Benefits</h3>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1" for="medicalInsuranceAnnual" data-i18n="lbl_medical_annual">
+                  Medical Insurance (Annual/Year)
+                </label>
+                <input type="number" min="0" step="100" id="medicalInsuranceAnnual" value="3500" class="w-full rounded-lg border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none border shadow-sm font-semibold text-slate-800">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1" for="annualFlightTicket" data-i18n="lbl_flight_ticket">
+                  Annual Leave Flight Allowance (Yearly)
+                </label>
+                <input type="number" min="0" step="100" id="annualFlightTicket" value="2000" class="w-full rounded-lg border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none border shadow-sm font-semibold text-slate-800">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1" for="workPermitIqama" data-i18n="lbl_work_permit">
+                  Govt Work Permit / Iqama / Visa Levy (Yearly)
+                </label>
+                <input type="number" min="0" step="100" id="workPermitIqama" value="9600" class="w-full rounded-lg border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none border shadow-sm font-semibold text-slate-800">
+              </div>
+
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1" for="equipmentOverhead" data-i18n="lbl_equipment_overhead">
+                  IT Hardware, Subscriptions & Admin (Yearly)
+                </label>
+                <input type="number" min="0" step="100" id="equipmentOverhead" value="2400" class="w-full rounded-lg border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none border shadow-sm font-semibold text-slate-800">
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" for="productiveHoursWeekly" data-i18n="lbl_work_hours">
+                Weekly Billable/Productive Working Hours
+              </label>
+              <input type="number" min="1" max="60" step="1" id="productiveHoursWeekly" value="40" class="w-full rounded-lg border-slate-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none border shadow-sm font-semibold text-slate-800">
+              <p class="text-[11px] text-slate-500 mt-1" data-i18n="hint_productive_hours">Standard 40 or 48 hrs/week (Used to compute hourly burden cost)</p>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Summary / Results Column (5 Cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-white rounded-2xl p-6 sm:p-7 shadow-lg border border-slate-200/80 sticky top-28 print-shadow-none">
+          
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-widest" data-i18n="res_header">Cost & Burden Summary</span>
+            <span class="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800" id="resBurdenBadge">Burden: +0.0%</span>
+          </div>
+
+          <!-- Primary Hero Metric -->
+          <div class="mt-4 p-4 rounded-xl bg-gradient-to-br from-slate-900 via-navy-900 to-slate-900 text-white relative overflow-hidden shadow-inner">
+            <div class="text-xs font-medium text-emerald-400" data-i18n="res_monthly_ctc_label">Total Monthly True Cost to Company</div>
+            <div class="text-3xl sm:text-4xl font-extrabold tracking-tight mt-1 text-white" id="resMonthlyCTC">0.00</div>
+            <div class="text-[11px] text-slate-300 mt-1 flex justify-between">
+              <span data-i18n="res_gross_salary_label">Direct Gross: <strong id="resDirectGross" class="text-white font-semibold">0.00</strong></span>
+              <span data-i18n="res_hourly_cost_label">Hourly Cost: <strong id="resHourlyCost" class="text-emerald-400 font-semibold">0.00</strong></span>
+            </div>
+          </div>
+
+          <!-- Metric Breakdown Table -->
+          <div class="mt-5 space-y-3 text-xs">
+            <div class="flex justify-between py-1.5 border-b border-slate-100 text-slate-700">
+              <span class="font-medium" data-i18n="row_annual_ctc">Total Annual CTC:</span>
+              <span class="font-bold text-slate-900" id="resAnnualCTC">0.00</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-slate-100 text-slate-700">
+              <span class="font-medium" data-i18n="row_employer_social">Monthly Employer Social / GOSI:</span>
+              <span class="font-semibold text-slate-800" id="resMonthlySocial">0.00</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-slate-100 text-slate-700">
+              <span class="font-medium" data-i18n="row_eosb_accrual">Monthly EOSB Statutory Provision:</span>
+              <span class="font-semibold text-slate-800" id="resMonthlyEOSB">0.00</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-slate-100 text-slate-700">
+              <span class="font-medium" data-i18n="row_amortized_benefits">Amortized Benefits & Overheads/Mo:</span>
+              <span class="font-semibold text-slate-800" id="resMonthlyBenefits">0.00</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-slate-100 text-slate-700 font-bold bg-emerald-50 px-2 rounded">
+              <span class="text-emerald-900" data-i18n="row_burden_multiplier">Burden Multiplier:</span>
+              <span class="text-emerald-800 text-sm" id="resBurdenMultiplier">1.00x</span>
+            </div>
+          </div>
+
+          <!-- Export and Action Buttons -->
+          <div class="mt-6 flex flex-col sm:flex-row gap-2 no-print">
+            <button id="printSummaryBtn" type="button" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2 px-3 rounded-lg text-xs transition flex items-center justify-center gap-1.5">
+              <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <span data-i18n="btn_print_pdf">Print / Save PDF</span>
+            </button>
+            <button id="exportCsvBtn" type="button" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-3 rounded-lg text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span data-i18n="btn_export_csv">Export CSV</span>
+            </button>
+          </div>
+
+          <!-- Gumroad Master Excel Upsell Card -->
+          <div class="mt-6 p-4 rounded-xl bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/90 no-print">
+            <div class="flex items-center gap-2 mb-1.5">
+              <span class="text-amber-800 bg-amber-200 text-[10px] font-extrabold uppercase px-1.5 py-0.5 rounded">Commercial Template</span>
+              <span class="text-xs font-bold text-slate-900" data-i18n="upsell_title">Automate Multi-Employee Payroll</span>
+            </div>
+            <p class="text-[11px] text-slate-600 leading-snug mb-3" data-i18n="upsell_desc">
+              Manage company-wide headcount budgeting, department allocations, GOSI tables, and WPS automated batch outputs with our offline Excel tool.
+            </p>
+            <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-slate-950 hover:bg-slate-800 text-white font-bold py-2 px-3 rounded-lg text-xs tracking-wide transition shadow-sm">
+              <span data-i18n="btn_get_upsell">Get Master Excel & VBA Model ($29)</span>
+            </a>
+          </div>
+
+          <!-- Statutory Legal Disclaimer (Mandatory) -->
+          <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-600 leading-relaxed">
+            <p class="font-bold text-slate-800 flex items-center gap-1 mb-1">
+              <svg class="w-3.5 h-3.5 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+              <span data-i18n="disclaimer_title">Regulatory Estimation Notice:</span>
+            </p>
+            <p data-i18n="disclaimer_body">
+              Calculations generated by this tool are analytical estimates for workforce financial forecasting. Actual statutory obligations (such as GOSI, GPSSA, Iqama levies, and Labor Law severance provisions) may differ based on bilateral wage ceilings, Saudization tier classifications, and recent labor ministry decrees. All figures must be verified against current labor regulations and official government portals before final payroll execution.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 800+ Word Comprehensive B2B SEO Guide & FAQ Section -->
+    <section class="mt-16 pt-12 border-t border-slate-200 text-slate-800">
+      <div class="max-w-4xl mx-auto space-y-10">
+        
+        <div>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-950 tracking-tight" data-i18n="guide_h1">
+            Mastering Total Cost to Company (CTC) & Employee Burden Rates in the GCC
+          </h2>
+          <p class="mt-3 text-sm text-slate-600 leading-relaxed" data-i18n="guide_p1">
+            In modern corporate budgeting, assessing an employee’s financial commitment based solely on their base monthly wage is one of the most perilous oversights a Chief Financial Officer or HR Director can commit. True workforce expenditures encompass statutory payroll contributions, mandatory health protection programs, government permitting levies, accrued liability provisions, and indirect operational support overheads.
+          </p>
+        </div>
+
+        <!-- The Burden Rate Formula -->
+        <div class="bg-white rounded-xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+          <h3 class="text-lg font-bold text-slate-950 mb-3" data-i18n="formula_h2">The Mathematical Architecture of Burdened Labor Cost</h3>
+          <p class="text-sm text-slate-600 leading-relaxed mb-4" data-i18n="formula_p1">
+            The employee burden rate reflects the percentage of indirect non-wage overhead incurred on top of direct wages. Calculating this metric ensures service firms set profitable billable charge-out rates and industrial enterprises preserve healthy gross profit margins.
+          </p>
+          <div class="bg-slate-900 text-slate-100 p-4 rounded-lg font-mono text-xs overflow-x-auto space-y-1.5">
+            <p class="text-emerald-400 font-semibold">// Total Monthly CTC Formulation:</p>
+            <p>Monthly CTC = Gross Direct Compensation + Employer Social Insurance + EOSB Provision + (Annual Recurring Direct Overheads ÷ 12)</p>
+            <p class="mt-2 text-emerald-400 font-semibold">// True Labor Burden Multiplier:</p>
+            <p>Burden Multiplier = Total Monthly CTC ÷ Gross Direct Compensation</p>
+            <p class="mt-2 text-emerald-400 font-semibold">// Fully Loaded Hourly Cost:</p>
+            <p>Hourly Rate = Total Annual CTC ÷ (Weekly Productive Hours × 52 Weeks)</p>
+          </div>
+        </div>
+
+        <!-- Critical GCC Components Breakdown -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-bold text-slate-950" data-i18n="breakdown_h2">Deconstructing the Real Pillars of Workforce Expenditure</h3>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <h4 class="font-bold text-slate-900 mb-1.5" data-i18n="comp_card1_title">1. Social Insurance & GOSI Contributions</h4>
+              <p class="text-slate-600 leading-relaxed" data-i18n="comp_card1_desc">
+                In the Kingdom of Saudi Arabia, employers contribute 11.75% to 12.75% for Saudi nationals toward social security and unemployment insurance (SANED), alongside a mandatory 2% Occupational Hazards contribution for all workers, national or expatriate. In the UAE, employer GPSSA contributions range between 12.5% to 15% for local personnel.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <h4 class="font-bold text-slate-900 mb-1.5" data-i18n="comp_card2_title">2. Statutory End-of-Service Benefit (EOSB) Accrual</h4>
+              <p class="text-slate-600 leading-relaxed" data-i18n="comp_card2_desc">
+                Under Article 84 of the Saudi Labor Law and UAE Federal Decree-Law No. 33 of 2021, employers must disburse severance gratuities based on half a month’s wage per year for the initial five years, rising to one full month's wage per subsequent year. Forward-thinking accounting teams accrue between 4.17% and 8.33% of base wages monthly to prevent sudden cash flow shocks.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <h4 class="font-bold text-slate-900 mb-1.5" data-i18n="comp_card3_title">3. Expatriate Levies & Work Permits</h4>
+              <p class="text-slate-600 leading-relaxed" data-i18n="comp_card3_desc">
+                For non-national employees, regulatory surcharges constitute a significant overhead. In KSA, the Ministry of Human Resources imposes the Expatriate Expat Levy (Maktab Amal fee of up to SAR 9,600 annually per expat worker), plus Iqama renewal fees and medical insurance underwriting through CCHI-compliant health schemes.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <h4 class="font-bold text-slate-900 mb-1.5" data-i18n="comp_card4_title">4. Workstation & Technology Surcharges</h4>
+              <p class="text-slate-600 leading-relaxed" data-i18n="comp_card4_desc">
+                Modern white-collar staff necessitate enterprise ERP seats, productivity software licenses (e.g., Microsoft 365, Google Workspace, specialized CAD/CRM software), physical computing hardware depreciation, and office square footage overhead that often add 10% to 20% over standard wages.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Frequently Asked Questions (FAQ) -->
+        <div class="space-y-4">
+          <h3 class="text-lg font-bold text-slate-950" data-i18n="faq_h2">Frequently Asked Questions (FAQ)</h3>
+          
+          <div class="space-y-3">
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <h4 class="text-sm font-bold text-slate-900" data-i18n="faq1_q">What is the standard burden rate in Saudi Arabia and the GCC?</h4>
+              <p class="mt-1 text-xs text-slate-600 leading-relaxed" data-i18n="faq1_a">
+                For professional and corporate roles, the typical employee burden rate ranges between 25% to 45% above base pay. For junior expatriate workers with significant government levies and mandatory healthcare overhead, the burden rate can sometimes surpass 60% of baseline wages.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <h4 class="text-sm font-bold text-slate-900" data-i18n="faq2_q">How should CTC be utilized in B2B service project pricing?</h4>
+              <p class="mt-1 text-xs text-slate-600 leading-relaxed" data-i18n="faq2_a">
+                When bidding on professional services or consulting contracts, project leaders should always price billable hours using fully burdened hourly cost rather than gross wages. Applying a target operating margin (such as 30% to 50%) to the burdened rate ensures commercial viability and overhead recovery.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-white border border-slate-200">
+              <h4 class="text-sm font-bold text-slate-900" data-i18n="faq3_q">Why is monthly EOSB accrual critical under IFRS standards?</h4>
+              <p class="mt-1 text-xs text-slate-600 leading-relaxed" data-i18n="faq3_a">
+                Under International Accounting Standard 19 (IAS 19 - Employee Benefits), defined benefit obligations such as end of service gratuities must be actuarially provisioned during the period in which the employee renders service, rather than recognized on a cash basis upon contract termination.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 bg-white py-6 mt-12 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p>© <span id="year">2025</span> LaborBurden Pro™ — B2B Workforce Planning Systems.</p>
+      <div class="flex items-center space-x-4 rtl:space-x-reverse">
+        <a href="https://gumroad.com" target="_blank" class="hover:text-emerald-700 font-medium underline">Enterprise Excel Template ($29)</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Calculation Engine and Localization Script -->
+  <script>
+    const translations = {
+      en: {
+        top_banner_tag: "HR & CFO Edition:",
+        top_banner_text: "Get our Complete Offline Automated Excel & VBA Master Template ($29)",
+        get_template_now: "Download Template ($29)",
+        app_brand: "LaborBurden Pro™",
+        app_tagline: "B2B Workforce Cost & Burden Ratio Engine",
+        hero_title: "Employee Cost to Company (CTC) & Burden Rate Calculator",
+        hero_subtitle: "Accurately evaluate total annual and monthly employment expenditure beyond gross wages—incorporating GOSI/social insurance, medical tiers, work permits, EOSB statutory provisions, and operational overhead.",
+        params_heading: "Payroll & Overhead Parameters",
+        btn_reset: "Reset Defaults",
+        sec_direct_comp: "Direct Compensation (Monthly)",
+        lbl_basic_salary: "Basic Salary (SAR/AED/USD)",
+        lbl_housing_allowance: "Housing Allowance (Monthly)",
+        lbl_trans_allowance: "Transportation Allowance",
+        lbl_other_allowances: "Other Fixed Allowances (Mobile, Shift)",
+        sec_statutory: "Statutory & Social Insurance",
+        lbl_nationality_type: "Employee Category",
+        opt_expat: "Expatriate / Non-National",
+        opt_national: "National (Saudi/GCC Citizen)",
+        lbl_employer_social_rate: "Employer Social Insurance % (GOSI/GPSSA)",
+        hint_social_rate: "Standard: 2% Hazard for Expats; 11.75%–12.75% for Saudi Nationals",
+        lbl_eosb_provision: "Statutory End of Service Provision (% of Monthly Gross)",
+        hint_eosb: "4.17% = Half month salary/year; 8.33% = Full month salary/year accrual",
+        sec_annual_overhead: "Annual Overheads & Recurring Benefits",
+        lbl_medical_annual: "Medical Insurance (Annual/Year)",
+        lbl_flight_ticket: "Annual Leave Flight Allowance (Yearly)",
+        lbl_work_permit: "Govt Work Permit / Iqama / Visa Levy (Yearly)",
+        lbl_equipment_overhead: "IT Hardware, Subscriptions & Admin (Yearly)",
+        lbl_work_hours: "Weekly Billable/Productive Working Hours",
+        hint_productive_hours: "Standard 40 or 48 hrs/week (Used to compute hourly burden cost)",
+        res_header: "Cost & Burden Summary",
+        res_monthly_ctc_label: "Total Monthly True Cost to Company",
+        res_gross_salary_label: "Direct Gross:",
+        res_hourly_cost_label: "Hourly Cost:",
+        row_annual_ctc: "Total Annual CTC:",
+        row_employer_social: "Monthly Employer Social / GOSI:",
+        row_eosb_accrual: "Monthly EOSB Statutory Provision:",
+        row_amortized_benefits: "Amortized Benefits & Overheads/Mo:",
+        row_burden_multiplier: "Burden Multiplier:",
+        btn_print_pdf: "Print / Save PDF",
+        btn_export_csv: "Export CSV",
+        upsell_title: "Automate Multi-Employee Payroll",
+        upsell_desc: "Manage company-wide headcount budgeting, department allocations, GOSI tables, and WPS automated batch outputs with our offline Excel tool.",
+        btn_get_upsell: "Get Master Excel & VBA Model ($29)",
+        disclaimer_title: "Regulatory Estimation Notice:",
+        disclaimer_body: "Calculations generated by this tool are analytical estimates for workforce financial forecasting. Actual statutory obligations (such as GOSI, GPSSA, Iqama levies, and Labor Law severance provisions) may differ based on bilateral wage ceilings, Saudization tier classifications, and recent labor ministry decrees. All figures must be verified against current labor regulations and official government portals before final payroll execution.",
+        guide_h1: "Mastering Total Cost to Company (CTC) & Employee Burden Rates in the GCC",
+        guide_p1: "In modern corporate budgeting, assessing an employee’s financial commitment based solely on their base monthly wage is one of the most perilous oversights a Chief Financial Officer or HR Director can commit. True workforce expenditures encompass statutory payroll contributions, mandatory health protection programs, government permitting levies, accrued liability provisions, and indirect operational support overheads.",
+        formula_h2: "The Mathematical Architecture of Burdened Labor Cost",
+        formula_p1: "The employee burden rate reflects the percentage of indirect non-wage overhead incurred on top of direct wages. Calculating this metric ensures service firms set profitable billable charge-out rates and industrial enterprises preserve healthy gross profit margins.",
+        breakdown_h2: "Deconstructing the Real Pillars of Workforce Expenditure",
+        comp_card1_title: "1. Social Insurance & GOSI Contributions",
+        comp_card1_desc: "In the Kingdom of Saudi Arabia, employers contribute 11.75% to 12.75% for Saudi nationals toward social security and unemployment insurance (SANED), alongside a mandatory 2% Occupational Hazards contribution for all workers, national or expatriate. In the UAE, employer GPSSA contributions range between 12.5% to 15% for local personnel.",
+        comp_card2_title: "2. Statutory End-of-Service Benefit (EOSB) Accrual",
+        comp_card2_desc: "Under Article 84 of the Saudi Labor Law and UAE Federal Decree-Law No. 33 of 2021, employers must disburse severance gratuities based on half a month’s wage per year for the initial five years, rising to one full month's wage per subsequent year. Forward-thinking accounting teams accrue between 4.17% and 8.33% of base wages monthly to prevent sudden cash flow shocks.",
+        comp_card3_title: "3. Expatriate Levies & Work Permits",
+        comp_card3_desc: "For non-national employees, regulatory surcharges constitute a significant overhead. In KSA, the Ministry of Human Resources imposes the Expatriate Expat Levy (Maktab Amal fee of up to SAR 9,600 annually per expat worker), plus Iqama renewal fees and medical insurance underwriting through CCHI-compliant health schemes.",
+        comp_card4_title: "4. Workstation & Technology Surcharges",
+        comp_card4_desc: "Modern white-collar staff necessitate enterprise ERP seats, productivity software licenses (e.g., Microsoft 365, Google Workspace, specialized CAD/CRM software), physical computing hardware depreciation, and office square footage overhead that often add 10% to 20% over standard wages.",
+        faq_h2: "Frequently Asked Questions (FAQ)",
+        faq1_q: "What is the standard burden rate in Saudi Arabia and the GCC?",
+        faq1_a: "For professional and corporate roles, the typical employee burden rate ranges between 25% to 45% above base pay. For junior expatriate workers with significant government levies and mandatory healthcare overhead, the burden rate can sometimes surpass 60% of baseline wages.",
+        faq2_q: "How should CTC be utilized in B2B service project pricing?",
+        faq2_a: "When bidding on professional services or consulting contracts, project leaders should always price billable hours using fully burdened hourly cost rather than gross wages. Applying a target operating margin (such as 30% to 50%) to the burdened rate ensures commercial viability and overhead recovery.",
+        faq3_q: "Why is monthly EOSB accrual critical under IFRS standards?",
+        faq3_a: "Under International Accounting Standard 19 (IAS 19 - Employee Benefits), defined benefit obligations such as end of service gratuities must be actuarially provisioned during the period in which the employee renders service, rather than recognized on a cash basis upon contract termination."
+      },
+      ar: {
+        top_banner_tag: "نسخة مدراء الموارد والمالية:",
+        top_banner_text: "احصل على نموذج إكسل الشامل مع أكواد VBA البرمجية ($29)",
+        get_template_now: "تحميل القالب ($29)",
+        app_brand: "LaborBurden Pro™",
+        app_tagline: "محرك احتساب التكلفة الإجمالية ومعدل عبء العمالة",
+        hero_title: "حاسبة التكلفة الإجمالية للموظف (CTC) ومعدل العبء المالي للمنشآت",
+        hero_subtitle: "قياس دقيق لكامل التزامات التوظيف السنوية والشهرية متجاوزاً الراتب الأساسي—شاملاً التأمينات الاجتماعية (GOSI)، التأمين الصحي، رسوم رخص العمل، مخصص نهاية الخدمة والتكاليف التشغيلية.",
+        params_heading: "معطيات الرواتب والمصاريف الإضافية",
+        btn_reset: "استعادة الافتراضي",
+        sec_direct_comp: "التعويضات المباشرة (شهرياً)",
+        lbl_basic_salary: "الراتب الأساسي (ريال/درهم/دولار)",
+        lbl_housing_allowance: "بدل السكن (شهرياً)",
+        lbl_trans_allowance: "بدل المواصلات",
+        lbl_other_allowances: "بدلات أخرى (اتصال، مناوبة، طبيعة عمل)",
+        sec_statutory: "التأمينات النظامية والاشتراكات",
+        lbl_nationality_type: "فئة الموظف",
+        opt_expat: "وافد / غير مواطن",
+        opt_national: "مواطن (سعودي / خليجي)",
+        lbl_employer_social_rate: "نسبة التأمينات على المنشأة % (GOSI/GPSSA)",
+        hint_social_rate: "افتراضي: 2% أخطار مهنية للوافد؛ 11.75%–12.75% للسعودي",
+        lbl_eosb_provision: "مخصص مكافأة نهاية الخدمة (% من الإجمالي الشهري)",
+        hint_eosb: "4.17% تعادل نصف راتب سنوياً؛ 8.33% تعادل راتب كامل سنوياً",
+        sec_annual_overhead: "المصاريف السنوية والبدلات المتكررة",
+        lbl_medical_annual: "التأمين الطبي (سنوياً للموظف)",
+        lbl_flight_ticket: "تذكرة السفر السنوية للإجازة",
+        lbl_work_permit: "رسوم مكتب العمل / الإقامة / التأشيرة (سنوياً)",
+        lbl_equipment_overhead: "الأجهزة التقنية والتراخيص والإداريات (سنوياً)",
+        lbl_work_hours: "ساعات العمل الإنتاجية الأسبوعية",
+        hint_productive_hours: "الافتراضي 40 أو 48 ساعة/أسبوع (لاحتساب تكلفة الساعة المحمّلة)",
+        res_header: "ملخص التكلفة ومعدل التحميل",
+        res_monthly_ctc_label: "إجمالي التكلفة الشهرية الحقيقية على المنشأة",
+        res_gross_salary_label: "إجمالي الراتب المباشر:",
+        res_hourly_cost_label: "تكلفة الساعة الإنتاجية:",
+        row_annual_ctc: "إجمالي التكلفة السنوية (CTC):",
+        row_employer_social: "التأمينات الاجتماعية الشهرية على صاحب العمل:",
+        row_eosb_accrual: "المخصص الشهري لمكافأة نهاية الخدمة:",
+        row_amortized_benefits: "المصاريف والمنافع السنوية الموزعة شهرياً:",
+        row_burden_multiplier: "معامل العبء الإضافي:",
+        btn_print_pdf: "طباعة / حفظ كملف PDF",
+        btn_export_csv: "تصدير ملف CSV",
+        upsell_title: "أتمتة موازنة الأجور والتوظيف للشركات",
+        upsell_desc: "تحكم بموازنات الأقسام، جداول اشتراكات التأمينات التلقائية، وملفات نظام حماية الأجور (WPS) عبر نموذجنا الاحترافي في إكسل.",
+        btn_get_upsell: "الحصول على نموذج إكسل وVBA ($29)",
+        disclaimer_title: "إخلاء مسؤولية نظامي:",
+        disclaimer_body: "المخرجات الصادرة عن هذه الحاسبة هي تقديرات استرشادية للتخطيط المالي والميزانيات التقديرية. قد تختلف الالتزامات الفعلية (كنسب التأمينات الاجتماعية GOSI ورسوم المقابل المالي ومكافأة نهاية الخدمة وفق نظام العمل) بناءً على سقوف الأجور وفئات نطاقات وتحديثات اللوائح التنفيذية. يجب التحقق والرجوع للجهات الرسمية قبل الاعتماد المالي النهائي.",
+        guide_h1: "دليل احتساب التكلفة الإجمالية للموظف (CTC) ونسبة العبء المالي في دول الخليج",
+        guide_p1: "في التخطيط المالي المعاصر للشركات، يُعد حصر تكلفة الموظف في راتبه الشهري الاسمي من أكبر الأخطاء التي تقع فيها الإدارات المالية. تشمل التكلفة الحقيقية اشتراكات التأمينات، التأمين الطبي الإلزامي، الرسوم الحكومية، مخصصات مكافأة نهاية الخدمة، وتكاليف تشغيل المعدات والمكاتب.",
+        formula_h2: "المعادلة الرياضية لاحتساب عبء تكلفة العمالة",
+        formula_p1: "يمثل معدل عبء الموظف (Burden Rate) النسبة المئوية للمصاريف الإضافية غير المباشرة المضافة للراتب المباشر. يساعد هذا المؤشر في تسعير المشاريع الخدمية بنجاح وضمان هوامش ربحية مجزية.",
+        breakdown_h2: "تفصيل الركائز الأساسية لمصاريف الكادر الوظيفي",
+        comp_card1_title: "1. اشتراكات التأمينات الاجتماعية (GOSI)",
+        comp_card1_desc: "في المملكة العربية السعودية، يتحمل صاحب العمل نسبة 11.75% إلى 12.75% عن الموظف السعودي لنظامي المعاشات وساند، مع إضافة 2% للأخطار المهنية لكافة الموظفين سواء مواطنين أو وافدين. وفي الإمارات تتراوح نسب صندوق التقاعد بين 12.5% و15%.",
+        comp_card2_title: "2. مخصص مكافأة نهاية الخدمة الإلزامي",
+        comp_card2_desc: "وفقاً للمادة 84 من نظام العمل السعودي والتشريعات الخليجية، يستحق الموظف أجر نصف شهر عن كل سنة من السنوات الخمس الأولى وأجر شهر كامل عن كل سنة تالية. يتطلب المعيار المحاسبي (IAS 19) رصد مخصص شهري يتراوح بين 4.17% و8.33% تجنباً لأي ضغط في السيولة.",
+        comp_card3_title: "3. رسوم رخص العمل والمقابل المالي",
+        comp_card3_desc: "تشكل الرسوم النظامية للعمالة الوافدة عبئاً إضافياً، كالمقابل المالي لرخص العمل في السعودية (حتى 9,600 ريال سنوياً للموظف الوافد)، بالإضافة لرسوم تجديد الإقامة ووثائق التأمين الصحي المعتمدة من مجلس الضمان الصحي.",
+        comp_card4_title: "4. مصاريف بيئة العمل والأجهزة والبرمجيات",
+        comp_card4_desc: "يحتاج الموظف المهني إلى أجهزة حاسوبية وتراخيص أنظمة سحابية وتكاليف تشغيلية ومساحة مكتبية تضيف عادة ما بين 10% إلى 20% على إجمالي الراتب المستلم.",
+        faq_h2: "الأسئلة الشائعة حول تكلفة الموظف (FAQ)",
+        faq1_q: "ما هو معدل العبء الطبيعي (Burden Rate) في المنشآت الخليجية؟",
+        faq1_a: "يتراوح معدل العبء في الوظائف المهنية والمكتبية عموماً بين 25% إلى 45% فوق الراتب المباشر. أما في العمالة الوافدة ذات الرواتب المحدودة فقد يتجاوز معدل التحميل 60% بسبب الرسوم الحكومية والتأمين الإلزامي.",
+        faq2_q: "كيف يتم استخدام تكلفة الموظف (CTC) في تسعير عقود المشاريع؟",
+        faq2_a: "عند تقديم عروض الأسعار للمناقصات والمشاريع الاستشارية، يجب الاعتماد على تكلفة الساعة المحمّلة بالكامل بدلاً من الراتب المجرد، ثم إضافة هامش الربح المستهدف (مثلاً 30% إلى 50%) لضمان تغطية مصاريف الشركة التشغيلية.",
+        faq3_q: "لماذا تشترط معايير المحاسبة الدولية (IFRS) ترحيل مخصص شهري لنهاية الخدمة؟",
+        faq3_a: "بموجب معيار المحاسبة الدولي رقم 19 (منافع الموظفين)، يجب الاعتراف بالتزامات مكافأة نهاية الخدمة على أساس الاستحقاق خلال فترات أداء العمل بدلاً من تسجيلها كمصروف فجائي عند مغادرة الموظف."
+      }
+    };
+
+    let currentLang = 'en';
+
+    const basicSalaryInput = document.getElementById('basicSalary');
+    const housingAllowanceInput = document.getElementById('housingAllowance');
+    const transAllowanceInput = document.getElementById('transAllowance');
+    const otherAllowancesInput = document.getElementById('otherAllowances');
+    const nationalityTypeInput = document.getElementById('nationalityType');
+    const employerSocialRateInput = document.getElementById('employerSocialRate');
+    const eosbAccrualRateInput = document.getElementById('eosbAccrualRate');
+    const medicalInsuranceAnnualInput = document.getElementById('medicalInsuranceAnnual');
+    const annualFlightTicketInput = document.getElementById('annualFlightTicket');
+    const workPermitIqamaInput = document.getElementById('workPermitIqama');
+    const equipmentOverheadInput = document.getElementById('equipmentOverhead');
+    const productiveHoursWeeklyInput = document.getElementById('productiveHoursWeekly');
+
+    const resMonthlyCTC = document.getElementById('resMonthlyCTC');
+    const resDirectGross = document.getElementById('resDirectGross');
+    const resHourlyCost = document.getElementById('resHourlyCost');
+    const resAnnualCTC = document.getElementById('resAnnualCTC');
+    const resMonthlySocial = document.getElementById('resMonthlySocial');
+    const resMonthlyEOSB = document.getElementById('resMonthlyEOSB');
+    const resMonthlyBenefits = document.getElementById('resMonthlyBenefits');
+    const resBurdenMultiplier = document.getElementById('resBurdenMultiplier');
+    const resBurdenBadge = document.getElementById('resBurdenBadge');
+
+    function formatNumber(num) {
+      return new Intl.NumberFormat(currentLang === 'ar' ? 'ar-SA' : 'en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(num);
+    }
+
+    function calculate() {
+      const basic = parseFloat(basicSalaryInput.value) || 0;
+      const housing = parseFloat(housingAllowanceInput.value) || 0;
+      const trans = parseFloat(transAllowanceInput.value) || 0;
+      const other = parseFloat(otherAllowancesInput.value) || 0;
+
+      const monthlyGross = basic + housing + trans + other;
+      const subjectToSocial = basic + housing;
+
+      const socialRate = (parseFloat(employerSocialRateInput.value) || 0) / 100;
+      const monthlySocial = subjectToSocial * socialRate;
+
+      const eosbRate = (parseFloat(eosbAccrualRateInput.value) || 0) / 100;
+      const monthlyEOSB = monthlyGross * eosbRate;
+
+      const annualMedical = parseFloat(medicalInsuranceAnnualInput.value) || 0;
+      const annualFlight = parseFloat(annualFlightTicketInput.value) || 0;
+      const annualGovtFees = parseFloat(workPermitIqamaInput.value) || 0;
+      const annualEquip = parseFloat(equipmentOverheadInput.value) || 0;
+
+      const totalAnnualFixedOverhead = annualMedical + annualFlight + annualGovtFees + annualEquip;
+      const monthlyFixedOverhead = totalAnnualFixedOverhead / 12;
+
+      const totalMonthlyCTC = monthlyGross + monthlySocial + monthlyEOSB + monthlyFixedOverhead;
+      const totalAnnualCTC = totalMonthlyCTC * 12;
+
+      const weeklyHours = Math.max(parseFloat(productiveHoursWeeklyInput.value) || 40, 1);
+      const annualProductiveHours = weeklyHours * 52;
+      const loadedHourlyCost = totalAnnualCTC / annualProductiveHours;
+
+      const burdenRatePercent = monthlyGross > 0 ? ((totalMonthlyCTC - monthlyGross) / monthlyGross) * 100 : 0;
+      const burdenMultiplier = monthlyGross > 0 ? (totalMonthlyCTC / monthlyGross) : 1;
+
+      resMonthlyCTC.textContent = formatNumber(totalMonthlyCTC);
+      resDirectGross.textContent = formatNumber(monthlyGross);
+      resHourlyCost.textContent = formatNumber(loadedHourlyCost);
+      resAnnualCTC.textContent = formatNumber(totalAnnualCTC);
+      resMonthlySocial.textContent = formatNumber(monthlySocial);
+      resMonthlyEOSB.textContent = formatNumber(monthlyEOSB);
+      resMonthlyBenefits.textContent = formatNumber(monthlyFixedOverhead);
+      resBurdenMultiplier.textContent = burdenMultiplier.toFixed(2) + 'x';
+      
+      resBurdenBadge.textContent = (currentLang === 'ar' ? 'نسبة العبء: +' : 'Burden: +') + burdenRatePercent.toFixed(1) + '%';
+    }
+
+    // Adjust default GOSI based on Expat vs National
+    nationalityTypeInput.addEventListener('change', (e) => {
+      if (e.target.value === 'national') {
+        employerSocialRateInput.value = '11.75';
+        workPermitIqamaInput.value = '0'; // Nationals don't pay Maktab Amal or Iqama
+      } else {
+        employerSocialRateInput.value = '2.00';
+        workPermitIqamaInput.value = '9600';
+      }
+      calculate();
+    });
+
+    // Event Listeners for inputs
+    document.querySelectorAll('#ctcForm input').forEach(input => {
+      input.addEventListener('input', calculate);
+    });
+
+    // Reset Button
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      basicSalaryInput.value = '10000';
+      housingAllowanceInput.value = '2500';
+      transAllowanceInput.value = '1000';
+      otherAllowancesInput.value = '500';
+      nationalityTypeInput.value = 'expat';
+      employerSocialRateInput.value = '2';
+      eosbAccrualRateInput.value = '4.17';
+      medicalInsuranceAnnualInput.value = '3500';
+      annualFlightTicketInput.value = '2000';
+      workPermitIqamaInput.value = '9600';
+      equipmentOverheadInput.value = '2400';
+      productiveHoursWeeklyInput.value = '40';
+      calculate();
+    });
+
+    // CSV Export functionality
+    document.getElementById('exportCsvBtn').addEventListener('click', () => {
+      const basic = basicSalaryInput.value;
+      const housing = housingAllowanceInput.value;
+      const transport = transAllowanceInput.value;
+      const other = otherAllowancesInput.value;
+      const mGross = resDirectGross.textContent.replace(/,/g, '');
+      const mCTC = resMonthlyCTC.textContent.replace(/,/g, '');
+      const aCTC = resAnnualCTC.textContent.replace(/,/g, '');
+      const hourly = resHourlyCost.textContent.replace(/,/g, '');
+      const mult = resBurdenMultiplier.textContent;
+
+      const csvContent = "data:text/csv;charset=utf-8," 
+        + "Parameter,Value\n"
+        + "Basic Salary," + basic + "\n"
+        + "Housing Allowance," + housing + "\n"
+        + "Transport Allowance," + transport + "\n"
+        + "Other Allowances," + other + "\n"
+        + "Monthly Gross Direct Salary," + mGross + "\n"
+        + "Total Monthly True CTC," + mCTC + "\n"
+        + "Total Annual CTC," + aCTC + "\n"
+        + "Burden Multiplier," + mult + "\n"
+        + "Fully Loaded Hourly Cost," + hourly + "\n";
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Employee_Cost_To_Company_CTC_Report.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    // Print PDF functionality
+    document.getElementById('printSummaryBtn').addEventListener('click', () => {
+      window.print();
+    });
+
+    // Language Toggle
+    const langToggleBtn = document.getElementById('langToggleBtn');
+    const langLabel = document.getElementById('langLabel');
+
+    langToggleBtn.addEventListener('click', () => {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      document.documentElement.setAttribute('lang', currentLang);
+      document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+      langLabel.textContent = currentLang === 'en' ? 'عربي' : 'English';
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[currentLang] && translations[currentLang][key]) {
+          el.innerHTML = translations[currentLang][key];
+        }
+      });
+
+      calculate();
+    });
+
+    // Initial run
+    document.getElementById('year').textContent = new Date().getFullYear();
+    calculate();
+  </script>
+</body>
+</html>
