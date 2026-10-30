@@ -26,5 +26,12 @@
     "title_ar": "حاسبة التكلفة الإجمالية للموظف (CTC) ومعدل العبء المالي للمنشآت",
     "description_en": "Calculate the true employee cost to company (CTC) in Saudi & GCC SMEs. Compute GOSI, visa fees, health insurance, EOSB accrual, and burden rates.",
     "date": "2026-10-30"
+  },
+  {
+    "slug": "vat-and-invoice-margin-calculator",
+    "title_en": "B2B VAT & Invoice Profit Margin Calculator",
+    "title_ar": "حاسبة ضريبة القيمة المضافة وهامش ربح الفواتير التجارية",
+    "description_en": "Calculate GCC VAT (15% & 5%), gross margins, markup, net profit, and tax-inclusive invoice pricing instantly. Free B2B quotation & margin tool.",
+    "date": "2026-10-30"
   }
 ]

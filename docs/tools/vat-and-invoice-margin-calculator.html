@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>B2B VAT & Invoice Profit Margin Calculator | حاسبة ضريبة القيمة المضافة وهامش الربح</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#15803d',
+              600: '#166534',
+              700: '#14532d',
+              800: '#052e16',
+              accent: '#f59e0b'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Cairo', 'sans-serif'],
+            arabic: ['Cairo', 'Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .font-cairo { font-family: 'Cairo', sans-serif; }
+    .font-inter { font-family: 'Inter', sans-serif; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      body { background: #fff !important; color: #000 !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen flex flex-col justify-between">
+
+  <!-- Top Banner (Sticky Promo) -->
+  <div class="sticky top-0 z-50 bg-gradient-to-r from-slate-900 via-brand-800 to-slate-950 text-white border-b border-emerald-500/20 shadow-md no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-amber-400 text-slate-950 uppercase tracking-wide">Pro Excel</span>
+        <span id="promoTextEn" class="font-medium">Need full ERP-grade batch invoice margin modeling?</span>
+        <span id="promoTextAr" class="font-cairo hidden font-semibold">هل تحتاج لنموذج إكسيل متكامل لإدارة وتسعير الفواتير الجماعية؟</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1 rounded transition duration-150 flex items-center gap-1.5 shadow-sm text-xs sm:text-sm">
+          <span id="ctaPromoEn">Get Master Excel &amp; VBA Sheet ($29)</span>
+          <span id="ctaPromoAr" class="font-cairo hidden">تحميل نموذج إكسيل الماستر ($29)</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Header -->
+  <header class="bg-white border-b border-slate-200 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center font-black text-xl shadow-md">
+          % 
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-bold tracking-tight text-slate-900 leading-tight" id="headerTitleEn">B2B VAT &amp; Margin Calculator</h1>
+          <p class="text-xs text-slate-500 font-medium" id="headerSubEn">Bilingual GCC / International Tax &amp; Commercial Pricing Engine</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" id="langToggleBtn" class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-slate-300 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold tracking-wide transition shadow-sm">
+          <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+          <span id="langLabel">عربي / English</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+    
+    <!-- Hero intro -->
+    <div class="mb-8 text-center max-w-3xl mx-auto">
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug" id="heroHeadEn">
+        Accurate VAT, Pricing Markup &amp; Gross Margin Engine
+      </h2>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug font-cairo hidden" id="heroHeadAr">
+        محرك حساب ضريبة القيمة المضافة وتحديد هوامش أرباح التسعير
+      </h2>
+      <p class="mt-2 text-sm text-slate-600" id="heroSubEn">
+        Designed for procurement specialists, financial controllers, B2B sales leads, and SME accountants across Saudi Arabia (15%), UAE/Bahrain/Oman (5%), and customized international tax regimes.
+      </p>
+      <p class="mt-2 text-sm text-slate-600 font-cairo hidden" id="heroSubAr">
+        مُصمم خصيصاً لمسؤولي المشتريات، المحاسبين الماليين، وفرق المبيعات في المملكة العربية السعودية (15%)، الإمارات وعُمان والبحرين (5%)، والأسواق العالمية لحساب الهوامش والضرائب بدقة متناهية.
+      </p>
+    </div>
+
+    <!-- Calculator Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Form Column (5 cols) -->
+      <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+          <span class="text-sm font-bold uppercase tracking-wider text-brand-700 flex items-center gap-1.5" id="secParamsEn">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"></path></svg>
+            Parameters &amp; Pricing Basis
+          </span>
+          <span class="text-sm font-bold uppercase tracking-wider text-brand-700 font-cairo hidden" id="secParamsAr">
+            معطيات التسعير والتكلفة
+          </span>
+          <button type="button" id="resetBtn" class="text-xs text-slate-400 hover:text-rose-600 transition font-medium underline">Reset Defaults</button>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Calculation Mode -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1" id="lblModeEn">Input Mode</label>
+            <label class="block text-xs font-bold text-slate-700 uppercase mb-1 font-cairo hidden" id="lblModeAr">طريقة الحساب الأساسية</label>
+            <div class="grid grid-cols-2 gap-2 text-xs font-semibold">
+              <button type="button" id="modeCostPlus" class="py-2 px-3 rounded-lg border border-brand-600 bg-brand-50 text-brand-700 font-bold text-center transition">Cost + Target Margin</button>
+              <button type="button" id="modeReverseTax" class="py-2 px-3 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 text-center hover:bg-slate-100 transition">Gross Invoice Back-calc</button>
+            </div>
+          </div>
+
+          <!-- Base Currency -->
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1" id="lblCurrencyEn">Currency Label</label>
+              <label class="block text-xs font-semibold text-slate-600 mb-1 font-cairo hidden" id="lblCurrencyAr">رمز العملة</label>
+              <select id="currency" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                <option value="SAR" selected>SAR (ر.س)</option>
+                <option value="AED">AED (د.إ)</option>
+                <option value="KWD">KWD (د.ك)</option>
+                <option value="BHD">BHD (د.ب)</option>
+                <option value="OMR">OMR (ر.ع)</option>
+                <option value="QAR">QAR (ر.ق)</option>
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+              </select>
+            </div>
+
+            <!-- VAT Rate Preset -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1" id="lblVatPresetEn">VAT Rate Preset</label>
+              <label class="block text-xs font-semibold text-slate-600 mb-1 font-cairo hidden" id="lblVatPresetAr">نسبة الضريبة القياسية</label>
+              <select id="vatPreset" class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                <option value="15" selected>15% (KSA Standard)</option>
+                <option value="5">5% (UAE / Bahrain / Oman)</option>
+                <option value="0">0% (Zero-rated / Exempt)</option>
+                <option value="custom">Custom Rate %</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Custom VAT Input (conditional) -->
+          <div id="customVatContainer" class="hidden">
+            <label class="block text-xs font-semibold text-slate-600 mb-1" id="lblCustomVatEn">Custom VAT Rate (%)</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1 font-cairo hidden" id="lblCustomVatAr">نسبة الضريبة المخصصة (%)</label>
+            <input type="number" id="customVat" min="0" max="100" step="0.1" value="15" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono font-medium focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          </div>
+
+          <!-- Dynamic Cost / Price Inputs -->
+          <div id="costModeGroup" class="space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblUnitCostEn">Unit Cost of Goods / Services (Exclusive of VAT)</label>
+              <label class="block text-xs font-semibold text-slate-700 mb-1 font-cairo hidden" id="lblUnitCostAr">تكلفة الوحدة أو الخدمة (غير شامل الضريبة)</label>
+              <div class="relative">
+                <input type="number" id="unitCost" min="0" step="0.01" value="1000" class="w-full pl-3 pr-14 py-2 border border-slate-300 rounded-lg text-sm font-mono font-bold text-slate-900 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400 cur-label">SAR</span>
+              </div>
+            </div>
+
+            <!-- Margin vs Markup Choice -->
+            <div>
+              <div class="flex justify-between items-center mb-1">
+                <label class="text-xs font-semibold text-slate-700" id="lblProfitTypeEn">Target Profit Model</label>
+                <label class="text-xs font-semibold text-slate-700 font-cairo hidden" id="lblProfitTypeAr">طبيعة حساب الربح</label>
+                <div class="flex gap-2 text-xs">
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input type="radio" name="profitBasis" value="margin" checked class="accent-brand-600">
+                    <span class="ml-1 text-slate-700">Margin %</span>
+                  </label>
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input type="radio" name="profitBasis" value="markup" class="accent-brand-600">
+                    <span class="ml-1 text-slate-700">Markup %</span>
+                  </label>
+                </div>
+              </div>
+              <div class="relative">
+                <input type="number" id="profitPercent" min="0" max="99.9" step="0.1" value="25" class="w-full pl-3 pr-10 py-2 border border-slate-300 rounded-lg text-sm font-mono font-bold text-slate-900 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1" id="profitHintEn">Margin = Profit ÷ Selling Price | Markup = Profit ÷ Cost</p>
+              <p class="text-[11px] text-slate-400 mt-1 font-cairo hidden" id="profitHintAr">الهامش = الربح ÷ سعر البيع | الإضافة (المارك أب) = الربح ÷ التكلفة</p>
+            </div>
+          </div>
+
+          <!-- Reverse Mode Group (Hidden by default) -->
+          <div id="reverseModeGroup" class="hidden space-y-3">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblGrossInvoiceEn">Final Gross Invoice Amount (Tax Inclusive)</label>
+              <label class="block text-xs font-semibold text-slate-700 mb-1 font-cairo hidden" id="lblGrossInvoiceAr">إجمالي قيمة الفاتورة النهائية (شامل الضريبة)</label>
+              <div class="relative">
+                <input type="number" id="grossInvoice" min="0" step="0.01" value="1437.50" class="w-full pl-3 pr-14 py-2 border border-slate-300 rounded-lg text-sm font-mono font-bold text-slate-900 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400 cur-label">SAR</span>
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblEstCostEn">Original Base Cost (Exclusive of Tax)</label>
+              <label class="block text-xs font-semibold text-slate-700 mb-1 font-cairo hidden" id="lblEstCostAr">تكلفة البضاعة الأصلية المباشرة (قبل الضريبة)</label>
+              <div class="relative">
+                <input type="number" id="reverseCost" min="0" step="0.01" value="1000" class="w-full pl-3 pr-14 py-2 border border-slate-300 rounded-lg text-sm font-mono font-bold text-slate-900 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400 cur-label">SAR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quantity & Discount -->
+          <div class="grid grid-cols-2 gap-3 pt-1 border-t border-slate-100">
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1" id="lblQtyEn">Quantity</label>
+              <label class="block text-xs font-semibold text-slate-600 mb-1 font-cairo hidden" id="lblQtyAr">الكمية</label>
+              <input type="number" id="itemQty" min="1" step="1" value="1" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono font-semibold focus:ring-2 focus:ring-brand-500 focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-600 mb-1" id="lblDiscEn">Commercial Discount (%)</label>
+              <label class="block text-xs font-semibold text-slate-600 mb-1 font-cairo hidden" id="lblDiscAr">نسبة الخصم التجاري (%)</label>
+              <div class="relative">
+                <input type="number" id="discountPct" min="0" max="100" step="0.1" value="0" class="w-full pl-3 pr-8 py-2 border border-slate-300 rounded-lg text-sm font-mono font-semibold focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                <span class="absolute right-3 top-2 text-xs font-bold text-slate-400">%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Client / Project Reference (Optional) -->
+          <div class="pt-1">
+            <label class="block text-xs font-semibold text-slate-600 mb-1" id="lblRefEn">Client / Project Reference (Optional)</label>
+            <label class="block text-xs font-semibold text-slate-600 mb-1 font-cairo hidden" id="lblRefAr">مرجع العميل أو المشروع (اختياري)</label>
+            <input type="text" id="projectRef" placeholder="e.g. Quotation #Q-2025-081" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs font-medium focus:ring-2 focus:ring-brand-500 focus:outline-none">
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary & Output Column (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <!-- Output Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden p-6 print:border-none print:shadow-none">
+          
+          <!-- Card Header -->
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-4 mb-5">
+            <div>
+              <span class="text-xs font-bold tracking-widest text-emerald-700 uppercase bg-emerald-50 px-2.5 py-1 rounded-full" id="resBadgeEn">Quotation Financial Breakdown</span>
+              <span class="text-xs font-bold tracking-widest text-emerald-700 uppercase bg-emerald-50 px-2.5 py-1 rounded-full font-cairo hidden" id="resBadgeAr">التحليل المالي وتسعير الفاتورة</span>
+              <h3 class="text-xl font-black text-slate-900 mt-1" id="resHeadingEn">Invoice Summary Metrics</h3>
+              <h3 class="text-xl font-black text-slate-900 mt-1 font-cairo hidden" id="resHeadingAr">ملخص بيانات الفاتورة والأرباح</h3>
+            </div>
+            <div class="flex items-center gap-2 no-print">
+              <button type="button" id="printSummaryBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-100 text-xs font-semibold text-slate-700 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                Print / PDF
+              </button>
+              <button type="button" id="exportCsvBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-xs font-semibold text-white transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                Export CSV
+              </button>
+            </div>
+          </div>
+
+          <!-- Key Figures High Level (KPI Cards) -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+            <div class="bg-slate-50 border border-slate-100 rounded-xl p-4">
+              <p class="text-xs text-slate-500 font-medium" id="kpiSubtotalEn">Net Subtotal (Before Tax)</p>
+              <p class="text-xs text-slate-500 font-medium font-cairo hidden" id="kpiSubtotalAr">المجموع قبل الضريبة</p>
+              <p class="text-lg font-black text-slate-900 mt-1 font-mono" id="dispNetSubtotal">0.00 SAR</p>
+            </div>
+            <div class="bg-amber-50/60 border border-amber-100 rounded-xl p-4">
+              <p class="text-xs text-amber-800 font-medium" id="kpiTaxEn">Total VAT Amount</p>
+              <p class="text-xs text-amber-800 font-medium font-cairo hidden" id="kpiTaxAr">مبلغ ضريبة القيمة المضافة</p>
+              <p class="text-lg font-black text-amber-900 mt-1 font-mono" id="dispTaxAmount">0.00 SAR</p>
+              <p class="text-[10px] text-amber-700/80 font-mono mt-0.5" id="dispVatRateTag">Rate: 15%</p>
+            </div>
+            <div class="bg-emerald-50/70 border border-emerald-100 rounded-xl p-4">
+              <p class="text-xs text-emerald-800 font-medium" id="kpiGrossEn">Total Gross (Payable)</p>
+              <p class="text-xs text-emerald-800 font-medium font-cairo hidden" id="kpiGrossAr">الإجمالي النهائي المستحق</p>
+              <p class="text-xl font-black text-emerald-900 mt-1 font-mono" id="dispGrossTotal">0.00 SAR</p>
+            </div>
+          </div>
+
+          <!-- Itemized Breakdown Table -->
+          <div class="overflow-x-auto mb-6">
+            <table class="w-full text-xs text-left">
+              <thead class="bg-slate-100 text-slate-600 font-semibold uppercase tracking-wider">
+                <tr>
+                  <th class="py-2.5 px-3 rounded-l-lg" id="thComponentEn">Metric Component</th>
+                  <th class="py-2.5 px-3 text-right">Unit Value</th>
+                  <th class="py-2.5 px-3 text-right rounded-r-lg">Total (<span class="qty-counter">1</span> units)</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-mono text-slate-800">
+                <tr>
+                  <td class="py-2.5 px-3 font-sans font-medium text-slate-600" id="rowCostEn">Baseline Direct Cost</td>
+                  <td class="py-2.5 px-3 text-right font-medium" id="tblUnitCost">0.00</td>
+                  <td class="py-2.5 px-3 text-right font-bold text-slate-900" id="tblTotalCost">0.00</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 font-sans font-medium text-slate-600" id="rowDiscEn">Commercial Discount Deducted</td>
+                  <td class="py-2.5 px-3 text-right text-rose-600 font-medium" id="tblUnitDisc">-0.00</td>
+                  <td class="py-2.5 px-3 text-right text-rose-600 font-bold" id="tblTotalDisc">-0.00</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 font-sans font-medium text-slate-600" id="rowProfitEn">Gross Commercial Profit</td>
+                  <td class="py-2.5 px-3 text-right text-brand-700 font-medium" id="tblUnitProfit">0.00</td>
+                  <td class="py-2.5 px-3 text-right text-brand-700 font-bold" id="tblTotalProfit">0.00</td>
+                </tr>
+                <tr class="bg-slate-50/50">
+                  <td class="py-2.5 px-3 font-sans font-bold text-slate-800" id="rowPreTaxEn">Selling Price (Excl. VAT)</td>
+                  <td class="py-2.5 px-3 text-right font-bold" id="tblUnitSellingPreTax">0.00</td>
+                  <td class="py-2.5 px-3 text-right font-bold text-slate-900" id="tblTotalSellingPreTax">0.00</td>
+                </tr>
+                <tr>
+                  <td class="py-2.5 px-3 font-sans font-medium text-amber-700" id="rowVatItemEn">VAT Rate (<span id="tblTaxRateLabel">15%</span>)</td>
+                  <td class="py-2.5 px-3 text-right text-amber-700 font-medium" id="tblUnitVat">0.00</td>
+                  <td class="py-2.5 px-3 text-right text-amber-700 font-bold" id="tblTotalVat">0.00</td>
+                </tr>
+                <tr class="bg-emerald-50/60 font-bold">
+                  <td class="py-3 px-3 font-sans text-brand-800" id="rowFinalInvEn">Invoice Total (Tax Inclusive)</td>
+                  <td class="py-3 px-3 text-right text-brand-900" id="tblUnitFinal">0.00</td>
+                  <td class="py-3 px-3 text-right text-brand-900 text-sm" id="tblTotalFinal">0.00</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Margins Gauge / KPI Footer -->
+          <div class="grid grid-cols-2 gap-3 pt-4 border-t border-slate-100 bg-slate-50/70 p-3 rounded-xl">
+            <div>
+              <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-500 block" id="lblRealizedMarginEn">Achieved Gross Margin</span>
+              <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-500 block font-cairo hidden" id="lblRealizedMarginAr">هامش الربح الإجمالي المحقق</span>
+              <div class="flex items-baseline gap-1 mt-0.5">
+                <span class="text-lg font-black text-slate-900 font-mono" id="dispMarginPct">0.00%</span>
+                <span class="text-[10px] text-slate-400">(Gross Profit / Net Revenue)</span>
+              </div>
+            </div>
+            <div>
+              <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-500 block" id="lblRealizedMarkupEn">Effective Cost Markup</span>
+              <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-500 block font-cairo hidden" id="lblRealizedMarkupAr">نسبة المارك أب على التكلفة</span>
+              <div class="flex items-baseline gap-1 mt-0.5">
+                <span class="text-lg font-black text-slate-900 font-mono" id="dispMarkupPct">0.00%</span>
+                <span class="text-[10px] text-slate-400">(Gross Profit / Cost)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Legal Mandatory Disclaimer -->
+          <div class="mt-5 p-3.5 rounded-xl bg-amber-50 border border-amber-200/70 text-[11px] leading-relaxed text-amber-900 flex gap-2.5 items-start">
+            <svg class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+            <div>
+              <p id="disclaimerEn"><strong>Statutory Disclaimer:</strong> The calculations generated by this tool are estimates intended strictly for operational guidance, pricing simulations, and quotation planning. They do not constitute formal tax, legal, or audit advice. Companies must verify all final invoice tax classifications and rates against applicable regulations (such as ZATCA regulations in KSA or FTA guidelines in UAE) and official national statutory sources before issuing tax invoices or submitting VAT returns.</p>
+              <p id="disclaimerAr" class="font-cairo hidden mt-1"><strong>إخلاء مسؤولية نظامي:</strong> الحسابات والنتائج المستخرجة عبر هذه الأداة هي لأغراض المحاكاة والتسعير التشغيلي الاسترشادي فقط، ولا تُعد استشارة ضريبية أو قانونية معتمدة. يتعين على المنشأة التحقق من النسب والمعاملات الضريبية للفواتير بالرجوع إلى الأنظمة الرسمية النافذة (مثل لوائح هيئة الزكاة والضريبة والجمارك ZATCA في السعودية أو الهيئة الاتحادية للضرائب FTA في الإمارات) ومصادرها المعتمدة قبل إصدار الفواتير الضريبية أو تقديم الإقرارات.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Embedded High-Converting Product Pitch CTA Box -->
+        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-brand-900 rounded-2xl p-6 text-white shadow-xl border border-slate-700/60 no-print">
+          <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+              <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-400 text-slate-950 uppercase tracking-wide">
+                Save 12+ Hours Every Month
+              </div>
+              <h4 class="text-lg sm:text-xl font-black text-white" id="ctaCardTitleEn">The Complete Offline Automated Excel &amp; VBA Master Template</h4>
+              <h4 class="text-lg sm:text-xl font-black text-white font-cairo hidden" id="ctaCardTitleAr">نموذج إكسيل الماستر التلقائي والأوفلاين مع ماكرو VBA</h4>
+              <p class="text-xs text-slate-300 max-w-xl" id="ctaCardSubEn">
+                Includes batch multi-line tax quotation generator, customer database lookup, ZATCA e-invoice compliant layout formatting, automatic currency converter, and real-time gross margin sensitivity matrix.
+              </p>
+              <p class="text-xs text-slate-300 max-w-xl font-cairo hidden" id="ctaCardSubAr">
+                يشمل مسودة تسعير متعددة البنود، قاعدة بيانات العملاء، تنسيق متوافق مع متطلبات الفاتورة الإلكترونية، مصفوفة حساسية هوامش الربح وتحويل العملات بضغطة زر وبدون اشتراكات شهرية.
+              </p>
+            </div>
+            <div class="flex-shrink-0 w-full sm:w-auto text-center">
+              <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="block w-full sm:w-auto px-6 py-3 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black rounded-xl text-center shadow-lg transition duration-200 transform hover:-translate-y-0.5 text-sm">
+                <span id="ctaCardBtnEn">Download Now — $29</span>
+                <span id="ctaCardBtnAr" class="font-cairo hidden">حمّل النموذج الآن — 29$</span>
+                <span class="block text-[10px] font-normal text-slate-800">Instant Download • Lifetime Access</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Comprehensive 800+ Word SEO Guide & Documentation -->
+    <section class="mt-16 pt-12 border-t border-slate-200 max-w-5xl mx-auto space-y-12 text-slate-700 leading-relaxed">
+      
+      <!-- Article Section 1 -->
+      <div>
+        <h2 class="text-2xl font-bold text-slate-900 mb-4" id="artTitle1En">
+          Comprehensive B2B Guide: Mastering VAT Calculation, Margin, and Commercial Markup
+        </h2>
+        <h2 class="text-2xl font-bold text-slate-900 mb-4 font-cairo hidden" id="artTitle1Ar">
+          الدليل الشامل: إتقان حساب ضريبة القيمة المضافة وهامش الربح والمارك أب التجاري للشركات
+        </h2>
+        <p class="mb-4 text-sm sm:text-base">
+          Accurate pricing in business-to-business (B2B) commerce requires total clarity regarding the difference between cost markup, profit margin, and statutory value-added tax (VAT). For small and medium-sized enterprises (SMEs), quoting errors can inadvertently swallow working capital or trigger substantial tax penalties. Whether your firm operates under the 15% standard VAT mandated by the Zakat, Tax and Customs Authority (ZATCA) in the Kingdom of Saudi Arabia, the 5% VAT rate implemented by the Federal Tax Authority (FTA) in the UAE and Bahrain, or customized rates across international territories, using a mathematically rigorous invoice pricing engine is essential.
+        </p>
+        <p class="text-sm sm:text-base">
+          One of the most persistent financial pitfalls in contract negotiations is the confusion between <strong>Markup</strong> and <strong>Gross Profit Margin</strong>. While both express profitability, they use different denominators. Setting prices using markup when contracts mandate a specific gross margin invariably leads to cash flow shortages.
+        </p>
+      </div>
+
+      <!-- Mathematical Formulas -->
+      <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+        <h3 class="text-lg font-bold text-slate-900 mb-3" id="artMathHeadEn">The Core Mathematical Formulations</h3>
+        <h3 class="text-lg font-bold text-slate-900 mb-3 font-cairo hidden" id="artMathHeadAr">المعادلات الرياضية المحاسبية الأساسية</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm font-mono">
+          <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+            <p class="font-bold text-brand-700 mb-1">1. Selling Price from Margin (Cost-Plus)</p>
+            <p class="text-slate-800">Selling Price = Net Cost / (1 - Margin %)</p>
+            <p class="text-slate-500 text-xs mt-2 font-sans">Example: Cost $1000, target 20% margin: $1000 / 0.8 = $1,250.</p>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+            <p class="font-bold text-brand-700 mb-1">2. Selling Price from Markup</p>
+            <p class="text-slate-800">Selling Price = Net Cost * (1 + Markup %)</p>
+            <p class="text-slate-500 text-xs mt-2 font-sans">Example: Cost $1000, 20% markup: $1000 * 1.20 = $1,200.</p>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+            <p class="font-bold text-amber-700 mb-1">3. Forward Tax Calculation (Exclusive to Inclusive)</p>
+            <p class="text-slate-800">VAT Amount = Pre-Tax Price * (VAT Rate / 100)</p>
+            <p class="text-slate-800">Gross Payable = Pre-Tax Price + VAT Amount</p>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+            <p class="font-bold text-amber-700 mb-1">4. Reverse VAT Extraction (Inclusive to Pre-Tax)</p>
+            <p class="text-slate-800">Pre-Tax Price = Gross Amount / (1 + (VAT Rate / 100))</p>
+            <p class="text-slate-800">VAT Amount = Gross Amount - Pre-Tax Price</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparison Table: Margin vs Markup -->
+      <div>
+        <h3 class="text-xl font-bold text-slate-900 mb-4" id="artTableHeadEn">Quick Reference: Markup vs. Gross Margin Equivalence</h3>
+        <h3 class="text-xl font-bold text-slate-900 mb-4 font-cairo hidden" id="artTableHeadAr">جدول المقارنة السريعة: المارك أب مقابل هامش الربح</h3>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-xs sm:text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <thead class="bg-slate-100 text-slate-700 font-bold uppercase text-left">
+              <tr>
+                <th class="p-3">Desired Markup on Cost</th>
+                <th class="p-3">Equivalent Gross Margin on Sales</th>
+                <th class="p-3">Net Selling Price (Base $1,000)</th>
+                <th class="p-3">Gross Total (with 15% VAT)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 bg-white">
+              <tr>
+                <td class="p-3 font-semibold">10.0%</td>
+                <td class="p-3 font-semibold text-brand-700">9.09%</td>
+                <td class="p-3 font-mono">$1,100.00</td>
+                <td class="p-3 font-mono text-slate-900">$1,265.00</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">20.0%</td>
+                <td class="p-3 font-semibold text-brand-700">16.67%</td>
+                <td class="p-3 font-mono">$1,200.00</td>
+                <td class="p-3 font-mono text-slate-900">$1,380.00</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">25.0%</td>
+                <td class="p-3 font-semibold text-brand-700">20.00%</td>
+                <td class="p-3 font-mono">$1,250.00</td>
+                <td class="p-3 font-mono text-slate-900">$1,437.50</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">33.33%</td>
+                <td class="p-3 font-semibold text-brand-700">25.00%</td>
+                <td class="p-3 font-mono">$1,333.33</td>
+                <td class="p-3 font-mono text-slate-900">$1,533.33</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">50.0%</td>
+                <td class="p-3 font-semibold text-brand-700">33.33%</td>
+                <td class="p-3 font-mono">$1,500.00</td>
+                <td class="p-3 font-mono text-slate-900">$1,725.00</td>
+              </tr>
+              <tr>
+                <td class="p-3 font-semibold">100.0%</td>
+                <td class="p-3 font-semibold text-brand-700">50.00%</td>
+                <td class="p-3 font-mono">$2,000.00</td>
+                <td class="p-3 font-mono text-slate-900">$2,300.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Detailed FAQ Accordion -->
+      <div>
+        <h3 class="text-2xl font-bold text-slate-900 mb-6" id="artFaqHeadEn">Frequently Asked Questions (FAQ)</h3>
+        <h3 class="text-2xl font-bold text-slate-900 mb-6 font-cairo hidden" id="artFaqHeadAr">الأسئلة الشائعة حول ضريبة القيمة المضافة والتسعير</h3>
+        
+        <div class="space-y-4">
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h4 class="font-bold text-slate-900 text-sm sm:text-base">How do I extract pre-tax value from a 15% VAT invoice?</h4>
+            <p class="mt-2 text-xs sm:text-sm text-slate-600">
+              To extract the pre-tax net amount from a tax-inclusive 15% invoice (such as in Saudi Arabia), divide the total amount by 1.15. For instance, if an invoice reads SAR 11,500 inclusive of VAT, the pre-tax price is SAR 11,500 ÷ 1.15 = SAR 10,000, and the VAT portion is SAR 1,500. Never calculate 15% directly from the gross total, as that overstates tax by 2.25%.
+            </p>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h4 class="font-bold text-slate-900 text-sm sm:text-base">What is the key difference between Gross Margin and Markup?</h4>
+            <p class="mt-2 text-xs sm:text-sm text-slate-600">
+              Markup is the percentage added directly to the purchase or production cost to establish a sales price. Gross margin is the percentage of the final sales price that represents profit. If you buy an item for $80 and sell it for $100, your gross profit is $20. Your markup is $20 ÷ $80 = 25%, while your gross margin is $20 ÷ $100 = 20%.
+            </p>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h4 class="font-bold text-slate-900 text-sm sm:text-base">Are commercial discounts applied before or after VAT calculation?</h4>
+            <p class="mt-2 text-xs sm:text-sm text-slate-600">
+              According to standard international tax frameworks and ZATCA / FTA directives, commercial trade discounts, volume rebates, and contractual reductions must be applied to the base selling price <em>before</em> VAT is computed. Value-added tax is only levied on the actual consideration payable after deduction of valid promotional or commercial discounts.
+            </p>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-xl p-5">
+            <h4 class="font-bold text-slate-900 text-sm sm:text-base">Can input VAT be recovered on all commercial purchases?</h4>
+            <p class="mt-2 text-xs sm:text-sm text-slate-600">
+              Generally, registered taxable businesses can claim input tax deduction on business-related expenses incurred to generate taxable supplies. However, certain costs—such as employee entertainment, personal motor vehicles, and exempt financial activities—may have non-recoverable VAT under local executive regulations. Consult your certified chartered accountant for itemized recovery eligibility.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 py-8 no-print mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+      <div>
+        <p class="text-slate-300 font-semibold">B2B VAT &amp; Invoice Profit Margin Calculator &bull; Professional Edition</p>
+        <p class="mt-1 text-slate-500">Designed for operational controllers, commercial teams, and SME finance leaders.</p>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="text-amber-400 hover:text-amber-300 font-semibold underline">Get Automated Master Sheet ($29)</a>
+        <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="text-slate-400 hover:text-white">Back to Top &uarr;</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Calculation Engine Script -->
+  <script>
+    (function() {
+      let currentLang = 'en';
+      let inputMode = 'cost'; // 'cost' or 'reverse'
+
+      // DOM Elements
+      const langToggleBtn = document.getElementById('langToggleBtn');
+      const langLabel = document.getElementById('langLabel');
+      
+      const modeCostPlus = document.getElementById('modeCostPlus');
+      const modeReverseTax = document.getElementById('modeReverseTax');
+      const costModeGroup = document.getElementById('costModeGroup');
+      const reverseModeGroup = document.getElementById('reverseModeGroup');
+
+      const currencySelect = document.getElementById('currency');
+      const vatPreset = document.getElementById('vatPreset');
+      const customVatContainer = document.getElementById('customVatContainer');
+      const customVatInput = document.getElementById('customVat');
+      const curLabels = document.querySelectorAll('.cur-label');
+
+      const unitCostInput = document.getElementById('unitCost');
+      const profitPercentInput = document.getElementById('profitPercent');
+      const grossInvoiceInput = document.getElementById('grossInvoice');
+      const reverseCostInput = document.getElementById('reverseCost');
+      const itemQtyInput = document.getElementById('itemQty');
+      const discountPctInput = document.getElementById('discountPct');
+      const projectRefInput = document.getElementById('projectRef');
+      const resetBtn = document.getElementById('resetBtn');
+
+      // Displays
+      const dispNetSubtotal = document.getElementById('dispNetSubtotal');
+      const dispTaxAmount = document.getElementById('dispTaxAmount');
+      const dispGrossTotal = document.getElementById('dispGrossTotal');
+      const dispVatRateTag = document.getElementById('dispVatRateTag');
+      const dispMarginPct = document.getElementById('dispMarginPct');
+      const dispMarkupPct = document.getElementById('dispMarkupPct');
+
+      // Table values
+      const tblUnitCost = document.getElementById('tblUnitCost');
+      const tblTotalCost = document.getElementById('tblTotalCost');
+      const tblUnitDisc = document.getElementById('tblUnitDisc');
+      const tblTotalDisc = document.getElementById('tblTotalDisc');
+      const tblUnitProfit = document.getElementById('tblUnitProfit');
+      const tblTotalProfit = document.getElementById('tblTotalProfit');
+      const tblUnitSellingPreTax = document.getElementById('tblUnitSellingPreTax');
+      const tblTotalSellingPreTax = document.getElementById('tblTotalSellingPreTax');
+      const tblUnitVat = document.getElementById('tblUnitVat');
+      const tblTotalVat = document.getElementById('tblTotalVat');
+      const tblUnitFinal = document.getElementById('tblUnitFinal');
+      const tblTotalFinal = document.getElementById('tblTotalFinal');
+      const tblTaxRateLabel = document.getElementById('tblTaxRateLabel');
+      const qtyCounters = document.querySelectorAll('.qty-counter');
+
+      // Buttons
+      const printSummaryBtn = document.getElementById('printSummaryBtn');
+      const exportCsvBtn = document.getElementById('exportCsvBtn');
+
+      // State calculation data cache for export
+      let calculationResult = {};
+
+      function getEffectiveVatRate() {
+        const preset = vatPreset.value;
+        if (preset === 'custom') {
+          const val = parseFloat(customVatInput.value);
+          return isNaN(val) ? 0 : Math.max(0, val);
+        }
+        return parseFloat(preset);
+      }
+
+      function formatNumber(num) {
+        return (num || 0).toLocaleString(undefined, {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+
+      function calculate() {
+        const curr = currencySelect.value;
+        curLabels.forEach(el => el.textContent = curr);
+        
+        const vatRate = getEffectiveVatRate();
+        tblTaxRateLabel.textContent = vatRate + '%';
+        dispVatRateTag.textContent = (currentLang === 'en' ? 'VAT Rate: ' : 'نسبة الضريبة: ') + vatRate + '%';
+
+        const qty = Math.max(1, parseInt(itemQtyInput.value) || 1);
+        qtyCounters.forEach(el => el.textContent = qty.toString());
+
+        const discPct = Math.min(100, Math.max(0, parseFloat(discountPctInput.value) || 0));
+        const profitBasis = document.querySelector('input[name="profitBasis"]:checked').value;
+        
+        let unitCost = 0;
+        let unitPreTaxSelling = 0;
+        let unitProfit = 0;
+        let unitDiscount = 0;
+        let unitVat = 0;
+        let unitFinalGross = 0;
+        let marginPct = 0;
+        let markupPct = 0;
+
+        if (inputMode === 'cost') {
+          unitCost = Math.max(0, parseFloat(unitCostInput.value) || 0);
+          const profitVal = Math.max(0, parseFloat(profitPercentInput.value) || 0);
+          
+          if (profitBasis === 'margin') {
+            // Price before discount: P = Cost / (1 - Margin/100)
+            const safeMargin = Math.min(99.9, profitVal);
+            const baseListPrice = safeMargin < 100 ? unitCost / (1 - (safeMargin / 100)) : unitCost;
+            unitDiscount = baseListPrice * (discPct / 100);
+            unitPreTaxSelling = Math.max(0, baseListPrice - unitDiscount);
+          } else {
+            // Markup
+            const baseListPrice = unitCost * (1 + (profitVal / 100));
+            unitDiscount = baseListPrice * (discPct / 100);
+            unitPreTaxSelling = Math.max(0, baseListPrice - unitDiscount);
+          }
+          unitProfit = unitPreTaxSelling - unitCost;
+        } else {
+          // Reverse Tax Mode
+          const grossTotalInput = Math.max(0, parseFloat(grossInvoiceInput.value) || 0);
+          unitCost = Math.max(0, parseFloat(reverseCostInput.value) || 0);
+          
+          const unitGrossTotal = grossTotalInput / qty;
+          unitPreTaxSelling = unitGrossTotal / (1 + (vatRate / 100));
+          unitDiscount = discPct > 0 ? (unitPreTaxSelling / (1 - (discPct / 100))) * (discPct / 100) : 0;
+          unitProfit = unitPreTaxSelling - unitCost;
+        }
+
+        unitVat = unitPreTaxSelling * (vatRate / 100);
+        unitFinalGross = unitPreTaxSelling + unitVat;
+
+        // Margins & Markup
+        if (unitPreTaxSelling > 0) {
+          marginPct = (unitProfit / unitPreTaxSelling) * 100;
+        } else {
+          marginPct = 0;
+        }
+
+        if (unitCost > 0) {
+          markupPct = (unitProfit / unitCost) * 100;
+        } else {
+          markupPct = 0;
+        }
+
+        // Aggregates
+        const totalCost = unitCost * qty;
+        const totalDiscount = unitDiscount * qty;
+        const totalProfit = unitProfit * qty;
+        const totalNetSelling = unitPreTaxSelling * qty;
+        const totalVat = unitVat * qty;
+        const totalGross = unitFinalGross * qty;
+
+        // Update UI KPI Cards
+        dispNetSubtotal.textContent = `${formatNumber(totalNetSelling)} ${curr}`;
+        dispTaxAmount.textContent = `${formatNumber(totalVat)} ${curr}`;
+        dispGrossTotal.textContent = `${formatNumber(totalGross)} ${curr}`;
+
+        dispMarginPct.textContent = `${marginPct.toFixed(2)}%`;
+        dispMarkupPct.textContent = `${markupPct.toFixed(2)}%`;
+
+        // Table update
+        tblUnitCost.textContent = `${formatNumber(unitCost)} ${curr}`;
+        tblTotalCost.textContent = `${formatNumber(totalCost)} ${curr}`;
+        
+        tblUnitDisc.textContent = `-${formatNumber(unitDiscount)} ${curr}`;
+        tblTotalDisc.textContent = `-${formatNumber(totalDiscount)} ${curr}`;
+
+        tblUnitProfit.textContent = `${formatNumber(unitProfit)} ${curr}`;
+        tblTotalProfit.textContent = `${formatNumber(totalProfit)} ${curr}`;
+
+        tblUnitSellingPreTax.textContent = `${formatNumber(unitPreTaxSelling)} ${curr}`;
+        tblTotalSellingPreTax.textContent = `${formatNumber(totalNetSelling)} ${curr}`;
+
+        tblUnitVat.textContent = `${formatNumber(unitVat)} ${curr}`;
+        tblTotalVat.textContent = `${formatNumber(totalVat)} ${curr}`;
+
+        tblUnitFinal.textContent = `${formatNumber(unitFinalGross)} ${curr}`;
+        tblTotalFinal.textContent = `${formatNumber(totalGross)} ${curr}`;
+
+        // Cache for CSV
+        calculationResult = {
+          currency: curr,
+          vatRate: vatRate,
+          qty: qty,
+          unitCost: unitCost,
+          totalCost: totalCost,
+          discountPct: discPct,
+          unitDiscount: unitDiscount,
+          totalDiscount: totalDiscount,
+          unitProfit: unitProfit,
+          totalProfit: totalProfit,
+          unitPreTaxSelling: unitPreTaxSelling,
+          totalNetSelling: totalNetSelling,
+          unitVat: unitVat,
+          totalVat: totalVat,
+          unitFinalGross: unitFinalGross,
+          totalGross: totalGross,
+          marginPct: marginPct,
+          markupPct: markupPct,
+          ref: projectRefInput.value || 'N/A'
+        };
+      }
+
+      // Switch mode
+      modeCostPlus.addEventListener('click', () => {
+        inputMode = 'cost';
+        modeCostPlus.classList.add('border-brand-600', 'bg-brand-50', 'text-brand-700', 'font-bold');
+        modeCostPlus.classList.remove('border-slate-200', 'bg-slate-50', 'text-slate-600');
+        
+        modeReverseTax.classList.remove('border-brand-600', 'bg-brand-50', 'text-brand-700', 'font-bold');
+        modeReverseTax.classList.add('border-slate-200', 'bg-slate-50', 'text-slate-600');
+        
+        costModeGroup.classList.remove('hidden');
+        reverseModeGroup.classList.add('hidden');
+        calculate();
+      });
+
+      modeReverseTax.addEventListener('click', () => {
+        inputMode = 'reverse';
+        modeReverseTax.classList.add('border-brand-600', 'bg-brand-50', 'text-brand-700', 'font-bold');
+        modeReverseTax.classList.remove('border-slate-200', 'bg-slate-50', 'text-slate-600');
+        
+        modeCostPlus.classList.remove('border-brand-600', 'bg-brand-50', 'text-brand-700', 'font-bold');
+        modeCostPlus.classList.add('border-slate-200', 'bg-slate-50', 'text-slate-600');
+        
+        reverseModeGroup.classList.remove('hidden');
+        costModeGroup.classList.add('hidden');
+        calculate();
+      });
+
+      vatPreset.addEventListener('change', () => {
+        if (vatPreset.value === 'custom') {
+          customVatContainer.classList.remove('hidden');
+        } else {
+          customVatContainer.classList.add('hidden');
+        }
+        calculate();
+      });
+
+      // Listeners for live recalculation
+      [currencySelect, customVatInput, unitCostInput, profitPercentInput, grossInvoiceInput, reverseCostInput, itemQtyInput, discountPctInput, projectRefInput].forEach(inp => {
+        inp.addEventListener('input', calculate);
+      });
+      document.querySelectorAll('input[name="profitBasis"]').forEach(radio => {
+        radio.addEventListener('change', calculate);
+      });
+
+      // Reset
+      resetBtn.addEventListener('click', () => {
+        unitCostInput.value = '1000';
+        profitPercentInput.value = '25';
+        itemQtyInput.value = '1';
+        discountPctInput.value = '0';
+        vatPreset.value = '15';
+        customVatContainer.classList.add('hidden');
+        projectRefInput.value = '';
+        grossInvoiceInput.value = '1437.50';
+        reverseCostInput.value = '1000';
+        calculate();
+      });
+
+      // Print summary
+      printSummaryBtn.addEventListener('click', () => {
+        window.print();
+      });
+
+      // Export CSV
+      exportCsvBtn.addEventListener('click', () => {
+        const r = calculationResult;
+        const rows = [
+          ["B2B VAT and Invoice Margin Calculation Export"],
+          ["Project Reference", r.ref],
+          ["Currency", r.currency],
+          ["VAT Rate Percentage", r.vatRate + "%"],
+          ["Quantity", r.qty],
+          [],
+          ["Line Item Metric", "Unit Value (" + r.currency + ")", "Total Value (" + r.currency + ")"],
+          ["Direct Unit Cost", r.unitCost.toFixed(2), r.totalCost.toFixed(2)],
+          ["Commercial Discount Deducted", r.unitDiscount.toFixed(2), r.totalDiscount.toFixed(2)],
+          ["Gross Commercial Profit", r.unitProfit.toFixed(2), r.totalProfit.toFixed(2)],
+          ["Selling Subtotal (Pre-Tax)", r.unitPreTaxSelling.toFixed(2), r.totalNetSelling.toFixed(2)],
+          ["VAT Amount", r.unitVat.toFixed(2), r.totalVat.toFixed(2)],
+          ["Total Gross Invoice (Payable)", r.unitFinalGross.toFixed(2), r.totalGross.toFixed(2)],
+          [],
+          ["Achieved Gross Margin (%)", r.marginPct.toFixed(2) + "%"],
+          ["Effective Cost Markup (%)", r.markupPct.toFixed(2) + "%"],
+          ["Timestamp", new Date().toISOString()]
+        ];
+
+        const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `VAT_Quotation_Calculation_${Date.now()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+
+      // Bilingual Toggle Functionality
+      langToggleBtn.addEventListener('click', () => {
+        const isEn = currentLang === 'en';
+        currentLang = isEn ? 'ar' : 'en';
+        document.documentElement.setAttribute('dir', isEn ? 'rtl' : 'ltr');
+        document.documentElement.setAttribute('lang', currentLang);
+
+        const toggleElements = (enId, arId) => {
+          const enEl = document.getElementById(enId);
+          const arEl = document.getElementById(arId);
+          if (enEl && arEl) {
+            if (isEn) {
+              enEl.classList.add('hidden');
+              arEl.classList.remove('hidden');
+            } else {
+              enEl.classList.remove('hidden');
+              arEl.classList.add('hidden');
+            }
+          }
+        };
+
+        toggleElements('promoTextEn', 'promoTextAr');
+        toggleElements('ctaPromoEn', 'ctaPromoAr');
+        toggleElements('headerTitleEn', 'headerTitleEn');
+        toggleElements('heroHeadEn', 'heroHeadAr');
+        toggleElements('heroSubEn', 'heroSubAr');
+        toggleElements('secParamsEn', 'secParamsAr');
+        toggleElements('lblModeEn', 'lblModeAr');
+        toggleElements('lblCurrencyEn', 'lblCurrencyAr');
+        toggleElements('lblVatPresetEn', 'lblVatPresetAr');
+        toggleElements('lblCustomVatEn', 'lblCustomVatAr');
+        toggleElements('lblUnitCostEn', 'lblUnitCostAr');
+        toggleElements('lblProfitTypeEn', 'lblProfitTypeAr');
+        toggleElements('profitHintEn', 'profitHintAr');
+        toggleElements('lblGrossInvoiceEn', 'lblGrossInvoiceAr');
+        toggleElements('lblEstCostEn', 'lblEstCostAr');
+        toggleElements('lblQtyEn', 'lblQtyAr');
+        toggleElements('lblDiscEn', 'lblDiscAr');
+        toggleElements('lblRefEn', 'lblRefAr');
+        toggleElements('resBadgeEn', 'resBadgeAr');
+        toggleElements('resHeadingEn', 'resHeadingAr');
+        toggleElements('kpiSubtotalEn', 'kpiSubtotalAr');
+        toggleElements('kpiTaxEn', 'kpiTaxAr');
+        toggleElements('kpiGrossEn', 'kpiGrossAr');
+        toggleElements('lblRealizedMarginEn', 'lblRealizedMarginAr');
+        toggleElements('lblRealizedMarkupEn', 'lblRealizedMarkupAr');
+        toggleElements('disclaimerEn', 'disclaimerAr');
+        toggleElements('ctaCardTitleEn', 'ctaCardTitleAr');
+        toggleElements('ctaCardSubEn', 'ctaCardSubAr');
+        toggleElements('ctaCardBtnEn', 'ctaCardBtnAr');
+        toggleElements('artTitle1En', 'artTitle1Ar');
+        toggleElements('artMathHeadEn', 'artMathHeadAr');
+        toggleElements('artTableHeadEn', 'artTableHeadAr');
+        toggleElements('artFaqHeadEn', 'artFaqHeadAr');
+
+        langLabel.textContent = isEn ? 'English / عربي' : 'عربي / English';
+        calculate();
+      });
+
+      // Initial calculation
+      calculate();
+    })();
+  </script>
+</body>
+</html>
