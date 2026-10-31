@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commercial Fleet Lease vs. Buy ROI Calculator</title>
+    <meta name="description" content="Compare commercial vehicle leasing vs purchasing ROI, TCO, tax shields, and salvage values for corporate fleets. Export executive PDF/CSV reports.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        [dir="rtl"] body, [dir="rtl"] { font-family: 'Cairo', sans-serif; }
+        .tab-active { border-bottom: 2px solid #2563eb; color: #2563eb; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: #ffffff; color: #000000; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Sticky Top Banner CTA -->
+    <div class="no-print sticky top-0 z-50 bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 text-white px-4 py-2.5 shadow-md flex items-center justify-between">
+        <div class="flex items-center gap-2 max-w-4xl mx-auto w-full justify-between text-xs sm:text-sm font-medium">
+            <div class="flex items-center gap-2">
+                <span class="bg-amber-400 text-slate-950 font-bold px-2 py-0.5 rounded text-[11px] tracking-wide uppercase">PRO TEMPLATE</span>
+                <span class="hidden sm:inline" data-en="Need an enterprise financial model? Get our Multi-Vehicle CapEx vs OpEx Model." data-ar="هل تحتاج نموذجاً مالياً مؤسسياً؟ احصل على نموذج تحليل CapEx مقابل OpEx المتقدم.">Need an enterprise financial model? Get our Multi-Vehicle CapEx vs OpEx Model.</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="https://gumroad.com" target="_blank" rel="noopener" class="bg-blue-600 hover:bg-blue-500 transition px-3 py-1.5 rounded font-semibold text-white shadow-sm flex items-center gap-1">
+                    <span data-en="Get Master Excel ($29)" data-ar="تحميل نموذج الإكسل الشامل ($29)">Get Master Excel ($29)</span>
+                    <svg class="w-3.5 h-3.5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+                <button id="langToggle" class="bg-slate-800/80 hover:bg-slate-700 border border-slate-600 px-2 py-1 rounded text-xs transition">
+                    العربية
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="bg-white border-b border-slate-200 py-6 px-4 sm:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 flex items-center gap-2">
+                    <span class="p-2 bg-blue-100 text-blue-700 rounded-lg">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 17a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4M5 11h14l-1-4H6l-1 4zm0 0v6h14v-6M4 7h16"></path></svg>
+                    </span>
+                    <span data-en="Corporate Fleet Lease vs. Buy Calculator" data-ar="حاسبة استئجار أو شراء أساطيل المركبات التجارية">Corporate Fleet Lease vs. Buy Calculator</span>
+                </h1>
+                <p class="mt-1 text-sm text-slate-600" data-en="Evaluate Net Present Value (NPV), Total Cost of Ownership (TCO), and corporate tax shields across operational lifespans." data-ar="تقييم صافي القيمة الحالية (NPV)، التكلفة الإجمالية للملكية (TCO)، والوفر الضريبي التشغيلي على مدى دورة حياة الأسطول.">Evaluate Net Present Value (NPV), Total Cost of Ownership (TCO), and corporate tax shields across operational lifespans.</p>
+            </div>
+            <div class="flex items-center gap-2 no-print">
+                <button onclick="exportCSV()" class="px-3.5 py-2 border border-slate-300 rounded-lg text-sm font-semibold text-slate-700 hover:bg-slate-50 transition flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                    <span data-en="Export CSV" data-ar="تصدير CSV">Export CSV</span>
+                </button>
+                <button onclick="window.print()" class="px-3.5 py-2 bg-slate-800 text-white rounded-lg text-sm font-semibold hover:bg-slate-700 transition flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    <span data-en="Print Report" data-ar="طباعة التقرير">Print Report</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Interactive Grid -->
+    <main class="max-w-7xl mx-auto w-full px-4 sm:px-8 py-8 flex-grow">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Inputs Form (Left Col: 7) -->
+            <div class="lg:col-span-7 bg-white p-6 sm:p-7 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-900 border-b pb-3 mb-6 flex items-center justify-between">
+                    <span data-en="Financial & Operational Parameters" data-ar="المعطيات المالية والتشغيلية للأسطول">Financial & Operational Parameters</span>
+                    <span class="text-xs font-normal text-slate-500" data-en="All figures in base currency (USD/SAR/AED)" data-ar="جميع المبالغ بالعملة الأساسية (ريال/درهم/دولار)">All figures in base currency</span>
+                </h2>
+
+                <div class="space-y-6">
+                    <!-- Section 1: Fleet Scale & Life -->
+                    <div>
+                        <div class="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3" data-en="1. Fleet Scale & Horizon" data-ar="١. حجم الأسطول والمدة الزمنية">1. Fleet Scale & Horizon</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Fleet Size (Vehicles)" data-ar="عدد المركبات">Fleet Size (Vehicles)</label>
+                                <input type="number" id="fleetSize" value="5" min="1" max="500" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Analysis Horizon (Years)" data-ar="فترة التحليل (سنوات)">Analysis Horizon (Years)</label>
+                                <select id="horizonYears" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                                    <option value="3">3 Years (36 Mos)</option>
+                                    <option value="4" selected>4 Years (48 Mos)</option>
+                                    <option value="5">5 Years (60 Mos)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Discount Rate (WACC %)" data-ar="تكلفة رأس المال WACC (%)">Discount Rate (WACC %)</label>
+                                <input type="number" id="discountRate" value="8.5" step="0.1" min="0" max="30" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 2: Purchase Option Parameters -->
+                    <div class="pt-4 border-t border-slate-100">
+                        <div class="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3" data-en="2. Outright Purchase & Debt Scenario" data-ar="٢. خيار الشراء والتمويل الرأسمالي">2. Outright Purchase & Debt Scenario</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Purchase Price per Vehicle" data-ar="سعر شراء المركبة الواحدة">Purchase Price per Vehicle</label>
+                                <input type="number" id="unitBuyPrice" value="28000" min="1000" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Expected Resale/Salvage Value (End)" data-ar="القيمة المتبقية/البيع المتوقعة">Expected Resale/Salvage Value (End)</label>
+                                <input type="number" id="salvageVal" value="10000" min="0" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Down Payment / Equity (%)" data-ar="الدفعة الأولى المقدمة (%)">Down Payment / Equity (%)</label>
+                                <input type="number" id="downPaymentPct" value="20" min="0" max="100" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Loan APR Interest Rate (%)" data-ar="فائدة التمويل السنوية (%)">Loan APR Interest Rate (%)</label>
+                                <input type="number" id="loanInterestRate" value="6.0" step="0.1" min="0" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Annual Maint. & Tyres (Per Car)" data-ar="الصيانة السنوية والإطارات (للسيارة)">Annual Maint. & Tyres (Per Car)</label>
+                                <input type="number" id="buyMaintAnnual" value="1200" min="0" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Annual Insurance (Per Car)" data-ar="التأمين السنوي للمركبة">Annual Insurance (Per Car)</label>
+                                <input type="number" id="buyInsurAnnual" value="1100" min="0" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 3: Operating Lease Scenario -->
+                    <div class="pt-4 border-t border-slate-100">
+                        <div class="text-xs font-bold text-blue-600 uppercase tracking-wider mb-3" data-en="3. Operating Lease Scenario" data-ar="٣. خيار الإيجار التشغيلي الكامل">3. Operating Lease Scenario</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Monthly Lease Payment (Per Car)" data-ar="قسط الإيجار الشهري (للمركبة)">Monthly Lease Payment (Per Car)</label>
+                                <input type="number" id="leaseMonthly" value="650" min="0" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Upfront Admin/Security Fee (Per Car)" data-ar="رسوم التسليم والتأمين الإداري">Upfront Admin/Security Fee</label>
+                                <input type="number" id="leaseUpfront" value="500" min="0" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Lease Inclusions" data-ar="مزايا العقد المشمولة">Lease Inclusions</label>
+                                <div class="text-xs text-slate-500 bg-slate-100 rounded-lg p-2 leading-snug" data-en="Standard corporate leases include scheduled maintenance, tires, and comprehensive insurance." data-ar="تشمل عقود الإيجار التشغيلي عادة الصيانة والتأمين الشامل وتبديل الإطارات.">Maintenance & Ins. Included</div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Excess Mileage / Damage Reserve (Yr)" data-ar="مخصص الكيلومترات الإضافية / الأضرار">Excess Mileage / Damage Reserve (Yr)</label>
+                                <input type="number" id="leaseExcessAnnual" value="250" min="0" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Corporate Income Tax Shield (%)" data-ar="نسبة ضريبة دخل الشركات (درع ضريبي)">Corporate Income Tax Shield (%)</label>
+                                <input type="number" id="taxShieldRate" value="20.0" min="0" max="50" class="w-full px-3 py-2 border rounded-lg text-sm font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results & Executive Recommendation (Right Col: 5) -->
+            <div class="lg:col-span-5 space-y-6">
+                <!-- Decision Banner Card -->
+                <div id="recommendationCard" class="bg-white rounded-2xl shadow-sm border p-6 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500" data-en="Strategic Recommendation" data-ar="التوصية الاستراتيجية المالية">Strategic Recommendation</span>
+                        <span id="winningBadge" class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800">LEASE WINS</span>
+                    </div>
+                    <div id="recommendationText" class="text-lg font-extrabold text-slate-900 mb-2">
+                        Leasing saves $14,230 over 4 years
+                    </div>
+                    <p id="recommendationReason" class="text-xs text-slate-600 leading-relaxed mb-4">
+                        Operating lease preserves liquidity and eliminates residual vehicle market risk while providing superior operational tax write-offs.
+                    </p>
+                    
+                    <!-- Metric Cards -->
+                    <div class="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100 text-center">
+                        <div class="p-3 bg-slate-50 rounded-xl">
+                            <div class="text-xs text-slate-500" data-en="Net TCO: Purchase" data-ar="التكلفة الإجمالية: الشراء">Net TCO: Purchase</div>
+                            <div id="resBuyTco" class="text-base font-bold text-slate-900 mt-1">$138,400</div>
+                            <div id="resBuyNpv" class="text-[11px] text-slate-500">NPV: $122,100</div>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-xl">
+                            <div class="text-xs text-blue-700 font-semibold" data-en="Net TCO: Lease" data-ar="التكلفة الإجمالية: الإيجار">Net TCO: Lease</div>
+                            <div id="resLeaseTco" class="text-base font-bold text-blue-900 mt-1">$124,170</div>
+                            <div id="resLeaseNpv" class="text-[11px] text-blue-700">NPV: $109,240</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cash Flow Breakdown Table -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <h3 class="text-sm font-bold text-slate-900 mb-4" data-en="Comparative Financial Breakdown (Entire Fleet)" data-ar="المقارنة المالية التراكمية (كامل الأسطول)">Comparative Financial Breakdown (Entire Fleet)</h3>
+                    <div class="space-y-3 text-xs">
+                        <div class="flex justify-between py-1.5 border-b border-slate-100">
+                            <span class="text-slate-600" data-en="Initial Capital Outlay (Day 0)" data-ar="رأس المال الأولي المدفوع (اليوم 0)">Initial Capital Outlay (Day 0)</span>
+                            <div class="font-medium space-x-2 rtl:space-x-reverse">
+                                <span class="text-slate-800" id="dtlBuyCapEx">$28,000</span> vs 
+                                <span class="text-blue-700" id="dtlLeaseCapEx">$2,500</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between py-1.5 border-b border-slate-100">
+                            <span class="text-slate-600" data-en="Cumulative Maintenance & Tyres" data-ar="إجمالي تكاليف الصيانة والإطارات">Cumulative Maintenance & Tyres</span>
+                            <div class="font-medium space-x-2 rtl:space-x-reverse">
+                                <span class="text-slate-800" id="dtlBuyMaint">$24,000</span> vs 
+                                <span class="text-blue-700">$0 (Incl.)</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between py-1.5 border-b border-slate-100">
+                            <span class="text-slate-600" data-en="Cumulative Fleet Insurance" data-ar="إجمالي رسوم التأمين على الأسطول">Cumulative Fleet Insurance</span>
+                            <div class="font-medium space-x-2 rtl:space-x-reverse">
+                                <span class="text-slate-800" id="dtlBuyInsur">$22,000</span> vs 
+                                <span class="text-blue-700">$0 (Incl.)</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between py-1.5 border-b border-slate-100">
+                            <span class="text-slate-600" data-en="Terminal Resale / Asset Recovery" data-ar="قيمة الاسترداد/البيع بنهاية العقد">Terminal Resale / Asset Recovery</span>
+                            <div class="font-medium space-x-2 rtl:space-x-reverse">
+                                <span class="text-emerald-700 font-bold" id="dtlBuySalvage">-$50,000</span> vs 
+                                <span class="text-slate-400">$0</span>
+                            </div>
+                        </div>
+                        <div class="flex justify-between py-1.5 border-b border-slate-100">
+                            <span class="text-slate-600" data-en="Tax Shield Value (Depr. or Rent)" data-ar="قيمة الوفر الضريبي (إهلاك أو مصاريف)">Tax Shield Value (Depr. or Rent)</span>
+                            <div class="font-medium space-x-2 rtl:space-x-reverse">
+                                <span class="text-slate-800" id="dtlBuyTaxShield">-$18,000</span> vs 
+                                <span class="text-blue-700 font-bold" id="dtlLeaseTaxShield">-$31,200</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gumroad Excel Upsell Card -->
+                <div class="no-print bg-gradient-to-br from-indigo-900 to-slate-900 rounded-2xl p-6 text-white shadow-lg border border-indigo-700/40 relative overflow-hidden">
+                    <div class="absolute -right-8 -bottom-8 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="bg-amber-400 text-slate-950 font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">Enterprise Ready</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-white mb-2" data-en="Automated Fleet Excel & VBA Master Template" data-ar="نموذج الإكسل المتقدم لتحليل وإدارة الأساطيل (VBA)">Automated Fleet Excel & VBA Master Template</h4>
+                    <p class="text-xs text-indigo-200 leading-relaxed mb-4" data-en="Get the comprehensive offline financial model: Includes multi-tranche debt amortizations, IFRS 16 lease accounting schedules, salvage value sensitivity matrices, and Board-ready printable pitch decks." data-ar="احصل على نموذج الموازنات الشامل دون اتصال: جداول إهلاك الديون، القيود المحاسبية لمعيار IFRS 16، مصفوفة حساسية القيمة المتبقية، وعروض تنفيذية جاهزة للطباعة.">
+                        Includes IFRS 16 lease schedules, salvage risk matrices, and boardroom CapEx models.
+                    </p>
+                    <a href="https://gumroad.com" target="_blank" rel="noopener" class="w-full block text-center py-2.5 px-4 bg-blue-500 hover:bg-blue-400 text-white font-bold text-sm rounded-xl transition shadow-md">
+                        <span data-en="Download Master Excel Template ($29)" data-ar="شراء وتحميل النموذج المكتبي ($29)">Download Master Excel Template ($29)</span>
+                    </a>
+                </div>
+
+                <!-- Legal Disclaimer Box -->
+                <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-[11px] leading-relaxed">
+                    <strong class="font-bold" data-en="Regulatory & Financial Disclaimer:" data-ar="إخلاء مسؤولية تنظيمي ومالي:">Regulatory & Financial Disclaimer:</strong>
+                    <span data-en=" Calculations and metrics presented are for strategic planning and estimation purposes only. Corporate tax deductibility, VAT implications, and accounting treatment (under IFRS 16 / US GAAP ASC 842) vary by jurisdiction. Corporate controllers must verify with certified auditors." data-ar=" الحسابات والمؤشرات المعروضة هي لأغراض التخطيط الاستراتيجي والتقديري فقط. قد تختلف المعالجات الضريبية ومعايير المحاسبة الدولية (IFRS 16) بحسب الدولة وسياسات الشركة. يلزم الرجوع لمحاسب قانوني مرخص.">
+                        Calculations and metrics presented are for strategic planning and estimation purposes only. Corporate tax deductibility, VAT implications, and accounting treatment (under IFRS 16 / US GAAP ASC 842) vary by jurisdiction. Corporate controllers must verify with certified auditors.
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comprehensive SEO Breakdown & Knowledge Base Section -->
+        <article class="mt-16 bg-white border border-slate-200 rounded-2xl p-6 sm:p-10 text-slate-700 leading-relaxed max-w-7xl mx-auto shadow-sm">
+            <header class="border-b pb-6 mb-8">
+                <h2 class="text-2xl font-extrabold text-slate-900" data-en="Strategic Guide: Fleet Capital Expenditure (CapEx) vs. Operating Lease (OpEx)" data-ar="الدليل الاستراتيجي: الإنفاق الرأسمالي (CapEx) مقابل الإيجار التشغيلي (OpEx) للمركبات">Strategic Guide: Fleet Capital Expenditure (CapEx) vs. Operating Lease (OpEx)</h2>
+                <p class="text-sm text-slate-500 mt-1" data-en="Understanding the mechanics of Net Present Value, IFRS 16 impact, and cash preservation for enterprise fleets." data-ar="فهم معادلات صافي القيمة الحالية (NPV)، وتأثير معيار IFRS 16 وحماية التدفق النقدي للأساطيل التجارية.">Understanding the mechanics of Net Present Value, IFRS 16 impact, and cash preservation for enterprise fleets.</p>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 mb-2" data-en="1. The Total Cost of Ownership (TCO) Model" data-ar="١. نموذج التكلفة الإجمالية للملكية (TCO)">1. The Total Cost of Ownership (TCO) Model</h3>
+                    <p class="mb-3" data-en="Corporate fleet acquisition decisions cannot rely merely on sticker price versus monthly rental quotes. The true economic cost encompasses acquisition financing, scheduled maintenance cycles, tire replacement overhead, comprehensive insurance, administrative tracking, and terminal salvage price risk." data-ar="لا يمكن حصر قرار المفاضلة في أساطيل الشركات بمقارنة سعر الشراء مقابل القسط الشهري فقط؛ بل يجب قياس التكلفة الشاملة المتضمنة تمويل الشراء، جداول الصيانة، إهلاك الإطارات، التأمين التجاري، ومخاطر تقلب أسعار السيارات المستعملة بنهاية الخدمة.">
+                        Corporate fleet acquisition decisions cannot rely merely on sticker price versus monthly rental quotes. The true economic cost encompasses acquisition financing, scheduled maintenance cycles, tire replacement overhead, comprehensive insurance, administrative tracking, and terminal salvage price risk.
+                    </p>
+                    <p data-en="When purchasing outright or via bank debt, an enterprise takes full risk on the secondary market value of the vehicle after 3 to 5 years. In an operating lease, this residual risk remains completely with the fleet management leasing lessor." data-ar="في حالة الشراء المباشر أو التمويل البنكي، تتحمل المنشأة وحدها مخاطر انخفاض القيمة السوقية للسيارة المستعملة، بينما في الإيجار التشغيلي تنتقل هذه المخاطرة بالكامل إلى الشركة المؤجرة.">
+                        When purchasing outright or via bank debt, an enterprise takes full risk on the secondary market value of the vehicle after 3 to 5 years. In an operating lease, this residual risk remains completely with the fleet management leasing lessor.
+                    </p>
+                </div>
+
+                <div>
+                    <h3 class="text-base font-bold text-slate-900 mb-2" data-en="2. Discounted Cash Flows (NPV) & WACC" data-ar="٢. التدفقات النقدية المخصومة (NPV) وتكلفة التمويل">2. Discounted Cash Flows (NPV) & WACC</h3>
+                    <p class="mb-3" data-en="Money spent today is more expensive than money committed four years in the future. By applying your company's Weighted Average Cost of Capital (WACC), our engine calculates the Net Present Value (NPV) of all outflows under both options:" data-ar="النقد المصروف اليوم أعلى تكلفة من النقد الملتزم به مستقبلاً. عبر تطبيق المتوسط المرجح لتكلفة رأس المال (WACC)، تقوم حاستنا بخصم التدفقات النقدية المستقبلية لمعرفة القيمة الحالية الحقيقية للبديلين:">
+                        Money spent today is more expensive than money committed four years in the future. By applying your company's Weighted Average Cost of Capital (WACC), our engine calculates the Net Present Value (NPV) of all outflows under both options:
+                    </p>
+                    <div class="bg-slate-100 p-3 rounded-lg font-mono text-xs text-slate-800 mb-3">
+                        NPV = &Sigma; [ Net Outflow_t / (1 + WACC)^t ] - Day0_Equity
+                    </div>
+                    <p data-en="Preserving day-one liquidity through leasing enables companies to invest working capital into core business activities yielding higher margins than depreciating fleet assets." data-ar="يسمح الحفاظ على السيولة النقدية من خلال الإيجار بإعادة استثمار رأس المال العامل في النشاط التجاري الأساسي للشركة وتحقيق عوائد تفوق الاستثمار في أصول تشغيلية متناقصة القيمة.">
+                        Preserving day-one liquidity through leasing enables companies to invest working capital into core business activities yielding higher margins than depreciating fleet assets.
+                    </p>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="mt-10 border-t pt-8">
+                <h3 class="text-lg font-bold text-slate-900 mb-4" data-en="Frequently Asked Questions (Fleet Controllers & CFOs)" data-ar="الأسئلة الشائعة للمدراء الماليين ومدراء المشتريات">Frequently Asked Questions</h3>
+                
+                <div class="space-y-4 text-xs sm:text-sm">
+                    <div class="border border-slate-200 rounded-xl p-4">
+                        <h4 class="font-bold text-slate-900 mb-1" data-en="How does IFRS 16 affect lease vs buy?" data-ar="كيف يؤثر معيار المحاسبة الدولي IFRS 16 على قرار الشراء أو الاستئجار؟">How does IFRS 16 affect lease vs buy?</h4>
+                        <p class="text-slate-600 leading-relaxed" data-en="Under IFRS 16, virtually all leases (with minor exceptions for short-term or low-value items) must be recognized on the balance sheet as a Right-of-Use (ROU) Asset and a corresponding Lease Liability. While this reduces 'off-balance-sheet' financing, operating leasing still retains significant administrative and cash flow benefits." data-ar="بموجب معيار IFRS 16، يتم إدراج معظم عقود الإيجار في الميزانية العمومية كـ 'حق استخدام الأصل' مع التزام مقابل. ورغم انتهاء ميزة التمويل خارج الميزانية، يظل للإيجار التشغيلي فوائد حاسمة من حيث السيولة وتحييد مخاطر الصيانة وبيع المستعمل.">
+                            Under IFRS 16, virtually all leases must be recognized on balance sheet as a Right-of-Use (ROU) asset. However, operational and cash flow advantages remain distinct.
+                        </p>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl p-4">
+                        <h4 class="font-bold text-slate-900 mb-1" data-en="What is the Corporate Tax Shield formula applied?" data-ar="ما هي معادلة احتساب الدرع الضريبي للشركات؟">What is the Corporate Tax Shield formula applied?</h4>
+                        <p class="text-slate-600 leading-relaxed" data-en="In an outright purchase scenario, tax deductions typically arise from annual vehicle depreciation and loan interest payments. In an operating lease, the full operational lease expenditure is treated as an OPEX deduction against taxable corporate profits: Tax Shield = Deductible Expense * Corporate Tax Rate." data-ar="في خيار الشراء، ينشأ التوفير الضريبي من إهلاك الأصل البنكي ومن فوائد القرض. أما في خيار الإيجار، فيعتبر قسط الإيجار بالكامل مصروفاً تشغيلياً خاضعاً للخصم المباشر من الأرباح الخاضعة للضريبة: الوفر الضريبي = المصروف التشغيلي * نسبة الضريبة.">
+                            Tax shields reduce net cash outflow: Tax Shield = Allowable Expense * Corporate Income Tax Rate.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-auto bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4">
+            &copy; <span id="year"></span> Enterprise Fleet Calculators &bull; High-Performance B2B Financial Architecture.
+        </div>
+    </footer>
+
+    <!-- Calculation Engine & Scripts -->
+    <script>
+        let currentLang = 'en';
+
+        function formatCurr(num) {
+            return '$' + Math.round(num).toLocaleString();
+        }
+
+        function calculate() {
+            const fleetSize = Math.max(1, parseFloat(document.getElementById('fleetSize').value) || 1);
+            const years = parseInt(document.getElementById('horizonYears').value) || 4;
+            const months = years * 12;
+            const waccRate = (parseFloat(document.getElementById('discountRate').value) || 8.5) / 100;
+            const monthlyDiscount = Math.pow(1 + waccRate, 1/12) - 1;
+            
+            // Buy Params
+            const unitPrice = parseFloat(document.getElementById('unitBuyPrice').value) || 0;
+            const salvagePerCar = parseFloat(document.getElementById('salvageVal').value) || 0;
+            const downPct = (parseFloat(document.getElementById('downPaymentPct').value) || 0) / 100;
+            const loanApr = (parseFloat(document.getElementById('loanInterestRate').value) || 0) / 100;
+            const maintYearPerCar = parseFloat(document.getElementById('buyMaintAnnual').value) || 0;
+            const insurYearPerCar = parseFloat(document.getElementById('buyInsurAnnual').value) || 0;
+            const taxRate = (parseFloat(document.getElementById('taxShieldRate').value) || 0) / 100;
+
+            // Lease Params
+            const leaseMonthPerCar = parseFloat(document.getElementById('leaseMonthly').value) || 0;
+            const leaseUpfrontPerCar = parseFloat(document.getElementById('leaseUpfront').value) || 0;
+            const leaseExcessYearPerCar = parseFloat(document.getElementById('leaseExcessAnnual').value) || 0;
+
+            // --- BUY CALCULATION ---
+            const totalBuyCapex = unitPrice * fleetSize;
+            const downPayment = totalBuyCapex * downPct;
+            const loanPrincipal = totalBuyCapex - downPayment;
+            
+            // Loan monthly installment
+            const monthlyLoanRate = loanApr / 12;
+            let monthlyPmt = 0;
+            if (monthlyLoanRate > 0) {
+                monthlyPmt = loanPrincipal * (monthlyLoanRate * Math.pow(1 + monthlyLoanRate, months)) / (Math.pow(1 + monthlyLoanRate, months) - 1);
+            } else {
+                monthlyPmt = loanPrincipal / months;
+            }
+
+            const totalLoanPaid = (monthlyPmt * months);
+            const totalInterestPaid = totalLoanPaid - loanPrincipal;
+            const totalMaintBuy = (maintYearPerCar * years) * fleetSize;
+            const totalInsurBuy = (insurYearPerCar * years) * fleetSize;
+            const totalSalvage = salvagePerCar * fleetSize;
+            
+            // Depreciation (Straight line to salvage)
+            const totalDepreciation = totalBuyCapex - totalSalvage;
+            const buyTaxShield = (totalDepreciation + totalInterestPaid + totalMaintBuy + totalInsurBuy) * taxRate;
+            const netBuyTco = downPayment + totalLoanPaid + totalMaintBuy + totalInsurBuy - totalSalvage - buyTaxShield;
+
+            // Buy NPV calculation
+            let buyNpv = downPayment;
+            let remainingPrincipal = loanPrincipal;
+            for (let m = 1; m <= months; m++) {
+                const intExp = remainingPrincipal * monthlyLoanRate;
+                remainingPrincipal -= (monthlyPmt - intExp);
+                const operatingOutflow = (maintYearPerCar / 12 * fleetSize) + (insurYearPerCar / 12 * fleetSize);
+                const monthlyTaxBenefit = ((totalDepreciation / months) + intExp + operatingOutflow) * taxRate;
+                const netMonthlyOutflow = monthlyPmt + operatingOutflow - monthlyTaxBenefit;
+                buyNpv += netMonthlyOutflow / Math.pow(1 + monthlyDiscount, m);
+            }
+            buyNpv -= (totalSalvage / Math.pow(1 + monthlyDiscount, months));
+
+            // --- LEASE CALCULATION ---
+            const upfrontLeaseTotal = leaseUpfrontPerCar * fleetSize;
+            const totalMonthlyLeasePaid = (leaseMonthPerCar * fleetSize) * months;
+            const totalLeaseExcess = (leaseExcessYearPerCar * years) * fleetSize;
+            const grossLeaseCost = upfrontLeaseTotal + totalMonthlyLeasePaid + totalLeaseExcess;
+            const leaseTaxShield = grossLeaseCost * taxRate;
+            const netLeaseTco = grossLeaseCost - leaseTaxShield;
+
+            // Lease NPV calculation
+            let leaseNpv = upfrontLeaseTotal;
+            for (let m = 1; m <= months; m++) {
+                const monthlyGross = (leaseMonthPerCar * fleetSize) + (leaseExcessYearPerCar / 12 * fleetSize);
+                const netOutflow = monthlyGross * (1 - taxRate);
+                leaseNpv += netOutflow / Math.pow(1 + monthlyDiscount, m);
+            }
+
+            // Update Visuals
+            document.getElementById('resBuyTco').textContent = formatCurr(netBuyTco);
+            document.getElementById('resBuyNpv').textContent = 'NPV: ' + formatCurr(buyNpv);
+            document.getElementById('resLeaseTco').textContent = formatCurr(netLeaseTco);
+            document.getElementById('resLeaseNpv').textContent = 'NPV: ' + formatCurr(leaseNpv);
+
+            // Update Detailed Row Items
+            document.getElementById('dtlBuyCapEx').textContent = formatCurr(downPayment);
+            document.getElementById('dtlLeaseCapEx').textContent = formatCurr(upfrontLeaseTotal);
+            document.getElementById('dtlBuyMaint').textContent = formatCurr(totalMaintBuy);
+            document.getElementById('dtlBuyInsur').textContent = formatCurr(totalInsurBuy);
+            document.getElementById('dtlBuySalvage').textContent = '-' + formatCurr(totalSalvage);
+            document.getElementById('dtlBuyTaxShield').textContent = '-' + formatCurr(buyTaxShield);
+            document.getElementById('dtlLeaseTaxShield').textContent = '-' + formatCurr(leaseTaxShield);
+
+            // Decision logic
+            const recCard = document.getElementById('recommendationCard');
+            const badge = document.getElementById('winningBadge');
+            const recTitle = document.getElementById('recommendationText');
+            const recReason = document.getElementById('recommendationReason');
+
+            const savings = Math.abs(netBuyTco - netLeaseTco);
+            if (netLeaseTco < netBuyTco) {
+                badge.textContent = currentLang === 'en' ? 'LEASE RECOMMENDED' : 'يُنصح بالإيجار';
+                badge.className = "px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-100 text-emerald-800";
+                recTitle.textContent = currentLang === 'en' 
+                    ? `Leasing saves ${formatCurr(savings)} over ${years} years`
+                    : `الاستئجار يوفر ${formatCurr(savings)} على مدى ${years} سنوات`;
+                recReason.textContent = currentLang === 'en'
+                    ? 'Operating lease lowers initial CapEx exposure, hedges against used vehicle price drops, and yields immediate operational tax deductions.'
+                    : 'يحمي الإيجار التشغيلي السيولة النقدية، وينفي مخاطر انخفاض قيمة بيع السيارات، مع توفير خصومات ضريبية تشغيلية أعلى.';
+            } else {
+                badge.textContent = currentLang === 'en' ? 'PURCHASE RECOMMENDED' : 'يُنصح بالشراء';
+                badge.className = "px-2.5 py-1 text-xs font-bold rounded-full bg-blue-100 text-blue-800";
+                recTitle.textContent = currentLang === 'en'
+                    ? `Purchasing saves ${formatCurr(savings)} over ${years} years`
+                    : `الشراء يوفر ${formatCurr(savings)} على مدى ${years} سنوات`;
+                recReason.textContent = currentLang === 'en'
+                    ? 'Outright ownership and secondary market salvage recovery outweigh ongoing monthly rental premiums and interest financing charges.'
+                    : 'استرداد قيمة بيع السيارات لاحقاً وتملك الأصول يوفر تكاليف مقارنة بأقساط الإيجار التراكمية الطويلة.';
+            }
+        }
+
+        // Bilingual Toggle
+        document.getElementById('langToggle').addEventListener('click', function() {
+            const html = document.documentElement;
+            if (currentLang === 'en') {
+                currentLang = 'ar';
+                html.setAttribute('dir', 'rtl');
+                html.setAttribute('lang', 'ar');
+                this.textContent = 'English';
+            } else {
+                currentLang = 'en';
+                html.setAttribute('dir', 'ltr');
+                html.setAttribute('lang', 'en');
+                this.textContent = 'العربية';
+            }
+
+            document.querySelectorAll('[data-en]').forEach(el => {
+                el.textContent = currentLang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-ar');
+            });
+            calculate();
+        });
+
+        // CSV Export
+        function exportCSV() {
+            const fleetSize = document.getElementById('fleetSize').value;
+            const horizon = document.getElementById('horizonYears').value;
+            const buyTco = document.getElementById('resBuyTco').textContent.replace(/[^0-9.-]+/g,"");
+            const leaseTco = document.getElementById('resLeaseTco').textContent.replace(/[^0-9.-]+/g,"");
+            
+            let csv = "Metric,Value\n";
+            csv += `Fleet Size (Vehicles),${fleetSize}\n`;
+            csv += `Analysis Horizon (Years),${horizon}\n`;
+            csv += `Total Net Cost to Own (Purchase),$${buyTco}\n`;
+            csv += `Total Net Cost to Lease,$${leaseTco}\n`;
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Fleet_Lease_vs_Buy_Analysis_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Live Input Observers
+        const inputs = document.querySelectorAll('input, select');
+        inputs.forEach(input => {
+            input.addEventListener('input', calculate);
+        });
+
+        document.getElementById('year').textContent = new Date().getFullYear();
+        calculate();
+    </script>
+</body>
+</html>

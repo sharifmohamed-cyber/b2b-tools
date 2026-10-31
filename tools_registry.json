@@ -33,5 +33,12 @@
     "title_ar": "حاسبة ضريبة القيمة المضافة وهامش ربح الفواتير التجارية",
     "description_en": "Calculate GCC VAT (15% & 5%), gross margins, markup, net profit, and tax-inclusive invoice pricing instantly. Free B2B quotation & margin tool.",
     "date": "2026-10-30"
+  },
+  {
+    "slug": "fleet-lease-vs-buy-roi-calculator",
+    "title_en": "Commercial Fleet Lease vs. Buy ROI Calculator",
+    "title_ar": "حاسبة العائد الاستثماري لمقارنة شراء واستئجار أساطيل المركبات للشركات",
+    "description_en": "Compare commercial vehicle leasing vs purchasing ROI, TCO, tax shields, and salvage values for corporate fleets. Export executive PDF/CSV reports.",
+    "date": "2026-10-31"
   }
 ]
