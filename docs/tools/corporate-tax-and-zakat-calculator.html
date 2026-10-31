@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corporate Tax & Zakat Provision Calculator</title>
+  <meta name="description" content="Calculate estimated Corporate Income Tax and Zakat base provisions for KSA and GCC entities instantly.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', 'Cairo', sans-serif; }
+    .font-cairo { font-family: 'Cairo', sans-serif; }
+    [dir="rtl"] .ltr-only { direction: ltr; text-align: left; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Sticky Upsell Banner -->
+  <aside class="sticky top-0 z-50 bg-gradient-to-r from-emerald-900 via-slate-900 to-emerald-950 text-white shadow-md border-b border-emerald-500/30 px-4 py-2.5 transition-all">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-500 text-slate-950 uppercase tracking-wide">NEW</span>
+        <p class="font-medium">
+          <span class="lang-en">Need audit-ready statutory financial models? Get the</span>
+          <span class="lang-ar hidden">هل تحتاج نماذج مالية معتمدة للتدقيق؟ احصل على</span>
+          <strong class="text-emerald-400 font-semibold"> Complete Offline Automated Excel &amp; VBA Master Template ($29)</strong>
+        </p>
+      </div>
+      <a href="https://gumroad.com" target="_blank" rel="noopener" class="inline-flex items-center justify-center px-3.5 py-1.5 rounded-md bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold transition shadow-sm text-xs">
+        <span class="lang-en">Instant Download &rarr;</span>
+        <span class="lang-ar hidden">تحميل فوري &larr;</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Header Navigation -->
+  <header class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <div class="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-black text-xl shadow-inner">Z</div>
+        <div>
+          <span class="text-lg font-bold tracking-tight text-slate-900 block leading-none">TaxZakat<span class="text-emerald-600">Pro</span></span>
+          <span class="text-[11px] text-slate-500 font-medium">KSA &amp; GCC Statutory Provision Engine</span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <button id="langToggle" class="px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+          <span id="langLabel">العربية</span>
+        </button>
+        <button onclick="window.print()" class="hidden sm:inline-flex items-center px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100 transition gap-1.5">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          <span class="lang-en">Print PDF</span>
+          <span class="lang-ar hidden">طباعة PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+    <!-- Intro Heading -->
+    <div class="mb-8 text-center max-w-3xl mx-auto">
+      <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
+        <span class="lang-en">Corporate Tax &amp; Zakat Provision Calculator</span>
+        <span class="lang-ar hidden">حاسبة مخصص ضريبة الدخل والزكاة التقديرية للشركات</span>
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600 leading-relaxed">
+        <span class="lang-en">Real-time statutory tax and Zakat provisioning model for mixed-ownership entities in Saudi Arabia (ZATCA) and GCC jurisdictions.</span>
+        <span class="lang-ar hidden">نموذج مالي لحساب مخصصات الزكاة وضريبة الدخل للشركات المختلطة وفق معايير هيئة الزكاة والضريبة والجمارك (ZATCA) ودول الخليج.</span>
+      </p>
+    </div>
+
+    <!-- Calculator Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start mb-12">
+      
+      <!-- Form Inputs Column (7 Cols) -->
+      <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span class="lang-en">1. Corporate Structure &amp; Calendar</span>
+            <span class="lang-ar hidden">١. هيكل الملكية والتقويم المالي</span>
+          </h2>
+          <button id="resetBtn" class="text-xs font-semibold text-slate-400 hover:text-slate-600 transition">
+            <span class="lang-en">Reset Values</span>
+            <span class="lang-ar hidden">إعادة ضبط</span>
+          </button>
+        </div>
+
+        <!-- Ownership & Calendar row -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+              <span class="lang-en">Saudi / GCC Ownership (%)</span>
+              <span class="lang-ar hidden">نسبة الشركاء السعوديين / الخليجيين (%)</span>
+            </label>
+            <div class="relative">
+              <input type="number" id="gccShare" min="0" max="100" step="0.01" value="60" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-semibold text-slate-900 pr-8">
+              <span class="absolute inset-y-0 right-3 flex items-center text-xs font-bold text-slate-400">%</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">
+              <span class="lang-en">Subject to Zakat regulations.</span>
+              <span class="lang-ar hidden">تخضع لأحكام جباية الزكاة الشرعية.</span>
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+              <span class="lang-en">Foreign Ownership (%)</span>
+              <span class="lang-ar hidden">نسبة الشركاء الأجانب (%)</span>
+            </label>
+            <div class="relative">
+              <input type="number" id="foreignShare" min="0" max="100" step="0.01" value="40" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-semibold text-slate-900 pr-8 bg-slate-50" readonly>
+              <span class="absolute inset-y-0 right-3 flex items-center text-xs font-bold text-slate-400">%</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-1">
+              <span class="lang-en">Subject to 20% Income Tax.</span>
+              <span class="lang-ar hidden">تخضع لضريبة الدخل بنسبة 20%.</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+              <span class="lang-en">Financial Year Calendar</span>
+              <span class="lang-ar hidden">التقويم المالي المعتمد</span>
+            </label>
+            <select id="calendarType" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-semibold text-slate-900 bg-white">
+              <option value="gregorian" selected>Gregorian (365 days - 2.5778%)</option>
+              <option value="hijri">Hijri (354 days - 2.5000%)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+              <span class="lang-en">Statutory Tax Rate</span>
+              <span class="lang-ar hidden">نسبة ضريبة الدخل النظامية</span>
+            </label>
+            <input type="text" value="20.00% (ZATCA Default)" disabled class="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-slate-100 text-slate-600 text-sm font-semibold">
+          </div>
+        </div>
+
+        <!-- Financial Adjustments Section -->
+        <div class="pt-2 border-t border-slate-100">
+          <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span class="lang-en">2. Income Statement (P&amp;L) Inputs (SAR)</span>
+            <span class="lang-ar hidden">٢. مدخلات قائمة الدخل (الأرباح والخسائر)</span>
+          </h2>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                <span class="lang-en">Accounting Net Profit / (Loss)</span>
+                <span class="lang-ar hidden">صافي الربح / (الخسارة) المحاسبي قبل الضريبة</span>
+              </label>
+              <div class="relative">
+                <input type="number" id="netProfit" value="2500000" step="1000" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-semibold text-slate-900 pl-12">
+                <span class="absolute inset-y-0 left-3 flex items-center text-xs font-bold text-slate-400">SAR</span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  <span class="lang-en">Non-Deductible Expenses (+)</span>
+                  <span class="lang-ar hidden">المصاريف غير جائزة الحسم (+)</span>
+                </label>
+                <input type="number" id="taxAdditions" value="180000" step="500" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium text-slate-900">
+                <span class="text-[10px] text-slate-400">Provisions, penalties, unapproved donations.</span>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  <span class="lang-en">Statutory Deductions &amp; Losses (-)</span>
+                  <span class="lang-ar hidden">الحسومات النظامية والخسائر المرحلة (-)</span>
+                </label>
+                <input type="number" id="taxDeductions" value="50000" step="500" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium text-slate-900">
+                <span class="text-[10px] text-slate-400">Depreciation variance, qualifying dividends.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Balance Sheet (Zakat Base) Section -->
+        <div class="pt-2 border-t border-slate-100">
+          <h2 class="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span class="lang-en">3. Balance Sheet Inputs for Zakat Base (SAR)</span>
+            <span class="lang-ar hidden">٣. بنود الميزانية العمومية لحساب الوعاء الزكوي</span>
+          </h2>
+
+          <div class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  <span class="lang-en">Paid-up Capital &amp; Reserves</span>
+                  <span class="lang-ar hidden">رأس المال والاحتياطيات النظامية</span>
+                </label>
+                <input type="number" id="equityCapital" value="6000000" step="5000" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium text-slate-900">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  <span class="lang-en">Long-Term Debt &amp; Provisions</span>
+                  <span class="lang-ar hidden">الديون طويلة الأجل والمخصصات المضافة</span>
+                </label>
+                <input type="number" id="zakatLiabilities" value="2200000" step="5000" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium text-slate-900">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  <span class="lang-en">Net Fixed Assets (-)</span>
+                  <span class="lang-ar hidden">صافي الأصول الثابتة المقتطعة (-)</span>
+                </label>
+                <input type="number" id="netFixedAssets" value="3100000" step="5000" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium text-slate-900">
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  <span class="lang-en">Non-Current Investments (-)</span>
+                  <span class="lang-ar hidden">استثمارات خارجية طويلة الأجل (-)</span>
+                </label>
+                <input type="number" id="deductibleInvestments" value="800000" step="5000" class="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium text-slate-900">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary & Output Cards Column (5 Cols) -->
+      <div class="lg:col-span-5 space-y-6 sticky top-16">
+        
+        <!-- Main Results Card -->
+        <div class="bg-white rounded-2xl shadow-lg border border-emerald-100 overflow-hidden">
+          <div class="bg-gradient-to-br from-slate-900 to-emerald-950 p-6 text-white">
+            <span class="text-[11px] font-bold uppercase tracking-widest text-emerald-400 block mb-1">
+              <span class="lang-en">Estimated Total Statutory Liability</span>
+              <span class="lang-ar hidden">إجمالي المخصص النظامي المقدر</span>
+            </span>
+            <div class="flex items-baseline space-x-2 rtl:space-x-reverse">
+              <span class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white" id="totalProvision">SAR 0</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-2 flex justify-between">
+              <span>Effective Tax/Zakat Rate:</span>
+              <strong id="effectiveRate" class="text-emerald-300 font-bold">0.00%</strong>
+            </p>
+          </div>
+
+          <!-- Breakdown details -->
+          <div class="p-6 space-y-4 divide-y divide-slate-100 text-sm">
+            
+            <!-- Zakat Share Breakdown -->
+            <div class="pt-3 first:pt-0">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-slate-800 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span class="lang-en">Zakat Provision (Saudi/GCC)</span>
+                  <span class="lang-ar hidden">مخصص الزكاة (الشركاء الخليجيين)</span>
+                </span>
+                <span id="zakatAmount" class="font-extrabold text-slate-900 text-base">SAR 0</span>
+              </div>
+              <div class="text-xs text-slate-500 space-y-0.5">
+                <div class="flex justify-between"><span>Calculated Zakat Base:</span><span id="dispZakatBase">SAR 0</span></div>
+                <div class="flex justify-between"><span>Applicable Rate:</span><span id="dispZakatRate">2.5778%</span></div>
+                <div class="flex justify-between"><span>Saudi/GCC Quota:</span><span id="dispGccQuota">60%</span></div>
+              </div>
+            </div>
+
+            <!-- Corporate Tax Breakdown -->
+            <div class="pt-4">
+              <div class="flex justify-between items-center mb-1">
+                <span class="font-bold text-slate-800 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+                  <span class="lang-en">Corporate Income Tax (Foreign)</span>
+                  <span class="lang-ar hidden">ضريبة الدخل (الشركاء الأجانب)</span>
+                </span>
+                <span id="taxAmount" class="font-extrabold text-slate-900 text-base">SAR 0</span>
+              </div>
+              <div class="text-xs text-slate-500 space-y-0.5">
+                <div class="flex justify-between"><span>Adjusted Tax Profit:</span><span id="dispAdjustedProfit">SAR 0</span></div>
+                <div class="flex justify-between"><span>Foreign Tax Rate:</span><span>20.00%</span></div>
+                <div class="flex justify-between"><span>Foreign Quota:</span><span id="dispForeignQuota">40%</span></div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="pt-5 flex flex-col gap-2.5">
+              <button id="exportCsvBtn" class="w-full py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl transition text-xs flex items-center justify-center gap-2">
+                <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span class="lang-en">Export Audit Breakdown (CSV)</span>
+                <span class="lang-ar hidden">تصدير تقرير التدقيق (CSV)</span>
+              </button>
+
+              <!-- Gumroad Upsell Card -->
+              <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 mt-2">
+                <div class="flex items-start gap-3">
+                  <div class="p-2 bg-amber-500 rounded-lg text-white font-bold text-xs">XLS</div>
+                  <div class="space-y-1">
+                    <h4 class="text-xs font-bold text-amber-950 uppercase tracking-wide">
+                      <span class="lang-en">Offline Master Excel &amp; VBA Model ($29)</span>
+                      <span class="lang-ar hidden">نموذج الإكسل المتقدم والماكرو ($29)</span>
+                    </h4>
+                    <p class="text-[11px] text-amber-800 leading-normal">
+                      <span class="lang-en">Includes ZATCA ERV schedules, WHT tracker, multi-year loss carryforwards, and certified IFRS disclosure templates.</span>
+                      <span class="lang-ar hidden">يتضمن جداول الربط الإلكتروني، متابعة ضريبة الاستقطاع، ترحيل الخسائر، وإفصاحات معايير IFRS.</span>
+                    </p>
+                  </div>
+                </div>
+                <a href="https://gumroad.com" target="_blank" rel="noopener" class="mt-3 block text-center py-2 px-4 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-xs transition shadow-sm">
+                  <span class="lang-en">Get Master Excel Suite ($29) &rarr;</span>
+                  <span class="lang-ar hidden">احصل على حقيبة الإكسل الشاملة ($29) &larr;</span>
+                </a>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- Mandatory Compliance Disclaimer Box -->
+        <div class="p-4 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 text-xs leading-relaxed">
+          <div class="flex items-start gap-2.5">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="space-y-1">
+              <p class="font-bold text-slate-800">
+                <span class="lang-en">Statutory Estimation Disclaimer</span>
+                <span class="lang-ar hidden">إخلاء مسؤولية تنظيمي وقانوني</span>
+              </p>
+              <p>
+                <span class="lang-en">Calculations are indicative estimates intended for internal budget planning only. They do not constitute official statutory audit opinions or ZATCA/tax rulings. Figures must be certified by a licensed chartered accountant (SOCPA) against current regulatory executive bylaws before filing.</span>
+                <span class="lang-ar hidden">هذه الحسابات تقديرية مخصصة لأغراض التخطيط المالي الداخلي فقط ولا تغني عن الاستشارة المهنية أو الفحص الضريبي النظامي. يجب مراجعة واعتماد الإقرارات من قبل محاسب قانوني مرخص ومطابقتها مع اللوائح التنفيذية لهيئة الزكاة والضريبة والجمارك.</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 800+ Word Authority Guide & Documentation Section -->
+    <section class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 text-slate-700 space-y-10 mt-12">
+      
+      <!-- Article Title -->
+      <div class="border-b border-slate-200 pb-6">
+        <h2 class="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-3">
+          <span class="lang-en">Executive Guide: Corporate Tax &amp; Zakat Computation in KSA &amp; GCC</span>
+          <span class="lang-ar hidden">الدليل المهني: احتساب ضريبة الدخل والزكاة للشركات في المملكة ودول الخليج</span>
+        </h2>
+        <p class="text-sm text-slate-500">
+          <span class="lang-en">Authored for Chief Financial Officers, Tax Directors, Finance Managers, and Chartered Accountants operating under ZATCA guidelines.</span>
+          <span class="lang-ar hidden">مخصص للمدراء الماليين ومدراء الضرائب والمحاسبين القانونيين العاملين وفق تعليمات هيئة الزكاة والضريبة والجمارك.</span>
+        </p>
+      </div>
+
+      <!-- Section 1: Overview of Mixed Entities -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-bold text-slate-900">
+          <span class="lang-en">1. The Dual Tax and Zakat Regime for Mixed Ownership Entities</span>
+          <span class="lang-ar hidden">١. النظام المزدوج (الزكاة وضريبة الدخل) للكيانات المختلطة</span>
+        </h3>
+        <p class="text-sm sm:text-base leading-relaxed">
+          <span class="lang-en">In the Kingdom of Saudi Arabia and various member jurisdictions across the Gulf Cooperation Council (GCC), corporate taxation operates on a dual-framework statutory mechanism. Rather than assessing an organization solely based on its geographic registration or total revenue, corporate liabilities are determined based on the legal nationality of the ultimate beneficial owners (shareholders).</span>
+          <span class="lang-ar hidden">في المملكة العربية السعودية والعديد من دول مجلس التعاون الخليجي، تعتمد منظومة الالتزامات المالية للشركات على نموذج مزدوج. فلا يحدد التكليف المالي بحسب المقر الجغرافي فقط، بل استناداً إلى جنسية الشركاء والملاك النهائيين المسجلين في عقد التأسيس.</span>
+        </p>
+        <p class="text-sm sm:text-base leading-relaxed">
+          <span class="lang-en">For entities having both Saudi/GCC nationals and foreign non-GCC investors, profits and equity bases are apportioned strictly pro-rata. The portion of adjusted taxable profit attributable to the non-Saudi/non-GCC partner is subjected to Corporate Income Tax at the statutory rate of <strong>20.00%</strong>. Concurrently, the portion attributable to the Saudi or GCC national partner is subjected to Zakat calculated at <strong>2.5778%</strong> for Gregorian calendar years or <strong>2.5000%</strong> for Hijri calendar years on the company's Zakat Base.</span>
+          <span class="lang-ar hidden">بالنسبة للشركات المختلطة التي تضم شركاء سعوديين وخليجيين إلى جانب مستثمرين أجانب، يتم تقسيم النتائج المالية تناسبياً. يخضع نصيب الشريك الأجنبي من صافي الربح المعدل لضريبة الدخل بمعدل <strong>20%</strong>، بينما يخضع نصيب الشريك السعودي أو الخليجي للزكاة الشرعية بنسبة <strong>2.5778%</strong> للسنوات الميلادية أو <strong>2.500%</strong> للسنوات الهجرية من الوعاء الزكوي.</span>
+        </p>
+      </div>
+
+      <!-- Section 2: Mathematical Formulas -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold text-slate-900">
+          <span class="lang-en">2. Mathematical Formulations &amp; Algorithmic Logic</span>
+          <span class="lang-ar hidden">٢. الصياغة الرياضية والخوارزمية المحاسبية المعتمدة</span>
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs sm:text-sm">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="font-bold text-emerald-800 mb-2 uppercase tracking-wide">Income Tax Formula (Foreign Share)</h4>
+            <pre class="bg-white p-3 rounded border border-slate-200 text-slate-800 overflow-x-auto text-[11px] leading-relaxed">
+Adjusted Net Profit = Accounting Net Profit
+                      + Disallowed Additions
+                      - Permissible Deductions
+
+Taxable Base (Foreign) = Adjusted Net Profit × Foreign Share %
+Corporate Tax Liability = Taxable Base × 20.00%</pre>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="font-bold text-emerald-800 mb-2 uppercase tracking-wide">Zakat Base Formula (Indirect Method)</h4>
+            <pre class="bg-white p-3 rounded border border-slate-200 text-slate-800 overflow-x-auto text-[11px] leading-relaxed">
+Zakat Base = Paid-Up Capital
+             + Retained Earnings &amp; Statutory Reserves
+             + Long-Term Debt / Provisions
+             - Net Fixed Assets (Net Book Value)
+             - Long-Term Non-Trading Investments
+             + Adjusted Profit for the Year
+
+Zakat Liability = Zakat Base × GCC Share % × 2.5778%</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: In-Depth Add-backs and Deductions -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-bold text-slate-900">
+          <span class="lang-en">3. Common Audit Add-backs and Deductions under ZATCA Bylaws</span>
+          <span class="lang-ar hidden">٣. أبرز بنود الردود والحسومات المعتمدة لدى هيئة الزكاة (ZATCA)</span>
+        </h3>
+        <p class="text-sm sm:text-base leading-relaxed">
+          <span class="lang-en">A critical area of scrutiny during tax inspections relates to reconciliations between statutory book profit under IFRS and taxable net profit:</span>
+          <span class="lang-ar hidden">تعتبر مرحلة التسوية بين الربح الدفتري وفق المعايير الدولية (IFRS) والربح الخاضع للضريبة أو الوعاء الزكوي أهم محاور الفحص الضريبي:</span>
+        </p>
+        <ul class="list-disc list-inside space-y-1.5 text-xs sm:text-sm pl-2 text-slate-600">
+          <li><strong>Non-allowable Provisions:</strong> General bad debt provisions, inventory obsolescence provisions, and unutilized accruals are disallowed until actually realized or written off according to formal legal criteria.</li>
+          <li><strong>Depreciation Variances:</strong> Accelerated book depreciation exceeding standard statutory maximum depreciation percentages approved by ZATCA must be added back to taxable income.</li>
+          <li><strong>Excessive Employee Benefits:</strong> Managerial end-of-service accruals exceeding statutory Labor Law calculations or unapproved private pension schemes.</li>
+          <li><strong>Government Penalties:</strong> Statutory fines, labor inspection sanctions, traffic violations, and late tax filing penalties cannot be claimed as tax-deductible operational expenditures.</li>
+          <li><strong>Loss Carryforward Ceiling:</strong> Tax losses carried forward from past accounting periods can only offset up to a maximum of 25% of the current period's adjusted net profit.</li>
+        </ul>
+      </div>
+
+      <!-- Section 4: Frequently Asked Questions (Bilingual) -->
+      <div class="space-y-4 pt-4 border-t border-slate-200">
+        <h3 class="text-lg font-bold text-slate-900">
+          <span class="lang-en">4. Frequently Asked Questions (FAQ)</span>
+          <span class="lang-ar hidden">٤. الأسئلة الشائعة حول الزكاة وضريبة الشركات</span>
+        </h3>
+        
+        <div class="space-y-3">
+          <div class="border border-slate-200 rounded-xl p-4">
+            <h4 class="font-bold text-slate-800 text-sm mb-1">
+              <span class="lang-en">Why is the Zakat rate 2.5778% instead of 2.500%?</span>
+              <span class="lang-ar hidden">لماذا يتم احتساب الزكاة بنسبة 2.5778% بدلاً من 2.5%؟</span>
+            </h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              <span class="lang-en">Islamic jurisprudence prescribes 2.50% based on the lunar Hijri year (354 days). When a company operates on the Gregorian accounting calendar (typically 365 or 366 days), the rate is mathematically calibrated as: 2.5% × (365 / 354) = 2.5778% to account for the additional 11 calendar days.</span>
+              <span class="lang-ar hidden">النسبة الشرعية المقررة هي 2.5% للسنة الهجرية (354 يوماً). وحيث إن غالبية الشركات تعتمد السنة الميلادية (365 يوماً)، فإن النسبة تُعدل رياضياً إلى: 2.5% × (365 ÷ 354) = 2.5778% للتعويض عن الأحد عشر يوماً الإضافية.</span>
+            </p>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4">
+            <h4 class="font-bold text-slate-800 text-sm mb-1">
+              <span class="lang-en">What happens if the calculated Zakat Base is negative?</span>
+              <span class="lang-ar hidden">ماذا يحدث إذا كان الوعاء الزكوي المحسوب سالباً؟</span>
+            </h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              <span class="lang-en">Under ZATCA regulations, if the calculated indirect Zakat base results in a negative figure, the minimum Zakat base is established equal to the company's adjusted net profit for the year. A company that posts profits cannot pay zero Zakat simply because its deductible fixed assets exceed equity.</span>
+              <span class="lang-ar hidden">وفقاً للائحة التنفيذية لجباية الزكاة، إذا كان الوعاء الزكوي المحسوب بالمعادلة غير المباشرة سالباً، يكون الحد الأدنى للوعاء هو صافي الربح المعدل للعام نفسه، فلا يجوز لشركة حققت أرباحاً أن تقدم وعاءً صفرياً بسبب زيادة الأصول الثابتة.</span>
+            </p>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4">
+            <h4 class="font-bold text-slate-800 text-sm mb-1">
+              <span class="lang-en">Are listed joint stock companies on the Tadawul exchange treated differently?</span>
+              <span class="lang-ar hidden">هل تعامل الشركات المساهمة المدرجة في السوق المالية (تداول) بشكل مختلف؟</span>
+            </h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              <span class="lang-en">Yes. Listed companies on the Saudi Exchange (Tadawul) are entirely subject to Zakat rules on 100% of their base, regardless of the presence of non-Saudi public shareholders, with specific exceptions for founding foreign strategic partners in banking or petrochemical conglomerates.</span>
+              <span class="lang-ar hidden">نعم، تخضع الشركات المساهمة المدرجة في السوق المالية السعودية (تداول) للزكاة بنسبة 100% من وعائها بغض النظر عن جنسية المساهمين المتداولين، مع استثناءات محدودة تخص الحصص الاستراتيجية التأسيسية الأجنبية في بعض القطاعات.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 mt-16 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 space-y-2">
+      <p>&copy; <span id="currentYear"></span> TaxZakatPro Enterprise Solutions. All rights reserved.</p>
+      <p class="text-slate-400">Professional Financial Engineering, Auditing Tools, and Compliance Architecture.</p>
+    </div>
+  </footer>
+
+  <!-- Vanilla JS Calculation Engine -->
+  <script>
+    (function() {
+      // Elements
+      const gccShareInput = document.getElementById('gccShare');
+      const foreignShareInput = document.getElementById('foreignShare');
+      const calendarTypeInput = document.getElementById('calendarType');
+      const netProfitInput = document.getElementById('netProfit');
+      const taxAdditionsInput = document.getElementById('taxAdditions');
+      const taxDeductionsInput = document.getElementById('taxDeductions');
+      const equityCapitalInput = document.getElementById('equityCapital');
+      const zakatLiabilitiesInput = document.getElementById('zakatLiabilities');
+      const netFixedAssetsInput = document.getElementById('netFixedAssets');
+      const deductibleInvestmentsInput = document.getElementById('deductibleInvestments');
+
+      // Output Elements
+      const totalProvisionEl = document.getElementById('totalProvision');
+      const zakatAmountEl = document.getElementById('zakatAmount');
+      const taxAmountEl = document.getElementById('taxAmount');
+      const effectiveRateEl = document.getElementById('effectiveRate');
+      const dispZakatBaseEl = document.getElementById('dispZakatBase');
+      const dispZakatRateEl = document.getElementById('dispZakatRate');
+      const dispGccQuotaEl = document.getElementById('dispGccQuota');
+      const dispAdjustedProfitEl = document.getElementById('dispAdjustedProfit');
+      const dispForeignQuotaEl = document.getElementById('dispForeignQuota');
+
+      // Dynamic formatting
+      const fmt = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'SAR',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+      function calculate() {
+        let gcc = parseFloat(gccShareInput.value) || 0;
+        if (gcc < 0) gcc = 0;
+        if (gcc > 100) gcc = 100;
+        
+        const foreign = Math.max(0, 100 - gcc);
+        foreignShareInput.value = foreign.toFixed(2);
+
+        const isGregorian = calendarTypeInput.value === 'gregorian';
+        const zakatRate = isGregorian ? 0.025778 : 0.025000;
+        const corporateTaxRate = 0.20;
+
+        const netProfit = parseFloat(netProfitInput.value) || 0;
+        const additions = parseFloat(taxAdditionsInput.value) || 0;
+        const deductions = parseFloat(taxDeductionsInput.value) || 0;
+
+        // Taxable Profit (Adjusted)
+        const adjustedNetProfit = Math.max(0, netProfit + additions - deductions);
+
+        // Zakat Base (Indirect balance-sheet method)
+        const equity = parseFloat(equityCapitalInput.value) || 0;
+        const liabilities = parseFloat(zakatLiabilitiesInput.value) || 0;
+        const fixedAssets = parseFloat(netFixedAssetsInput.value) || 0;
+        const investments = parseFloat(deductibleInvestmentsInput.value) || 0;
+
+        // Base = Equity + LongTerm Debt/Provisions - Net Fixed Assets - Investments + Adjusted Profit
+        let calculatedBase = (equity + liabilities) - (fixedAssets + investments) + adjustedNetProfit;
+        
+        // Minimum base constraint: cannot be less than adjusted net profit if company was profitable
+        let finalZakatBase = calculatedBase;
+        if (adjustedNetProfit > 0 && finalZakatBase < adjustedNetProfit) {
+          finalZakatBase = adjustedNetProfit;
+        }
+        if (finalZakatBase < 0) finalZakatBase = 0;
+
+        // Pro-rata allocations
+        const foreignPortionProfit = adjustedNetProfit * (foreign / 100);
+        const corporateTaxProvision = foreignPortionProfit * corporateTaxRate;
+
+        const gccPortionBase = finalZakatBase * (gcc / 100);
+        const zakatProvision = gccPortionBase * zakatRate;
+
+        const totalStatutory = corporateTaxProvision + zakatProvision;
+        const effectiveRate = netProfit > 0 ? (totalStatutory / netProfit) * 100 : 0;
+
+        // Update UI
+        totalProvisionEl.innerText = fmt.format(totalStatutory);
+        zakatAmountEl.innerText = fmt.format(zakatProvision);
+        taxAmountEl.innerText = fmt.format(corporateTaxProvision);
+        effectiveRateEl.innerText = effectiveRate.toFixed(2) + '%';
+
+        dispZakatBaseEl.innerText = fmt.format(finalZakatBase);
+        dispZakatRateEl.innerText = isGregorian ? '2.5778%' : '2.5000%';
+        dispGccQuotaEl.innerText = gcc.toFixed(1) + '%';
+        dispAdjustedProfitEl.innerText = fmt.format(adjustedNetProfit);
+        dispForeignQuotaEl.innerText = foreign.toFixed(1) + '%';
+      }
+
+      // Attach listeners
+      const inputs = [
+        gccShareInput, calendarTypeInput, netProfitInput,
+        taxAdditionsInput, taxDeductionsInput, equityCapitalInput,
+        zakatLiabilitiesInput, netFixedAssetsInput, deductibleInvestmentsInput
+      ];
+      inputs.forEach(input => {
+        input.addEventListener('input', calculate);
+        input.addEventListener('change', calculate);
+      });
+
+      // Reset Button
+      document.getElementById('resetBtn').addEventListener('click', () => {
+        gccShareInput.value = '60';
+        calendarTypeInput.value = 'gregorian';
+        netProfitInput.value = '2500000';
+        taxAdditionsInput.value = '180000';
+        taxDeductionsInput.value = '50000';
+        equityCapitalInput.value = '6000000';
+        zakatLiabilitiesInput.value = '2200000';
+        netFixedAssetsInput.value = '3100000';
+        deductibleInvestmentsInput.value = '800000';
+        calculate();
+      });
+
+      // CSV Export Button
+      document.getElementById('exportCsvBtn').addEventListener('click', () => {
+        const rows = [
+          ["Metric", "Value"],
+          ["Saudi / GCC Ownership %", gccShareInput.value + "%"],
+          ["Foreign Ownership %", foreignShareInput.value + "%"],
+          ["Accounting Net Profit (SAR)", netProfitInput.value],
+          ["Tax Additions (SAR)", taxAdditionsInput.value],
+          ["Tax Deductions (SAR)", taxDeductionsInput.value],
+          ["Adjusted Net Profit (SAR)", dispAdjustedProfitEl.innerText],
+          ["Total Calculated Zakat Base (SAR)", dispZakatBaseEl.innerText],
+          ["Calculated Zakat Provision (SAR)", zakatAmountEl.innerText],
+          ["Calculated Income Tax Provision (SAR)", taxAmountEl.innerText],
+          ["Total Estimated Statutory Provision (SAR)", totalProvisionEl.innerText],
+          ["Effective Rate", effectiveRateEl.innerText],
+          ["Generated Date", new Date().toISOString()]
+        ];
+        const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.map(i => `"${i}"`).join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "tax_and_zakat_provision_report.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+
+      // Language Toggle Logic
+      const langToggle = document.getElementById('langToggle');
+      const langLabel = document.getElementById('langLabel');
+      let isArabic = false;
+
+      langToggle.addEventListener('click', () => {
+        isArabic = !isArabic;
+        document.documentElement.setAttribute('dir', isArabic ? 'rtl' : 'ltr');
+        document.documentElement.setAttribute('lang', isArabic ? 'ar' : 'en');
+        langLabel.innerText = isArabic ? 'English' : 'العربية';
+
+        document.querySelectorAll('.lang-en').forEach(el => {
+          el.classList.toggle('hidden', isArabic);
+        });
+        document.querySelectorAll('.lang-ar').forEach(el => {
+          el.classList.toggle('hidden', !isArabic);
+        });
+      });
+
+      // Set year
+      document.getElementById('currentYear').innerText = new Date().getFullYear();
+
+      // Initial calculation
+      calculate();
+    })();
+  </script>
+</body>
+</html>
