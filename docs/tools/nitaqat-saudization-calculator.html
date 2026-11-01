@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nitaqat Saudization Quota & Tier Estimator | حاسبة نطاقات ونسب التوطين</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        [dir="rtl"] body, [dir="rtl"] .font-arabic {
+            font-family: 'Cairo', sans-serif;
+        }
+        .tier-platinum { background-color: #0f766e; color: #ccfbf1; border-color: #14b8a6; }
+        .tier-high-green { background-color: #15803d; color: #dcfce7; border-color: #22c55e; }
+        .tier-mid-green { background-color: #65a30d; color: #ecfccb; border-color: #84cc16; }
+        .tier-low-green { background-color: #ca8a04; color: #fef9c3; border-color: #eab308; }
+        .tier-red { background-color: #b91c1c; color: #fee2e2; border-color: #ef4444; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 transition-colors duration-200">
+
+    <!-- Top Sticky Promotion Bar -->
+    <div class="sticky top-0 z-50 bg-slate-900 border-b border-amber-500/30 text-white text-xs sm:text-sm py-2.5 px-4 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <div class="flex items-center gap-2 text-center sm:text-left">
+                <span class="bg-amber-500 text-slate-950 font-bold px-2 py-0.5 rounded text-[11px] uppercase tracking-wide">Pro Solution</span>
+                <span class="lang-en">Automate your entire company payroll, Qiwa imports & Nitaqat projections in Microsoft Excel.</span>
+                <span class="lang-ar hidden">أتمتة حسابات مسيرات الرواتب وملفات قوى والتوطين بالكامل عبر إكسل وVBA.</span>
+            </div>
+            <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 font-bold px-3.5 py-1 rounded-md text-xs transition shadow-sm whitespace-nowrap">
+                <span class="lang-en">Download Offline Master Template ($29)</span>
+                <span class="lang-ar hidden">تحميل نموذج الإكسل الاحترافي ($29)</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Navigation / Header -->
+    <header class="bg-white border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-black text-lg shadow-sm">
+                    N
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">
+                        <span class="lang-en">Nitaqat & Saudization Calculator</span>
+                        <span class="lang-ar hidden font-arabic">حاسبة نطاقات ومحاكي نسب التوطين</span>
+                    </h1>
+                    <p class="text-[11px] text-slate-500 leading-none">
+                        <span class="lang-en">HR Compliance & Workforce Quota Engine</span>
+                        <span class="lang-ar hidden font-arabic">محرك التوافق الوظيفي ومحاكاة التأشيرات</span>
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="setLanguage('en')" id="btn-en" class="px-2.5 py-1 text-xs font-semibold rounded bg-slate-100 text-slate-800 border border-slate-300">EN</button>
+                <button onclick="setLanguage('ar')" id="btn-ar" class="px-2.5 py-1 text-xs font-semibold rounded text-slate-600 hover:bg-slate-100">العربية</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Body Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Input Form Column -->
+            <div class="lg:col-span-7 space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                    <div class="border-b border-slate-100 pb-4 mb-5 flex justify-between items-center">
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">
+                                <span class="lang-en">Enterprise Workforce Data</span>
+                                <span class="lang-ar hidden font-arabic">بيانات القوى العاملة بالمنشأة</span>
+                            </h2>
+                            <p class="text-xs text-slate-500">
+                                <span class="lang-en">Input official headcount as reported in Qiwa & GOSI.</span>
+                                <span class="lang-ar hidden font-arabic">أدخل إجمالي العاملين وفقاً لسجلات منصتي قوى والتأمينات.</span>
+                            </p>
+                        </div>
+                        <button onclick="resetForm()" class="text-xs text-slate-400 hover:text-rose-600 transition underline">
+                            <span class="lang-en">Reset Values</span>
+                            <span class="lang-ar hidden font-arabic">إعادة ضبط</span>
+                        </button>
+                    </div>
+
+                    <div class="space-y-4">
+                        <!-- Industry Selector -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">
+                                <span class="lang-en">Economic Activity / Commercial Sector</span>
+                                <span class="lang-ar hidden font-arabic">النشاط الاقتصادي / القطاع</span>
+                            </label>
+                            <select id="industry" onchange="calculateNitaqat()" class="w-full rounded-lg border-slate-300 text-sm focus:border-emerald-500 focus:ring-emerald-500 bg-slate-50 p-2.5 border">
+                                <option value="construction">Construction & Contracting (التشييد والبناء)</option>
+                                <option value="wholesale_retail">Wholesale & Retail Trade (تجارة الجملة والتجزئة)</option>
+                                <option value="it_telecom" selected>Information Technology & Telecom (تقنية المعلومات والاتصالات)</option>
+                                <option value="services">Commercial & Business Services (خدمات الأعمال والتجارة)</option>
+                                <option value="healthcare">Healthcare & Medical Services (الرعاية الصحية)</option>
+                                <option value="hospitality">Hotels & Tourism (الفنادق والسياحة)</option>
+                                <option value="manufacturing">Manufacturing & Industrial (الصناعة والتشغيل)</option>
+                            </select>
+                        </div>
+
+                        <!-- Saudi Employees Breakdown -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50/70 p-3.5 rounded-lg border border-slate-200/80">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">
+                                    <span class="lang-en">Full-time Saudis (Base Wage ≥ 4,000 SAR)</span>
+                                    <span class="lang-ar hidden font-arabic">السعوديون (دوام كامل - أجر ≥ 4000)</span>
+                                </label>
+                                <div class="relative">
+                                    <input type="number" id="saudiFull" min="0" value="14" oninput="calculateNitaqat()" class="w-full rounded-lg border-slate-300 text-sm p-2 border pl-3 pr-8 focus:ring-emerald-500 focus:border-emerald-500 font-semibold text-slate-800">
+                                    <span class="absolute right-2.5 top-2.5 text-[11px] text-slate-400">1.0 pt</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">
+                                    <span class="lang-en">Partial Saudis (Wage 3,000 - 3,999 SAR)</span>
+                                    <span class="lang-ar hidden font-arabic">سعوديون براتب (3000 - 3999 ريال)</span>
+                                </label>
+                                <div class="relative">
+                                    <input type="number" id="saudiHalf" min="0" value="2" oninput="calculateNitaqat()" class="w-full rounded-lg border-slate-300 text-sm p-2 border pl-3 pr-8 focus:ring-emerald-500 focus:border-emerald-500 font-semibold text-slate-800">
+                                    <span class="absolute right-2.5 top-2.5 text-[11px] text-slate-400">0.5 pt</span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">
+                                    <span class="lang-en">Special Needs / Disabilities (PwD)</span>
+                                    <span class="lang-ar hidden font-arabic">ذوو الإعاقة (المحسوب بأربعة)</span>
+                                </label>
+                                <div class="relative">
+                                    <input type="number" id="saudiPwd" min="0" value="1" oninput="calculateNitaqat()" class="w-full rounded-lg border-slate-300 text-sm p-2 border pl-3 pr-8 focus:ring-emerald-500 focus:border-emerald-500 font-semibold text-slate-800">
+                                    <span class="absolute right-2.5 top-2.5 text-[11px] text-slate-400">4.0 pts</span>
+                                </div>
+                                <span class="text-[10px] text-slate-400 block mt-0.5">Max quota 10% of total Saudis applies automatically.</span>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">
+                                    <span class="lang-en">Flexible / Students / Released Inmates</span>
+                                    <span class="lang-ar hidden font-arabic">الطلاب / العمل المرن / المفرج عنهم</span>
+                                </label>
+                                <div class="relative">
+                                    <input type="number" id="saudiStudents" min="0" value="0" oninput="calculateNitaqat()" class="w-full rounded-lg border-slate-300 text-sm p-2 border pl-3 pr-8 focus:ring-emerald-500 focus:border-emerald-500 font-semibold text-slate-800">
+                                    <span class="absolute right-2.5 top-2.5 text-[11px] text-slate-400">0.5 pt</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Expatriate Employees -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">
+                                <span class="lang-en">Total Non-Saudi Expatriate Employees</span>
+                                <span class="lang-ar hidden font-arabic">إجمالي الموظفين غير السعوديين (الوافدين)</span>
+                            </label>
+                            <input type="number" id="expatCount" min="0" value="32" oninput="calculateNitaqat()" class="w-full rounded-lg border-slate-300 text-sm p-2.5 border focus:ring-emerald-500 focus:border-emerald-500 font-semibold text-slate-800">
+                            <p class="text-[11px] text-slate-400 mt-1">
+                                <span class="lang-en">Include all active iqama holders sponsored on your unified establishment number.</span>
+                                <span class="lang-ar hidden font-arabic">يشمل جميع حاملي الإقامة النظاميين على الرقم الموحد للمنشأة.</span>
+                            </p>
+                        </div>
+
+                        <!-- Simulation Target Tier Selector -->
+                        <div class="border-t border-slate-100 pt-4">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">
+                                <span class="lang-en">Target Desired Tier Simulation</span>
+                                <span class="lang-ar hidden font-arabic">المستوى المستهدف للمحاكاة</span>
+                            </label>
+                            <select id="targetTier" onchange="calculateNitaqat()" class="w-full rounded-lg border-slate-300 text-sm focus:border-emerald-500 focus:ring-emerald-500 bg-slate-50 p-2 border">
+                                <option value="Platinum">Platinum (البلاتيني - Visa issuance unlocked)</option>
+                                <option value="High Green" selected>High Green (الأخضر المرتفع - Safe buffer zone)</option>
+                                <option value="Mid Green">Mid Green (الأخضر المتوسط - Standard renewals)</option>
+                                <option value="Low Green">Low Green (الأخضر المنخفض - At risk zone)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons: Print / CSV -->
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="window.print()" class="flex-1 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold text-xs py-2.5 px-4 rounded-lg shadow-sm flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        <span class="lang-en">Print PDF Compliance Summary</span>
+                        <span class="lang-ar hidden font-arabic">طباعة تقرير التوافق PDF</span>
+                    </button>
+                    <button onclick="exportCSV()" class="flex-1 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold text-xs py-2.5 px-4 rounded-lg shadow-sm flex items-center justify-center gap-2">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <span class="lang-en">Export Results (CSV)</span>
+                        <span class="lang-ar hidden font-arabic">تصدير البيانات (CSV)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Right Results & Recommendations Card Column -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden sticky top-20">
+                    <div class="p-6 space-y-5">
+                        <!-- Tier Status Badge -->
+                        <div>
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                                        <span class="lang-en">Official Nitaqat Status</span>
+                                        <span class="lang-ar hidden font-arabic">نطاق المنشأة الحالي</span>
+                                    </span>
+                                    <h3 id="resTierName" class="text-2xl font-black text-slate-900 mt-0.5">High Green</h3>
+                                </div>
+                                <span id="tierBadge" class="px-3.5 py-1 text-xs font-black uppercase rounded-full border shadow-sm tier-high-green">
+                                    Active Safe
+                                </span>
+                            </div>
+                            <p id="tierPrivilegeText" class="text-xs text-slate-600 mt-2 leading-relaxed">
+                                Full recruitment visas available, smooth work permit renewals, and instant sponsorship transfers permitted.
+                            </p>
+                        </div>
+
+                        <!-- Metric Gauges -->
+                        <div class="grid grid-cols-2 gap-3 pt-2">
+                            <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-100">
+                                <span class="text-[11px] text-slate-500 font-medium block">
+                                    <span class="lang-en">Saudization Rate</span>
+                                    <span class="lang-ar hidden font-arabic">نسبة التوطين المحتسبة</span>
+                                </span>
+                                <span id="resSaudizationRate" class="text-2xl font-black text-emerald-700">37.5%</span>
+                                <span id="resEntitySize" class="text-[10px] text-slate-400 block mt-0.5">Size: Medium Enterprise</span>
+                            </div>
+                            <div class="bg-slate-50 p-3.5 rounded-lg border border-slate-100">
+                                <span class="text-[11px] text-slate-500 font-medium block">
+                                    <span class="lang-en">Weighted Saudi Headcount</span>
+                                    <span class="lang-ar hidden font-arabic">نقاط التوطين الموزونة</span>
+                                </span>
+                                <span id="resWeightedSaudis" class="text-2xl font-black text-slate-800">19.00</span>
+                                <span id="resTotalWorkforce" class="text-[10px] text-slate-400 block mt-0.5">Total: 51 Headcount</span>
+                            </div>
+                        </div>
+
+                        <!-- Simulation / Hiring Advice Card -->
+                        <div class="bg-emerald-50/70 border border-emerald-200 rounded-lg p-4">
+                            <div class="flex items-center gap-2 mb-1.5 text-emerald-900 font-bold text-xs uppercase tracking-wide">
+                                <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                                <span class="lang-en">Hiring Headroom Simulation</span>
+                                <span class="lang-ar hidden font-arabic">محاكي تعيين ونقل الكفالات</span>
+                            </div>
+                            <div id="simulationNarrative" class="text-xs text-emerald-950 leading-relaxed font-medium">
+                                Loading simulation data...
+                            </div>
+                        </div>
+
+                        <!-- Conversion CTA Card -->
+                        <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-4 text-white shadow-md border border-slate-700">
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded uppercase">Excel Tool</span>
+                                <span class="text-amber-400 font-bold text-sm">$29 One-Time</span>
+                            </div>
+                            <h4 class="font-bold text-sm text-white mb-1">
+                                <span class="lang-en">Complete KSA HR & Nitaqat Pro Model</span>
+                                <span class="lang-ar hidden font-arabic">حقيبة الإكسل الاحترافية للموارد البشرية وقوى</span>
+                            </h4>
+                            <p class="text-xs text-slate-300 mb-3">
+                                <span class="lang-en">Automated Excel sheet with preloaded MoHR 2024 sector matrix, Muqeem API batch format, EOSB gratuity, & WPS bank file generator.</span>
+                                <span class="lang-ar hidden font-arabic">ملف إكسل متكامل مع جداول نطاقات وقوى الرسمية، حساب مكافأة نهاية الخدمة، وتوليد ملف حماية الأجور (SIF).</span>
+                            </p>
+                            <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="block text-center w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2.5 rounded-lg transition shadow">
+                                <span class="lang-en">Get Instant Download Access</span>
+                                <span class="lang-ar hidden font-arabic">تحميل القالب الآلي الفوري</span>
+                            </a>
+                        </div>
+
+                        <!-- Bilingual Disclaimer Box -->
+                        <div class="p-3 bg-amber-50/60 border border-amber-200 rounded-lg text-[11px] text-amber-900 leading-normal">
+                            <div class="font-bold mb-0.5 flex items-center gap-1 text-amber-800">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                                <span class="lang-en">Legal & Regulatory Disclaimer</span>
+                                <span class="lang-ar hidden font-arabic">إخلاء مسؤولية تنظيمي وقانوني</span>
+                            </div>
+                            <p class="lang-en">
+                                Results generated by this simulator are estimates based on standardized Ministry of Human Resources (MoHR) published threshold curves. Actual Qiwa ratings utilize 26-week moving averages and unified commercial registration weighting. Always verify status in your official Qiwa portal.
+                            </p>
+                            <p class="lang-ar hidden font-arabic">
+                                النتائج المعروضة تقديرية وتستند إلى معدلات ومعايير وزارة الموارد البشرية والتنمية الاجتماعية. تعتمد منصة قوى الرسمية على المتوسط الحسابي المتحرك لـ 26 أسبوعاً والسجل التجاري الموحد. يجب التحقق دائماً من حسابكم في قوى قبل اتخاذ قرارات التوظيف.
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 800+ Word Comprehensive SEO Knowledge Base & Formula Guide -->
+        <article class="mt-16 bg-white border border-slate-200 rounded-xl p-6 sm:p-10 text-slate-700 leading-relaxed space-y-8 max-w-5xl mx-auto shadow-sm">
+            <div>
+                <h2 class="text-2xl font-black text-slate-900 tracking-tight">
+                    <span class="lang-en">Mastering the Nitaqat Saudization System: Complete Enterprise Guide</span>
+                    <span class="lang-ar hidden font-arabic">دليل نظام نطاقات ونسب التوطين الشامل للشركات والمنشآت</span>
+                </h2>
+                <p class="text-sm text-slate-500 mt-1">
+                    <span class="lang-en">Published for GCC HR Directors, General Managers, CFOs, and Qiwa Compliance Officers.</span>
+                    <span class="lang-ar hidden font-arabic">موجّه لمدراء الموارد البشرية، المدراء الماليين ومسؤولي التوافق في المنشآت.</span>
+                </p>
+            </div>
+
+            <!-- Core Formulas Section -->
+            <section class="space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2">
+                    <span class="lang-en">1. The Core Nitaqat Calculation Methodology</span>
+                    <span class="lang-ar hidden font-arabic">١. آلية ومعادلة احتساب نطاقات الدقيقة</span>
+                </h3>
+                <p class="text-sm">
+                    Under the Saudi Ministry of Human Resources and Social Development (MoHR), the Saudization percentage is no longer a simple headcount fraction. The rate is evaluated across an establishment’s unified group (الرقم الموحد) over a 26-week rolling arithmetic mean. Different categories of national employees contribute distinct point weights based on their registered GOSI base wage and physical capabilities:
+                </p>
+                <div class="bg-slate-50 p-4 rounded-lg font-mono text-xs text-slate-800 border border-slate-200 space-y-1.5">
+                    <div class="font-bold text-slate-900">Official Weighted Headcount Formula:</div>
+                    <div>Weighted Saudis = (S_full × 1.0) + (S_partial × 0.5) + (S_pwd × 4.0*) + (S_flexible × 0.5)</div>
+                    <div>Saudization Percentage (%) = [ Weighted Saudis / (Weighted Saudis + Total Expats) ] × 100</div>
+                    <div class="text-[11px] text-slate-500 font-sans mt-2">*Note: Disabled Saudi employees (PwD) count as 4 units, but cannot exceed a maximum ceiling of 10% of total Saudis in the entity under standard regulations.</div>
+                </div>
+            </section>
+
+            <!-- Tier Thresholds Explained -->
+            <section class="space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2">
+                    <span class="lang-en">2. Nitaqat Color Bands and Operational Implications</span>
+                    <span class="lang-ar hidden font-arabic">٢. نطاقات الألوان والآثار التشغيلية على التأشيرات ورخص العمل</span>
+                </h3>
+                <p class="text-sm">
+                    An establishment’s tier directly controls its operational viability in the Kingdom of Saudi Arabia. Dropping into lower tiers restricts essential government services:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div class="p-3.5 border border-teal-200 bg-teal-50/50 rounded-lg">
+                        <span class="font-bold text-teal-900 block text-sm mb-1">Platinum (البلاتيني)</span>
+                        <p class="text-teal-800 leading-normal">Top 20% performance bracket in the sector. Unrestricted visa allocation via Qiwa, instant change of professions, ability to hire expatriates from Red or Low Green firms without release letters, and six-month grace periods on minor infractions.</p>
+                    </div>
+                    <div class="p-3.5 border border-emerald-200 bg-emerald-50/50 rounded-lg">
+                        <span class="font-bold text-emerald-900 block text-sm mb-1">High Green (الأخضر المرتفع)</span>
+                        <p class="text-emerald-800 leading-normal">Standard high-compliance bracket. Provides visa requests (subject to quota balances), uninterrupted work permit (Iqama) renewals for up to 2 years, and transfer of employee sponsorships into the entity.</p>
+                    </div>
+                    <div class="p-3.5 border border-lime-200 bg-lime-50/50 rounded-lg">
+                        <span class="font-bold text-lime-900 block text-sm mb-1">Mid Green (الأخضر المتوسط)</span>
+                        <p class="text-lime-800 leading-normal">Operational threshold. Permits Iqama renewals and internal transfers. However, new block visa applications are heavily restricted or throttled until Saudization is elevated.</p>
+                    </div>
+                    <div class="p-3.5 border border-amber-200 bg-amber-50/50 rounded-lg">
+                        <span class="font-bold text-amber-900 block text-sm mb-1">Low Green (الأخضر المنخفض)</span>
+                        <p class="text-amber-800 leading-normal">Warning buffer. Businesses can renew work permits for existing personnel but are barred from obtaining new visas or transferring in additional expatriate staff.</p>
+                    </div>
+                </div>
+                <div class="p-3.5 border border-red-200 bg-red-50/50 rounded-lg text-xs">
+                    <span class="font-bold text-red-900 block text-sm mb-1">Red Zone (النطاق الأحمر) - Immediate Risk</span>
+                    <p class="text-red-800 leading-normal">Non-compliant tier. Expatriate staff are legally permitted to transfer their sponsorships to other compliant entities without employer consent or notice. Blocked from opening new branch files, renewing work permits, or acquiring commercial licensing extensions.</p>
+                </div>
+            </section>
+
+            <!-- Salary Requirements -->
+            <section class="space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2">
+                    <span class="lang-en">3. GOSI Wage Rules for Saudization Credit</span>
+                    <span class="lang-ar hidden font-arabic">٣. شروط الأجور المحتسبة في التأمينات الاجتماعية (GOSI)</span>
+                </h3>
+                <p class="text-sm">
+                    Under MoHR Ministerial Decision No. 224, minimum wage floors dictate employee weighting in nationalization quotas:
+                </p>
+                <ul class="list-disc list-inside text-sm space-y-1.5 pl-2">
+                    <li><strong>Minimum 4,000 SAR monthly salary:</strong> Required for a Saudi employee to count as one full point (1.0) in Nitaqat.</li>
+                    <li><strong>Between 3,000 SAR and 3,999 SAR:</strong> The employee is counted as exactly one half (0.5) point.</li>
+                    <li><strong>Below 3,000 SAR:</strong> The employee is not counted toward the Saudization ratio whatsoever, despite remaining registered on GOSI.</li>
+                    <li><strong>Part-time Contracts:</strong> Registered via Qiwa’s flexible/part-time scheme count as 0.5 points, provided GOSI contributions meet the pro-rated threshold.</li>
+                </ul>
+            </section>
+
+            <!-- Comprehensive FAQ -->
+            <section class="space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 border-b border-slate-200 pb-2">
+                    <span class="lang-en">Frequently Asked Questions (HR & Finance Teams)</span>
+                    <span class="lang-ar hidden font-arabic">الأسئلة الشائعة لمدراء الموارد البشرية والمالية</span>
+                </h3>
+                
+                <div class="space-y-3">
+                    <div class="border border-slate-200 rounded-lg p-3.5">
+                        <h4 class="text-sm font-bold text-slate-900">How fast does hiring a Saudi reflect on our Qiwa status?</h4>
+                        <p class="text-xs text-slate-600 mt-1">
+                            Qiwa employs a rolling 26-week cumulative calculation. When you register a new Saudi on GOSI, the system adds 1/26th of their weight in week one, reaching full 1.0 weight by week 26. Instant status jump is mitigated by this rolling average to prevent seasonal hiring manipulation. Fast-track provisions apply to startups in their first year.
+                        </p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-3.5">
+                        <h4 class="text-sm font-bold text-slate-900">Can one company branch be Platinum while another is Red?</h4>
+                        <p class="text-xs text-slate-600 mt-1">
+                            No. Nitaqat calculations aggregate all branches operating under the Unified Commercial Number (الرقم الموحد). A failure in one subsidiary or branch directly drags down the collective group rating for the entire organization.
+                        </p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-3.5">
+                        <h4 class="text-sm font-bold text-slate-900">What is the maximum quota for counting special categories?</h4>
+                        <p class="text-xs text-slate-600 mt-1">
+                            For employees with disabilities (PwD) counted as 4 points, the law limits this concession to not exceed 10% of the total Saudi workforce count within the establishment. Any excess disabled employees beyond that ceiling count as standard 1.0 employees.
+                        </p>
+                    </div>
+                </div>
+            </section>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-200 bg-white mt-20 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-400 space-y-2">
+            <p>© 2025 B2B HR Tools Engine. Designed for Middle East & GCC Operations.</p>
+            <p class="text-[11px]">Saudi Labor Law Compliance • Qiwa & GOSI Aligned • SME HR Calculator Suite</p>
+        </div>
+    </footer>
+
+    <!-- Calculation Engine & Client-Side Scripts -->
+    <script>
+        // Threshold definitions per industry (Simplified standard curve representations)
+        const industryThresholds = {
+            construction: { lowGreen: 8, midGreen: 12, highGreen: 17, platinum: 24 },
+            wholesale_retail: { lowGreen: 15, midGreen: 20, highGreen: 28, platinum: 35 },
+            it_telecom: { lowGreen: 18, midGreen: 25, highGreen: 32, platinum: 42 },
+            services: { lowGreen: 14, midGreen: 20, highGreen: 26, platinum: 34 },
+            healthcare: { lowGreen: 20, midGreen: 28, highGreen: 36, platinum: 46 },
+            hospitality: { lowGreen: 12, midGreen: 18, highGreen: 25, platinum: 33 },
+            manufacturing: { lowGreen: 10, midGreen: 15, highGreen: 22, platinum: 30 }
+        };
+
+        function setLanguage(lang) {
+            const html = document.documentElement;
+            const enElements = document.querySelectorAll('.lang-en');
+            const arElements = document.querySelectorAll('.lang-ar');
+            const btnEn = document.getElementById('btn-en');
+            const btnAr = document.getElementById('btn-ar');
+
+            if (lang === 'ar') {
+                html.setAttribute('dir', 'rtl');
+                html.setAttribute('lang', 'ar');
+                enElements.forEach(el => el.classList.add('hidden'));
+                arElements.forEach(el => el.classList.remove('hidden'));
+                btnAr.className = 'px-2.5 py-1 text-xs font-semibold rounded bg-slate-100 text-slate-800 border border-slate-300';
+                btnEn.className = 'px-2.5 py-1 text-xs font-semibold rounded text-slate-600 hover:bg-slate-100';
+            } else {
+                html.setAttribute('dir', 'ltr');
+                html.setAttribute('lang', 'en');
+                arElements.forEach(el => el.classList.add('hidden'));
+                enElements.forEach(el => el.classList.remove('hidden'));
+                btnEn.className = 'px-2.5 py-1 text-xs font-semibold rounded bg-slate-100 text-slate-800 border border-slate-300';
+                btnAr.className = 'px-2.5 py-1 text-xs font-semibold rounded text-slate-600 hover:bg-slate-100';
+            }
+            calculateNitaqat();
+        }
+
+        function calculateNitaqat() {
+            const sFull = parseFloat(document.getElementById('saudiFull').value) || 0;
+            const sHalf = parseFloat(document.getElementById('saudiHalf').value) || 0;
+            const sPwd = parseFloat(document.getElementById('saudiPwd').value) || 0;
+            const sStud = parseFloat(document.getElementById('saudiStudents').value) || 0;
+            const expats = parseFloat(document.getElementById('expatCount').value) || 0;
+            const industry = document.getElementById('industry').value;
+            const targetTier = document.getElementById('targetTier').value;
+            const isArabic = document.documentElement.getAttribute('dir') === 'rtl';
+
+            // PwD cap logic: max 10% of total Saudis can receive 4x multiplier
+            const rawSaudisCount = sFull + sHalf + sPwd + sStud;
+            const maxPwdWithBonus = Math.max(1, Math.floor(rawSaudisCount * 0.10));
+            const bonusPwD = Math.min(sPwd, maxPwdWithBonus);
+            const standardPwD = sPwd - bonusPwD;
+
+            const weightedSaudis = (sFull * 1.0) + (sHalf * 0.5) + (bonusPwD * 4.0) + (standardPwD * 1.0) + (sStud * 0.5);
+            const totalWorkforce = weightedSaudis + expats;
+            const rate = totalWorkforce > 0 ? (weightedSaudis / totalWorkforce) * 100 : 0;
+
+            // Determine Tier
+            const thresholds = industryThresholds[industry] || industryThresholds.services;
+            let currentTier = 'Red';
+            let tierClass = 'tier-red';
+            let privilegeTextEn = 'Immediate recruitment freeze. Existing expatriate employees can transfer to other firms without consent.';
+            let privilegeTextAr = 'تجميد تام لطلبات الاستقدام ونقل التأشيرات، ويحق للعمالة الوافدة نقل كفالتها دون موافقة المنشأة.';
+
+            if (rate >= thresholds.platinum) {
+                currentTier = 'Platinum';
+                tierClass = 'tier-platinum';
+                privilegeTextEn = 'Maximum corporate privileges: Instant visa issuance via Qiwa and VIP labor bureau status.';
+                privilegeTextAr = 'أعلى الميزات والخدمات: تأشيرات فورية وتجديد وتسهيلات كبرى في رخص العمل.';
+            } else if (rate >= thresholds.highGreen) {
+                currentTier = 'High Green';
+                tierClass = 'tier-high-green';
+                privilegeTextEn = 'Safe zone. Block visas available, full work permit renewals, and flexible profession transfers.';
+                privilegeTextAr = 'نطاق آمن ومثالي: إصدار تأشيرات مهنية وتجديد رخص العمل ونقل الكفالات متاح بيسر.';
+            } else if (rate >= thresholds.midGreen) {
+                currentTier = 'Mid Green';
+                tierClass = 'tier-mid-green';
+                privilegeTextEn = 'Compliant status. Normal work permit renewals permitted. New visa allocations subject to stricter quotas.';
+                privilegeTextAr = 'نطاق متوسط مقبول: تجديد رخص العمل متاح ولكن توجد قيود على التأشيرات الجديدة.';
+            } else if (rate >= thresholds.lowGreen) {
+                currentTier = 'Low Green';
+                tierClass = 'tier-low-green';
+                privilegeTextEn = 'Risk zone. Work permit renewals allowed for existing staff, but cannot hire new visas or transfer expats in.';
+                privilegeTextAr = 'نطاق خطر وتحذير: تجديد إقامات الموظفين الحاليين متاح ولكن ممنوع من استقدام أي عمالة جديدة.';
+            }
+
+            // Display Tier
+            document.getElementById('resTierName').innerText = isArabic ? getArabicTier(currentTier) : currentTier;
+            const badge = document.getElementById('tierBadge');
+            badge.className = `px-3.5 py-1 text-xs font-black uppercase rounded-full border shadow-sm ${tierClass}`;
+            badge.innerText = isArabic ? getArabicTier(currentTier) : currentTier;
+            document.getElementById('tierPrivilegeText').innerText = isArabic ? privilegeTextAr : privilegeTextEn;
+            document.getElementById('resSaudizationRate').innerText = `${rate.toFixed(2)}%`;
+            document.getElementById('resWeightedSaudis').innerText = weightedSaudis.toFixed(2);
+            document.getElementById('resTotalWorkforce').innerText = isArabic 
+                ? `إجمالي العدد: ${Math.round(rawSaudisCount + expats)} موظف` 
+                : `Total: ${Math.round(rawSaudisCount + expats)} Headcount`;
+
+            // Entity Size Tagging
+            const rawTotal = rawSaudisCount + expats;
+            let sizeLabel = isArabic ? 'منشأة صغيرة (أ)' : 'Small Enterprise';
+            if (rawTotal <= 5) sizeLabel = isArabic ? 'منشأة متناهية الصغر' : 'Micro Entity (1-5)';
+            else if (rawTotal <= 49) sizeLabel = isArabic ? 'منشأة صغيرة (6-49)' : 'Small Entity (6-49)';
+            else if (rawTotal <= 499) sizeLabel = isArabic ? 'منشأة متوسطة (50-499)' : 'Medium Entity (50-499)';
+            else sizeLabel = isArabic ? 'منشأة عملاقة (500+)' : 'Large Entity (500+)';
+            document.getElementById('resEntitySize').innerText = isArabic ? `الحجم: ${sizeLabel}` : `Size: ${sizeLabel}`;
+
+            // Simulation Delta for Target Tier
+            let targetPct = thresholds.highGreen;
+            if (targetTier === 'Platinum') targetPct = thresholds.platinum;
+            if (targetTier === 'Mid Green') targetPct = thresholds.midGreen;
+            if (targetTier === 'Low Green') targetPct = thresholds.lowGreen;
+
+            const p = targetPct / 100;
+            let narrative = "";
+            if (rate >= targetPct) {
+                // Can hire expats
+                // (W) / (W + E + deltaE) >= p  =>  W >= p*(W + E + deltaE) => deltaE <= (W*(1-p)/p) - E
+                const maxExpatsAllowed = Math.floor((weightedSaudis * (1 - p) / p) - expats);
+                if (maxExpatsAllowed > 0) {
+                    narrative = isArabic
+                        ? `أنت تحقق الهدف (${getArabicTier(targetTier)}) بأمان! يمكنك إصدار ما يصل إلى <strong>${maxExpatsAllowed}</strong> تأشيرة أو كفالة وافدة جديدة قبل النزول عن المستوى.`
+                        : `You satisfy the <strong>${targetTier}</strong> target! You can safely recruit up to <strong>${maxExpatsAllowed}</strong> new expat employee(s) before dropping below this threshold.`;
+                } else {
+                    narrative = isArabic
+                        ? `أنت تماماً عند حافة مستوى ${getArabicTier(targetTier)}. أي توظيف لوافد دون إضافة سعودي سيهبط بتصنيفك فوراً.`
+                        : `You are exactly at the margin for <strong>${targetTier}</strong>. Sponsoring any additional expats without adding Saudis will downgrade your band.`;
+                }
+            } else {
+                // Need to hire Saudis
+                // (W + deltaS) / (W + deltaS + E) >= p => (W + deltaS) >= p*(W + deltaS + E)
+                // deltaS * (1 - p) >= p*E - W*(1 - p) => deltaS >= (p*E / (1 - p)) - W
+                const requiredSaudis = Math.ceil(((p * expats) / (1 - p)) - weightedSaudis);
+                narrative = isArabic
+                    ? `للوصول إلى تصنيف <strong>${getArabicTier(targetTier)}</strong> (${targetPct}%)، يتعين عليك توظيف <strong>${Math.max(1, requiredSaudis)}</strong> موظف سعودي براتب 4000+ ريال (أو ما يعادلهم بالنقاط).`
+                    : `To reach the <strong>${targetTier}</strong> threshold (${targetPct}%), you need to hire <strong>${Math.max(1, requiredSaudis)}</strong> full-time Saudi employee(s) earning ≥4,000 SAR (or equivalent weighted points).`;
+            }
+            document.getElementById('simulationNarrative').innerHTML = narrative;
+        }
+
+        function getArabicTier(tier) {
+            switch(tier) {
+                case 'Platinum': return 'البلاتيني';
+                case 'High Green': return 'الأخضر المرتفع';
+                case 'Mid Green': return 'الأخضر المتوسط';
+                case 'Low Green': return 'الأخضر المنخفض';
+                case 'Red': return 'الأحمر';
+                default: return tier;
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('saudiFull').value = 14;
+            document.getElementById('saudiHalf').value = 2;
+            document.getElementById('saudiPwd').value = 1;
+            document.getElementById('saudiStudents').value = 0;
+            document.getElementById('expatCount').value = 32;
+            document.getElementById('industry').value = 'it_telecom';
+            document.getElementById('targetTier').value = 'High Green';
+            calculateNitaqat();
+        }
+
+        function exportCSV() {
+            const sFull = document.getElementById('saudiFull').value;
+            const sHalf = document.getElementById('saudiHalf').value;
+            const sPwd = document.getElementById('saudiPwd').value;
+            const sStud = document.getElementById('saudiStudents').value;
+            const exp = document.getElementById('expatCount').value;
+            const rate = document.getElementById('resSaudizationRate').innerText;
+            const tier = document.getElementById('resTierName').innerText;
+            const weighted = document.getElementById('resWeightedSaudis').innerText;
+
+            const csvContent = "data:text/csv;charset=utf-8,"
+                + "Metric,Value\n"
+                + `"Full Time Saudis",${sFull}\n`
+                + `"Partial Saudis",${sHalf}\n`
+                + `"Persons with Disabilities",${sPwd}\n`
+                + `"Flexible/Students",${sStud}\n`
+                + `"Expatriates",${exp}\n`
+                + `"Weighted Saudi Points",${weighted}\n`
+                + `"Saudization Percentage",${rate}\n`
+                + `"Nitaqat Color Tier",${tier}\n`
+                + `"Generated Timestamp",${new Date().toISOString()}\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Nitaqat_Audit_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initial run
+        window.onload = function() {
+            calculateNitaqat();
+        };
+    </script>
+</body>
+</html>

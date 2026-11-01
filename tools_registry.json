@@ -54,5 +54,12 @@
     "title_ar": "محول سجلات الحضور والانصراف إلى كشف الرواتب",
     "description_en": "Convert raw biometric CSV attendance logs into clean, accurate payroll summaries including overtime, late deductions, and total payable salaries instantly.",
     "date": "2026-11-01"
+  },
+  {
+    "slug": "nitaqat-saudization-calculator",
+    "title_en": "Nitaqat Saudization Quota & Tier Estimator",
+    "title_ar": "حاسبة نسب التوطين ونطاقات ومحاكي التعيينات",
+    "description_en": "Calculate your Saudization percentage, Nitaqat color tier, and simulate expat visa quotas with our bilingual HR compliance calculator for GCC & KSA.",
+    "date": "2026-11-01"
   }
 ]
