@@ -47,5 +47,12 @@
     "title_ar": "حاسبة مخصص الزكاة وضريبة الدخل للشركات (السعودية والخليج)",
     "description_en": "Calculate estimated Corporate Income Tax and Zakat base provisions for KSA & GCC mixed-ownership entities instantly. Free B2B compliance estimator.",
     "date": "2026-10-31"
+  },
+  {
+    "slug": "csv-attendance-to-payroll-converter",
+    "title_en": "CSV Attendance to Payroll Converter",
+    "title_ar": "محول سجلات الحضور والانصراف إلى كشف الرواتب",
+    "description_en": "Convert raw biometric CSV attendance logs into clean, accurate payroll summaries including overtime, late deductions, and total payable salaries instantly.",
+    "date": "2026-11-01"
   }
 ]

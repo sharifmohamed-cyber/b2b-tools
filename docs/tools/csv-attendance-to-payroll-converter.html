@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSV Attendance to Payroll Converter | محول الحضور إلى الرواتب</title>
+    <meta name="description" content="Convert raw biometric CSV attendance logs into clean, accurate payroll summaries including overtime, late deductions, and total payable salaries instantly.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .font-en { font-family: 'Inter', sans-serif; }
+        .font-ar { font-family: 'Cairo', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-en" id="bodyRoot">
+    
+    <!-- Sticky Top Banner -->
+    <div class="bg-indigo-900 text-white px-4 py-3 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center gap-2 text-sm">
+                <span class="bg-indigo-700 text-indigo-100 text-xs px-2 py-0.5 rounded-full font-semibold" data-en="B2B Tool" data-ar="أداة أعمال">B2B Tool</span>
+                <span data-en="Tired of manual payroll spreadsheets? Upgrade your workflow." data-ar="هل مللت من جداول الرواتب اليدوية؟ طور سير عملك.">Tired of manual payroll spreadsheets? Upgrade your workflow.</span>
+            </div>
+            <a href="https://gumroad.com" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow transition transform hover:scale-105" data-en="Get Excel & VBA Master Template ($29)" data-ar="احصل على نموذج إكسل الاحترافي (29$)">Get Excel & VBA Master Template ($29)</a>
+        </div>
+    </div>
+
+    <!-- Header & Language Switcher -->
+    <header class="max-w-7xl mx-auto px-4 py-6 flex justify-between items-center border-b border-slate-200">
+        <div>
+            <h1 class="text-2xl font-bold text-indigo-900" data-en="CSV Attendance to Payroll Converter" data-ar="محول الحضور إلى كشف الرواتب">CSV Attendance to Payroll Converter</h1>
+            <p class="text-sm text-slate-500" data-en="Process biometric clock-ins, calculate overtime & deductions, and export payroll." data-ar="معالجة بيانات البصمة، حساب الإضافي والخصومات، وتصدير الرواتب.">Process biometric clock-ins, calculate overtime & deductions, and export payroll.</p>
+        </div>
+        <button onclick="toggleLanguage()" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium shadow-sm transition">
+            <span id="langToggleText">العربية</span>
+        </button>
+    </header>
+
+    <!-- Main Calculator Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left & Middle: Inputs & Configurations -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-lg font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100" data-en="1. Payroll & Attendance Rules" data-ar="1. قواعد الرواتب والحضور">1. Payroll & Attendance Rules</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Standard Hourly Rate ($)" data-ar="سعر الساعة الأساسية ($)">Standard Hourly Rate ($)</label>
+                        <input type="number" id="hourlyRate" value="20" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Overtime Multiplier" data-ar="مضاعف ساعات العمل الإضافي">Overtime Multiplier</label>
+                        <input type="number" id="otMultiplier" value="1.5" step="0.1" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Standard Daily Hours" data-ar="ساعات العمل اليومية القياسية">Standard Daily Hours</label>
+                        <input type="number" id="stdHours" value="8" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Late Penalty Per Hour ($)" data-ar="غرامة التأخير لكل ساعة ($)">Late Penalty Per Hour ($)</label>
+                        <input type="number" id="latePenalty" value="25" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Input / CSV Simulator -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+                    <h2 class="text-lg font-bold text-slate-800" data-en="2. Attendance Records Data" data-ar="2. بيانات سجلات الحضور">2. Attendance Records Data</h2>
+                    <button onclick="loadSampleData()" class="text-xs text-indigo-600 hover:underline font-medium" data-en="Load Sample CSV Data" data-ar="تحميل بيانات تجريبية">Load Sample CSV Data</button>
+                </div>
+                
+                <p class="text-xs text-slate-500 mb-2" data-en="Paste CSV format (Employee Name, Regular Hours Worked, Overtime Hours, Late Minutes):" data-ar="الصق بصيغة CSV (اسم الموظف، ساعات العمل العادية، ساعات الإضافي، دقائق التأخير):">Paste CSV format (Employee Name, Regular Hours Worked, Overtime Hours, Late Minutes):</p>
+                <textarea id="csvInput" rows="6" class="w-full font-mono text-xs border border-slate-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-500" oninput="calculatePayroll()">
+John Doe, 160, 10, 30
+Jane Smith, 150, 5, 0
+Ahmed Ali, 160, 15, 45
+Sara Ahmed, 160, 0, 15
+Michael Johnson, 140, 20, 60</textarea>
+            </div>
+        </div>
+
+        <!-- Right Column: Results & Export CTA -->
+        <div class="space-y-6">
+            <div class="bg-indigo-900 text-white rounded-2xl shadow-lg p-6 relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-indigo-800 rounded-full opacity-50 pointer-events-none"></div>
+                <h3 class="text-sm uppercase tracking-wider text-indigo-200 font-semibold mb-1" data-en="Total Payroll Payout" data-ar="إجمالي رواتب المستحقات">Total Payroll Payout</h3>
+                <div class="text-4xl font-extrabold mb-4" id="totalPayout">$0.00</div>
+                
+                <div class="space-y-2 border-t border-indigo-800 pt-4 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-indigo-200" data-en="Total Regular Pay" data-ar="إجمالي الرواتب الأساسية">Total Regular Pay</span>
+                        <span class="font-bold" id="sumRegular">$0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-indigo-200" data-en="Total Overtime Pay" data-ar="إجمالي بدل الإضافي">Total Overtime Pay</span>
+                        <span class="font-bold" id="sumOvertime">$0.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-indigo-200" data-en="Total Late Deductions" data-ar="إجمالي خصومات التأخير">Total Late Deductions</span>
+                        <span class="font-bold text-rose-300" id="sumDeductions">$0.00</span>
+                    </div>
+                </div>
+
+                <button onclick="exportCSV()" class="w-full mt-6 bg-white hover:bg-slate-100 text-indigo-900 font-semibold py-2.5 rounded-xl text-sm transition shadow-sm" data-en="Export Payroll CSV" data-ar="تصدير كشف الرواتب (CSV)">Export Payroll CSV</button>
+            </div>
+
+            <!-- Gumroad Upsell Card -->
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6 shadow-sm">
+                <span class="bg-amber-100 text-amber-800 text-xs font-bold px-2.5 py-1 rounded-md" data-en="Pro Accountants Edition" data-ar="إنسخة المحاسبين المحترفين">Pro Accountants Edition</span>
+                <h4 class="text-base font-bold text-slate-900 mt-3 mb-1" data-en="Automated Excel & VBA Master Template" data-ar="نموذج إكسل وماكرو VBA الآلي">Automated Excel & VBA Master Template</h4>
+                <p class="text-xs text-slate-600 mb-4" data-en="Import thousands of biometric punch logs directly, manage multi-shift differentials, tax brackets, and generate payslips instantly." data-ar="استورد آلاف سجلات البصمة مباشرة، أدر الورديات المتعددة، والضرائب، وأنشئ قسائم الرواتب بضغطة زر.">Import thousands of biometric punch logs directly, manage multi-shift differentials, tax brackets, and generate payslips instantly.</p>
+                <a href="https://gumroad.com" target="_blank" class="block text-center bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-xl text-sm shadow transition" data-en="Unlock Full Master Template ($29)" data-ar="احصل على النسخة الشاملة (29$)">Unlock Full Master Template ($29)</a>
+            </div>
+
+            <!-- Legal Disclaimer -->
+            <div class="bg-slate-100 rounded-xl p-4 border border-slate-200 text-xs text-slate-500 leading-relaxed">
+                <span class="font-bold text-slate-700" data-en="Disclaimer:" data-ar="إخلاء مسؤولية:">Disclaimer:</span>
+                <span data-en="Outputs are estimates only and must be verified against current labor laws, company policies, and official attendance records before payroll disbursement." data-ar="المخرجات تعتبر تقديرات أولية ويجب التحقق منها مقابل قوانين العمل السارية وسياسات الشركة وسجلات الحضور الرسمية قبل صرف الرواتب.">Outputs are estimates only and must be verified against current labor laws, company policies, and official attendance records before payroll disbursement.</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- Calculated Results Table -->
+    <section class="max-w-7xl mx-auto px-4 pb-12">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100">
+                <h3 class="font-bold text-slate-800" data-en="Processed Payroll Summary" data-ar="ملخص كشف الرواتب المعالج">Processed Payroll Summary</h3>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
+                            <th class="p-4" data-en="Employee Name" data-ar="اسم الموظف">Employee Name</th>
+                            <th class="p-4" data-en="Regular Hours" data-ar="الساعات العادية">Regular Hours</th>
+                            <th class="p-4" data-en="Overtime (Hrs)" data-ar="الإضافي (ساعات)">Overtime (Hrs)</th>
+                            <th class="p-4" data-en="Late (Mins)" data-ar="التأخير (دقائق)">Late (Mins)</th>
+                            <th class="p-4" data-en="Gross Pay" data-ar="الإجمالي المستحق">Gross Pay</th>
+                            <th class="p-4" data-en="Net Payable" data-ar="صافي المستحق">Net Payable</th>
+                        </tr>
+                    </thead>
+                    <tbody id="payrollTableBody" class="divide-y divide-slate-100 text-sm">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comprehensive SEO Guide & FAQ Section -->
+    <section class="max-w-7xl mx-auto px-4 py-12 border-t border-slate-200 text-slate-700">
+        <article class="max-w-4xl mx-auto space-y-8">
+            <div>
+                <h2 class="text-2xl font-bold text-indigo-900 mb-4" data-en="Complete Guide to CSV Attendance & Payroll Automation" data-ar="الدليل الشامل لأتمتة الحضور وانصراف الرواتب عبر ملفات CSV">Complete Guide to CSV Attendance & Payroll Automation</h2>
+                <p class="text-sm leading-relaxed" data-en="Processing monthly payroll from raw biometric attendance machine exports can be tedious and prone to human calculation errors. Whether your workforce uses ZKTeco, Hikvision, or manual punch logs, converting CSV attendance exports correctly ensures legal compliance, boosts employee trust, and eliminates friction in finance departments." data-ar="تعتبر معالجة الرواتب الشهرية من تصديرات أجهزة البصمة الخام عملية شريطة للأخطاء اليدوية. سواء كانت مؤسستك تستخدم أجهزة بصمة مختلفة أو سجلات يدوية، فإن تحويل بيانات الحضور بدقة يضمن الامتثال القانوني، ويعزز ثقة الموظفين، ويزيل التوتر من أقسام الشؤون المالية.">Processing monthly payroll from raw biometric attendance machine exports can be tedious and prone to human calculation errors. Whether your workforce uses ZKTeco, Hikvision, or manual punch logs, converting CSV attendance exports correctly ensures legal compliance, boosts employee trust, and eliminates friction in finance departments.</p>
+            </div>
+
+            <div class="bg-slate-100 p-6 rounded-2xl">
+                <h3 class="text-lg font-bold text-slate-900 mb-3" data-en="Standard Payroll Calculation Formula" data-ar="صيغة حساب الرواتب القياسية">Standard Payroll Calculation Formula</h3>
+                <p class="text-xs font-mono bg-white p-4 rounded border border-slate-200 mb-3">
+                    Net Payable = (Regular Hours * Hourly Rate) + (Overtime Hours * Hourly Rate * OT Multiplier) - (Late Minutes / 60 * Penalty Rate)
+                </p>
+                <p class="text-xs text-slate-600" data-en="This formula accounts for standard productivity hours while fairly compensating extra effort and penalizing consistent tardiness based on company HR policy regulations." data-ar="تأخذ هذه الصيغة في الاعتبار ساعات الإنتاجية القياسية مع تعويض الجهود الإضافية بشكل عادل ومعاقبة التأخير المتكرر بناءً على سياسات الموارد البشرية.">This formula accounts for standard productivity hours while fairly compensating extra effort and penalizing consistent tardiness based on company HR policy regulations.</p>
+            </div>
+
+            <div>
+                <h3 class="text-xl font-bold text-indigo-900 mb-4" data-en="Frequently Asked Questions (FAQ)" data-ar="الأسئلة الشائعة">Frequently Asked Questions (FAQ)</h3>
+                
+                <div class="space-y-4 text-sm">
+                    <div class="bg-white p-4 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-800 mb-1" data-en="Can I import my biometric machine CSV directly?" data-ar="هل يمكنني استيراد ملف CSV لجهاز البصمة مباشرة؟">Can I import my biometric machine CSV directly?</h4>
+                        <p class="text-xs text-slate-600" data-en="Most attendance machines export CSV files containing Employee ID, Punch Timestamp, and Status. You can map columns or paste summarized totals directly into our web converter tool." data-ar="تقوم معظم أجهزة الحضور بتصدير ملفات CSV تحتوي على معرف الموظف، وقت البصمة، والحالة. يمكنك مطابقة الأعمدة أو لصق الإجماليات مباشرة في أداة المحول الخاصة بنا.">Most attendance machines export CSV files containing Employee ID, Punch Timestamp, and Status. You can map columns or paste summarized totals directly into our web converter tool.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-800 mb-1" data-en="How is overtime calculated under standard labor laws?" data-ar="كيف يتم حساب العمل الإضافي بموجب قوانين العمل القياسية؟">How is overtime calculated under standard labor laws?</h4>
+                        <p class="text-xs text-slate-600" data-en="Typically, hours worked beyond standard daily or weekly hours are multiplied by 1.25x to 1.5x of the normal hourly wage rate." data-ar="عادةً، يتم ضرب ساعات العمل التي تتجاوز الساعات اليومية أو الأسبوعية القياسية بنسبة تتراوح بين 1.25 إلى 1.5 ضعف معدل الأجر العادي للساعة.">Typically, hours worked beyond standard daily or weekly hours are multiplied by 1.25x to 1.5x of the normal hourly wage rate.</p>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-800 mb-1" data-en="Is my employee attendance data secure?" data-ar="هل بيانات حضور الموظفين الخاصة بي آمنة؟">Is my employee attendance data secure?</h4>
+                        <p class="text-xs text-slate-600" data-en="Yes! All calculations happen locally within your browser via JavaScript. No sensitive employee data is ever stored or transmitted to external servers." data-ar="نعم! جميع العمليات الحسابية تتم محلياً داخل متصفحك عبر جافاسكريبت. لا يتم تخزين أو إرسال أي بيانات حساسة للموظفين إلى خوادم خارجية.">Yes! All calculations happen locally within your browser via JavaScript. No sensitive employee data is ever stored or transmitted to external servers.</p>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let currentLang = 'en';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const body = document.getElementById('bodyRoot');
+            const langBtn = document.getElementById('langToggleText');
+
+            if (currentLang === 'ar') {
+                body.dir = 'rtl';
+                body.className = 'bg-slate-50 text-slate-800 font-ar';
+                langBtn.textContent = 'English';
+            } else {
+                body.dir = 'ltr';
+                body.className = 'bg-slate-50 text-slate-800 font-en';
+                langBtn.textContent = 'العربية';
+            }
+
+            document.querySelectorAll('[data-en]').forEach(el => {
+                const enText = el.getAttribute('data-en');
+                const arText = el.getAttribute('data-ar');
+                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                    // skip placeholders if needed
+                } else {
+                    el.textContent = currentLang === 'ar' ? arText : enText;
+                }
+            });
+            calculatePayroll();
+        }
+
+        function loadSampleData() {
+            const sample = `John Doe, 160, 10, 30\nJane Smith, 150, 5, 0\nAhmed Ali, 160, 15, 45\nSara Ahmed, 160, 0, 15\nMichael Johnson, 140, 20, 60`;
+            document.getElementById('csvInput').value = sample;
+            calculatePayroll();
+        }
+
+        function calculatePayroll() {
+            const hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
+            const otMultiplier = parseFloat(document.getElementById('otMultiplier').value) || 1;
+            const latePenalty = parseFloat(document.getElementById('latePenalty').value) || 0;
+            const csvText = document.getElementById('csvInput').value;
+
+            const lines = csvText.split('\n');
+            let tableHtml = '';
+            let grandTotal = 0;
+            let sumReg = 0;
+            let sumOT = 0;
+            let sumDed = 0;
+
+            lines.forEach(line => {
+                if (!line.trim()) return;
+                const parts = line.split(',');
+                if (parts.length < 4) return;
+
+                const name = parts[0].trim();
+                const regHours = parseFloat(parts[1]) || 0;
+                const otHours = parseFloat(parts[2]) || 0;
+                const lateMins = parseFloat(parts[3]) || 0;
+
+                const regPay = regHours * hourlyRate;
+                const otPay = otHours * hourlyRate * otMultiplier;
+                const deduction = (lateMins / 60) * latePenalty;
+                const netPay = (regPay + otPay) - deduction;
+
+                sumReg += regPay;
+                sumOT += otPay;
+                sumDed += deduction;
+                grandTotal += netPay;
+
+                tableHtml += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-4 font-semibold text-slate-800">${name}</td>
+                        <td class="p-4">${regHours} hrs</td>
+                        <td class="p-4 text-emerald-600">+${otHours} hrs</td>
+                        <td class="p-4 text-rose-500">-${lateMins} mins</td>
+                        <td class="p-4 text-slate-600">$${(regPay + otPay).toFixed(2)}</td>
+                        <td class="p-4 font-bold text-indigo-900">$${netPay.toFixed(2)}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('payrollTableBody').innerHTML = tableHtml;
+            document.getElementById('totalPayout').textContent = `$${grandTotal.toFixed(2)}`;
+            document.getElementById('sumRegular').textContent = `$${sumReg.toFixed(2)}`;
+            document.getElementById('sumOvertime').textContent = `$${sumOT.toFixed(2)}`;
+            document.getElementById('sumDeductions').textContent = `-$${sumDed.toFixed(2)}`;
+        }
+
+        function exportCSV() {
+            const csvText = document.getElementById('csvInput').value;
+            const hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
+            const otMultiplier = parseFloat(document.getElementById('otMultiplier').value) || 1;
+            const latePenalty = parseFloat(document.getElementById('latePenalty').value) || 0;
+
+            let csvContent = "data:text/csv;charset=utf-8,Employee Name,Regular Hours,Overtime Hours,Late Mins,Net Payable\n";
+            const lines = csvText.split('\n');
+
+            lines.forEach(line => {
+                if (!line.trim()) return;
+                const parts = line.split(',');
+                if (parts.length < 4) return;
+                const name = parts[0].trim();
+                const regHours = parseFloat(parts[1]) || 0;
+                const otHours = parseFloat(parts[2]) || 0;
+                const lateMins = parseFloat(parts[3]) || 0;
+
+                const regPay = regHours * hourlyRate;
+                const otPay = otHours * hourlyRate * otMultiplier;
+                const deduction = (lateMins / 60) * latePenalty;
+                const netPay = (regPay + otPay) - deduction;
+
+                csvContent += `"${name}",${regHours},${otHours},${lateMins},${netPay.toFixed(2)}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "payroll_summary_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Run initial calculation on load
+        window.onload = calculatePayroll;
+    </script>
+</body>
+</html>
