@@ -68,5 +68,12 @@
     "title_ar": "حاسبة ضريبة الاستقطاع والتعويض الإجمالي في السعودية",
     "description_en": "Calculate ZATCA withholding tax (WHT) rates, cross-border vendor gross-up amounts, and net remittable funds with bilateral tax treaty adjustments.",
     "date": "2026-11-02"
+  },
+  {
+    "slug": "saudi-overtime-and-wage-protection-audit-tool",
+    "title_en": "Saudi Overtime & Wage Protection System (WPS) Compliance Audit Tool",
+    "title_ar": "أداة تدقيق نظام حماية الأجور وساعات العمل الإضافية في السعودية",
+    "description_en": "Calculate Saudi Labor Law compliant overtime pay, ensure WPS salary transfer compliance, and audit payroll records instantly for KSA SMEs.",
+    "date": "2026-11-02"
   }
 ]

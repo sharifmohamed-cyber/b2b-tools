@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi Overtime & Wage Protection System (WPS) Compliance Audit Tool</title>
+    <meta name="description" content="Calculate Saudi Labor Law compliant overtime pay, ensure WPS salary transfer compliance, and audit payroll records instantly for KSA SMEs.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Cairo', sans-serif; }
+        [dir="rtl"] body { font-family: 'Cairo', 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Top Sticky Banner -->
+    <div class="bg-emerald-600 text-white px-4 py-3 sticky top-0 z-50 shadow-md flex flex-wrap justify-between items-center">
+        <div class="flex items-center space-x-2 rtl:space-x-reverse">
+            <span class="bg-emerald-800 text-xs px-2 py-1 rounded font-semibold uppercase tracking-wide" data-en="B2B Pro" data-ar="احترافي">B2B Pro</span>
+            <span class="text-sm font-medium" data-en="Automate your entire HR payroll audit with our advanced Excel toolkit." data-ar="أتمتة تدقيق الرواتب بالكامل باستخدام مجموعة أدوات إكسل المتقدمة.">Automate your entire HR payroll audit with our advanced Excel toolkit.</span>
+        </div>
+        <a href="https://gumroad.com" target="_blank" class="bg-white text-emerald-700 hover:bg-emerald-50 text-xs font-bold px-3 py-1.5 rounded transition shadow-sm" data-en="Get Excel Master Template ($29) &rarr;" data-ar="احصل على نموذج إكسل الرئيسي (29 دولار) &larr;">Get Excel Master Template ($29) &rarr;</a>
+    </div>
+
+    <!-- Main Header -->
+    <header class="bg-white border-b border-slate-200 py-6 px-6">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-900" data-en="Saudi Overtime & WPS Compliance Audit Tool" data-ar="أداة تدقيق نظام حماية الأجور وساعات العمل الإضافية السعودي">Saudi Overtime & WPS Compliance Audit Tool</h1>
+                <p class="text-sm text-slate-500 mt-1" data-en="Article 107 Saudi Labor Law & Qiwa/WPS Compliance Checker" data-ar="المادة 107 من نظام العمل السعودي وفحص توافق منصة قوى وحماية الأجور">Article 107 Saudi Labor Law & Qiwa/WPS Compliance Checker</p>
+            </div>
+            <button onclick="toggleLanguage()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold transition border border-slate-300">
+                <span id="lang-toggle-text">العربية (AR)</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Calculator & Results Section -->
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Input Form -->
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-lg font-semibold text-slate-800 mb-4 pb-2 border-b border-slate-100" data-en="Employee & Overtime Parameters" data-ar="بيانات الموظف وساعات العمل الإضافية">Employee & Overtime Parameters</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Basic Salary (SAR)" data-ar="الراتب الأساسي (ريال)">Basic Salary (SAR)</label>
+                        <input type="number" id="basicSalary" value="6000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Housing Allowance (SAR)" data-ar="بدل السكن (ريال)">Housing Allowance (SAR)</label>
+                        <input type="number" id="housingAllowance" value="2000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Other Allowances (SAR)" data-ar="بدلات أخرى (ريال)">Other Allowances (SAR)</label>
+                        <input type="number" id="otherAllowances" value="500" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Normal Working Hours / Month" data-ar="ساعات العمل العادية / شهرياً">Normal Working Hours / Month</label>
+                        <input type="number" id="monthlyHours" value="240" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Normal Overtime Hours (1.5x)" data-ar="ساعات العمل الإضافي العادية (1.5x)">Normal Overtime Hours (1.5x)</label>
+                        <input type="number" id="otNormal" value="15" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Rest Day / Holiday Hours (2.0x)" data-ar="ساعات أيام الراحة / الإجازات (2.0x)">Rest Day / Holiday Hours (2.0x)</label>
+                        <input type="number" id="otHoliday" value="8" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-4 border-t border-slate-100">
+                    <h3 class="text-sm font-semibold text-slate-700 mb-3" data-en="WPS / Mudad Compliance Check Parameters" data-ar="معايير فحص توافق نظام حماية الأجور (مدد)">WPS / Mudad Compliance Check Parameters</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="Actual Total Net Paid via WPS (SAR)" data-ar="إجمالي صافي الراتب المدفوع عبر حماية الأجور (ريال)">Actual Total Net Paid via WPS (SAR)</label>
+                            <input type="number" id="wpsPaid" value="8950" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1" data-en="GOSI Registered Wage (Basic + Housing)" data-ar="الأجر المسجل في التأمينات الاجتماعية (الأساسي + السكن)">GOSI Registered Wage (Basic + Housing)</label>
+                            <input type="number" id="gosiWage" value="8000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="calculateAudit()" class="mt-6 w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-lg transition shadow-sm" data-en="Run Compliance & Overtime Audit" data-ar="تشغيل تدقيق الالتزام وساعات العمل الإضافي">Run Compliance & Overtime Audit</button>
+            </div>
+
+            <!-- Results & CTA Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-lg font-semibold text-slate-800 mb-4 pb-2 border-b border-slate-100" data-en="Audit Summary" data-ar="ملخص التدقيق">Audit Summary</h2>
+                    
+                    <div class="space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500" data-en="Hourly Rate (Base):" data-ar="أجر الساعة (الأساسي):">Hourly Rate (Base):</span>
+                            <span id="res-hourly-base" class="font-semibold text-slate-800">0.00 SAR</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500" data-en="Normal OT Pay (1.5x):" data-ar="أجر الإضافي العادي (1.5x):">Normal OT Pay (1.5x):</span>
+                            <span id="res-ot-normal" class="font-semibold text-slate-800">0.00 SAR</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-slate-500" data-en="Holiday OT Pay (2.0x):" data-ar="أجر إضافي العطل (2.0x):">Holiday OT Pay (2.0x):</span>
+                            <span id="res-ot-holiday" class="font-semibold text-slate-800">0.00 SAR</span>
+                        </div>
+                        <div class="flex justify-between text-sm border-t border-slate-100 pt-2">
+                            <span class="font-bold text-slate-700" data-en="Total Overtime Due:" data-ar="إجمالي المستحق للإضافي:">Total Overtime Due:</span>
+                            <span id="res-total-ot" class="font-bold text-emerald-600 text-base">0.00 SAR</span>
+                        </div>
+                        <div class="flex justify-between text-sm border-t border-slate-100 pt-2">
+                            <span class="font-bold text-slate-700" data-en="WPS Variance Status:" data-ar="حالة مطابقة حماية الأجور:">WPS Variance Status:</span>
+                            <span id="res-wps-status" class="font-bold text-xs px-2 py-1 rounded bg-slate-100 text-slate-600">Pending</span>
+                        </div>
+                    </div>
+
+                    <!-- Disclaimer -->
+                    <p class="mt-6 text-[11px] text-slate-400 leading-relaxed" data-en="Disclaimer: Estimates are based on standard interpretations of Saudi Labor Law Article 107 and WPS guidelines. Verify all calculations with professional legal and HR advisors prior to official submission." data-ar="إخلاء مسؤولية: النتائج هي تقديرات بناءً على التفسيرات القياسية للمادة 107 من نظام العمل السعودي وإرشادات حماية الأجور. يجب التحقق من كافة الحسابات مع مستشاري الموارد البشرية والقانونيين قبل التقديم الرسمي.">
+                        Disclaimer: Estimates are based on standard interpretations of Saudi Labor Law Article 107 and WPS guidelines. Verify all calculations with professional legal and HR advisors prior to official submission.
+                    </p>
+                </div>
+
+                <!-- Gumroad CTA Box inside Card -->
+                <div class="mt-6 bg-slate-50 border border-slate-200 rounded-xl p-4 text-center">
+                    <h4 class="font-bold text-slate-800 text-sm" data-en="Need Bulk WPS & Overtime Sheets?" data-ar="هل تحتاج إلى جداول حماية الأجور والإضافي بالجملة؟">Need Bulk WPS & Overtime Sheets?</h4>
+                    <p class="text-xs text-slate-500 mt-1 mb-3" data-en="Download the complete Excel + VBA macro automated template with audit logs." data-ar="قم بتنزيل نموذج إكسل الآلي الكامل مع سجلات التدقيق.">Download the complete Excel + VBA macro automated template with audit logs.</p>
+                    <a href="https://gumroad.com" target="_blank" class="inline-block bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2.5 rounded-lg transition w-full shadow-sm" data-en="Download Excel Template - $29" data-ar="تحميل نموذج إكسل - 29 دولار">Download Excel Template - $29</a>
+                </div>
+
+                <button onclick="exportCSV()" class="mt-4 w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-4 rounded-lg text-xs transition border border-slate-300" data-en="Export Audit Summary (CSV)" data-ar="تصدير ملخص التدقيق (CSV)">Export Audit Summary (CSV)</button>
+            </div>
+
+        </div>
+
+        <!-- SEO Guide Section -->
+        <section class="mt-12 bg-white rounded-xl shadow-sm border border-slate-200 p-8">
+            <h2 class="text-xl font-bold text-slate-900 mb-4" data-en="Complete Guide to Saudi Overtime (Article 107) & WPS Compliance" data-ar="الدليل الشامل لساعات العمل الإضافية (المادة 107) والامتثال لنظام حماية الأجور السعودي">Complete Guide to Saudi Overtime (Article 107) & WPS Compliance Guide</h2>
+            
+            <div class="space-y-4 text-sm text-slate-600 leading-relaxed">
+                <p data-en="Operating a business in the Kingdom of Saudi Arabia requires strict adherence to the Saudi Labor Law and Ministry of Human Resources and Social Development (MHRSD) regulations. Two critical pillars of local HR administration are accurate overtime calculation under Article 107 and seamless Wage Protection System (WPS) / Mudad compliance." data-ar="يتطلب تشغيل الأعمال في المملكة العربية السعودية الالتزام التام بنظام العمل السعودي ولوائح وزارة الموارد البشرية والتنمية الاجتماعية. ركيزتان أساسيتان لإدارة الموارد البشرية هما حساب العمل الإضافي بدقة وفقاً للمادة 107 والالتزام التام بنظام حماية الأجور (مدد).">
+                    Operating a business in the Kingdom of Saudi Arabia requires strict adherence to the Saudi Labor Law and Ministry of Human Resources and Social Development (MHRSD) regulations. Two critical pillars of local HR administration are accurate overtime calculation under Article 107 and seamless Wage Protection System (WPS) / Mudad compliance.
+                </p>
+
+                <h3 class="text-base font-bold text-slate-800 pt-3" data-en="1. How Article 107 Overtime is Calculated" data-ar="1. كيف يتم حساب ساعات العمل الإضافي طبقاً للمادة 107">1. How Article 107 Overtime is Calculated</h3>
+                <p data-en="According to Saudi Labor Law Article 107, if an employer requires an employee to work additional hours beyond normal working hours, compensation must be paid at a rate not less than 150% (1.5x) of the normal hourly wage. Furthermore, work performed on weekends (Rest Days) or official public holidays must be compensated at 200% (2.0x). The hourly wage is typically calculated based on the basic salary plus contractual allowances divided by normal monthly working hours." data-ar="وفقاً للمادة 107 من نظام العمل السعودي، إذا طلب صاحب العمل من العامل ساعات إضافية، يجب تعويضه بأجر لا يقل عن 150% من أجر الساعة العادي. علاوة على ذلك، يتم تعويض العمل في أيام الراحة أو الإجازات الرسمية بنسبة 200%. يتم احتساب أجر الساعة بناءً على الأساسي مضافاً إليه البدلات المتفق عليها مقسوماً على ساعات العمل الشهرية العادية.">
+                    According to Saudi Labor Law Article 107, if an employer requires an employee to work additional hours beyond normal working hours, compensation must be paid at a rate not less than 150% (1.5x) of the normal hourly wage. Furthermore, work performed on weekends (Rest Days) or official public holidays must be compensated at 200% (2.0x). The hourly wage is typically calculated based on the basic salary plus contractual allowances divided by normal monthly working hours.
+                </p>
+
+                <h3 class="text-base font-bold text-slate-800 pt-3" data-en="2. Wage Protection System (WPS) & Mudad Integration" data-ar="2. نظام حماية الأجور (WPS) والربط بمنصة مدد">2. Wage Protection System (WPS) & Mudad Integration</h3>
+                <p data-en="The WPS mandates that all private sector employers transfer employee wages through approved financial institutions and report them via the Mudad platform. Discrepancies between the GOSI registered wage and actual WPS transfers can trigger Mudad compliance flags, leading to suspension of government services or fines. Regular internal audits of overtime payouts ensure transparency and compliance." data-ar="يلزم نظام حماية الأجور أصحاب العمل في القطاع الخاص بتحويل أجور العمال عبر المؤسسات المالية المعتمدة وإبلاغها عبر منصة مدد. أي تناقض بين أجر التأمينات الاجتماعية والتحويلات الفعلية قد يؤدي إلى إيقاف الخدمات الحكومية أو الغرامات.">
+                    The WPS mandates that all private sector employers transfer employee wages through approved financial institutions and report them via the Mudad platform. Discrepancies between the GOSI registered wage and actual WPS transfers can trigger Mudad compliance flags, leading to suspension of government services or fines. Regular internal audits of overtime payouts ensure transparency and compliance.
+                </p>
+
+                <h3 class="text-base font-bold text-slate-800 pt-3" data-en="Frequently Asked Questions (FAQ)" data-ar="الأسئلة الشائعة">Frequently Asked Questions (FAQ)</h3>
+                <div class="space-y-3 pt-2">
+                    <div>
+                        <strong class="text-slate-700 block" data-en="Q: Is overtime mandatory for all employees?" data-ar="س: هل العمل الإضافي إلزامي لجميع الموظفين؟">Q: Is overtime mandatory for all employees?</strong>
+                        <p class="text-slate-500" data-en="A: Managerial and high-level executive employees are often exempt from overtime compensation under specific contract clauses, whereas operational and administrative staff are generally eligible." data-ar="ج: غالباً ما يتم إعفاء الموظفين الإداريين والمديرين التنفيذيين من تعويض العمل الإضافي بموجب بنود عقد محددة، بينما يستحق الموظفون التشغيليون والإداريون ذلك.">A: Managerial and high-level executive employees are often exempt from overtime compensation under specific contract clauses, whereas operational and administrative staff are generally eligible.</p>
+                    </div>
+                    <div>
+                        <strong class="text-slate-700 block" data-en="Q: How does Mudad check wage compliance?" data-ar="س: كيف تقوم منصة مدد بالتحقق من التزام الأجور؟">Q: How does Mudad check wage compliance?</strong>
+                        <p class="text-slate-500" data-en="A: Mudad cross-references monthly bank transfer files with employment contracts registered on Qiwa and GOSI wage records to detect unpaid or delayed salaries." data-ar="ج: تقاطع منصة مدد ملفات التحويل المصرفي الشهرية مع عقود العمل المسجلة في قوى وسجلات التأمينات الاجتماعية لاكتشاف الرواتب غير المدفوعة أو المتأخرة.">A: Mudad cross-references monthly bank transfer files with employment contracts registered on Qiwa and GOSI wage records to detect unpaid or delayed salaries.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 mt-12">
+        <p data-en="&copy; 2025 Saudi Overtime & WPS Audit Tool. Built for KSA Businesses." data-ar="&copy; 2025 أداة تدقيق العمل الإضافي وحماية الأجور السعودي. مخصصة لشركات المملكة العربية السعودية.">&copy; 2025 Saudi Overtime & WPS Audit Tool. Built for KSA Businesses.</p>
+    </footer>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let currentLang = 'en';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const html = document.documentElement;
+            
+            if (currentLang === 'ar') {
+                html.setAttribute('dir', 'rtl');
+                html.setAttribute('lang', 'ar');
+                document.getElementById('lang-toggle-text').innerText = 'English (EN)';
+            } else {
+                html.setAttribute('dir', 'ltr');
+                html.setAttribute('lang', 'en');
+                document.getElementById('lang-toggle-text').innerText = 'العربية (AR)';
+            }
+
+            document.querySelectorAll('[data-en]').forEach(el => {
+                el.innerText = el.getAttribute(`data-${currentLang}`);
+            });
+            calculateAudit();
+        }
+
+        function calculateAudit() {
+            const basic = parseFloat(document.getElementById('basicSalary').value) || 0;
+            const housing = parseFloat(document.getElementById('housingAllowance').value) || 0;
+            const other = parseFloat(document.getElementById('otherAllowances').value) || 0;
+            const hours = parseFloat(document.getElementById('monthlyHours').value) || 240;
+            const otNorm = parseFloat(document.getElementById('otNormal').value) || 0;
+            const otHol = parseFloat(document.getElementById('otHoliday').value) || 0;
+            const wpsPaid = parseFloat(document.getElementById('wpsPaid').value) || 0;
+            const gosiWage = parseFloat(document.getElementById('gosiWage').value) || 0;
+
+            // Hourly rate based on total cash remuneration or basic depending on internal policy (using basic+housing+other for comprehensive hourly or basic standard)
+            const totalMonthlyRemuneration = basic + housing + other;
+            const hourlyRate = hours > 0 ? (totalMonthlyRemuneration / hours) : 0;
+
+            const otNormalPay = otNorm * hourlyRate * 1.5;
+            const otHolidayPay = otHol * hourlyRate * 2.0;
+            const totalOT = otNormalPay + otHolidayPay;
+
+            document.getElementById('res-hourly-base').innerText = hourlyRate.toFixed(2) + ' SAR';
+            document.getElementById('res-ot-normal').innerText = otNormalPay.toFixed(2) + ' SAR';
+            document.getElementById('res-ot-holiday').innerText = otHolidayPay.toFixed(2) + ' SAR';
+            document.getElementById('res-total-ot').innerText = totalOT.toFixed(2) + ' SAR';
+
+            const statusEl = document.getElementById('res-wps-status');
+            if (wpsPaid >= (gosiWage + totalOT)) {
+                statusEl.innerText = currentLang === 'ar' ? 'متوافق (Compliant)' : 'Compliant';
+                statusEl.className = 'font-bold text-xs px-2 py-1 rounded bg-emerald-100 text-emerald-700';
+            } else {
+                statusEl.innerText = currentLang === 'ar' ? 'غير متوافق/تباين (Variance)' : 'Variance Detected';
+                statusEl.className = 'font-bold text-xs px-2 py-1 rounded bg-rose-100 text-rose-700';
+            }
+        }
+
+        function exportCSV() {
+            const basic = document.getElementById('basicSalary').value;
+            const housing = document.getElementById('housingAllowance').value;
+            const totalOT = document.getElementById('res-total-ot').innerText;
+            const status = document.getElementById('res-wps-status').innerText;
+
+            const csvContent = "data:text/csv;charset=utf-8," + 
+                "Parameter,Value\n" +
+                `Basic Salary,${basic}\n` +
+                `Housing Allowance,${housing}\n` +
+                `Total Overtime Due,${totalOT}\n` +
+                `WPS Status,${status}\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "saudi_overtime_wps_audit.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initial run
+        window.onload = calculateAudit;
+    </script>
+</body>
+</html>
