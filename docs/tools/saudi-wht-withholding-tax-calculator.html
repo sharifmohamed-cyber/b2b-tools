@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saudi Withholding Tax (WHT) & Gross-Up Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            cairo: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body[dir="rtl"] { font-family: 'Cairo', sans-serif; }
+    body[dir="ltr"] { font-family: 'Inter', sans-serif; }
+    .badge-soft { background: rgba(16, 185, 129, 0.1); color: #047857; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col" dir="ltr" id="pageBody">
+
+  <!-- Top Banner (Sticky Lead Gen) -->
+  <header class="sticky top-0 z-50 bg-slate-900 border-b border-slate-800 text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse">
+        <span class="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <p class="text-xs sm:text-sm font-medium text-slate-200">
+          <span class="font-bold text-amber-300" data-i18n="banner_highlight">ZATCA Compliant:</span>
+          <span data-i18n="banner_text">Instant Saudi Cross-Border Withholding Tax & Gross-Up Engine.</span>
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-xs bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1.5 rounded-md transition-colors shadow">
+          <span data-i18n="banner_cta">Get Master Excel & VBA Tool ($29)</span>
+          <svg class="w-3.5 h-3.5 ml-1 rtl:mr-1 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+        <button id="langToggleBtn" onclick="toggleLanguage()" class="text-xs font-semibold px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition">
+          العربية
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
+    <!-- Title Header -->
+    <div class="text-center max-w-3xl mx-auto mb-8">
+      <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full badge-soft text-xs font-bold uppercase tracking-wider mb-2">
+        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+        <span data-i18n="badge_title">Saudi Tax Authority (ZATCA) Standard</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight" data-i18n="main_title">
+        Saudi Withholding Tax (WHT) & Gross-Up Calculator
+      </h1>
+      <p class="mt-2 text-sm sm:text-base text-slate-600" data-i18n="main_subtitle">
+        Accurately compute withholding tax liabilities, vendor gross-up adjustments, and double taxation treaty (DTAA) provisions for payments to non-resident entities.
+      </p>
+    </div>
+
+    <!-- Calculator Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <!-- Input Form Card -->
+      <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            <span data-i18n="input_header">Transaction & Contract Parameters</span>
+          </h2>
+          <button type="button" onclick="resetDefaults()" class="text-xs text-slate-500 hover:text-emerald-600 font-semibold underline" data-i18n="reset_btn">Reset</button>
+        </div>
+
+        <div class="space-y-5">
+          <!-- Contract Value & Currency -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div class="sm:col-span-2">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_invoice_amount">Base Invoice Amount</label>
+              <div class="relative rounded-lg shadow-sm">
+                <input type="number" id="invoiceAmount" min="0" step="any" value="50000" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:bg-white text-slate-900 text-base font-semibold transition">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_currency">Currency</label>
+              <select id="currencyCode" class="w-full px-3 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-slate-900 font-semibold transition">
+                <option value="SAR">SAR (ر.س)</option>
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+                <option value="AED">AED (د.إ)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Payment Nature / Service Type -->
+          <div>
+            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="label_service_type">Nature of Cross-Border Payment (Article 68)</label>
+            <select id="serviceType" onchange="updateCategoryRate()" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-slate-900 font-medium transition text-sm">
+              <option value="20" data-desc-en="Management fees & executive supervision" data-desc-ar="أتعاب الإدارة والإشراف التنفيذي">Management Fees (20%)</option>
+              <option value="15" data-desc-en="Royalties, software licenses, IP, patents" data-desc-ar="حقوق ملكية، تراخيص برمجيات، براءات اختراع" selected>Royalties, Software License, IP (15%)</option>
+              <option value="5" data-desc-en="Technical, consulting, engineering, IT services" data-desc-ar="خدمات فنية واستشارية وهندسية وتكنولوجيا المعلومات">Technical & Consulting Services (5%)</option>
+              <option value="5_telecom" data-desc-en="International telecom & data transit" data-desc-ar="خدمات الاتصالات الدولية ونقل البيانات">International Telecommunications (5%)</option>
+              <option value="5_freight" data-desc-en="International freight, sea/air shipping" data-desc-ar="خدمات الشحن الدولي البحري أو الجوي">International Freight / Shipping (5%)</option>
+              <option value="5_dividend" data-desc-en="Dividends & distributed company profits" data-desc-ar="أرباح أسهم موزعة لغير المقيمين">Dividends (5%)</option>
+              <option value="5_loan" data-desc-en="Loan interest / financing returns" data-desc-ar="عوائد القروض وتسهيلات التمويل">Loan Charges / Financial Interest (5%)</option>
+              <option value="15_other" data-desc-en="Any other services performed wholly or partially in KSA" data-desc-ar="أي خدمات أخرى مؤداة كلياً أو جزئياً داخل المملكة">Other Services Rendered in KSA (15%)</option>
+              <option value="custom" data-desc-en="Special treaty or customized rate" data-desc-ar="نسبة اتفاقية ضريبية مخصصة">Custom / Treaty Specified Rate</option>
+            </select>
+            <p id="serviceDescription" class="mt-1 text-xs text-slate-500 italic"></p>
+          </div>
+
+          <!-- Custom Rate Box (Shown only if custom or overridden) -->
+          <div id="customRateWrapper" class="hidden p-3.5 bg-amber-50 rounded-lg border border-amber-200">
+            <label class="block text-xs font-bold text-amber-900 uppercase tracking-wider mb-1" data-i18n="label_custom_rate">Applied Statutory Rate (%)</label>
+            <input type="number" id="customRateInput" min="0" max="100" step="0.5" value="5" class="w-32 px-3 py-1.5 bg-white border border-amber-300 rounded font-bold text-slate-900 focus:ring-2 focus:ring-amber-500">
+            <span class="text-xs text-amber-700 ml-2" data-i18n="note_custom_rate">Override based on official DTAA certificate.</span>
+          </div>
+
+          <!-- Gross-Up Clause Switch (Crucial for B2B) -->
+          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-slate-50 transition">
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <h3 class="text-sm font-bold text-slate-900" data-i18n="label_grossup_title">Gross-Up Required? ("Net-of-Taxes" Contract)</h3>
+                <p class="text-xs text-slate-500 mt-0.5" data-i18n="label_grossup_sub">
+                  Select 'Yes' if vendor requires receiving the full invoice value net without any tax deduction.
+                </p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer mt-1 flex-shrink-0">
+                <input type="checkbox" id="grossUpToggle" class="sr-only peer" checked>
+                <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Reverse Charge Mechanism VAT -->
+          <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70">
+            <div class="flex items-center justify-between gap-3">
+              <div>
+                <h3 class="text-sm font-bold text-slate-900" data-i18n="label_rcm_vat_title">Apply 15% VAT Reverse Charge (RCM)</h3>
+                <p class="text-xs text-slate-500 mt-0.5" data-i18n="label_rcm_vat_sub">
+                  Self-accounted VAT declared on Box 9 of your KSA VAT Return.
+                </p>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer flex-shrink-0">
+                <input type="checkbox" id="rcmToggle" class="sr-only peer" checked>
+                <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Filing Deadline Reminder -->
+          <div class="flex items-center gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-900 text-xs">
+            <svg class="w-4 h-4 text-blue-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+            <span data-i18n="remit_deadline_note">Statutory Requirement: WHT must be submitted to ZATCA within the first 10 days of the month following payment.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Output / Results Summary Card -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-6 sm:p-7 relative overflow-hidden">
+          <div class="absolute top-0 right-0 left-0 h-2 bg-gradient-to-r from-emerald-500 to-teal-600"></div>
+          
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
+            <h2 class="text-base font-bold text-slate-900 uppercase tracking-wide" data-i18n="summary_title">Settlement Breakdown</h2>
+            <span id="statusTag" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Grossed-Up</span>
+          </div>
+
+          <!-- Key Primary Metric -->
+          <div class="p-4 rounded-xl bg-slate-900 text-white mb-5 shadow-inner">
+            <span class="text-xs font-medium text-slate-400 block mb-1" data-i18n="metric_total_cost">Total Company Cash Outlay (Cost)</span>
+            <div class="flex items-baseline gap-2">
+              <span id="dispTotalCost" class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white">0.00</span>
+              <span class="text-sm font-semibold text-emerald-400 currLabel">SAR</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-2" id="costBreakdownNote">Includes remitted vendor funds + ZATCA tax payment</p>
+          </div>
+
+          <!-- Line item details -->
+          <div class="space-y-3.5 text-sm">
+            <div class="flex justify-between items-center text-slate-600">
+              <span data-i18n="res_vendor_payment">Net Remittance to Foreign Vendor</span>
+              <span class="font-bold text-slate-900"><span id="dispVendorNet">0.00</span> <span class="currLabel">SAR</span></span>
+            </div>
+
+            <div class="flex justify-between items-center text-slate-600">
+              <span class="flex items-center gap-1">
+                <span data-i18n="res_wht_liability">ZATCA Withholding Tax Payable</span>
+                <span class="text-xs px-1.5 py-0.2 rounded bg-slate-100 font-semibold" id="dispAppliedRate">15%</span>
+              </span>
+              <span class="font-bold text-red-600"><span id="dispWHTAmount">0.00</span> <span class="currLabel">SAR</span></span>
+            </div>
+
+            <div class="flex justify-between items-center text-slate-600">
+              <span data-i18n="res_gross_base">Effective Taxable Base (Gross Amount)</span>
+              <span class="font-semibold text-slate-800"><span id="dispGrossBase">0.00</span> <span class="currLabel">SAR</span></span>
+            </div>
+
+            <div id="rcmRow" class="flex justify-between items-center text-slate-600 pt-2 border-t border-slate-100">
+              <span class="flex items-center gap-1">
+                <span data-i18n="res_rcm_vat">15% Reverse Charge VAT (RCM)</span>
+                <span class="text-[10px] text-slate-400 font-normal" data-i18n="input_recoverable">(Recoverable)</span>
+              </span>
+              <span class="font-semibold text-teal-700"><span id="dispRCMVAT">0.00</span> <span class="currLabel">SAR</span></span>
+            </div>
+
+            <div class="flex justify-between items-center text-slate-600 pt-2 border-t border-slate-100 font-medium">
+              <span data-i18n="res_effective_tax">Additional Cost Over Contract</span>
+              <span id="dispTaxSurcharge" class="font-bold text-amber-700">+17.65%</span>
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div class="mt-6 grid grid-cols-2 gap-3">
+            <button onclick="window.print()" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg border border-slate-300 hover:bg-slate-100 font-semibold text-xs text-slate-700 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <span data-i18n="btn_print">Print / PDF</span>
+            </button>
+            <button onclick="exportCSV()" class="w-full flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-lg border border-emerald-600 bg-emerald-50 hover:bg-emerald-100 font-semibold text-xs text-emerald-800 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              <span data-i18n="btn_export">Export CSV</span>
+            </button>
+          </div>
+
+          <!-- Visible Legal Disclaimer -->
+          <div class="mt-5 p-3 rounded-lg bg-amber-50/80 border border-amber-200/80 text-[11px] text-amber-900 leading-relaxed">
+            <p class="font-bold mb-0.5" data-i18n="disclaimer_title">Regulatory Notice & Disclaimer:</p>
+            <p data-i18n="disclaimer_body">
+              This tool provides estimates based on Saudi Income Tax Law (Article 68) and standard ZATCA guidelines. Exact liability depends on Double Taxation Avoidance Agreements (DTAA), valid tax residence certificates (TRC), and specific permanent establishment tests. Verify all filings with a certified tax consultant prior to declaration.
+            </p>
+          </div>
+        </div>
+
+        <!-- High Converting CTA Box -->
+        <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-emerald-950 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden border border-emerald-900/40">
+          <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl"></div>
+          <div class="flex items-center gap-2 text-amber-400 font-bold text-xs uppercase tracking-wider mb-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+            <span data-i18n="cta_badge">Finance & Tax Toolkit ($29)</span>
+          </div>
+          <h3 class="text-lg font-extrabold text-white leading-snug" data-i18n="cta_headline">
+            Get The Complete Automated Corporate Tax & WHT Excel Register
+          </h3>
+          <p class="text-xs text-slate-300 mt-2 mb-4 leading-relaxed" data-i18n="cta_desc">
+            Includes automated vendor ledger, treaty tax matrix, ZATCA monthly return reconciliation, journal entry generator, and audit trail templates.
+          </p>
+          <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="block text-center w-full py-3 px-4 rounded-xl font-bold text-sm bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition transform hover:-translate-y-0.5 shadow-lg shadow-emerald-500/20" data-i18n="cta_btn">
+            Download Master Excel & VBA Template ($29) →
+          </a>
+          <div class="flex items-center justify-center gap-4 text-[11px] text-slate-400 mt-3">
+            <span>✓ Instant Download</span>
+            <span>✓ 100% Unlocked formulas</span>
+            <span>✓ Excel 2016-365</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 800+ Word Educational & Authority Guide for SEO -->
+    <section class="mt-16 bg-white rounded-2xl border border-slate-200 p-8 sm:p-10 shadow-sm">
+      <div class="max-w-4xl mx-auto space-y-10 text-slate-700 leading-relaxed text-sm sm:text-base">
+        
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900 mb-4" data-i18n="guide_h1">Comprehensive Guide to Saudi Withholding Tax (WHT) Regulations</h2>
+          <p data-i18n="guide_p1">
+            Under the Saudi Income Tax Law enacted by Royal Decree No. (M/1) and overseen by the Zakat, Tax and Customs Authority (ZATCA), any resident entity or permanent establishment (PE) in the Kingdom making payments to non-resident entities without a permanent establishment in Saudi Arabia is legally mandated to deduct Withholding Tax (WHT) at source. Withholding tax ensures that cross-border economic activity generated within Saudi Arabia contributes equitably to the state treasury.
+          </p>
+        </div>
+
+        <!-- Rates Matrix Table -->
+        <div>
+          <h3 class="text-xl font-bold text-slate-900 mb-3" data-i18n="guide_h2">Statutory ZATCA Withholding Tax Rates (Article 68)</h3>
+          <div class="overflow-x-auto rounded-xl border border-slate-200 mt-2">
+            <table class="min-w-full text-left rtl:text-right text-xs sm:text-sm divide-y divide-slate-200">
+              <thead class="bg-slate-50 text-slate-800 font-bold uppercase text-[11px]">
+                <tr>
+                  <th class="px-4 py-3" data-i18n="th_service">Payment Type / Nature</th>
+                  <th class="px-4 py-3 text-center" data-i18n="th_rate">Statutory Rate</th>
+                  <th class="px-4 py-3" data-i18n="th_examples">Common Commercial Examples</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 bg-white">
+                <tr>
+                  <td class="px-4 py-3 font-semibold text-slate-900" data-i18n="row1_name">Management Fees</td>
+                  <td class="px-4 py-3 text-center font-bold text-red-600">20%</td>
+                  <td class="px-4 py-3 text-slate-600" data-i18n="row1_desc">Executive leadership recharges, headquarters management support, board retainers.</td>
+                </tr>
+                <tr class="bg-slate-50/50">
+                  <td class="px-4 py-3 font-semibold text-slate-900" data-i18n="row2_name">Royalties & IP Exploitation</td>
+                  <td class="px-4 py-3 text-center font-bold text-amber-600">15%</td>
+                  <td class="px-4 py-3 text-slate-600" data-i18n="row2_desc">SaaS subscriptions, software licensing, trademark franchise fees, patents, proprietary blueprints.</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 font-semibold text-slate-900" data-i18n="row3_name">Technical & Consulting Services</td>
+                  <td class="px-4 py-3 text-center font-bold text-emerald-600">5%</td>
+                  <td class="px-4 py-3 text-slate-600" data-i18n="row3_desc">Engineering studies, specialized advisory, bespoke software development, architectural plans.</td>
+                </tr>
+                <tr class="bg-slate-50/50">
+                  <td class="px-4 py-3 font-semibold text-slate-900" data-i18n="row4_name">International Telecommunications</td>
+                  <td class="px-4 py-3 text-center font-bold text-emerald-600">5%</td>
+                  <td class="px-4 py-3 text-slate-600" data-i18n="row4_desc">Cross-border transit data lines, satellite link charges, international bandwidth routing.</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 font-semibold text-slate-900" data-i18n="row5_name">Loan Charges / Interest</td>
+                  <td class="px-4 py-3 text-center font-bold text-emerald-600">5%</td>
+                  <td class="px-4 py-3 text-slate-600" data-i18n="row5_desc">Intercompany loan interests, debt servicing charges paid to non-resident financial institutions.</td>
+                </tr>
+                <tr class="bg-slate-50/50">
+                  <td class="px-4 py-3 font-semibold text-slate-900" data-i18n="row6_name">Dividends to Non-Residents</td>
+                  <td class="px-4 py-3 text-center font-bold text-emerald-600">5%</td>
+                  <td class="px-4 py-3 text-slate-600" data-i18n="row6_desc">Profit distributions from Saudi limited liability companies or joint-stock shares to foreign owners.</td>
+                </tr>
+                <tr>
+                  <td class="px-4 py-3 font-semibold text-slate-900" data-i18n="row7_name">Other In-Kingdom Services</td>
+                  <td class="px-4 py-3 text-center font-bold text-amber-600">15%</td>
+                  <td class="px-4 py-3 text-slate-600" data-i18n="row7_desc">Any unclassified commercial service rendered physically inside Saudi territorial borders.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Mathematical Gross-Up Breakdown -->
+        <div>
+          <h3 class="text-xl font-bold text-slate-900 mb-3" data-i18n="guide_h3">Understanding the Gross-Up Formula in International Procurement</h3>
+          <p class="mb-3" data-i18n="guide_p2">
+            International vendors frequently demand contractual clauses stipulating that invoices must be received <strong>"Net of any local taxes, levies, or source withholdings"</strong>. In such cases, the Saudi payor cannot simply subtract WHT from the vendor's agreed invoice balance. Instead, the company must assume the tax as an additional financial burden through a process called <em>Grossing-Up</em>.
+          </p>
+          <div class="p-4 rounded-xl bg-slate-100 border border-slate-200 font-mono text-xs sm:text-sm text-slate-800 space-y-2">
+            <p class="font-bold text-slate-900" data-i18n="formula_lbl1">Standard Gross-Up Equation:</p>
+            <p class="bg-white p-2.5 rounded border border-slate-300 font-semibold text-emerald-800">
+              Gross Base Amount = Net Contract Amount ÷ (1 - Tax Rate)
+            </p>
+            <p class="font-bold text-slate-900 mt-3" data-i18n="formula_lbl2">Withholding Tax Amount to ZATCA:</p>
+            <p class="bg-white p-2.5 rounded border border-slate-300 font-semibold text-red-700">
+              WHT Liability = Gross Base Amount × Tax Rate
+            </p>
+          </div>
+          <p class="mt-3 text-xs sm:text-sm text-slate-600" data-i18n="formula_example_text">
+            <strong>Numerical Example:</strong> Suppose an overseas technology firm invoices USD $100,000 for SaaS licensing (15% WHT) on a net contract basis. The taxable base becomes $100,000 ÷ (1 - 0.15) = $117,647.06. The Saudi company remits $100,000.00 to the vendor and pays $17,647.06 to ZATCA. The true economic surcharge on your enterprise is 17.65%.
+          </p>
+        </div>
+
+        <!-- Frequently Asked Questions -->
+        <div>
+          <h3 class="text-xl font-bold text-slate-900 mb-4" data-i18n="faq_h1">Frequently Asked Questions (FAQ)</h3>
+          <div class="space-y-4">
+            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+              <h4 class="font-bold text-slate-900 text-base mb-1" data-i18n="faq_q1">When is the exact deadline to remit Withholding Tax in Saudi Arabia?</h4>
+              <p class="text-sm text-slate-600" data-i18n="faq_a1">According to Article 68 of the Income Tax Regulations, Withholding Tax must be filed through the ZATCA portal and paid within the first 10 days of the calendar month following the month in which the foreign payment or realization of income occurred.</p>
+            </div>
+
+            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+              <h4 class="font-bold text-slate-900 text-base mb-1" data-i18n="faq_q2">Can Double Taxation Treaties (DTAA) eliminate the Withholding Tax?</h4>
+              <p class="text-sm text-slate-600" data-i18n="faq_a2">Yes. Saudi Arabia maintains comprehensive Double Tax Avoidance Agreements with more than 55 jurisdictions (including the UAE, UK, France, Germany, Japan, Singapore, and China). Under many treaties, technical and business service fees are classified under "Business Profits" (Article 7) and taxed at 0% in KSA unless the non-resident maintains a permanent establishment. However, a Tax Residency Certificate (TRC) and Form Q7B must be collected before applying treaty rates.</p>
+            </div>
+
+            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/50">
+              <h4 class="font-bold text-slate-900 text-base mb-1" data-i18n="faq_q3">Does Withholding Tax apply in addition to Value Added Tax (VAT)?</h4>
+              <p class="text-sm text-slate-600" data-i18n="faq_a3">Yes. WHT is a direct income tax withholding, whereas VAT is a consumption tax. Under the Saudi VAT Law, cross-border services received by a taxable Saudi business are subject to the Reverse Charge Mechanism (RCM) at 15%. Businesses record both the input and output tax simultaneously on Box 9 of their VAT returns.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 text-xs mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left rtl:sm:text-right">
+      <p>© <span id="year"></span> Saudi Tax Micro-SaaS Architect. Built for enterprise CFOs, accountants, and controllers.</p>
+      <div class="flex items-center gap-4">
+        <a href="https://gumroad.com" target="_blank" class="text-emerald-400 hover:underline">Excel Corporate Suite</a>
+        <a href="#top" class="hover:text-white">Back to Top ↑</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Set current year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Bilingual Translation Dictionary
+    const i18n = {
+      en: {
+        banner_highlight: "ZATCA Compliant:",
+        banner_text: "Instant Saudi Cross-Border Withholding Tax & Gross-Up Engine.",
+        banner_cta: "Get Master Excel & VBA Tool ($29)",
+        badge_title: "Saudi Tax Authority (ZATCA) Standard",
+        main_title: "Saudi Withholding Tax (WHT) & Gross-Up Calculator",
+        main_subtitle: "Accurately compute withholding tax liabilities, vendor gross-up adjustments, and double taxation treaty (DTAA) provisions for payments to non-resident entities.",
+        input_header: "Transaction & Contract Parameters",
+        reset_btn: "Reset",
+        label_invoice_amount: "Base Invoice Amount",
+        label_currency: "Currency",
+        label_service_type: "Nature of Cross-Border Payment (Article 68)",
+        label_custom_rate: "Applied Statutory Rate (%)",
+        note_custom_rate: "Override based on official DTAA certificate.",
+        label_grossup_title: "Gross-Up Required? (\"Net-of-Taxes\" Contract)",
+        label_grossup_sub: "Select 'Yes' if vendor requires receiving the full invoice value net without any tax deduction.",
+        label_rcm_vat_title: "Apply 15% VAT Reverse Charge (RCM)",
+        label_rcm_vat_sub: "Self-accounted VAT declared on Box 9 of your KSA VAT Return.",
+        remit_deadline_note: "Statutory Requirement: WHT must be submitted to ZATCA within the first 10 days of the month following payment.",
+        summary_title: "Settlement Breakdown",
+        metric_total_cost: "Total Company Cash Outlay (Cost)",
+        res_vendor_payment: "Net Remittance to Foreign Vendor",
+        res_wht_liability: "ZATCA Withholding Tax Payable",
+        res_gross_base: "Effective Taxable Base (Gross Amount)",
+        res_rcm_vat: "15% Reverse Charge VAT (RCM)",
+        input_recoverable: "(Recoverable)",
+        res_effective_tax: "Additional Cost Over Contract",
+        btn_print: "Print / PDF",
+        btn_export: "Export CSV",
+        disclaimer_title: "Regulatory Notice & Disclaimer:",
+        disclaimer_body: "This tool provides estimates based on Saudi Income Tax Law (Article 68) and standard ZATCA guidelines. Exact liability depends on Double Taxation Avoidance Agreements (DTAA), valid tax residence certificates (TRC), and specific permanent establishment tests. Verify all filings with a certified tax consultant prior to declaration.",
+        cta_badge: "Finance & Tax Toolkit ($29)",
+        cta_headline: "Get The Complete Automated Corporate Tax & WHT Excel Register",
+        cta_desc: "Includes automated vendor ledger, treaty tax matrix, ZATCA monthly return reconciliation, journal entry generator, and audit trail templates.",
+        cta_btn: "Download Master Excel & VBA Template ($29) →",
+        guide_h1: "Comprehensive Guide to Saudi Withholding Tax (WHT) Regulations",
+        guide_p1: "Under the Saudi Income Tax Law enacted by Royal Decree No. (M/1) and overseen by the Zakat, Tax and Customs Authority (ZATCA), any resident entity or permanent establishment (PE) in the Kingdom making payments to non-resident entities without a permanent establishment in Saudi Arabia is legally mandated to deduct Withholding Tax (WHT) at source. Withholding tax ensures that cross-border economic activity generated within Saudi Arabia contributes equitably to the state treasury.",
+        guide_h2: "Statutory ZATCA Withholding Tax Rates (Article 68)",
+        th_service: "Payment Type / Nature",
+        th_rate: "Statutory Rate",
+        th_examples: "Common Commercial Examples",
+        row1_name: "Management Fees",
+        row1_desc: "Executive leadership recharges, headquarters management support, board retainers.",
+        row2_name: "Royalties & IP Exploitation",
+        row2_desc: "SaaS subscriptions, software licensing, trademark franchise fees, patents, proprietary blueprints.",
+        row3_name: "Technical & Consulting Services",
+        row3_desc: "Engineering studies, specialized advisory, bespoke software development, architectural plans.",
+        row4_name: "International Telecommunications",
+        row4_desc: "Cross-border transit data lines, satellite link charges, international bandwidth routing.",
+        row5_name: "Loan Charges / Interest",
+        row5_desc: "Intercompany loan interests, debt servicing charges paid to non-resident financial institutions.",
+        row6_name: "Dividends to Non-Residents",
+        row6_desc: "Profit distributions from Saudi limited liability companies or joint-stock shares to foreign owners.",
+        row7_name: "Other In-Kingdom Services",
+        row7_desc: "Any unclassified commercial service rendered physically inside Saudi territorial borders.",
+        guide_h3: "Understanding the Gross-Up Formula in International Procurement",
+        guide_p2: "International vendors frequently demand contractual clauses stipulating that invoices must be received \"Net of any local taxes, levies, or source withholdings\". In such cases, the Saudi payor cannot simply subtract WHT from the vendor's agreed invoice balance. Instead, the company must assume the tax as an additional financial burden through a process called Grossing-Up.",
+        formula_lbl1: "Standard Gross-Up Equation:",
+        formula_lbl2: "Withholding Tax Amount to ZATCA:",
+        formula_example_text: "Numerical Example: Suppose an overseas technology firm invoices USD $100,000 for SaaS licensing (15% WHT) on a net contract basis. The taxable base becomes $100,000 ÷ (1 - 0.15) = $117,647.06. The Saudi company remits $100,000.00 to the vendor and pays $17,647.06 to ZATCA. The true economic surcharge on your enterprise is 17.65%.",
+        faq_h1: "Frequently Asked Questions (FAQ)",
+        faq_q1: "When is the exact deadline to remit Withholding Tax in Saudi Arabia?",
+        faq_a1: "According to Article 68 of the Income Tax Regulations, Withholding Tax must be filed through the ZATCA portal and paid within the first 10 days of the calendar month following the month in which the foreign payment or realization of income occurred.",
+        faq_q2: "Can Double Taxation Treaties (DTAA) eliminate the Withholding Tax?",
+        faq_a2: "Yes. Saudi Arabia maintains comprehensive Double Tax Avoidance Agreements with more than 55 jurisdictions (including the UAE, UK, France, Germany, Japan, Singapore, and China). Under many treaties, technical and business service fees are classified under \"Business Profits\" (Article 7) and taxed at 0% in KSA unless the non-resident maintains a permanent establishment. However, a Tax Residency Certificate (TRC) and Form Q7B must be collected before applying treaty rates.",
+        faq_q3: "Does Withholding Tax apply in addition to Value Added Tax (VAT)?",
+        faq_a3: "Yes. WHT is a direct income tax withholding, whereas VAT is a consumption tax. Under the Saudi VAT Law, cross-border services received by a taxable Saudi business are subject to the Reverse Charge Mechanism (RCM) at 15%. Businesses record both the input and output tax simultaneously on Box 9 of their VAT returns."
+      },
+      ar: {
+        banner_highlight: "متوافق مع هيئة الزكاة (ZATCA):",
+        banner_text: "محرك احتساب ضريبة الاستقطاع والتعويض الإجمالي الفوري للشركات.",
+        banner_cta: "احصل على نموذج الإكسل المتقدم ($29)",
+        badge_title: "معيار هيئة الزكاة والضريبة والجمارك",
+        main_title: "حاسبة ضريبة الاستقطاع والتعويض الإجمالي (WHT)",
+        main_subtitle: "حساب التزامات ضريبة الاستقطاع بدقة وفقاً للمادة 68، واحتساب التعويض الإجمالي للموردين الأجانب وتطبيقات الاتفاقيات الضريبية الدولية.",
+        input_header: "بيانات المعاملة وبنود العقد",
+        reset_btn: "إعادة تعيين",
+        label_invoice_amount: "قيمة الفاتورة الأساسية",
+        label_currency: "العملة",
+        label_service_type: "طبيعة الدفعة الدولية (المادة 68)",
+        label_custom_rate: "النسبة النظامية المطبقة (%)",
+        note_custom_rate: "تعديل النسبة بناءً على اتفاقية تجنب الازدواج الضريبي.",
+        label_grossup_title: "هل يتطلب العقد تعويضاً إجمالياً (Gross-Up)؟",
+        label_grossup_sub: "اختر 'نعم' إذا كان العقد ينص على استلام المورد كامل المبلغ صافياً من أي ضرائب محلية.",
+        label_rcm_vat_title: "تطبيق آلية الاحتساب العكسي لضريبة القيمة المضافة (15% RCM)",
+        label_rcm_vat_sub: "الضريبة الذاتية المصرح عنها في الخانة رقم 9 بإقرار ضريبة القيمة المضافة.",
+        remit_deadline_note: "الالتزام النظامي: يجب توريد ضريبة الاستقطاع للهيئة خلال الأيام العشرة الأولى من الشهر الذي يلي شهر السداد.",
+        summary_title: "ملخص التسوية والالتزامات",
+        metric_total_cost: "إجمالي التكلفة النقدية على الشركة",
+        res_vendor_payment: "صافي المبلغ المحول للمورد الأجنبي",
+        res_wht_liability: "مبلغ ضريبة الاستقطاع لهيئة الزكاة",
+        res_gross_base: "الوعاء الضريبي الفعلي (المبلغ الإجمالي)",
+        res_rcm_vat: "15% ضريبة الاحتساب العكسي (RCM)",
+        input_recoverable: "(مستردة)",
+        res_effective_tax: "نسبة التكلفة الإضافية عن العقد",
+        btn_print: "طباعة / PDF",
+        btn_export: "تصدير ملف CSV",
+        disclaimer_title: "إشعار نظامي وإخلاء مسؤولية:",
+        disclaimer_body: "هذه الأداة تقدم تقديرات استرشادية مبنية على نظام ضريبة الدخل السعودي (المادة 68) ولوائح الهيئة العامة للزكاة والدخل (ZATCA). قد تختلف الالتزامات الفعلية بناءً على اتفاقيات تجنب الازدواج الضريبي وشهادة الإقامة الضريبية ووجود المنشأة الدائمة. يرجى التحقق مع مستشار ضريبي معتمد قبل السداد.",
+        cta_badge: "حزمة الإدارة المالية والضريبية ($29)",
+        cta_headline: "احصل على سجل إكسل الشامل لاحتساب ضرائب الاستقطاع والشركات",
+        cta_desc: "يتضمن جدول متابعة الموردين التلقائي، ومصفوفة الاتفاقيات الدولية، ونموذج تسوية إقرار الاستقطاع الشهري، وقيود اليومية المحاسبية.",
+        cta_btn: "تحميل قالب الإكسل المتقدم وبرمجة VBA ($29) ←",
+        guide_h1: "الدليل الشامل لأحكام ضريبة الاستقطاع في المملكة العربية السعودية",
+        guide_p1: "بموجب نظام ضريبة الدخل الصادر بالمرسوم الملكي رقم (م/1) واللوائح التنفيذية الصادرة عن هيئة الزكاة والضريبة والجمارك (ZATCA)، يلتزم كل شخص مقيم أو منشأة دائمة في المملكة تستقطع مبالغ مدفوعة لجهة غير مقيمة ليس لها منشأة دائمة باستقطاع الضريبة من المصدر وتوريدها للدولة.",
+        guide_h2: "جدول نسب ضريبة الاستقطاع النظامية (المادة 68)",
+        th_service: "نوع الخدمة / طبيعة الدفعة",
+        th_rate: "النسبة النظامية",
+        th_examples: "أمثلة تجارية شائعة",
+        row1_name: "أتعاب الإدارة",
+        row1_desc: "نفقات إدارة المقرات الرئيسية، إشراف المدراء التنفيذيين، مكافآت مجالس الإدارة الخارجية.",
+        row2_name: "الإتاوات (الريع) واستغلال الملكية الفكرية",
+        row2_desc: "اشتراكات البرمجيات السحابية (SaaS)، تراخيص البرامج، الامتياز التجاري (الفرنشايز)، براءات الاختراع.",
+        row3_name: "الخدمات الفنية والاستشارية",
+        row3_desc: "الدراسات الهندسية، الاستشارات الإدارية المتخصصة، تطوير البرمجيات المخصصة، التصاميم المعمارية.",
+        row4_name: "الاتصالات الدولية",
+        row4_desc: "خطوط نقل البيانات الدولية، قنوات الاتصال عبر الأقمار الصناعية، سعات الإنترنت الدولية.",
+        row5_name: "عوائد القروض وتكاليف التمويل",
+        row5_desc: "فوائد وعوائد التسهيلات الائتمانية والقروض المقدمة من بنوك وشركات أجنبية غير مقيمة.",
+        row6_name: "أرباح الأسهم الموزعة لغير المقيمين",
+        row6_desc: "توزيعات الأرباح من الشركات السعودية ذات المسؤولية المحدودة أو المساهمة لشركاء أجانب.",
+        row7_name: "أي خدمات أخرى مؤداة في المملكة",
+        row7_desc: "أي خدمات تجارية أخرى مؤداة كلياً أو جزئياً داخل حدود وأراضي المملكة العربية السعودية.",
+        guide_h3: "آلية احتساب التعويض الإجمالي (Gross-Up Formula)",
+        guide_p2: "يشترط العديد من الموردين العالميين والشركات التقنية الكبرى بنوداً تعاقدية تنص على دفع الفاتورة 'صافية من أي ضرائب استقطاع محلية'. في هذه الحالة، لا يمكن للشركة السعودية خصم الضريبة من المورد، بل تتحملها الشركة تكلفة إضافية من خلال معادلة التعويض الإجمالي (Gross-Up).",
+        formula_lbl1: "معادلة الوعاء الضريبي الإجمالي:",
+        formula_lbl2: "ضريبة الاستقطاع الواجبة التوريد لهيئة الزكاة:",
+        formula_example_text: "مثال رقمي: لو بلغت قيمة فاتورة مورد SaaS خارجي 100,000 دولار بشرط الاستلام الصافي، وكانت النسبة 15%. يصبح الوعاء الإجمالي: 100,000 ÷ (1 - 0.15) = 117,647.06 دولار. يدفع المشتري للمورد 100,000 دولار ولهيئة الزكاة 17,647.06 دولار، وتكون التكلفة الفعلية الإضافية 17.65%.",
+        faq_h1: "الأسئلة الشائعة (FAQ)",
+        faq_q1: "ما هو الموعد النهائي المحدد نظاماً لسداد ضريبة الاستقطاع؟",
+        faq_a1: "وفقاً للمادة 68 من اللائحة التنفيذية، يلزم تقديم نموذج استقطاع الضريبة وسداد المبالغ إلكترونياً عبر بوابة الهيئة خلال الأيام العشرة الأولى من الشهر التالي للشهر الذي تم فيه الدفع أو قيد المبلغ.",
+        faq_q2: "هل تعفي اتفاقيات تجنب الازدواج الضريبي (DTAA) من ضريبة الاستقطاع؟",
+        faq_a2: "نعم، ترتبط المملكة باتفاقيات نافذة مع أكثر من 55 دولة. بموجب معظم الاتفاقيات، تُعامل الخدمات الفنية والاستشارية كأرباح أعمال (المادة 7) وتخضع للضريبة بنسبة 0% بشرط تقديم شهادة إقامة ضريبية سارية ونموذج Q7B معتمد.",
+        faq_q3: "هل تطبق ضريبة الاستقطاع إلى جانب ضريبة القيمة المضافة (VAT)؟",
+        faq_a3: "نعم، فضريبة الاستقطاع تخص ضريبة الدخل، بينما تخضع الخدمات المستوردة ذاتها لضريبة القيمة المضافة بمعدل 15% بنظام آلية الاحتساب العكسي (RCM) ويتم إدراجها بالخانة 9 في الإقرار."
+      }
+    };
+
+    let currentLang = 'en';
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      const body = document.getElementById('pageBody');
+      const btn = document.getElementById('langToggleBtn');
+      
+      if (currentLang === 'ar') {
+        body.setAttribute('dir', 'rtl');
+        btn.textContent = 'English';
+      } else {
+        body.setAttribute('dir', 'ltr');
+        btn.textContent = 'العربية';
+      }
+
+      // Translate DOM elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18n[currentLang][key]) {
+          el.innerHTML = i18n[currentLang][key];
+        }
+      });
+
+      updateCategoryRate();
+      calculate();
+    }
+
+    function updateCategoryRate() {
+      const sel = document.getElementById('serviceType');
+      const val = sel.value;
+      const customBox = document.getElementById('customRateWrapper');
+      const descEl = document.getElementById('serviceDescription');
+      const activeOption = sel.options[sel.selectedIndex];
+      
+      const desc = currentLang === 'ar' 
+        ? activeOption.getAttribute('data-desc-ar') 
+        : activeOption.getAttribute('data-desc-en');
+      descEl.textContent = desc || '';
+
+      if (val === 'custom') {
+        customBox.classList.remove('hidden');
+      } else {
+        customBox.classList.add('hidden');
+      }
+      calculate();
+    }
+
+    function getEffectiveRate() {
+      const sel = document.getElementById('serviceType').value;
+      if (sel === 'custom') {
+        const customVal = parseFloat(document.getElementById('customRateInput').value) || 0;
+        return Math.max(0, Math.min(100, customVal)) / 100;
+      }
+      if (sel === '20') return 0.20;
+      if (sel === '15' || sel === '15_other') return 0.15;
+      if (sel === '5' || sel === '5_telecom' || sel === '5_freight' || sel === '5_dividend' || sel === '5_loan') return 0.05;
+      return 0.15;
+    }
+
+    function formatNumber(num) {
+      return num.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function calculate() {
+      const invoiceAmount = parseFloat(document.getElementById('invoiceAmount').value) || 0;
+      const isGrossUp = document.getElementById('grossUpToggle').checked;
+      const isRCM = document.getElementById('rcmToggle').checked;
+      const rate = getEffectiveRate();
+      const currency = document.getElementById('currencyCode').value;
+
+      // Update Currency labels
+      document.querySelectorAll('.currLabel').forEach(span => {
+        span.textContent = currency;
+      });
+
+      let grossTaxableBase = 0;
+      let whtAmount = 0;
+      let netToVendor = 0;
+      let totalCost = 0;
+      let surchargePct = 0;
+
+      if (isGrossUp) {
+        // Net of tax contract: Vendor receives full invoiceAmount
+        if (rate >= 1) {
+          // prevention of div by zero
+          grossTaxableBase = invoiceAmount;
+        } else {
+          grossTaxableBase = invoiceAmount / (1 - rate);
+        }
+        whtAmount = grossTaxableBase * rate;
+        netToVendor = invoiceAmount;
+        totalCost = netToVendor + whtAmount;
+        surchargePct = invoiceAmount > 0 ? ((whtAmount / invoiceAmount) * 100) : 0;
+        document.getElementById('statusTag').textContent = currentLang === 'ar' ? 'مع تعويض إجمالي' : 'Grossed-Up';
+        document.getElementById('statusTag').className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800";
+      } else {
+        // Vendor absorbs tax: Withheld from invoiceAmount
+        grossTaxableBase = invoiceAmount;
+        whtAmount = invoiceAmount * rate;
+        netToVendor = invoiceAmount - whtAmount;
+        totalCost = invoiceAmount;
+        surchargePct = 0;
+        document.getElementById('statusTag').textContent = currentLang === 'ar' ? 'خصم مباشر من المورد' : 'Vendor Deducted';
+        document.getElementById('statusTag').className = "px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800";
+      }
+
+      const rcmVAT = isRCM ? (grossTaxableBase * 0.15) : 0;
+      const rcmRow = document.getElementById('rcmRow');
+      if (isRCM) {
+        rcmRow.classList.remove('hidden');
+      } else {
+        rcmRow.classList.add('hidden');
+      }
+
+      // Render outputs
+      document.getElementById('dispTotalCost').textContent = formatNumber(totalCost);
+      document.getElementById('dispVendorNet').textContent = formatNumber(netToVendor);
+      document.getElementById('dispWHTAmount').textContent = formatNumber(whtAmount);
+      document.getElementById('dispGrossBase').textContent = formatNumber(grossTaxableBase);
+      document.getElementById('dispRCMVAT').textContent = formatNumber(rcmVAT);
+      document.getElementById('dispAppliedRate').textContent = (rate * 100).toFixed(1) + '%';
+      
+      if (isGrossUp && surchargePct > 0) {
+        document.getElementById('dispTaxSurcharge').textContent = `+${surchargePct.toFixed(2)}%`;
+      } else {
+        document.getElementById('dispTaxSurcharge').textContent = currentLang === 'ar' ? '0% (المورد يتحمل)' : '0% (Vendor absorbed)';
+      }
+    }
+
+    function resetDefaults() {
+      document.getElementById('invoiceAmount').value = 50000;
+      document.getElementById('currencyCode').value = 'SAR';
+      document.getElementById('serviceType').value = '15';
+      document.getElementById('grossUpToggle').checked = true;
+      document.getElementById('rcmToggle').checked = true;
+      document.getElementById('customRateInput').value = 5;
+      updateCategoryRate();
+      calculate();
+    }
+
+    function exportCSV() {
+      const currency = document.getElementById('currencyCode').value;
+      const inv = document.getElementById('invoiceAmount').value;
+      const base = document.getElementById('dispGrossBase').textContent.replace(/,/g, '');
+      const net = document.getElementById('dispVendorNet').textContent.replace(/,/g, '');
+      const wht = document.getElementById('dispWHTAmount').textContent.replace(/,/g, '');
+      const cost = document.getElementById('dispTotalCost').textContent.replace(/,/g, '');
+      const rcm = document.getElementById('dispRCMVAT').textContent.replace(/,/g, '');
+      const rate = document.getElementById('dispAppliedRate').textContent;
+      const grossed = document.getElementById('grossUpToggle').checked ? 'YES' : 'NO';
+
+      const csvContent = "data:text/csv;charset=utf-8,"
+        + "Saudi Withholding Tax (WHT) Assessment Summary\n"
+        + "Date," + new Date().toISOString().slice(0, 10) + "\n"
+        + "Currency," + currency + "\n"
+        + "Contract Invoice Value," + inv + "\n"
+        + "Gross-Up Applied," + grossed + "\n"
+        + "Statutory WHT Rate," + rate + "\n"
+        + "Effective Taxable Base," + base + "\n"
+        + "Net Remittance to Vendor," + net + "\n"
+        + "WHT Payable to ZATCA," + wht + "\n"
+        + "15% Reverse Charge VAT (RCM)," + rcm + "\n"
+        + "Total Company Cash Cost," + cost + "\n";
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `WHT_Assessment_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Event Listeners for live recalculation
+    ['invoiceAmount', 'currencyCode', 'customRateInput'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', calculate);
+    });
+    ['grossUpToggle', 'rcmToggle'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', calculate);
+    });
+
+    // Initial setup
+    updateCategoryRate();
+    calculate();
+  </script>
+</body>
+</html>

@@ -61,5 +61,12 @@
     "title_ar": "حاسبة نسب التوطين ونطاقات ومحاكي التعيينات",
     "description_en": "Calculate your Saudization percentage, Nitaqat color tier, and simulate expat visa quotas with our bilingual HR compliance calculator for GCC & KSA.",
     "date": "2026-11-01"
+  },
+  {
+    "slug": "saudi-wht-withholding-tax-calculator",
+    "title_en": "Saudi Withholding Tax (WHT) & Gross-Up Calculator",
+    "title_ar": "حاسبة ضريبة الاستقطاع والتعويض الإجمالي في السعودية",
+    "description_en": "Calculate ZATCA withholding tax (WHT) rates, cross-border vendor gross-up amounts, and net remittable funds with bilateral tax treaty adjustments.",
+    "date": "2026-11-02"
   }
 ]
