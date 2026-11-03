@@ -82,5 +82,12 @@
     "title_ar": "حاسبة إهلاك الأصول التجارية والقيمة الدفترية (متوافقة مع الزكاة السعودية)",
     "description_en": "Calculate fixed asset depreciation, net book value, and Zakat-compliant tax deductions for Saudi companies using straight-line and declining balance methods.",
     "date": "2026-11-03"
+  },
+  {
+    "slug": "saudi-qiwa-contract-probation-and-notice-period-calculator",
+    "title_en": "Saudi Qiwa Contract, Probation & Notice Period Calculator",
+    "title_ar": "حاسبة العقود وفترة التجربة وفترة الإشعارات في قوى السعودية",
+    "description_en": "Calculate Saudi Labor Law compliant notice periods, probation termination rights, and contract renewal indemnities under Qiwa regulations instantly.",
+    "date": "2026-11-03"
   }
 ]

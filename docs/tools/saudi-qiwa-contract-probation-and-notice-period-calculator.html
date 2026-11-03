@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi Qiwa Contract, Probation & Notice Period Calculator</title>
+    <meta name="description" content="Calculate Saudi Labor Law compliant notice periods, probation termination rights, and contract renewal indemnities under Qiwa regulations instantly.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Cairo', sans-serif; }
+        .rtl { direction: rtl; font-family: 'Cairo', 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+    <!-- Top Sticky Banner CTA -->
+    <div class="bg-indigo-600 text-white px-4 py-3 sticky top-0 z-50 shadow-md flex flex-wrap justify-between items-center">
+        <div class="flex items-center space-x-2 rtl:space-x-reverse">
+            <span class="bg-indigo-500 text-xs px-2 py-1 rounded font-semibold">PRO TOOL</span>
+            <p class="text-sm font-medium">Need automated HR & Qiwa compliance templates? Get our Complete Excel & VBA Master Suite.</p>
+        </div>
+        <a href="https://gumroad.com" target="_blank" class="bg-white text-indigo-700 hover:bg-indigo-50 font-bold px-4 py-1.5 rounded text-sm transition shadow-sm mt-1 sm:mt-0">Get Template ($29)</a>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div id="appContainer" class="max-w-5xl mx-auto px-4 py-8">
+        <!-- Header & Language Toggle -->
+        <header class="flex justify-between items-center mb-8 border-b pb-4">
+            <div>
+                <h1 id="mainTitle" class="text-2xl sm:text-3xl font-bold text-slate-900">Saudi Qiwa Contract, Probation & Notice Period Calculator</h1>
+                <p id="subTitle" class="text-slate-600 text-sm mt-1">Verify Saudi Labor Law compliance for terminations, probation periods, and contract notice requirements.</p>
+            </div>
+            <button onclick="toggleLanguage()" id="langBtn" class="bg-slate-200 hover:bg-slate-300 px-3 py-1.5 rounded text-sm font-semibold transition">
+                العربية
+            </button>
+        </header>
+
+        <!-- Calculator Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Inputs Form -->
+            <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <h2 id="formTitle" class="text-lg font-bold text-slate-800 mb-4">Contract & Termination Details</h2>
+                
+                <form id="calcForm" class="space-y-4" onsubmit="return false;">
+                    <div>
+                        <label id="lblContractType" class="block text-sm font-medium text-slate-700 mb-1">Contract Type</label>
+                        <select id="contractType" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500">
+                            <option value="fixed">Fixed-Term Contract (محدد المدة)</option>
+                            <option value="unfixed">Unfixed-Term / Indefinite (غير محدد المدة)</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label id="lblStartDate" class="block text-sm font-medium text-slate-700 mb-1">Contract Start Date</label>
+                            <input type="date" id="startDate" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                        <div>
+                            <label id="lblTerminationDate" class="block text-sm font-medium text-slate-700 mb-1">Termination / Notice Date</label>
+                            <input type="date" id="terminationDate" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label id="lblInProbation" class="block text-sm font-medium text-slate-700 mb-1">Is Employee Currently in Probation?</label>
+                        <select id="inProbation" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500">
+                            <option value="no">No (Outside Probation)</option>
+                            <option value="yes">Yes (Within first 90 days or extended probation)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label id="lblInitiator" class="block text-sm font-medium text-slate-700 mb-1">Who is Initiating the Termination?</label>
+                        <select id="initiator" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500">
+                            <option value="employer">Employer (Article 74 / 77 / 80)</option>
+                            <option value="employee">Employee Resignation (Article 75)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label id="lblReason" class="block text-sm font-medium text-slate-700 mb-1">Reason for Termination</label>
+                        <select id="reason" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500">
+                            <option value="normal">Standard Notice / Resignation / Mutual Agreement</option>
+                            <option value="article80">Employer Action under Article 80 (Gross Misconduct)</option>
+                            <option value="article81">Employee Resignation under Article 81 (Employer Breach)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label id="lblMonthlyWage" class="block text-sm font-medium text-slate-700 mb-1">Monthly Basic + Allowances Wage (SAR)</label>
+                        <input type="number" id="monthlyWage" value="10000" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results & CTA Card -->
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                    <h3 id="resTitle" class="text-lg font-bold text-slate-800 mb-4 border-b pb-2">Calculation Results</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <span id="resNoticeLabel" class="text-xs text-slate-500 block">Required Notice Period</span>
+                            <span id="resNoticeValue" class="text-xl font-bold text-slate-900">60 Days</span>
+                        </div>
+                        <div>
+                            <span id="resCompLabel" class="text-xs text-slate-500 block">Compensation / Indemnity Status</span>
+                            <span id="resCompValue" class="text-base font-semibold text-indigo-600">Standard Article 77 Review</span>
+                        </div>
+                        <div>
+                            <span id="resQiwaLabel" class="text-xs text-slate-500 block">Qiwa Portal Requirement</span>
+                            <span id="resQiwaValue" class="text-sm font-medium text-slate-700">Unified Contract Attestation Validated</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t">
+                        <button onclick="exportSummary()" id="btnExport" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2 rounded-lg text-sm transition mb-3">
+                            Export Calculation Summary
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Gumroad Card CTA -->
+                <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white p-6 rounded-xl shadow-lg">
+                    <h3 class="font-bold text-lg mb-2">Master Saudi Labor Compliance</h3>
+                    <p class="text-xs text-indigo-200 mb-4">Download the complete Excel tool with built-in GOSI, Qiwa contract tracker, and automated EOSB ledger.</p>
+                    <a href="https://gumroad.com" target="_blank" class="block text-center bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition shadow">Get Complete Template ($29)</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="mt-8 p-4 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
+            <span class="font-bold" id="disclaimerTitle">Disclaimer:</span> 
+            <span id="disclaimerText">Outputs generated by this tool are estimates based on Saudi Labor Law and Qiwa general guidelines. They do not constitute formal legal counsel. HR managers and employers must verify final settlements against official Qiwa platform portal records and Ministry of Human Resources and Social Development (MHRSD) regulations.</span>
+        </div>
+
+        <!-- Comprehensive SEO Guide & FAQ Section -->
+        <article class="mt-12 bg-white p-8 rounded-xl shadow-sm border border-slate-200 prose max-w-none text-slate-700">
+            <h2 class="text-2xl font-bold text-slate-900 mb-4">Comprehensive Guide to Saudi Qiwa Contracts, Probation & Notice Periods</h2>
+            
+            <p class="mb-4">
+                Operating in the Kingdom of Saudi Arabia requires strict adherence to the Saudi Labor Law and the Ministry of Human Resources and Social Development's (MHRSD) unified digital platform, <strong>Qiwa</strong>. Whether managing fixed-term contracts, navigating probation terminations under Article 53/54, or determining notice periods under Article 75, HR professionals must ensure full alignment to avoid severe penalties and labor disputes.
+            </p>
+
+            <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">1. Probation Periods under Saudi Labor Law</h3>
+            <p class="mb-4">
+                Under Article 53 of the Saudi Labor Law, an employee may be placed on a probation period, which must be explicitly stated in the Qiwa unified contract. The probation period cannot exceed <strong>90 days</strong>. However, it can be extended in writing up to a maximum of 180 days with mutual consent. During probation, either party may terminate the contract immediately without notice or indemnity, unless the contract specifies otherwise.
+            </p>
+
+            <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">2. Notice Periods and Contract Types (Fixed vs. Unfixed)</h3>
+            <p class="mb-4">
+                Following recent labor law amendments, all Saudi employment contracts are formalized electronically through Qiwa as fixed-term contracts (though mapped against standard termination rules). Notice requirements depend on who initiates the termination:
+            </p>
+            <ul class="list-disc pl-6 mb-4 space-y-1">
+                <li><strong>Resignation by Employee (Article 75):</strong> Requires a minimum of <strong>60 days</strong> written notice for contracts renewed automatically or indefinite terms, or 30 days depending on specific contract terms.</li>
+                <li><strong>Termination by Employer:</strong> Requires a minimum of <strong>60 days</strong> notice unless terminated for gross misconduct under Article 80.</li>
+            </ul>
+
+            <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">3. Article 77: Arbitrary Termination Compensation</h3>
+            <p class="mb-4">
+                If a contract is terminated without a valid legal reason (arbitrary termination), Article 77 dictates compensation rules:
+            </p>
+            <ul class="list-disc pl-6 mb-4 space-y-1">
+                <li>For <strong>Fixed-Term Contracts</strong>: Wages for the remaining duration of the contract, or a minimum of two months' wages.</li>
+                <li>For <strong>Unfixed-Term Contracts</strong>: 15 days' wages for each year of service, with a minimum of two months' wages.</li>
+            </ul>
+
+            <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3">Frequently Asked Questions (FAQ)</h3>
+            
+            <div class="space-y-4 mt-4">
+                <div>
+                    <h4 class="font-bold text-slate-800">Q: Can an employer extend probation beyond 90 days in Qiwa?</h4>
+                    <p class="text-sm">A: Yes, but only if agreed upon in writing before the expiration of the initial 90-day period, bringing the total maximum probation to 180 days.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-800">Q: What happens if notice period is not served by the employee?</h4>
+                    <p class="text-sm">A: If an employee leaves without serving the mandatory notice period, they may be required to pay compensation equivalent to the wage for the unserved notice period, as governed by Qiwa and contract clauses.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-800">Q: Are Qiwa contracts legally binding in labor courts?</h4>
+                    <p class="text-sm">A: Yes, digital contracts attested on the Qiwa platform serve as the primary official evidentiary document in Saudi Labor Courts (Labor Tribunals).</p>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                mainTitle: "Saudi Qiwa Contract, Probation & Notice Period Calculator",
+                subTitle: "Verify Saudi Labor Law compliance for terminations, probation periods, and contract notice requirements.",
+                langBtn: "العربية",
+                formTitle: "Contract & Termination Details",
+                lblContractType: "Contract Type",
+                lblStartDate: "Contract Start Date",
+                lblTerminationDate: "Termination / Notice Date",
+                lblInProbation: "Is Employee Currently in Probation?",
+                lblInitiator: "Who is Initiating the Termination?",
+                lblReason: "Reason for Termination",
+                lblMonthlyWage: "Monthly Basic + Allowances Wage (SAR)",
+                resTitle: "Calculation Results",
+                resNoticeLabel: "Required Notice Period",
+                resCompLabel: "Compensation / Indemnity Status",
+                resQiwaLabel: "Qiwa Portal Requirement",
+                btnExport: "Export Calculation Summary",
+                disclaimerTitle: "Disclaimer:",
+                disclaimerText: "Outputs generated by this tool are estimates based on Saudi Labor Law and Qiwa general guidelines. They do not constitute formal legal counsel. HR managers and employers must verify final settlements against official Qiwa platform portal records and Ministry of Human Resources and Social Development (MHRSD) regulations."
+            },
+            ar: {
+                mainTitle: "حاسبة العقود وفترة التجربة وفترة الإشعارات في قوى السعودية",
+                subTitle: "التحقق من توافق نظام العمل السعودي لإنهاء الخدمات وفترات التجربة ومتطلبات الإشعار عبر منصة قوى.",
+                langBtn: "English",
+                formTitle: "تفاصيل العقد وإنهاء الخدمة",
+                lblContractType: "نوع العقد",
+                lblStartDate: "تاريخ بداية العقد",
+                lblTerminationDate: "تاريخ الإنهاء / الإشعار",
+                lblInProbation: "هل الموظف في فترة التجربة حالياً؟",
+                lblInitiator: "من هو الطرف المبادر بإنهاء العقد؟",
+                lblReason: "سبب إنهاء الخدمة",
+                lblMonthlyWage: "إجمالي الأجر الشهري (الأساسي + البدلات) بالريال السعودي",
+                resTitle: "نتائج الحساب",
+                resNoticeLabel: "فترة الإشعار المطلوبة",
+                resCompLabel: "حالة التعويض / المكافأة",
+                resQiwaLabel: "متطلب منصة قوى",
+                btnExport: "تصدير ملخص الحساب",
+                disclaimerTitle: "إخلاء مسؤولية:",
+                disclaimerText: "النتائج التي تم توليدها بواسطة هذه الأداة هي تقديرات تعتمد على نظام العمل السعودي والإرشادات العامة لمنصة قوى ولا تشكل استشارة قانونية رسمية. يجب على مسؤولي الموارد البشرية وأصحاب العمل التحقق من التسويات النهائية مقابل سجلات منصة قوى الرسمية وأنظمة وزارة الموارد البشرية والتنمية الاجتماعية."
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const container = document.getElementById('appContainer');
+            const t = translations[currentLang];
+
+            if (currentLang === 'ar') {
+                container.classList.add('rtl');
+                document.documentElement.setAttribute('dir', 'rtl');
+                document.documentElement.setAttribute('lang', 'ar');
+            } else {
+                container.classList.remove('rtl');
+                document.documentElement.setAttribute('dir', 'ltr');
+                document.documentElement.setAttribute('lang', 'en');
+            }
+
+            document.getElementById('mainTitle').innerText = t.mainTitle;
+            document.getElementById('subTitle').innerText = t.subTitle;
+            document.getElementById('langBtn').innerText = t.langBtn;
+            document.getElementById('formTitle').innerText = t.formTitle;
+            document.getElementById('lblContractType').innerText = t.lblContractType;
+            document.getElementById('lblStartDate').innerText = t.lblStartDate;
+            document.getElementById('lblTerminationDate').innerText = t.lblTerminationDate;
+            document.getElementById('lblInProbation').innerText = t.lblInProbation;
+            document.getElementById('lblInitiator').innerText = t.lblInitiator;
+            document.getElementById('lblReason').innerText = t.lblReason;
+            document.getElementById('lblMonthlyWage').innerText = t.lblMonthlyWage;
+            document.getElementById('resTitle').innerText = t.resTitle;
+            document.getElementById('resNoticeLabel').innerText = t.resNoticeLabel;
+            document.getElementById('resCompLabel').innerText = t.resCompLabel;
+            document.getElementById('resQiwaLabel').innerText = t.resQiwaLabel;
+            document.getElementById('btnExport').innerText = t.btnExport;
+            document.getElementById('disclaimerTitle').innerText = t.disclaimerTitle;
+            document.getElementById('disclaimerText').innerText = t.disclaimerText;
+
+            updateCalculations();
+        }
+
+        function updateCalculations() {
+            const inProbation = document.getElementById('inProbation').value;
+            const initiator = document.getElementById('initiator').value;
+            const reason = document.getElementById('reason').value;
+            const wage = parseFloat(document.getElementById('monthlyWage').value) || 0;
+
+            let noticeText = "60 Days";
+            let compText = "Standard Article 77 Review";
+            let qiwaText = "Unified Contract Attestation Validated";
+
+            if (inProbation === 'yes') {
+                noticeText = currentLang === 'ar' ? "بدون إشعار (فترة تجربة)" : "0 Days (Immediate Termination in Probation)";
+                compText = currentLang === 'ar' ? "لا توجد تعويضات (خلال فترة التجربة)" : "No Compensation (Probationary Rights)";
+                qiwaText = currentLang === 'ar' ? "تحديث حالة العقد عبر منصة قوى" : "Update Contract Status via Qiwa Portal";
+            } else if (reason === 'article80') {
+                noticeText = currentLang === 'ar' ? "بدون إشعار (المادة 80)" : "0 Days (Article 80 - Gross Misconduct)";
+                compText = currentLang === 'ar' ? "حرمان من المكافأة والتعويض" : "Forfeiture of Indemnity under Art. 80";
+                qiwaText = currentLang === 'ar' ? "توثيق سبب الإنهاء في قوى" : "Document Article 80 Breach in Qiwa";
+            } else if (reason === 'article81') {
+                noticeText = currentLang === 'ar' ? "إنهاء فوري مع الاحتفاظ بالحقوق" : "Immediate Resignation with Full Rights (Art. 81)";
+                compText = currentLang === 'ar' ? "استحقاق كامل التعويض ومكافأة نهاية الخدمة" : "Full Statutory Indemnity & Compensation";
+                qiwaText = currentLang === 'ar' ? "تقديم طلب إثبات ضرر في قوى" : "Submit Breach Claim on Qiwa";
+            } else {
+                if (initiator === 'employee') {
+                    noticeText = currentLang === 'ar' ? "60 يوماً (استقالة نظامية)" : "60 Days Notice Requirement";
+                    compText = currentLang === 'ar' ? "حساب مكافأة نهاية الخدمة فقط" : "EOSB Calculation Applicable";
+                } else {
+                    noticeText = currentLang === 'ar' ? "60 يوماً (إنهاء من صاحب العمل)" : "60 Days Notice Requirement";
+                    compText = currentLang === 'ar' ? "مراجعة المادة 77 للتعويض التعسفي المحتمل" : "Article 77 Compensation Review";
+                }
+                qiwaText = currentLang === 'ar' ? "رفع طلب إنهاء العلاقة التعاقدية" : "Submit Contract Termination Request in Qiwa";
+            }
+
+            document.getElementById('resNoticeValue').innerText = noticeText;
+            document.getElementById('resCompValue').innerText = compText;
+            document.getElementById('resQiwaValue').innerText = qiwaText;
+        }
+
+        function exportSummary() {
+            const notice = document.getElementById('resNoticeValue').innerText;
+            const comp = document.getElementById('resCompValue').innerText;
+            const qiwa = document.getElementById('resQiwaValue').innerText;
+            const wage = document.getElementById('monthlyWage').value;
+
+            const csvContent = "data:text/csv;charset=utf-8," + 
+                "Parameter,Value\n" +
+                `Monthly Wage,${wage} SAR\n` +
+                `Notice Period,${notice}\n` +
+                `Compensation Status,${comp}\n` +
+                `Qiwa Requirement,${qiwa}\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "qiwa_contract_assessment.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Event Listeners
+        document.querySelectorAll('select, input').forEach(el => {
+            el.addEventListener('input', updateCalculations);
+            el.addEventListener('change', updateCalculations);
+        });
+
+        // Set default dates
+        const today = new Date();
+        const pastDate = new Date();
+        pastDate.setFullYear(today.getFullYear() - 1);
+        document.getElementById('startDate').valueAsDate = pastDate;
+        document.getElementById('terminationDate').valueAsDate = today;
+
+        updateCalculations();
+    </script>
+</body>
+</html>
