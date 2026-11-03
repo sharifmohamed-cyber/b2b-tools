@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi Business Asset Depreciation & Book Value Calculator</title>
+    <meta name="description" content="Calculate fixed asset depreciation, net book value, and Zakat-compliant tax deductions for Saudi companies using straight-line and declining balance methods.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Cairo', sans-serif; }
+        .rtl { direction: rtl; }
+        .ltr { direction: ltr; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 ltr" id="app-body">
+
+    <!-- Top Sticky Conversion Banner -->
+    <div class="bg-emerald-600 text-white text-xs md:text-sm py-2 px-4 text-center sticky top-0 z-50 shadow-md flex justify-center items-center gap-4">
+        <span id="banner-text">Need automated fixed asset registers and Zakat reporting? Get the complete Excel & VBA model.</span>
+        <a href="https://gumroad.com" target="_blank" class="bg-white text-emerald-700 font-bold px-3 py-1 rounded text-xs hover:bg-emerald-50 transition shadow">
+            <span id="banner-cta">Get Excel Template ($29)</span>
+        </a>
+    </div>
+
+    <!-- Header & Language Toggle -->
+    <header class="max-w-6xl mx-auto px-4 py-6 flex justify-between items-center border-b border-slate-200">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900" id="main-title">Saudi Asset Depreciation & Book Value Calculator</h1>
+            <p class="text-sm text-slate-600" id="main-subtitle">Zakat & GAZT Compliant Fixed Asset Schedule Estimator</p>
+        </div>
+        <button onclick="toggleLanguage()" class="bg-slate-200 hover:bg-slate-300 px-4 py-2 rounded-lg text-sm font-semibold transition">
+            <span id="lang-btn-text">العربية / English</span>
+        </button>
+    </header>
+
+    <!-- Main Application Container -->
+    <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left Column: Inputs -->
+        <div class="lg:col-span-1 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <h2 class="text-lg font-bold mb-4 text-slate-800 border-b pb-2" id="inputs-heading">Asset Parameters</h2>
+            
+            <form id="depreciation-form" onsubmit="return false;" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" id="label-asset-name">Asset Name / Description</label>
+                    <input type="text" id="assetName" value="Office Computer System" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" id="label-cost">Initial Purchase Cost (SAR)</label>
+                    <input type="number" id="cost" value="50000" min="0" step="100" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500" oninput="calculate()">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" id="label-salvage">Salvage / Residual Value (SAR)</label>
+                    <input type="number" id="salvage" value="5000" min="0" step="100" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500" oninput="calculate()">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" id="label-life">Useful Life (Years)</label>
+                    <input type="number" id="life" value="5" min="1" max="50" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500" oninput="calculate()">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" id="label-method">Depreciation Method</label>
+                    <select id="method" class="w-full px-3 py-2 border rounded-lg text-sm bg-white focus:ring-2 focus:ring-emerald-500" onchange="calculate()">
+                        <option value="straight" id="opt-straight">Straight-Line Method</option>
+                        <option value="declining" id="opt-declining">Declining Balance (Zakat Rate)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1" id="label-purchasedate">Purchase Year</label>
+                    <input type="number" id="purchaseYear" value="2024" min="2000" max="2030" class="w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-emerald-500" oninput="calculate()">
+                </div>
+            </form>
+        </div>
+
+        <!-- Right Column: Results & Schedule -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-xs text-slate-500 font-semibold" id="res-title-1">Annual Depreciation</p>
+                    <p class="text-2xl font-bold text-slate-900 mt-1" id="resAnnual">SAR 0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-xs text-slate-500 font-semibold" id="res-title-2">Net Book Value</p>
+                    <p class="text-2xl font-bold text-emerald-600 mt-1" id="resBookValue">SAR 0</p>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200">
+                    <p class="text-xs text-slate-500 font-semibold" id="res-title-3">Total Depreciation</p>
+                    <p class="text-2xl font-bold text-slate-700 mt-1" id="resTotalDep">SAR 0</p>
+                </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="bg-amber-50 border-l-4 border-amber-400 p-4 text-xs text-amber-800 rounded-r-lg">
+                <span class="font-bold" id="disclaimer-title">Disclaimer:</span> 
+                <span id="disclaimer-text">This tool provides estimates for internal management and provisional Zakat planning only. Calculations should be verified against ZATCA executive regulations and certified public accountants before filing tax and Zakat returns.</span>
+            </div>
+
+            <!-- Schedule Table -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-slate-800" id="schedule-heading">Depreciation Schedule</h3>
+                    <button onclick="exportCSV()" class="bg-slate-800 text-white hover:bg-slate-700 text-xs px-3 py-1.5 rounded transition" id="export-btn">Export CSV</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead>
+                            <tr class="border-b bg-slate-50 text-slate-600">
+                                <th class="p-2" id="th-year">Year</th>
+                                <th class="p-2" id="th-opening">Opening BV (SAR)</th>
+                                <th class="p-2" id="th-dep">Depreciation (SAR)</th>
+                                <th class="p-2" id="th-closing">Closing BV (SAR)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scheduleBody">
+                            <!-- Dynamically generated rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Results Card CTA Box -->
+            <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h3 class="text-lg font-bold" id="cta-title">Manage 100+ Assets with Full ZATCA Compliance</h3>
+                    <p class="text-xs text-slate-300 mt-1" id="cta-desc">Upgrade to our complete Excel & VBA Master Template featuring automated depreciation schedules, impairment tracking, and Zakat deduction reports.</p>
+                </div>
+                <a href="https://gumroad.com" target="_blank" class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold px-5 py-3 rounded-xl text-sm whitespace-nowrap transition shadow">
+                    <span id="cta-btn">Get Template ($29)</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- SEO Content Section -->
+    <section class="max-w-6xl mx-auto px-4 py-12 border-t border-slate-200 mt-12">
+        <div class="max-w-3xl space-y-6 text-slate-700 text-sm">
+            <h2 class="text-2xl font-bold text-slate-900" id="seo-h1">Understanding Asset Depreciation & Zakat Deductions in Saudi Arabia</h2>
+            <p id="seo-p1">Fixed asset management and depreciation are critical operational requirements for registered enterprises operating under Saudi law. According to ZATCA (Zakat, Tax and Customs Authority) regulations, businesses are permitted to deduct depreciation expenses when calculating their Zakat base or corporate income tax, provided the calculations adhere to approved accounting standards (SOCPA / IFRS) and asset classification rules.</p>
+            
+            <h3 class="text-xl font-bold text-slate-900 pt-4" id="seo-h2">Depreciation Methods: Straight-Line vs. Declining Balance</h3>
+            <p id="seo-p2">The <strong>Straight-Line Method</strong> distributes the cost of an asset evenly across its useful life, calculated as: <code>(Initial Cost - Salvage Value) / Useful Life</code>. This method is straightforward and commonly used for financial reporting.</p>
+            <p id="seo-p3">The <strong>Declining Balance Method</strong> applies a constant depreciation rate to the net book value of the asset each year, resulting in higher depreciation charges in the earlier years of the asset's lifecycle. ZATCA guidelines specify maximum allowable depreciation percentages for different asset categories (such as buildings, machinery, computers, and vehicles).</p>
+
+            <h3 class="text-xl font-bold text-slate-900 pt-4" id="seo-h3">Frequently Asked Questions (FAQ)</h3>
+            <div class="space-y-4">
+                <div>
+                    <h4 class="font-bold text-slate-800" id="faq-q1">1. Are depreciation expenses fully deductible for Zakat calculation?</h4>
+                    <p class="text-slate-600 mt-1" id="faq-a1">Book depreciation is typically added back to net profit, and tax/Zakat-allowed depreciation (calculated per ZATCA guidelines) is deducted when computing the final Zakat base.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-800" id="faq-q2">2. What happens when an asset is fully depreciated?</h4>
+                    <p class="text-slate-600 mt-1" id="faq-a2">Once the net book value reaches the salvage value (or zero), no further depreciation is recorded, even if the asset remains in active operational use.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center py-6 text-xs text-slate-500 border-t border-slate-200">
+        <p id="footer-text">&copy; 2025 Saudi B2B Micro-SaaS Tools. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                bannerText: "Need automated fixed asset registers and Zakat reporting? Get the complete Excel & VBA model.",
+                bannerCta: "Get Excel Template ($29)",
+                mainTitle: "Saudi Asset Depreciation & Book Value Calculator",
+                mainSubtitle: "Zakat & GAZT Compliant Fixed Asset Schedule Estimator",
+                langBtnText: "العربية / English",
+                inputsHeading: "Asset Parameters",
+                labelAssetName: "Asset Name / Description",
+                labelCost: "Initial Purchase Cost (SAR)",
+                labelSalvage: "Salvage / Residual Value (SAR)",
+                labelLife: "Useful Life (Years)",
+                labelMethod: "Depreciation Method",
+                optStraight: "Straight-Line Method",
+                optDeclining: "Declining Balance (Zakat Rate)",
+                labelPurchaseDate: "Purchase Year",
+                resTitle1: "Annual Depreciation (Yr 1)",
+                resTitle2: "Net Book Value",
+                resTitle3: "Total Depreciation",
+                disclaimerTitle: "Disclaimer:",
+                disclaimerText: "This tool provides estimates for internal management and provisional Zakat planning only. Calculations should be verified against ZATCA executive regulations and certified public accountants before filing tax and Zakat returns.",
+                scheduleHeading: "Depreciation Schedule",
+                exportBtn: "Export CSV",
+                thYear: "Year",
+                thOpening: "Opening BV (SAR)",
+                thDep: "Depreciation (SAR)",
+                thClosing: "Closing BV (SAR)",
+                ctaTitle: "Manage 100+ Assets with Full ZATCA Compliance",
+                ctaDesc: "Upgrade to our complete Excel & VBA Master Template featuring automated depreciation schedules, impairment tracking, and Zakat deduction reports.",
+                ctaBtn: "Get Template ($29)",
+                seoH1: "Understanding Asset Depreciation & Zakat Deductions in Saudi Arabia",
+                seoP1: "Fixed asset management and depreciation are critical operational requirements for registered enterprises operating under Saudi law. According to ZATCA (Zakat, Tax and Customs Authority) regulations, businesses are permitted to deduct depreciation expenses when calculating their Zakat base or corporate income tax, provided the calculations adhere to approved accounting standards (SOCPA / IFRS) and asset classification rules.",
+                seoH2: "Depreciation Methods: Straight-Line vs. Declining Balance",
+                seoP2: "The Straight-Line Method distributes the cost of an asset evenly across its useful life, calculated as: (Initial Cost - Salvage Value) / Useful Life. This method is straightforward and commonly used for financial reporting.",
+                seoP3: "The Declining Balance Method applies a constant depreciation rate to the net book value of the asset each year, resulting in higher depreciation charges in the earlier years of the asset's lifecycle. ZATCA guidelines specify maximum allowable depreciation percentages for different asset categories (such as buildings, machinery, computers, and vehicles).",
+                seoH3: "Frequently Asked Questions (FAQ)",
+                faqQ1: "1. Are depreciation expenses fully deductible for Zakat calculation?",
+                faqA1: "Book depreciation is typically added back to net profit, and tax/Zakat-allowed depreciation (calculated per ZATCA guidelines) is deducted when computing the final Zakat base.",
+                faqQ2: "2. What happens when an asset is fully depreciated?",
+                faqA2: "Once the net book value reaches the salvage value (or zero), no further depreciation is recorded, even if the asset remains in active operational use.",
+                footerText: "&copy; 2025 Saudi B2B Micro-SaaS Tools. All rights reserved."
+            },
+            ar: {
+                bannerText: "هل تحتاج إلى سجلات أصول ثابتة آلية وتقارير زكوية؟ احصل على نموذج Excel و VBA الشامل.",
+                bannerCta: "احصل على نموذج إكسل ($29)",
+                mainTitle: "حاسبة إهلاك الأصول والقيمة الدفترية السعودية",
+                mainSubtitle: "مقدر جدول الأصول الثابتة المتوافق مع هيئة الزكاة والضريبة والجمارك",
+                langBtnText: "English / العربية",
+                inputsHeading: "معايير الأصل",
+                labelAssetName: "اسم الأصل / الوصف",
+                labelCost: "تكلفة الشراء الأولية (ريال سعودي)",
+                labelSalvage: "قيمة الخردة / القيمة المتبقية (ريال سعودي)
+                labelLife: "العمر الإنتاجي (سنوات)",
+                labelMethod: "طريقة الإهلاك",
+                optStraight: "طريقة القسط الثابت",
+                optDeclining: "القسط المتناقص (معدل الزكاة)",
+                labelPurchaseDate: "سنة الشراء",
+                resTitle1: "الإهلاك السنوي (السنة الأولى)",
+                resTitle2: "القيمة الدفترية الصافية",
+                resTitle3: "إجمالي الإهلاك",
+                disclaimerTitle: "إخلاء مسؤولية:",
+                disclaimerText: "توفر هذه الأداة تقديرات للإدارة الداخلية التخطيط الزكوي المؤقت فقط. يجب التحقق من الحسابات مقابل اللائحة التنفيذية لهيئة الزكاة والضريبة والجمارك والمحاسبين القانونيين قبل تقديم الإقرارات.",
+                scheduleHeading: "جدول الإهلاك",
+                exportBtn: "تصدير CSV",
+                thYear: "السنة",
+                thOpening: "القيمة الدفترية أول المدة",
+                thDep: "الإهلاك (ريال)",
+                thClosing: "القيمة الدفترية آخر المدة",
+                ctaTitle: "أدِر أكثر من 100 أصل بتوافق تام مع متطلبات الزكاة",
+                ctaDesc: "قم بالتحديث إلى نموذج إكسل الاحترافي الذي يتضمن جداول إهلاك آلية، تتبع الانخفاض، وتقارير الخصم الزكوي.",
+                ctaBtn: "احصل على النموذج ($29)",
+                seoH1: "فهم إهلاك الأصول والخصومات الزكوية في المملكة العربية السعودية",
+                seoP1: "تعتبر إدارة الأصول الثابتة وإهلاكها متطلبات تشغيلية بالغة الأهمية للشركات المسجلة العاملة بموجب الأنظمة السعودية. وفقاً للائحتي هيئة الزكاة والضريبة والجمارك (زاتكا)، يُسمح للشركات خصم مصاريف الإهلاك عند حساب الوعاء الزكوي أو ضريبة الدخل، بشرط توافقها مع معايير المحاسبة المعتمدة.",
+                seoH2: "طرق الإهلاك: القسط الثابت مقابل القسط المتناقص",
+                seoP2: "طريقة القسط الثابت توزع تكلفة الأصل بالتساوي على عمره الإنتاجي وتُحسب كالتالي: (تكلفة الشراء - قيمة الخردة) ÷ العمر الإنتاجي.",
+                seoP3: "طريقة القسط المتناقص تطبق معدلاً ثابتاً على القيمة الدفترية المتبقية سنوياً، مما ينتج عنه مصروف إهلاك أعلى في السنوات الأولى.",
+                seoH3: "الأسئلة الشائعة (FAQ)",
+                faqQ1: "1. هل مصاريف الإهلاك قابلة للخصم كلياً لحساب الزكاة؟",
+                faqA1: "يتم عادة إضافة الإهلاك المحاسبي إلى صافي الربح وخصم الإهلاك المقبول زكائياً وفق ضوابط الهيئة عند حساب الوعاء.",
+                faqQ2: "2. ماذا يحدث عندما يتم إهلاك الأصل بالكامل؟",
+                faqA2: "بمجرد وصول القيمة الدفترية إلى قيمة الخردة، لا يتم تسجيل أي إهلاك إضافي حتى لو ظل الأصل قيد الاستخدام.",
+                footerText: "&copy; 2025 أدواتSaaS للأعمال السعودية. جميع الحقوق محفوظة."
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const body = document.getElementById('app-body');
+            if (currentLang === 'ar') {
+                body.classList.remove('ltr');
+                body.classList.add('rtl');
+                body.setAttribute('dir', 'rtl');
+            } else {
+                body.classList.remove('rtl');
+                body.classList.add('ltr');
+                body.setAttribute('dir', 'ltr');
+            }
+
+            // Update text elements
+            document.getElementById('banner-text').innerText = translations[currentLang].bannerText;
+            document.getElementById('banner-cta').innerText = translations[currentLang].bannerCta;
+            document.getElementById('main-title').innerText = translations[currentLang].mainTitle;
+            document.getElementById('main-subtitle').innerText = translations[currentLang].mainSubtitle;
+            document.getElementById('lang-btn-text').innerText = translations[currentLang].langBtnText;
+            document.getElementById('inputs-heading').innerText = translations[currentLang].inputsHeading;
+            document.getElementById('label-asset-name').innerText = translations[currentLang].labelAssetName;
+            document.getElementById('label-cost').innerText = translations[currentLang].labelCost;
+            document.getElementById('label-salvage').innerText = translations[currentLang].labelSalvage;
+            document.getElementById('label-life').innerText = translations[currentLang].labelLife;
+            document.getElementById('label-method').innerText = translations[currentLang].labelMethod;
+            document.getElementById('opt-straight').innerText = translations[currentLang].optStraight;
+            document.getElementById('opt-declining').innerText = translations[currentLang].optDeclining;
+            document.getElementById('label-purchasedate').innerText = translations[currentLang].labelPurchaseDate;
+            document.getElementById('res-title-1').innerText = translations[currentLang].resTitle1;
+            document.getElementById('res-title-2').innerText = translations[currentLang].resTitle2;
+            document.getElementById('res-title-3').innerText = translations[currentLang].resTitle3;
+            document.getElementById('disclaimer-title').innerText = translations[currentLang].disclaimerTitle;
+            document.getElementById('disclaimer-text').innerText = translations[currentLang].disclaimerText;
+            document.getElementById('schedule-heading').innerText = translations[currentLang].scheduleHeading;
+            document.getElementById('export-btn').innerText = translations[currentLang].exportBtn;
+            document.getElementById('th-year').innerText = translations[currentLang].thYear;
+            document.getElementById('th-opening').innerText = translations[currentLang].thOpening;
+            document.getElementById('th-dep').innerText = translations[currentLang].thDep;
+            document.getElementById('th-closing').innerText = translations[currentLang].thClosing;
+            document.getElementById('cta-title').innerText = translations[currentLang].ctaTitle;
+            document.getElementById('cta-desc').innerText = translations[currentLang].ctaDesc;
+            document.getElementById('cta-btn').innerText = translations[currentLang].ctaBtn;
+            document.getElementById('seo-h1').innerText = translations[currentLang].seoH1;
+            document.getElementById('seo-p1').innerText = translations[currentLang].seoP1;
+            document.getElementById('seo-h2').innerText = translations[currentLang].seoH2;
+            document.getElementById('seo-p2').innerText = translations[currentLang].seoP2;
+            document.getElementById('seo-p3').innerText = translations[currentLang].seoP3;
+            document.getElementById('seo-h3').innerText = translations[currentLang].seoH3;
+            document.getElementById('faq-q1').innerText = translations[currentLang].faqQ1;
+            document.getElementById('faq-a1').innerText = translations[currentLang].faqA1;
+            document.getElementById('faq-q2').innerText = translations[currentLang].faqQ2;
+            document.getElementById('faq-a2').innerText = translations[currentLang].faqA2;
+            document.getElementById('footer-text').innerHTML = translations[currentLang].footerText;
+
+            calculate();
+        }
+
+        let scheduleData = [];
+
+        function calculate() {
+            const cost = parseFloat(document.getElementById('cost').value) || 0;
+            const salvage = parseFloat(document.getElementById('salvage').value) || 0;
+            const life = parseInt(document.getElementById('life').value) || 1;
+            const method = document.getElementById('method').value;
+            const startYear = parseInt(document.getElementById('purchaseYear').value) || 2024;
+
+            scheduleData = [];
+            let openingBV = cost;
+            let totalDepreciation = 0;
+            let annualDep = 0;
+            
+            const decliningRate = 2 / life; // Double declining standard or custom
+
+            const tbody = document.getElementById('scheduleBody');
+            tbody.innerHTML = '';
+
+            for (let i = 1; i <= life; i++) {
+                let year = startYear + i - 1;
+                let dep = 0;
+
+                if (method === 'straight') {
+                    dep = (cost - salvage) / life;
+                    if (openingBV - dep < salvage) {
+                        dep = Math.max(0, openingBV - salvage);
+                    }
+                } else {
+                    dep = openingBV * decliningRate;
+                    if (openingBV - dep < salvage) {
+                        dep = Math.max(0, openingBV - salvage);
+                    }
+                }
+
+                let closingBV = openingBV - dep;
+                if (i === life) {
+                    closingBV = Math.max(salvage, closingBV);
+                }
+
+                if (i === 1) {
+                    annualDep = dep;
+                }
+
+                totalDepreciation += dep;
+
+                scheduleData.push({
+                    year: year,
+                    opening: openingBV.toFixed(2),
+                    depreciation: dep.toFixed(2),
+                    closing: closingBV.toFixed(2)
+                });
+
+                const tr = document.createElement('tr');
+                tr.className = 'border-b hover:bg-slate-50';
+                tr.innerHTML = `
+                    <td class="p-2 font-medium">${year}</td>
+                    <td class="p-2">SAR ${formatNumber(openingBV)}</td>
+                    <td class="p-2 text-rose-600">SAR ${formatNumber(dep)}</td>
+                    <td class="p-2">SAR ${formatNumber(closingBV)}</td>
+                `;
+                tbody.appendChild(tr);
+
+                openingBV = closingBV;
+                if (openingBV <= salvage && method === 'straight') break;
+            }
+
+            // Update summary cards
+            document.getElementById('resAnnual').innerText = 'SAR ' + formatNumber(annualDep);
+            document.getElementById('resBookValue').innerText = 'SAR ' + formatNumber(openingBV);
+            document.getElementById('resTotalDep').innerText = 'SAR ' + formatNumber(totalDepreciation);
+        }
+
+        function formatNumber(num) {
+            return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function exportCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Year,Opening BV (SAR),Depreciation (SAR),Closing BV (SAR)\r\n";
+            
+            scheduleData.forEach(row => {
+                csvContent += `${row.year},${row.opening},${row.depreciation},${row.closing}\r\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "asset_depreciation_schedule.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initial run
+        window.onload = calculate;
+    </script>
+</body>
+</html>

@@ -75,5 +75,12 @@
     "title_ar": "أداة تدقيق نظام حماية الأجور وساعات العمل الإضافية في السعودية",
     "description_en": "Calculate Saudi Labor Law compliant overtime pay, ensure WPS salary transfer compliance, and audit payroll records instantly for KSA SMEs.",
     "date": "2026-11-02"
+  },
+  {
+    "slug": "saudi-business-asset-depreciation-and-book-value-calculator",
+    "title_en": "Saudi Business Asset Depreciation & Book Value Calculator (Zakat-Compliant)",
+    "title_ar": "حاسبة إهلاك الأصول التجارية والقيمة الدفترية (متوافقة مع الزكاة السعودية)",
+    "description_en": "Calculate fixed asset depreciation, net book value, and Zakat-compliant tax deductions for Saudi companies using straight-line and declining balance methods.",
+    "date": "2026-11-03"
   }
 ]
