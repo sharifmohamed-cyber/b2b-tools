@@ -96,5 +96,12 @@
     "title_ar": "مولد فواتير الضريبة وضريبة الاستقطاع للمستقلين والمقاولين في السعودية",
     "description_en": "Generate compliant Saudi VAT invoices, calculate withholding tax deductions, and estimate net contractor payouts instantly. Built for KSA freelancers.",
     "date": "2026-11-04"
+  },
+  {
+    "slug": "saudi-iqama-renewal-and-expats-levy-calculator",
+    "title_en": "Saudi Iqama Renewal, Work Permit & Dependent Levy Calculator",
+    "title_ar": "حاسبة رسوم تجديد الإقامة ورخص العمل والمقابل المالي والمرافقين",
+    "description_en": "Calculate Saudi Iqama renewal fees, Maktab Amal work permit financial levy, dependent fees, and medical insurance costs with instant export.",
+    "date": "2026-11-04"
   }
 ]

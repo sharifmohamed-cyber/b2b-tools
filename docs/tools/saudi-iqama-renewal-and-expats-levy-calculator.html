@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi Iqama Renewal, Work Permit & Dependent Levy Calculator | حاسبة تجديد الإقامة والمقابل المالي</title>
+  <meta name="description" content="Calculate Saudi Iqama renewal, Qiwa work permit levies, dependent fees (marfiqeen), and insurance costs for expatriate employees with full reporting." />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            cairo: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            },
+            gold: {
+              500: '#eab308',
+              600: '#ca8a04',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    .font-ar { font-family: 'Cairo', sans-serif; }
+    .tab-active { border-color: #16a34a; color: #16a34a; font-weight: 700; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #fff !important; color: #000 !important; }
+      .print-shadow-none { box-shadow: none !important; border: 1px solid #e5e7eb !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans transition-colors duration-200">
+
+  <!-- Top Banner Sticky CTA -->
+  <aside class="sticky top-0 z-50 bg-gradient-to-r from-emerald-900 via-slate-900 to-emerald-950 text-white border-b border-emerald-700/40 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 flex flex-wrap items-center justify-between gap-3 text-sm">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">NEW 2025</span>
+        <p class="font-medium">
+          <span class="en-text">Automate your corporate HR budgeting with the Master KSA Workforce Excel Model!</span>
+          <span class="ar-text font-ar hidden">وفّر ساعات التدقيق مع نموذج الإكسل الاحترافي الشامل لميزانية الإقامات ورخص العمل!</span>
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://gumroad.com" target="_blank" rel="noopener" class="inline-flex items-center px-3.5 py-1.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold text-xs tracking-wide shadow-sm transition">
+          <span class="en-text">Get Master Template ($29)</span>
+          <span class="ar-text font-ar hidden">تحميل نموذج الإكسل المتقدم (29$)</span>
+          <svg class="w-3.5 h-3.5 ml-1 rtl:mr-1 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+        <button id="langToggleBtn" onclick="toggleLanguage()" class="px-2.5 py-1 text-xs border border-slate-600 rounded-md hover:bg-slate-800 font-semibold transition text-slate-200 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+          <span id="langLabel">العربية</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Header Navigation -->
+  <header class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-md shadow-emerald-500/20">
+          🇸🇦
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+            <span class="en-text">Saudi Iqama Renewal &amp; Levy Calculator</span>
+            <span class="ar-text font-ar hidden">حاسبة تجديد الإقامة ورخص العمل والمقابل المالي</span>
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-500">
+            <span class="en-text">Accurate Qiwa, Jawazat, Maktab Amal &amp; Dependents Budgeting Engine</span>
+            <span class="ar-text font-ar hidden">محرك حساب الرسوم الحكومية لمنصة قوى والجوازات والمقابل المالي للمرافقين</span>
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start md:self-auto">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">
+          <span class="w-2 h-2 mr-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+          KSA Labor Law &amp; Qiwa Compliant (1446H / 2025)
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Form Inputs Column (7 Cols) -->
+      <section class="lg:col-span-7 space-y-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7">
+          <div class="border-b border-slate-100 pb-4 mb-6 flex justify-between items-center">
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+              <span class="en-text">Employee &amp; Establishment Parameters</span>
+              <span class="ar-text font-ar hidden">بيانات العامل والمنشأة والمرافقين</span>
+            </h2>
+            <button type="button" onclick="resetDefaults()" class="text-xs text-slate-500 hover:text-emerald-600 font-medium underline">
+              <span class="en-text">Reset Defaults</span>
+              <span class="ar-text font-ar hidden">استعادة الافتراضي</span>
+            </button>
+          </div>
+
+          <form id="iqamaForm" class="space-y-5" onsubmit="event.preventDefault();">
+            <!-- Calculation Mode: Single Employee vs Bulk Batch -->
+            <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
+                <span class="en-text">Calculation Scope</span>
+                <span class="ar-text font-ar hidden">نطاق الحساب</span>
+              </label>
+              <div class="grid grid-cols-2 gap-3">
+                <label class="flex items-center gap-2 p-2.5 bg-white rounded-lg border border-slate-200 cursor-pointer text-xs font-semibold hover:border-emerald-500 transition">
+                  <input type="radio" name="calcMode" value="single" checked onchange="updateCalculations()" class="text-emerald-600 focus:ring-emerald-500" />
+                  <span class="en-text">Individual Employee</span>
+                  <span class="ar-text font-ar hidden">موظف فردي واحد</span>
+                </label>
+                <label class="flex items-center gap-2 p-2.5 bg-white rounded-lg border border-slate-200 cursor-pointer text-xs font-semibold hover:border-emerald-500 transition">
+                  <input type="radio" name="calcMode" value="batch" onchange="updateCalculations()" class="text-emerald-600 focus:ring-emerald-500" />
+                  <span class="en-text">Group / Company Batch</span>
+                  <span class="ar-text font-ar hidden">مجموعة موظفين (دُفعة)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Batch Employee Count Field (Shown if batch) -->
+            <div id="batchCountWrapper" class="hidden">
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                <span class="en-text">Total Number of Expat Employees in Batch</span>
+                <span class="ar-text font-ar hidden">عدد الموظفين الوافدين المشمولين في الدفعة</span>
+              </label>
+              <input type="number" id="employeeHeadcount" min="1" max="1000" value="5" oninput="updateCalculations()" class="w-full rounded-lg border-slate-300 border px-3.5 py-2.5 text-sm focus:border-emerald-500 focus:ring-emerald-500" />
+            </div>
+
+            <!-- Saudization Status / Nitaqat Ratio for Maktab Amal Levy -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                <span class="en-text">Work Permit Financial Levy Tier (Maktab Amal / Qiwa)</span>
+                <span class="ar-text font-ar hidden">فئة المقابل المالي لرخص العمل (مكتب العمل / قوى)</span>
+              </label>
+              <select id="saudizationTier" onchange="updateCalculations()" class="w-full rounded-lg border-slate-300 border px-3.5 py-2.5 text-sm font-medium focus:border-emerald-500 focus:ring-emerald-500 bg-white">
+                <option value="exceeding">Expatriates EXCEED Saudi Count (800 SAR / Month = 9,600 SAR/Year) - عمالة فائضة</option>
+                <option value="equalOrLess">Expatriates EQUAL or LESS than Saudi Count (700 SAR / Month = 8,400 SAR/Year) - عمالة مساوية أو أقل</option>
+                <option value="exemptSmallBiz">Exempt Small Business (Micro Enterprise ≤ 9 workers with Saudi Owner) - إعفاء منشأة صغيرة</option>
+                <option value="nationalityExempt">Exempt Worker Category (e.g. Palestinian Egyptian passport, Tribe, Special) - إعفاء جنسية مستثناة</option>
+              </select>
+              <p class="mt-1 text-[11px] text-slate-500">
+                <span class="en-text">Qiwa evaluates monthly headcount ratio between Saudi nationals and foreign workers.</span>
+                <span class="ar-text font-ar hidden">تحدد منصة قوى المقابل المالي شهرياً حسب نسبة السعوديين إلى الوافدين.</span>
+              </p>
+            </div>
+
+            <!-- Renewal Duration (Quarterly, Semi-Annual, Annual) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                  <span class="en-text">Renewal Duration (Qiwa / Absher)</span>
+                  <span class="ar-text font-ar hidden">مدة التجديد (قوى / مقيم)</span>
+                </label>
+                <select id="renewalDuration" onchange="updateCalculations()" class="w-full rounded-lg border-slate-300 border px-3.5 py-2.5 text-sm font-medium focus:border-emerald-500 focus:ring-emerald-500 bg-white">
+                  <option value="3">3 Months (Quarterly / ربع سنوي)</option>
+                  <option value="6">6 Months (Semi-Annual / نصف سنوي)</option>
+                  <option value="9">9 Months (3 Quarters / تسعة أشهر)</option>
+                  <option value="12" selected>12 Months (Full Year / سنة كاملة)</option>
+                  <option value="24">24 Months (Two Years / سنتان)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                  <span class="en-text">Profession Category</span>
+                  <span class="ar-text font-ar hidden">المهنة ونوع الإقامة</span>
+                </label>
+                <select id="workerType" onchange="updateCalculations()" class="w-full rounded-lg border-slate-300 border px-3.5 py-2.5 text-sm font-medium focus:border-emerald-500 focus:ring-emerald-500 bg-white">
+                  <option value="commercial" selected>Commercial / Corporate Employee (عامل شركات ومؤسسات)</option>
+                  <option value="domestic">Domestic Worker / Amil Manzili (عمالة منزلية - كفالة فردية)</option>
+                  <option value="agricultural">Agricultural / Fishery (زراعي / رعي)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Dependent Levy (Marfiqeen) -->
+            <div class="border-t border-slate-100 pt-4">
+              <div class="flex items-center justify-between mb-2">
+                <label class="text-xs font-bold text-slate-800 uppercase tracking-wide flex items-center gap-1">
+                  <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                  <span class="en-text">Dependents / Companions Levy (المقابل المالي للمرافقين)</span>
+                  <span class="ar-text font-ar hidden">رسوم المرافقين والتابعين</span>
+                </label>
+                <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                  400 SAR / Month per Dependent
+                </span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                <div>
+                  <label class="block text-xs text-slate-600 mb-1">
+                    <span class="en-text">Number of Dependents (Wife + Children)</span>
+                    <span class="ar-text font-ar hidden">عدد المرافقين التابعين</span>
+                  </label>
+                  <input type="number" id="dependentsCount" min="0" max="15" value="0" oninput="updateCalculations()" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500" />
+                </div>
+                <div>
+                  <label class="block text-xs text-slate-600 mb-1">
+                    <span class="en-text">Who Pays Dependent Levy?</span>
+                    <span class="ar-text font-ar hidden">المتحمل للرسوم</span>
+                  </label>
+                  <select id="dependentPayer" onchange="updateCalculations()" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500 bg-white">
+                    <option value="employee">Borne by Employee (يتحملها المقيم)</option>
+                    <option value="company">Company Benefit (تتحملها المنشأة)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Corporate Add-ons: Medical Insurance & GOSI Hazard -->
+            <div class="border-t border-slate-100 pt-4">
+              <label class="text-xs font-bold text-slate-800 uppercase tracking-wide block mb-2">
+                <span class="en-text">Mandatory Corporate Add-Ons (Insurance &amp; Fees)</span>
+                <span class="ar-text font-ar hidden">التكاليف التابعة (التأمين الصحي ومخاطر التأمينات)</span>
+              </label>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-xs text-slate-600 mb-1">
+                    <span class="en-text">CCHI Medical Insurance (SAR/Yr)</span>
+                    <span class="ar-text font-ar hidden">التأمين الطبي السنوي (ريال)</span>
+                  </label>
+                  <input type="number" id="insuranceCost" min="0" step="50" value="750" oninput="updateCalculations()" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500" />
+                </div>
+                <div>
+                  <label class="block text-xs text-slate-600 mb-1">
+                    <span class="en-text">GOSI Occupational Hazard (2%)</span>
+                    <span class="ar-text font-ar hidden">مخاطر مهنية - تأمينات 2% (ريال/شهري)</span>
+                  </label>
+                  <input type="number" id="monthlyGosiWage" min="0" step="100" value="4000" placeholder="Monthly Basic+Housing" oninput="updateCalculations()" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500" />
+                </div>
+                <div>
+                  <label class="block text-xs text-slate-600 mb-1">
+                    <span class="en-text">HR Service &amp; Admin Fees</span>
+                    <span class="ar-text font-ar hidden">رسوم إدارية أو تعقيب</span>
+                  </label>
+                  <input type="number" id="adminFee" min="0" step="25" value="0" oninput="updateCalculations()" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500" />
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- Quick Info Callout -->
+        <div class="p-4 rounded-xl bg-amber-50/70 border border-amber-200 text-xs text-amber-900 leading-relaxed">
+          <p class="font-semibold flex items-center gap-1.5 mb-1">
+            <svg class="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="en-text">Notice for HR Managers: Fractional &amp; Quarterly Renewals</span>
+            <span class="ar-text font-ar hidden">تنبيه لمسؤولي الموارد البشرية: التجزئة الربع سنوية</span>
+          </p>
+          <p>
+            <span class="en-text">Under the Cabinet Decision and Qiwa/Jawazat system, commercial work permits and Iqamas can be issued/renewed on a 3, 6, 9, or 12-month basis. Dependent fees must be paid in full upfront covering the exact period before renewal approval.</span>
+            <span class="ar-text font-ar hidden">بموجب قرار مجلس الوزراء، يجوز تجديد رخص العمل والإقامات بشكل مجزأ (3، 6، 9، 12 شهراً). يُشترط سداد رسوم المرافقين بالكامل حتى تاريخ انتهاء الإقامة قبل إتمام عملية التجديد.</span>
+          </p>
+        </div>
+      </section>
+
+      <!-- Summary & Output Column (5 Cols) -->
+      <section class="lg:col-span-5 space-y-6">
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 sm:p-7 relative overflow-hidden">
+          <div class="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-700"></div>
+          
+          <div class="flex justify-between items-start mb-6">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-slate-400">
+                <span class="en-text">Grand Total Payable</span>
+                <span class="ar-text font-ar hidden">إجمالي التكلفة المستحقة للسداد</span>
+              </span>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span id="displayTotalSAR" class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">10,330</span>
+                <span class="text-base font-bold text-emerald-700">SAR / ر.س</span>
+              </div>
+            </div>
+            <span id="scopeBadge" class="px-2.5 py-1 rounded-md text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+              1 Employee (12M)
+            </span>
+          </div>
+
+          <!-- Line Item Breakdown -->
+          <div class="space-y-3 border-t border-b border-slate-100 py-4 text-xs">
+            <!-- 1. Maktab Amal Work Permit -->
+            <div class="flex justify-between items-center">
+              <span class="text-slate-600 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                <span class="en-text">Maktab Amal Work Permit (Qiwa)</span>
+                <span class="ar-text font-ar hidden">رخصة عمل مكتب العمل (قوى)</span>
+              </span>
+              <span id="displayMaktabAmal" class="font-bold text-slate-800">9,600 SAR</span>
+            </div>
+            <!-- 2. Jawazat Iqama Issuance/Renewal -->
+            <div class="flex justify-between items-center">
+              <span class="text-slate-600 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span class="en-text">Jawazat Iqama Fee</span>
+                <span class="ar-text font-ar hidden">رسوم تجديد الجوازات</span>
+              </span>
+              <span id="displayJawazat" class="font-bold text-slate-800">650 SAR</span>
+            </div>
+            <!-- 3. Dependent Levy (Marfiqeen) -->
+            <div class="flex justify-between items-center">
+              <span class="text-slate-600 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                <span class="en-text">Dependent Levy (Companions)</span>
+                <span class="ar-text font-ar hidden">المقابل المالي للمرافقين</span>
+              </span>
+              <span id="displayDependents" class="font-bold text-slate-800">0 SAR</span>
+            </div>
+            <!-- 4. Mandatory Medical Insurance -->
+            <div class="flex justify-between items-center">
+              <span class="text-slate-600 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                <span class="en-text">Medical Insurance (CCHI Pro-rated)</span>
+                <span class="ar-text font-ar hidden">التأمين الطبي (مجلس الضمان)</span>
+              </span>
+              <span id="displayInsurance" class="font-bold text-slate-800">750 SAR</span>
+            </div>
+            <!-- 5. GOSI Occupational Hazard (2%) -->
+            <div class="flex justify-between items-center">
+              <span class="text-slate-600 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                <span class="en-text">GOSI Hazard (2% Period Total)</span>
+                <span class="ar-text font-ar hidden">تأمينات أخطار مهنية (2%)</span>
+              </span>
+              <span id="displayGosiHazard" class="font-bold text-slate-800">960 SAR</span>
+            </div>
+            <!-- 6. Additional Admin Fees -->
+            <div class="flex justify-between items-center text-slate-500">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                <span class="en-text">Admin / Miscellaneous Services</span>
+                <span class="ar-text font-ar hidden">مصاريف إدارية وتعقيب</span>
+              </span>
+              <span id="displayAdmin" class="font-medium">0 SAR</span>
+            </div>
+          </div>
+
+          <!-- Cost Allocation Tag -->
+          <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-200/80 space-y-2 text-xs">
+            <div class="flex justify-between font-semibold">
+              <span class="text-slate-700">
+                <span class="en-text">Employer Total Obligation:</span>
+                <span class="ar-text font-ar hidden">التزام المنشأة (صاحب العمل):</span>
+              </span>
+              <span id="displayCompanyBurden" class="text-emerald-700 font-bold">11,960 SAR</span>
+            </div>
+            <div class="flex justify-between font-semibold">
+              <span class="text-slate-700">
+                <span class="en-text">Employee Deduction (Dependents):</span>
+                <span class="ar-text font-ar hidden">يُستقطع من العامل (المرافقين):</span>
+              </span>
+              <span id="displayEmployeeBurden" class="text-slate-600">0 SAR</span>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-500 border-t border-slate-200 pt-1.5">
+              <span>
+                <span class="en-text">Monthly Amortization (Accrual/Mo):</span>
+                <span class="ar-text font-ar hidden">الاستحقاق الشهري التقديري:</span>
+              </span>
+              <span id="displayMonthlyAccrual" class="font-medium">996.67 SAR/mo</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons (Print & Export CSV) -->
+          <div class="mt-6 grid grid-cols-2 gap-3 no-print">
+            <button onclick="window.print()" class="w-full py-2.5 px-3 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-sm">
+              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <span class="en-text">Print / PDF Sheet</span>
+              <span class="ar-text font-ar hidden">طباعة / حفظ PDF</span>
+            </button>
+            <button onclick="exportCSV()" class="w-full py-2.5 px-3 rounded-lg border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 transition shadow-sm">
+              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span class="en-text">Export CSV Report</span>
+              <span class="ar-text font-ar hidden">تصدير ملف CSV</span>
+            </button>
+          </div>
+
+          <!-- High Converting Product Card CTA -->
+          <div class="mt-6 p-4 rounded-xl bg-gradient-to-br from-emerald-900 to-slate-900 text-white shadow-md border border-emerald-600/30 no-print">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-400 text-amber-950 uppercase tracking-wide">Pro B2B Tool</span>
+              <span class="text-xs text-emerald-300 font-semibold">For HR &amp; Finance Teams</span>
+            </div>
+            <h3 class="text-sm font-bold leading-tight mb-1">
+              <span class="en-text">Automated KSA Workforce &amp; Iqama Budgeting Master Excel</span>
+              <span class="ar-text font-ar hidden">حقيبة الموارد البشرية المتكاملة لإكسل - تجديد الإقامات والرواتب</span>
+            </h3>
+            <p class="text-xs text-slate-300 mb-3.5 leading-normal">
+              <span class="en-text">Includes Qiwa batch formulas, Nitaqat optimizer, 500-employee monthly cash-flow forecast, and automated Sadad payment vouchers.</span>
+              <span class="ar-text font-ar hidden">يشمل معادلات الربط مع قوى وحساب نطاقات وتدفقات السيولة وسندات سداد جاهزة لـ 500 موظف.</span>
+            </p>
+            <a href="https://gumroad.com" target="_blank" rel="noopener" class="block w-full text-center py-2 px-4 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs uppercase tracking-wider transition shadow-lg hover:shadow-emerald-500/25">
+              <span class="en-text">Download Master Template ($29)</span>
+              <span class="ar-text font-ar hidden">شراء وتحميل النموذج المتقدم (29 دولار)</span>
+            </a>
+          </div>
+
+          <!-- Visible Bilingual Legal Disclaimer -->
+          <div class="mt-6 p-3 rounded-lg bg-slate-100 border border-slate-200 text-[11px] text-slate-500 leading-relaxed">
+            <div class="font-bold text-slate-700 flex items-center gap-1 mb-1">
+              <svg class="w-3.5 h-3.5 text-slate-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+              <span>Bilingual Legal Disclaimer / إخلاء مسؤولية نظامي</span>
+            </div>
+            <p class="mb-1">
+              <strong>Notice:</strong> Outputs are automated estimates for operational and budgeting purposes only. Official government invoices generated via Qiwa, Absher, Muqeem, and Sadad take legal precedence. Rates, exemptions, and Saudization regulations are subject to official ministerial decrees by the Ministry of Human Resources and Social Development (MHRSD) and the Zakat, Tax and Customs Authority (ZATCA).
+            </p>
+            <p class="font-ar text-[10px] text-slate-500">
+              <strong>تنبيه قانوني:</strong> النتائج الصادرة عن هذه الحاسبة هي تقديرات استرشادية لأغراض التخطيط المالي والميزانيات. الفواتير الصادرة رسمياً عبر منصات قوى، أبشر، ومقيم وأنظمة سداد هي الملزمة قانونياً. تخضع الرسوم والإعفاءات للأنظمة والقرارات الوزارية الصادرة عن وزارة الموارد البشرية والتنمية الاجتماعية والجهات المعنية في المملكة العربية السعودية.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- 800+ Word Comprehensive B2B Guide & Formulas Section -->
+    <section class="mt-16 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-10 text-slate-700 leading-relaxed">
+      <article class="prose prose-slate max-w-none">
+        <h2 class="text-2xl font-bold text-slate-900 mb-4 pb-2 border-b border-slate-200">
+          <span class="en-text">Comprehensive Guide: Saudi Iqama Renewal, Work Permit Levies &amp; Dependent Calculations</span>
+          <span class="ar-text font-ar hidden">الدليل الشامل لتكاليف تجديد الإقامة ورخص العمل والمقابل المالي في المملكة العربية السعودية</span>
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-6">
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">
+              1. Legal Framework of Maktab Amal (Qiwa) Work Permit Levies
+            </h3>
+            <p class="text-sm text-slate-600 mb-3">
+              Under the Kingdom of Saudi Arabia's Ministry of Human Resources and Social Development (MHRSD) regulations implemented via the <em>Qiwa platform</em>, corporate employers pay a monthly financial compensation levy (المقابل المالي لرخص العمل) for each non-Saudi employee. The fee structure is designed around Saudization (Nitaqat) tiers:
+            </p>
+            <ul class="text-xs list-disc pl-5 space-y-1.5 text-slate-600">
+              <li><strong>Exceeding Saudis (800 SAR/month = 9,600 SAR/year):</strong> Applies to expat headcount that exceeds the total count of full-time Saudi citizens employed in the company.</li>
+              <li><strong>Equal to or Fewer than Saudis (700 SAR/month = 8,400 SAR/year):</strong> Discounted tier granted to the portion of non-Saudi headcount that is equal to or less than the Saudi staff count.</li>
+              <li><strong>Micro-Enterprise Exemption:</strong> Small enterprises with 9 or fewer employees where the full-time Saudi owner is registered under GOSI are eligible for exemption on up to 2-4 expatriate workers according to specific MHRSD criteria.</li>
+              <li><strong>Qiwa Renewal Duration:</strong> Employers can choose 3-month, 6-month, 9-month, or 12-month renewal windows to optimize working capital.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-bold text-slate-900 mb-2">
+              2. Directorate General of Passports (Jawazat) Iqama Fees
+            </h3>
+            <p class="text-sm text-slate-600 mb-3">
+              The Jawazat fee (رسوم رخصة الإقامة) is a distinct statutory cost managed through the Ministry of Interior via Absher Business or Muqeem portals:
+            </p>
+            <ul class="text-xs list-disc pl-5 space-y-1.5 text-slate-600">
+              <li><strong>Corporate / Commercial Expat:</strong> 650 SAR per calendar year (500 SAR for Iqama renewal + 150 SAR Human Resources Development / technical levy). For quarterly renewal, this is calculated proportionally at 162.50 SAR per quarter.</li>
+              <li><strong>Domestic Workers (عمالة منزلية):</strong> 600 SAR per annum for first-tier domestic workers under individual sponsorship.</li>
+              <li><strong>Agricultural / Livestock:</strong> 650 SAR annual government fee.</li>
+              <li><strong>Late Penalty:</strong> If an Iqama is not renewed within 3 days of expiration, Jawazat imposes a 500 SAR fine for the 1st violation, and 1,000 SAR for repeated non-compliance.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="my-8 bg-slate-50 p-6 rounded-xl border border-slate-200">
+          <h3 class="text-lg font-bold text-slate-900 mb-3">
+            Mathematical Formula Breakdown &amp; Calculation Model
+          </h3>
+          <div class="overflow-x-auto text-xs font-mono text-slate-800 space-y-3">
+            <p class="p-3 bg-white rounded border border-slate-200">
+              <strong>Total Iqama Period Cost =</strong> (Work Permit Levy × Months / 12) + (Jawazat Fee × Months / 12) + (Dependents × 400 SAR × Months) + (Insurance Premium × Months / 12) + (GOSI Hazard 2% × Monthly Salary × Months)
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-sans">
+              <div class="bg-white p-3 rounded border border-slate-200">
+                <p class="font-bold text-slate-800 mb-1">Example: 1 Commercial Worker, 12 Months, Exceeding Saudis</p>
+                <ul class="space-y-1 text-slate-600 list-disc pl-4">
+                  <li>Work Permit (Qiwa): 800 × 12 = 9,600 SAR</li>
+                  <li>Jawazat Iqama Fee: 650 SAR</li>
+                  <li>Medical Insurance (Estimate): 750 SAR</li>
+                  <li>GOSI Hazard (2% on 4,000 SAR wage): 80 × 12 = 960 SAR</li>
+                  <li><strong>Total Employer Annual Cash Burden: 11,960 SAR</strong></li>
+                </ul>
+              </div>
+              <div class="bg-white p-3 rounded border border-slate-200">
+                <p class="font-bold text-slate-800 mb-1">Example: Worker with 2 Dependents (Family)</p>
+                <ul class="space-y-1 text-slate-600 list-disc pl-4">
+                  <li>Dependent Fee: 2 dependents × 400 SAR × 12 months = <strong>9,600 SAR</strong></li>
+                  <li>Payable via Sadad under Jawazat billing code 013 prior to Iqama renewal.</li>
+                  <li>Can be allocated to employee payroll deduction or funded as company perk.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Arabic Overview Section for High SEO Authority -->
+        <div class="my-8 border-t border-slate-200 pt-6" dir="rtl">
+          <h3 class="text-xl font-bold font-ar text-slate-900 mb-3">
+            دليل حساب تكاليف تجديد الإقامة ورخص العمل والعمالة الوافدة في السعودية
+          </h3>
+          <p class="text-sm font-ar text-slate-600 leading-relaxed mb-4">
+            تعتمد تكاليف تجديد إقامة الموظف الأجنبي في منشآت القطاع الخاص في السعودية على عدة ركائز أساسية تشمل رخصة العمل الصادرة عن وزارة الموارد البشرية عبر منصة <strong>قوى</strong>، ورسوم المديرية العامة للجوازات عبر <strong>مقيم</strong> أو <strong>أبشر أعمال</strong>، والتأمين الصحي الإلزامي المعتمد من مجلس الضمان الصحي (CCHI)، واشتراكات الأخطار المهنية في المؤسسة العامة للتأمينات الاجتماعية (GOSI).
+          </p>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-ar text-slate-700">
+            <div class="bg-emerald-50/50 p-3.5 rounded-lg border border-emerald-100">
+              <h4 class="font-bold text-emerald-900 mb-1">المقابل المالي لرخص العمل</h4>
+              <p>800 ريال شهرياً (9600 سنوياً) إذا كان عدد الوافدين أكثر من السعوديين. أو 700 ريال شهرياً (8400 سنوياً) إذا كان الوافدون مساوين أو أقل من السعوديين.</p>
+            </div>
+            <div class="bg-emerald-50/50 p-3.5 rounded-lg border border-emerald-100">
+              <h4 class="font-bold text-emerald-900 mb-1">رسوم الإقامة (الجوازات)</h4>
+              <p>650 ريال سنوياً لعمالة الشركات والمؤسسات وتتضمن رخصة العمل والتأهيل. يمكن تجديدها بشكل ربع سنوي بمقدار 162.50 ريال لكل 3 أشهر.</p>
+            </div>
+            <div class="bg-emerald-50/50 p-3.5 rounded-lg border border-emerald-100">
+              <h4 class="font-bold text-emerald-900 mb-1">رسوم المرافقين والتابعين</h4>
+              <p>400 ريال شهرياً عن كل مرافق (زوجة أو ابن أو ابنة) بواقع 4,800 ريال سنوياً للمرافق الواحد، ويتم سدادها مقدماً لكامل مدة صلاحية الإقامة.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Frequently Asked Questions (FAQ) Section -->
+        <div class="mt-10 border-t border-slate-200 pt-8">
+          <h3 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span class="en-text">Frequently Asked Questions (FAQ)</span>
+            <span class="ar-text font-ar hidden">الأسئلة الأكثر تداولاً عن رسوم الإقامات ورخص العمل</span>
+          </h3>
+
+          <div class="space-y-4 text-sm">
+            <div class="border border-slate-200 rounded-xl p-4">
+              <h4 class="font-bold text-slate-800 mb-1">
+                Can Saudi SMEs renew Iqamas quarterly (every 3 months)?
+              </h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Yes. In line with the Saudi Council of Ministers decision, employers and sponsors can issue and renew residency permits (Iqama) and work licenses on a 3, 6, 9, or 12-month basis (with the exclusion of domestic workers). This dramatically aids corporate cash-flow management by eliminating large annual lump-sum outlays.
+              </p>
+            </div>
+
+            <div class="border border-slate-200 rounded-xl p-4">
+              <h4 class="font-bold text-slate-800 mb-1">
+                Who is legally responsible for paying the Expat Dependent Levy (المقابل المالي للمرافقين)?
+              </h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Under statutory labor standards, the dependent fee is the personal liability of the expatriate employee unless their contractual employment offer or company internal HR policy explicitly provides dependent allowance coverage as an executive benefit.
+              </p>
+            </div>
+
+            <div class="border border-slate-200 rounded-xl p-4">
+              <h4 class="font-bold text-slate-800 mb-1">
+                What is the GOSI Occupational Hazard contribution for expatriates?
+              </h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                In Saudi Arabia, non-Saudi employees do not contribute to standard retirement pensions under GOSI, but employers are strictly mandated to contribute <strong>2.0%</strong> of the employee's basic wage and housing allowance for Occupational Hazards (Saned/Annuities do not apply to expats).
+              </p>
+            </div>
+
+            <div class="border border-slate-200 rounded-xl p-4">
+              <h4 class="font-bold text-slate-800 mb-1">
+                What happens if an Iqama expires before renewal?
+              </h4>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                Employers are granted a 3-day grace period following expiration. Thereafter, the Ministry of Interior imposes an automatic fine of 500 SAR for the first delay, and 1,000 SAR for subsequent delays. In addition, labor services on Qiwa, bank accounts, and health insurance validation are instantly suspended until the renewal fee and fine are cleared.
+              </p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-16 bg-white border-t border-slate-200 py-8 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 space-y-2">
+      <p>© 2025 Saudi Iqama Renewal &amp; Levy Estimator. Built for Gulf SMEs, HR Professionals, and Corporate Controllers.</p>
+      <p>Independent professional tool. All product names, logos, and brands are property of their respective owners.</p>
+    </div>
+  </footer>
+
+  <!-- Embedded Engine Script -->
+  <script>
+    // State Management
+    let currentLang = 'en';
+
+    function toggleLanguage() {
+      const htmlEl = document.documentElement;
+      if (currentLang === 'en') {
+        currentLang = 'ar';
+        htmlEl.setAttribute('dir', 'rtl');
+        htmlEl.setAttribute('lang', 'ar');
+        document.getElementById('langLabel').textContent = 'English';
+        document.querySelectorAll('.en-text').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.ar-text').forEach(el => el.classList.remove('hidden'));
+      } else {
+        currentLang = 'en';
+        htmlEl.setAttribute('dir', 'ltr');
+        htmlEl.setAttribute('lang', 'en');
+        document.getElementById('langLabel').textContent = 'العربية';
+        document.querySelectorAll('.en-text').forEach(el => el.classList.remove('hidden'));
+        document.querySelectorAll('.ar-text').forEach(el => el.classList.add('hidden'));
+      }
+    }
+
+    function resetDefaults() {
+      document.getElementById('iqamaForm').reset();
+      const singleRadio = document.querySelector('input[name="calcMode"][value="single"]');
+      if (singleRadio) singleRadio.checked = true;
+      document.getElementById('batchCountWrapper').classList.add('hidden');
+      updateCalculations();
+    }
+
+    function updateCalculations() {
+      // Determine Mode
+      const calcMode = document.querySelector('input[name="calcMode"]:checked').value;
+      const batchCountWrapper = document.getElementById('batchCountWrapper');
+      
+      let count = 1;
+      if (calcMode === 'batch') {
+        batchCountWrapper.classList.remove('hidden');
+        count = Math.max(1, parseInt(document.getElementById('employeeHeadcount').value) || 1);
+      } else {
+        batchCountWrapper.classList.add('hidden');
+      }
+
+      const tier = document.getElementById('saudizationTier').value;
+      const months = parseInt(document.getElementById('renewalDuration').value) || 12;
+      const workerType = document.getElementById('workerType').value;
+      const dependents = Math.max(0, parseInt(document.getElementById('dependentsCount').value) || 0);
+      const dependentPayer = document.getElementById('dependentPayer').value;
+      const annualInsurance = parseFloat(document.getElementById('insuranceCost').value) || 0;
+      const monthlyGosiWage = parseFloat(document.getElementById('monthlyGosiWage').value) || 0;
+      const adminFee = parseFloat(document.getElementById('adminFee').value) || 0;
+
+      // 1. Maktab Amal Work Permit Cost per Employee
+      let monthlyLevy = 0;
+      if (workerType === 'domestic') {
+        monthlyLevy = 0; // Domestic worker does not pay Qiwa levy (individual sponsorship)
+      } else if (tier === 'exceeding') {
+        monthlyLevy = 800;
+      } else if (tier === 'equalOrLess') {
+        monthlyLevy = 700;
+      } else if (tier === 'exemptSmallBiz' || tier === 'nationalityExempt') {
+        monthlyLevy = 0;
+      }
+      const singleMaktabAmal = monthlyLevy * months;
+
+      // 2. Jawazat Iqama Fee per Employee
+      let annualJawazat = 650;
+      if (workerType === 'domestic') {
+        annualJawazat = 600;
+      }
+      const singleJawazat = (annualJawazat / 12) * months;
+
+      // 3. Dependent Levy (400 SAR / month per dependent)
+      const singleDependents = dependents * 400 * months;
+
+      // 4. Medical Insurance Pro-rated to Duration
+      const singleInsurance = (annualInsurance / 12) * months;
+
+      // 5. GOSI Hazard 2% on monthly covered wage
+      const singleGosiHazard = monthlyGosiWage * 0.02 * months;
+
+      // Aggregate Totals
+      const totalMaktabAmal = singleMaktabAmal * count;
+      const totalJawazat = singleJawazat * count;
+      const totalDependents = singleDependents * count;
+      const totalInsurance = singleInsurance * count;
+      const totalGosiHazard = singleGosiHazard * count;
+      const totalAdmin = adminFee * count;
+
+      const grandTotal = totalMaktabAmal + totalJawazat + totalDependents + totalInsurance + totalGosiHazard + totalAdmin;
+
+      // Company Burden vs Employee Burden
+      let companyBurden = totalMaktabAmal + totalJawazat + totalInsurance + totalGosiHazard + totalAdmin;
+      let employeeBurden = 0;
+      if (dependentPayer === 'employee') {
+        employeeBurden = totalDependents;
+      } else {
+        companyBurden += totalDependents;
+      }
+
+      const monthlyAccrual = companyBurden / months;
+
+      // Format Helper
+      const fmt = (num) => Math.round(num).toLocaleString('en-US');
+
+      // Update DOM
+      document.getElementById('displayTotalSAR').textContent = fmt(grandTotal);
+      document.getElementById('displayMaktabAmal').textContent = fmt(totalMaktabAmal) + ' SAR';
+      document.getElementById('displayJawazat').textContent = fmt(totalJawazat) + ' SAR';
+      document.getElementById('displayDependents').textContent = fmt(totalDependents) + ' SAR';
+      document.getElementById('displayInsurance').textContent = fmt(totalInsurance) + ' SAR';
+      document.getElementById('displayGosiHazard').textContent = fmt(totalGosiHazard) + ' SAR';
+      document.getElementById('displayAdmin').textContent = fmt(totalAdmin) + ' SAR';
+      document.getElementById('displayCompanyBurden').textContent = fmt(companyBurden) + ' SAR';
+      document.getElementById('displayEmployeeBurden').textContent = fmt(employeeBurden) + ' SAR';
+      document.getElementById('displayMonthlyAccrual').textContent = fmt(monthlyAccrual) + ' SAR/mo';
+
+      // Badge update
+      const scopeBadge = document.getElementById('scopeBadge');
+      if (calcMode === 'batch') {
+        scopeBadge.textContent = `${count} Employees (${months}M)`;
+      } else {
+        scopeBadge.textContent = `1 Employee (${months}M)`;
+      }
+    }
+
+    // CSV Export Routine
+    function exportCSV() {
+      const calcMode = document.querySelector('input[name="calcMode"]:checked').value;
+      const count = calcMode === 'batch' ? document.getElementById('employeeHeadcount').value : '1';
+      const months = document.getElementById('renewalDuration').value;
+      const maktabAmal = document.getElementById('displayMaktabAmal').textContent;
+      const jawazat = document.getElementById('displayJawazat').textContent;
+      const dependents = document.getElementById('displayDependents').textContent;
+      const insurance = document.getElementById('displayInsurance').textContent;
+      const gosi = document.getElementById('displayGosiHazard').textContent;
+      const companyTotal = document.getElementById('displayCompanyBurden').textContent;
+      const grandTotal = document.getElementById('displayTotalSAR').textContent;
+
+      const csvRows = [
+        ['KSA Iqama Renewal & Government Levy Audit Report'],
+        ['Date', new Date().toISOString().split('T')[0]],
+        ['Staff Scope', calcMode === 'batch' ? `${count} Employees` : 'Individual Employee'],
+        ['Duration (Months)', months],
+        [],
+        ['Item Category', 'Amount'],
+        ['Maktab Amal Work Permit (Qiwa)', maktabAmal],
+        ['Jawazat Iqama Fee', jawazat],
+        ['Dependents Levy', dependents],
+        ['Medical Insurance (CCHI)', insurance],
+        ['GOSI Occupational Hazard (2%)', gosi],
+        ['Net Employer Financial Obligation', companyTotal],
+        ['Grand Total Payable', `${grandTotal} SAR`]
+      ];
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + csvRows.map(e => e.join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `saudi_iqama_renewal_budget_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initialize on page ready
+    document.addEventListener('DOMContentLoaded', () => {
+      updateCalculations();
+    });
+  </script>
+</body>
+</html>
