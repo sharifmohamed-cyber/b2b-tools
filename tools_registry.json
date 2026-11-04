@@ -89,5 +89,12 @@
     "title_ar": "حاسبة العقود وفترة التجربة وفترة الإشعارات في قوى السعودية",
     "description_en": "Calculate Saudi Labor Law compliant notice periods, probation termination rights, and contract renewal indemnities under Qiwa regulations instantly.",
     "date": "2026-11-03"
+  },
+  {
+    "slug": "saudi-freelance-and-contractor-withholding-tax-and-vat-invoice-generator",
+    "title_en": "Saudi Freelance & Contractor Withholding Tax & VAT Invoice Generator",
+    "title_ar": "مولد فواتير الضريبة وضريبة الاستقطاع للمستقلين والمقاولين في السعودية",
+    "description_en": "Generate compliant Saudi VAT invoices, calculate withholding tax deductions, and estimate net contractor payouts instantly. Built for KSA freelancers.",
+    "date": "2026-11-04"
   }
 ]

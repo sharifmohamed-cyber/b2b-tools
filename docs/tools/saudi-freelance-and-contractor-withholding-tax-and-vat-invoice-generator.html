@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" id="htmlRoot">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi Freelance & Contractor Withholding Tax & VAT Invoice Generator</title>
+    <meta name="description" content="Generate compliant Saudi VAT invoices, calculate withholding tax deductions, and estimate net contractor payouts instantly. Built for KSA freelancers.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Cairo', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Top Sticky Conversion Banner -->
+    <div class="bg-indigo-900 text-white py-3 px-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center gap-2 text-center sm:text-left">
+                <span class="bg-indigo-700 text-xs px-2 py-1 rounded font-semibold uppercase tracking-wide">Pro Tool</span>
+                <p class="text-sm font-medium" data-en="Need bulk invoicing & ZATCA phase 2 integration templates? Get the Excel Suite." data-ar="هل تحتاج إلى قوالب فوترة جماعية وتكامل الفاتورة الإلكترونية؟ احصل على حزمة الإكسل.">Need bulk invoicing & ZATCA phase 2 integration templates? Get the Excel Suite.</p>
+            </div>
+            <a href="https://gumroad.com" target="_blank" class="bg-amber-400 hover:bg-amber-500 text-slate-900 font-bold text-xs sm:text-sm px-4 py-2 rounded shadow transition flex items-center gap-1.5">
+                <span data-en="Get Complete Excel Template ($29)">Get Complete Excel Template ($29)</span>
+                <span data-ar="احصل على قالب الإكسل الكامل (29 دولاراً)" class="hidden">احصل على قالب الإكسل الكامل (29 دولاراً)</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Header & Language Switcher -->
+    <header class="bg-white border-b border-slate-200 py-6 px-4">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-slate-900" data-en="Saudi Freelance & Contractor Invoice & Tax Calculator" data-ar="حاسبة و مولد فواتير المستقلين والمقاولين في السعودية">Saudi Freelance & Contractor Invoice & Tax Calculator</h1>
+                <p class="text-slate-500 text-sm mt-1" data-en="ZATCA VAT & Cross-Border Withholding Tax Estimator" data-ar="مقدر ضريبة القيمة المضافة وضريبة الاستقطاع عبر الحدود المعتمد من الزكاة والضريبة والجمارك">ZATCA VAT & Cross-Border Withholding Tax Estimator</p>
+            </div>
+            <button onclick="toggleLanguage()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-4 py-2 rounded-lg text-sm border border-slate-300 transition">
+                <span id="langBtnText">العربية / AR</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- Left Column: Inputs -->
+        <div class="lg:col-span-5 bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <h2 class="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100" data-en="Invoice & Tax Parameters" data-ar="معايير الفاتورة والضرائب">Invoice & Tax Parameters</h2>
+            
+            <form id="calcForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1" data-en="Contractor Type" data-ar="نوع المقاول أو المستقل">Contractor Type</label>
+                    <select id="contractorType" class="w-full rounded-lg border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <option value="resident" data-en="Saudi Resident / Registered Establishment" data-ar="مققيم في السعودية / منشأة مسجلة">Saudi Resident / Registered Establishment</option>
+                        <option value="non-resident" data-en="Non-Resident Foreign Contractor (WHT Applicable)" data-ar="مقاول أجنبي غير مقيم (تطبق ضريبة الاستقطاع)">Non-Resident Foreign Contractor (WHT Applicable)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1" data-en="Base Service Amount (SAR)" data-ar="مبلغ الخدمة الأساسي (ريال سعودي)">Base Service Amount (SAR)</label>
+                    <input type="number" id="baseAmount" value="10000" min="0" step="100" class="w-full rounded-lg border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1" data-en="VAT Rate (%)" data-ar="نسبة ضريبة القيمة المضافة (٪)">VAT Rate (%)</label>
+                        <select id="vatRate" class="w-full rounded-lg border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="15">15% (Standard)</option>
+                            <option value="5">5%</option>
+                            <option value="0">0% (Zero-Rated / Export)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1" data-en="Withholding Tax Rate (%)" data-ar="نسبة ضريبة الاستقطاع (٪)">Withholding Tax Rate (%)</label>
+                        <select id="whtRate" class="w-full rounded-lg border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="0">0% (Local / Exempt)</option>
+                            <option value="5">5% (Dividends / Rent / Tickets)</option>
+                            <option value="15" selected>15% (Management / Consulting / Royalties)</option>
+                            <option value="20">20% (Technical / Professional Services)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1" data-en="Client Name / Entity" data-ar="اسم العميل / الجهة">Client Name / Entity</label>
+                    <input type="text" id="clientName" value="ACME KSA Enterprises" class="w-full rounded-lg border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-1" data-en="Service Description" data-ar="وصف الخدمة">Service Description</label>
+                    <input type="text" id="serviceDesc" value="IT Consultancy & Software Development" class="w-full rounded-lg border border-slate-300 p-2.5 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                </div>
+            </form>
+        </div>
+
+        <!-- Right Column: Live Calculation & Invoice Output -->
+        <div class="lg:col-span-7 flex flex-col gap-6">
+            
+            <!-- Results & Breakdown Card -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100" data-en="Financial Summary & Payout" data-ar="الملخص المالي وصافي المستحقات">Financial Summary & Payout</h2>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="text-xs text-slate-500 font-medium block" data-en="Subtotal Amount" data-ar="المبلغ الفرعي">Subtotal Amount</span>
+                        <span id="resSubtotal" class="text-xl font-bold text-slate-900">SAR 10,000</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="text-xs text-slate-500 font-medium block" data-en="VAT Amount" data-ar="مبلغ ضريبة القيمة المضافة">VAT Amount</span>
+                        <span id="resVat" class="text-xl font-bold text-indigo-600">SAR 1,500</span>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                        <span class="text-xs text-slate-500 font-medium block" data-en="Withholding Tax (WHT)" data-ar="ضريبة الاستقطاع (WHT)">Withholding Tax (WHT)</span>
+                        <span id="resWht" class="text-xl font-bold text-rose-600">SAR 0</span>
+                    </div>
+                </div>
+
+                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl flex justify-between items-center mb-6">
+                    <div>
+                        <span class="text-sm text-indigo-900 font-semibold block" data-en="Net Payable / Receivable" data-ar="صافي المبلغ المستحق">Net Payable / Receivable</span>
+                        <span class="text-xs text-indigo-700" data-en="After applicable tax deductions" data-ar="بعد خصم الضرائب المطبقة">After applicable tax deductions</span>
+                    </div>
+                    <span id="resNet" class="text-2xl font-black text-indigo-950">SAR 11,500</span>
+                </div>
+
+                <!-- Actions -->
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium text-sm px-5 py-2.5 rounded-lg shadow transition flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                        <span data-en="Print / Save PDF Invoice" data-ar="طباعة / حفظ الفاتورة كملف PDF">Print / Save PDF Invoice</span>
+                    </button>
+                    <a href="https://gumroad.com" target="_blank" class="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-bold text-sm px-5 py-2.5 rounded-lg shadow-md transition flex items-center justify-center gap-2 text-center">
+                        <span data-en="Unlock Full Automated Excel Suite ($29)">Unlock Full Automated Excel Suite ($29)</span>
+                        <span data-ar="فتح حزمة إكسل الآلية الكاملة (29 دولاراً)" class="hidden">فتح حزمة إكسل الآلية الكاملة (29 دولاراً)</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Invoice Preview Box -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200" id="invoicePreview">
+                <div class="flex justify-between items-start border-b border-slate-100 pb-4 mb-4">
+                    <div>
+                        <h3 class="font-bold text-slate-900" data-en="TAX INVOICE / STATEMENT" data-ar="فاتورة ضريبية / بيان الحساب">TAX INVOICE / STATEMENT</h3>
+                        <p class="text-xs text-slate-500">ZATCA Compliant Format Sample</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xs font-semibold text-slate-600 block" id="invDate">Date: 2023-10-25</span>
+                        <span class="text-xs font-semibold text-slate-600 block">Inv #: INV-2023-001</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 text-sm mb-4">
+                    <div>
+                        <span class="text-xs text-slate-400 uppercase block" data-en="Billed To:" data-ar="مفوترة إلى:">Billed To:</span>
+                        <span id="previewClient" class="font-semibold text-slate-800">ACME KSA Enterprises</span>
+                    </div>
+                    <div>
+                        <span class="text-xs text-slate-400 uppercase block" data-en="Service Rendered:" data-ar="الخدمة المقدمة:">Service Rendered:</span>
+                        <span id="previewService" class="font-semibold text-slate-800">IT Consultancy & Software Development</span>
+                    </div>
+                </div>
+                <table class="w-full text-left text-sm mb-4">
+                    <thead>
+                        <tr class="border-b border-slate-200 text-slate-500 text-xs">
+                            <th class="py-2" data-en="Description" data-ar="الوصف">Description</th>
+                            <th class="py-2 text-right" data-en="Amount" data-ar="المبلغ">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b border-slate-100">
+                            <td class="py-2 text-slate-700" id="previewDescRow">IT Consultancy & Software Development</td>
+                            <td class="py-2 text-right text-slate-700" id="previewSubtotalRow">SAR 10,000.00</td>
+                        </tr>
+                        <tr class="border-b border-slate-100">
+                            <td class="py-2 text-slate-700" data-en="VAT Rate Applied" data-ar="ضريبة القيمة المضافة المطبقة">VAT Rate Applied</td>
+                            <td class="py-2 text-right text-slate-700" id="previewVatRow">SAR 1,500.00</td>
+                        </tr>
+                        <tr class="border-b border-slate-100" id="whtPreviewRow">
+                            <td class="py-2 text-rose-600" data-en="Withholding Tax Deduction" data-ar="خصم ضريبة الاستقطاع">Withholding Tax Deduction</td>
+                            <td class="py-2 text-right text-rose-600" id="previewWhtRow">- SAR 0.00</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="flex justify-between items-center font-bold text-slate-900 pt-2">
+                    <span data-en="Total Due / Net Payout" data-ar="الإجمالي المستحق / صافي الدفع">Total Due / Net Payout</span>
+                    <span id="previewTotalRow">SAR 11,500.00</span>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Disclaimer -->
+    <div class="max-w-7xl mx-auto px-4 mb-8 w-full">
+        <div class="bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-xl text-xs">
+            <p data-en="Disclaimer: This tool provides estimates for Saudi VAT and Withholding Tax (WHT) calculations based on ZATCA guidelines. Outputs are for informational purposes only and should be verified with a certified tax accountant or official ZATCA portal before final submission." data-ar="إخلاء مسؤولية: توفر هذه الأداة تقديرات لحسابات ضريبة القيمة المضافة وضريبة الاستقطاع في المملكة بناءً على إرشادات الزكاة والضريبة والجمارك. المخرجات لأغراض إعلامية فقط ويجب التحقق منها مع محاسب ضريبي معتمد أو البوابة الرسمية للزكاة والضريبة والجمارك قبل التقديم النهائي.">
+                Disclaimer: This tool provides estimates for Saudi VAT and Withholding Tax (WHT) calculations based on ZATCA guidelines. Outputs are for informational purposes only and should be verified with a certified tax accountant or official ZATCA portal before final submission.
+            </p>
+        </div>
+    </div>
+
+    <!-- SEO & Guide Section -->
+    <section class="bg-white border-t border-slate-200 py-12 px-4">
+        <div class="max-w-4xl mx-auto space-y-8 text-slate-700 text-sm">
+            <div>
+                <h2 class="text-2xl font-bold text-slate-900 mb-3" data-en="Guide to Saudi VAT, Freelancing, and Withholding Tax (WHT)" data-ar="دليل ضريبة القيمة المضافة والعمل الحر وضريبة الاستقطاع في السعودية">Guide to Saudi VAT, Freelancing, and Withholding Tax (WHT)</h2>
+                <p data-en="Operating as a freelancer, independent contractor, or foreign vendor in the Kingdom of Saudi Arabia requires strict adherence to regulations set by the Zakat, Tax and Customs Authority (ZATCA). Understanding how Value Added Tax (VAT) and Withholding Tax (WHT) apply to your invoices is essential for maintaining compliance and avoiding costly penalties." data-ar="العمل كمدقق حر أو مقاول مستقل أو مورّد أجنبي في المملكة العربية السعودية يتطلب التزاماً صارماً باللوائح التي وضعتها هيئة الزكاة والضريبة والجمارك (زاتكا). فهم كيفية تطبيق ضريبة القيمة المضافة وضريبة الاستقطاع على فواتيرك يعد أمراً أساسياً للحفاظ على الامتثال وتجنب الغرامات الباهظة.">
+                    Operating as a freelancer, independent contractor, or foreign vendor in the Kingdom of Saudi Arabia requires strict adherence to regulations set by the Zakat, Tax and Customs Authority (ZATCA). Understanding how Value Added Tax (VAT) and Withholding Tax (WHT) apply to your invoices is essential for maintaining compliance and avoiding costly penalties.
+                </p>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2" data-en="1. Saudi VAT Rules for Freelancers & Contractors" data-ar="1. قواعد ضريبة القيمة المضافة للمستقلين والمقاولين في السعودية">1. Saudi VAT Rules for Freelancers & Contractors</h3>
+                <p data-en="In Saudi Arabia, mandatory VAT registration is required if your annual taxable supplies exceed SAR 375,000. Voluntary registration is available for those with taxable supplies exceeding SAR 187,500. Standard VAT is levied at 15%. However, export of services to entities outside the GCC region may qualify for 0% zero-rating under specific conditions." data-ar="في المملكة العربية السعودية، يُشترط التسجيل الإلزامي في ضريبة القيمة المضافة إذا تجاوزت توريداتك الخاضعة للضريبة 375,000 ريال سعودي سنوياً. يتوفر التسجيل الاختياري لمن تتجاوز توريداتهم 187,500 ريال سعودي. تبلغ نسبة الضريبة الأساسية 15٪، ومع ذلك قد تكون تصديرات الخدمات للجهات خارج دول مجلس التعاون الخليجي مؤهلة لنسبة الصفر بشروط محددة.">
+                    In Saudi Arabia, mandatory VAT registration is required if your annual taxable supplies exceed SAR 375,000. Voluntary registration is available for those with taxable supplies exceeding SAR 187,500. Standard VAT is levied at 15%. However, export of services to entities outside the GCC region may qualify for 0% zero-rating under specific conditions.
+                </p>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2" data-en="2. Understanding Withholding Tax (WHT) on Non-Resident Payments" data-ar="2. فهم ضريبة الاستقطاع (WHT) على مدفوعات غير المقيمين">2. Understanding Withholding Tax (WHT) on Non-Resident Payments</h3>
+                <p data-en="When a Saudi resident entity makes a payment to a non-resident foreign contractor or service provider, the Saudi entity is legally obligated to deduct WHT at source and remit it to ZATCA. Rates vary depending on the nature of the service: 5% for rent, tickets, and dividends; 15% for management and consulting fees; and up to 20% for technical and professional services." data-ar="عندما تقوم جهة مقيمة في السعودية بالدفع لمقاول أو مزود خدمة أجنبي غير مقيم، تكون الجهة السعودية ملزمة قانوناً بخصم ضريبة الاستقطاع من المصدر توريدها إلى هيئة الزكاة والضريبة والجمارك. تختلف النسب حسب طبيعة الخدمة: 5٪ للإيجار والتذاكر وتوزيعات الأرباح؛ 15٪ لخدمات الإدارة والاستشارات؛ وتصل إلى 20٪ للخدمات التقنية والمهنية.">
+                    When a Saudi resident entity makes a payment to a non-resident foreign contractor or service provider, the Saudi entity is legally obligated to deduct WHT at source and remit it to ZATCA. Rates vary depending on the nature of the service: 5% for rent, tickets, and dividends; 15% for management and consulting fees; and up to 20% for technical and professional services.
+                </p>
+            </div>
+
+            <div>
+                <h3 class="text-lg font-bold text-slate-900 mb-2" data-en="Frequently Asked Questions (FAQ)" data-ar="الأسئلة الشائعة">Frequently Asked Questions (FAQ)</h3>
+                <div class="space-y-3">
+                    <div>
+                        <h4 class="font-semibold text-slate-800" data-en="Q: Do freelance license holders in Saudi Arabia need a VAT certificate?" data-ar="س: هل يحتاج حاملو رخصة العمل الحر في السعودية إلى شهادة ضريبة القيمة المضافة؟">Q: Do freelance license holders in Saudi Arabia need a VAT certificate?</h4>
+                        <p class="text-slate-600 text-xs mt-1" data-en="A: Yes, if your taxable revenue crosses the mandatory threshold of SAR 375,000, or you can register voluntarily if you exceed SAR 187,500 to claim input VAT credits." data-ar="ج: نعم، إذا تجاوزت إيراداتك الخاضعة للضريبة الحد الإلزامي البالغ 375,000 ريال سعودي، أو يمكنك التسجيل اختيارياً إذا تجاوزت 187,500 ريال سعودي لاسترداد ضريبة المدخلات.">A: Yes, if your taxable revenue crosses the mandatory threshold of SAR 375,000, or you can register voluntarily if you exceed SAR 187,500 to claim input VAT credits.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-slate-800" data-en="Q: Who pays the Withholding Tax, the client or the contractor?" data-ar="س: من يدفع ضريبة الاستقطاع، العميل أم المقاول؟">Q: Who pays the Withholding Tax, the client or the contractor?</h4>
+                        <p class="text-slate-600 text-xs mt-1" data-en="A: The KSA client entity withholds the tax from the contractor's gross invoice amount and pays it directly to ZATCA on behalf of the non-resident contractor." data-ar="ج: تقوم جهة العميل في السعودية بحسم الضريبة من إجمالي مبلغ فاتورة المقاول ودفعها مباشرة لهيئة الزكاة والضريبة والجمارك نيابة عن المقاول غير المقيم.">A: The KSA client entity withholds the tax from the contractor's gross invoice amount and pays it directly to ZATCA on behalf of the non-resident contractor.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 px-4 text-center text-xs">
+        <p data-en="&copy; 2025 Saudi Contractor & Freelancer Tax Tool. All rights reserved." data-ar="&copy; 2025 أداة ضرائب المقاولين والمستقلين في السعودية. جميع الحقوق محفوظة.">&copy; 2025 Saudi Contractor & Freelancer Tax Tool. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let currentLang = 'en';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const htmlRoot = document.getElementById('htmlRoot');
+            const langBtnText = document.getElementById('langBtnText');
+            
+            if (currentLang === 'ar') {
+                htmlRoot.setAttribute('dir', 'rtl');
+                htmlRoot.setAttribute('lang', 'ar');
+                langBtnText.innerText = 'English / EN';
+            } else {
+                htmlRoot.setAttribute('dir', 'ltr');
+                htmlRoot.setAttribute('lang', 'en');
+                langBtnText.innerText = 'العربية / AR';
+            }
+
+            // Toggle bilingual elements
+            document.querySelectorAll('[data-en]').forEach(el => {
+                const enText = el.getAttribute('data-en');
+                const arText = el.getAttribute('data-ar');
+                if (arText && enText) {
+                    el.innerText = currentLang === 'ar' ? arText : enText;
+                }
+            });
+        }
+
+        function formatSAR(amount) {
+            return 'SAR ' + amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function calculate() {
+            const contractorType = document.getElementById('contractorType').value;
+            const baseAmount = parseFloat(document.getElementById('baseAmount').value) || 0;
+            const vatRate = parseFloat(document.getElementById('vatRate').value) || 0;
+            const whtRate = contractorType === 'non-resident' ? (parseFloat(document.getElementById('whtRate').value) || 0) : 0;
+            
+            const clientName = document.getElementById('clientName').value;
+            const serviceDesc = document.getElementById('serviceDesc').value;
+
+            // Calculations
+            const vatAmount = baseAmount * (vatRate / 100);
+            const whtAmount = contractorType === 'non-resident' ? baseAmount * (whtRate / 100) : 0;
+            
+            // For resident: Subtotal + VAT
+            // For non-resident: Subtotal + VAT - WHT deduction from payout
+            const netPayable = baseAmount + vatAmount - whtAmount;
+
+            // Update Results UI
+            document.getElementById('resSubtotal').innerText = formatSAR(baseAmount);
+            document.getElementById('resVat').innerText = formatSAR(vatAmount);
+            document.getElementById('resWht').innerText = formatSAR(whtAmount);
+            document.getElementById('resNet').innerText = formatSAR(netPayable);
+
+            // Update Invoice Preview
+            document.getElementById('previewClient').innerText = clientName;
+            document.getElementById('previewService').innerText = serviceDesc;
+            document.getElementById('previewDescRow').innerText = serviceDesc;
+            document.getElementById('previewSubtotalRow').innerText = formatSAR(baseAmount);
+            document.getElementById('previewVatRow').innerText = formatSAR(vatAmount);
+            
+            const whtPreviewRow = document.getElementById('whtPreviewRow');
+            if (contractorType === 'non-resident' && whtAmount > 0) {
+                whtPreviewRow.style.display = 'table-row';
+                document.getElementById('previewWhtRow').innerText = '- ' + formatSAR(whtAmount);
+            } else {
+                whtPreviewRow.style.display = 'none';
+            }
+
+            document.getElementById('previewTotalRow').innerText = formatSAR(netPayable);
+            document.getElementById('invDate').innerText = 'Date: ' + new Date().toISOString().split('T')[0];
+        }
+
+        // Event Listeners
+        document.getElementById('calcForm').addEventListener('input', calculate);
+        document.getElementById('contractorType').addEventListener('change', function() {
+            const whtSelect = document.getElementById('whtRate');
+            if (this.value === 'resident') {
+                whtSelect.value = '0';
+                whtSelect.disabled = true;
+            } else {
+                whtSelect.disabled = false;
+                whtSelect.value = '15';
+            }
+            calculate();
+        });
+
+        // Initial trigger
+        document.getElementById('whtRate').value = '15';
+        calculate();
+    </script>
+</body>
+</html>
