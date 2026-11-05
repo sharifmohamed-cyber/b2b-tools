@@ -110,5 +110,12 @@
     "title_ar": "حاسبة الرسوم الجمركية وضريبة القيمة المضافة وتكلفة الاستيراد (منصة فسح وهيئة الزكاة)",
     "description_en": "Calculate Saudi customs duties, 15% import VAT, clearance fees, and landed cost for commercial shipments per ZATCA & FASAH regulations.",
     "date": "2026-11-05"
+  },
+  {
+    "slug": "saudi-wps-sif-payroll-file-generator",
+    "title_en": "Saudi WPS SIF Payroll File Generator & Compliance Validator",
+    "title_ar": "مولد ومدقق ملف حماية الأجور (SIF) المعتمد للبنوك السعودية ومُدد",
+    "description_en": "Generate and validate compliant Saudi Wage Protection System (WPS) SIF bank payroll files. Audit IBANs, IDs, allowances, and avoid Mudad rejection.",
+    "date": "2026-11-05"
   }
 ]

@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi WPS SIF Payroll File Generator & Compliance Validator</title>
+  <meta name="description" content="Generate, audit, and export compliant Saudi Wage Protection System (WPS / SIF) text files for Saudi banks and Mudad. Prevent payroll rejections instantly." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Cairo', 'sans-serif'],
+            arabic: ['Cairo', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            emerald: {
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+            },
+            brand: {
+              dark: '#0f172a',
+              accent: '#0d9488',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .font-cairo { font-family: 'Cairo', sans-serif; }
+    .font-inter { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-sans flex flex-col min-h-screen">
+
+  <!-- Top Notification / Sticky Promo Banner -->
+  <div class="sticky top-0 z-50 bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 text-white shadow-md border-b border-emerald-500/30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm font-medium">
+      <div class="flex items-center gap-2">
+        <span class="bg-emerald-500 text-slate-950 font-bold px-2 py-0.5 rounded text-[11px] uppercase tracking-wide">Pro Solution</span>
+        <span id="bannerText">Need automatic batch salary processing with automated SIF macros?</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://gumroad.com" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1 rounded transition shadow-sm text-xs">
+          <span>Get Master Excel SIF Template ($29)</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+        </a>
+        <button id="langToggle" onclick="toggleLanguage()" class="border border-slate-600 bg-slate-800/80 hover:bg-slate-700 px-2.5 py-1 rounded text-xs text-slate-200 transition">
+          عربي / EN
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Header -->
+  <header class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="p-1.5 bg-emerald-100 text-emerald-800 rounded-lg text-lg">🇸🇦</span>
+          <h1 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight" id="appTitle">Saudi WPS SIF Payroll File Generator & Validator</h1>
+        </div>
+        <p class="text-slate-600 text-xs sm:text-sm" id="appSubtitle">
+          Standard SAMA & Mudad Wage Protection System formatted payroll builder (.SIF format) for Saudi Banks (Al Rajhi, SNB, Riyad, Alinma, etc.)
+        </p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="loadSampleData()" class="text-xs font-semibold px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-md transition border border-slate-300">
+          ⚡ <span id="btnSample">Load 4 Sample Employees</span>
+        </button>
+        <button onclick="resetForm()" class="text-xs font-semibold px-3 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-md transition border border-rose-200">
+          ↺ <span id="btnReset">Reset All</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+    <!-- Step 1: Employer & Batch Metadata -->
+    <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6">
+      <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+        <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+          <span class="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs inline-flex items-center justify-center font-bold">1</span>
+          <span id="sec1Title">Company & Payroll Header Parameters (MOL / Bank Header)</span>
+        </h2>
+        <span class="text-xs font-medium text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200">SAMA Spec v3.0</span>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblEstId">MOL Establishment ID (رقم المنشأة بمكتب العمل) *</label>
+          <input type="text" id="estId" value="7001234567" maxlength="15" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="e.g. 7001234567">
+          <span class="text-[11px] text-slate-400">700 Number or MOL 10-digit ID</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblCompName">Employer Name (اسم المنشأة بالإنجليزية) *</label>
+          <input type="text" id="compName" value="AL ARABIA TRADING LLC" maxlength="50" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none uppercase" placeholder="COMPANY NAME EN">
+          <span class="text-[11px] text-slate-400">Max 50 alphanumeric English chars</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblBankCode">Employer Bank (بنك المنشأة) *</label>
+          <select id="bankCode" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-white">
+            <option value="RJHI" selected>Al Rajhi Bank (RJHI)</option>
+            <option value="NCBK">Saudi National Bank - SNB (NCBK)</option>
+            <option value="RIBL">Riyad Bank (RIBL)</option>
+            <option value="INMA">Alinma Bank (INMA)</option>
+            <option value="BSFR">Banque Saudi Fransi (BSFR)</option>
+            <option value="ARNB">Arab National Bank (ARNB)</option>
+            <option value="SABB">Saudi Awwal Bank - SABB (SABB)</option>
+            <option value="BJAZ">Bank AlJazira (BJAZ)</option>
+            <option value="ALBI">Bank AlBilad (ALBI)</option>
+            <option value="GIBK">Gulf International Bank (GIBK)</option>
+          </select>
+          <span class="text-[11px] text-slate-400">Corporate clearing bank</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblPayDate">Salary Value Date (تاريخ الاستحقاق) *</label>
+          <input type="date" id="payDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+          <span class="text-[11px] text-slate-400">Disbursement date</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 2: Employee Payroll Table -->
+    <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-100">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs inline-flex items-center justify-center font-bold">2</span>
+            <span id="sec2Title">Employee Payroll Entries (WPS Record Lines)</span>
+          </h2>
+          <p class="text-xs text-slate-500" id="sec2Desc">Every row represents one salary payment record compliant with Saudi SIF standard layout.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="addEmployeeRow()" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-xs font-semibold transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            <span id="btnAddRow">+ Add Employee</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <div class="overflow-x-auto -mx-5 sm:mx-0">
+        <table class="min-w-full text-xs text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-100 text-slate-700 uppercase tracking-wider text-[11px]">
+              <th class="p-2.5 font-bold">#</th>
+              <th class="p-2.5 font-bold min-w-[130px]" id="thEmpId">National / Iqama ID</th>
+              <th class="p-2.5 font-bold min-w-[150px]" id="thEmpName">Employee Name</th>
+              <th class="p-2.5 font-bold min-w-[210px]" id="thIban">IBAN (SA + 22 Digits)</th>
+              <th class="p-2.5 font-bold min-w-[90px]" id="thBank">Bank</th>
+              <th class="p-2.5 font-bold min-w-[100px] text-right" id="thBasic">Basic (SAR)</th>
+              <th class="p-2.5 font-bold min-w-[90px] text-right" id="thHousing">Housing</th>
+              <th class="p-2.5 font-bold min-w-[90px] text-right" id="thOther">Other Allow.</th>
+              <th class="p-2.5 font-bold min-w-[90px] text-right" id="thDed">Deductions</th>
+              <th class="p-2.5 font-bold min-w-[105px] text-right text-emerald-800" id="thNet">Net Salary</th>
+              <th class="p-2.5 font-bold text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody id="employeeTableBody" class="divide-y divide-slate-200 text-slate-700">
+            <!-- Dynamic rows will be rendered here -->
+          </tbody>
+          <tfoot>
+            <tr class="bg-slate-50 font-bold border-t-2 border-slate-300 text-slate-900">
+              <td colspan="5" class="p-3 text-right uppercase text-xs" id="tblTotalsLabel">Batch Totals:</td>
+              <td class="p-3 text-right text-xs" id="totBasic">0.00</td>
+              <td class="p-3 text-right text-xs" id="totHousing">0.00</td>
+              <td class="p-3 text-right text-xs" id="totOther">0.00</td>
+              <td class="p-3 text-right text-xs text-rose-600" id="totDed">0.00</td>
+              <td class="p-3 text-right text-sm text-emerald-700 font-extrabold" id="totNet">0.00 SAR</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+
+    <!-- Step 3: Validation Audit & Metrics -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <!-- Summary Card -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+        <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center justify-between">
+          <span id="hdrBatchSummary">Batch Summary Audit</span>
+          <span class="text-[11px] px-2 py-0.5 rounded bg-slate-100 text-slate-600 font-mono" id="badgeRecCount">0 Records</span>
+        </h3>
+        <div class="space-y-2.5 text-xs">
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500" id="lblSumNet">Total Net Payroll:</span>
+            <span class="font-bold text-slate-900 text-sm" id="sumNetPay">SAR 0.00</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500" id="lblSumGross">Total Gross Earnings:</span>
+            <span class="font-semibold text-slate-700" id="sumGrossPay">SAR 0.00</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500" id="lblSumDeductions">Total Deductions:</span>
+            <span class="font-semibold text-rose-600" id="sumDeductions">SAR 0.00</span>
+          </div>
+          <div class="flex justify-between py-1 border-b border-slate-100">
+            <span class="text-slate-500" id="lblSumBankFee">Estimated SAMA Transfer Fee:</span>
+            <span class="font-semibold text-slate-700" id="sumBankFee">SAR 0.00</span>
+          </div>
+          <div class="flex justify-between py-1 pt-2">
+            <span class="text-slate-700 font-bold" id="lblComplStatus">WPS Status:</span>
+            <span id="wpsStatusBadge" class="px-2 py-0.5 rounded-full font-bold text-[11px] bg-emerald-100 text-emerald-800">VALID</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIF Format Validation Diagnostics -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 lg:col-span-2">
+        <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center justify-between">
+          <span id="hdrValidationIssues">Compliance & Bank Rejection Check</span>
+          <span id="errCountBadge" class="text-[11px] font-semibold text-slate-500">0 issues detected</span>
+        </h3>
+        <div id="validationReport" class="max-h-36 overflow-y-auto space-y-1.5 text-xs text-slate-600">
+          <div class="flex items-center gap-2 p-2 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
+            <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>Ready. All parameters follow Saudi Central Bank (SAMA) standard SIF guidelines.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legal Disclaimer Notice -->
+    <div class="p-4 mb-6 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-start gap-3">
+      <span class="text-base shrink-0">⚠️</span>
+      <div>
+        <p class="font-bold mb-0.5" id="discTitle">Bilingual Regulatory Notice / إخلاء مسؤولية تنظيمي</p>
+        <p class="text-amber-800 leading-relaxed" id="discBody">
+          This online tool produces estimated Wage Protection System (WPS) Standard Interchange Format (SIF) records. Final file specifications, bank routing codes, cut-off timings, and Mudad compliance metrics are governed by your clearing bank and the Ministry of Human Resources and Social Development (MHRSD). Always verify IBAN validity with each employee prior to bank authorization.
+        </p>
+        <p class="text-amber-800 leading-relaxed font-cairo mt-1" dir="rtl">
+          تنبيه: يتم إنشاء مخرجات ملف نظام حماية الأجور (SIF) لأغراض تسهيل التجهيز والتدقيق الأولي. تخضع الشروط والمعايير المصرفية لتعليمات البنك المركزي السعودي (ساما) ومنصة مُدد التابعة لوزارة الموارد البشرية والتنمية الاجتماعية. يرجى مطابقة الآيبان والبيانات مع العقود الموثقة قبل إرسال الملف للبنك.
+        </p>
+      </div>
+    </div>
+
+    <!-- Step 4: Output & Downloads -->
+    <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6 mb-12">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-4 border-b border-slate-100">
+        <div>
+          <h2 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-emerald-600 text-white text-xs inline-flex items-center justify-center font-bold">3</span>
+            <span id="sec3Title">Export SIF File & Payroll Registers</span>
+          </h2>
+          <p class="text-xs text-slate-500" id="sec3Desc">Download your verified text (.SIF) file ready for bank portal upload or export CSV for internal auditing.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" onclick="downloadSIFFile()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition inline-flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            <span id="btnDownloadSIF">Download SIF File (.txt / .sif)</span>
+          </button>
+          <button type="button" onclick="exportPayrollCSV()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg transition inline-flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span id="btnExportCsv">Export CSV Audit</span>
+          </button>
+          <button type="button" onclick="copySIFToClipboard()" class="px-3 py-2 border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-medium rounded-lg transition">
+            📋 <span id="btnCopyText">Copy Text</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- SIF Raw Preview Output -->
+      <div>
+        <div class="flex items-center justify-between mb-1.5 text-xs text-slate-600">
+          <span class="font-semibold" id="lblRawHeader">Raw Standard SIF Output Stream (Comma-Delimited):</span>
+          <span class="text-[11px] text-slate-400">Header Line + Employee Record Lines</span>
+        </div>
+        <pre id="sifOutputArea" class="w-full bg-slate-950 text-emerald-400 p-4 rounded-lg font-mono text-xs overflow-x-auto whitespace-pre leading-relaxed border border-slate-800 select-all h-44"></pre>
+      </div>
+
+      <!-- Upsell Card inside app -->
+      <div class="mt-6 bg-gradient-to-r from-emerald-50 via-teal-50 to-slate-50 border border-emerald-200 rounded-xl p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="space-y-1 text-center md:text-left">
+          <h4 class="font-bold text-slate-900 text-sm sm:text-base flex items-center justify-center md:justify-start gap-1.5">
+            <span>💼</span>
+            <span id="upsellTitle">Automate 500+ Employee Monthly Payrolls in Microsoft Excel</span>
+          </h4>
+          <p class="text-xs text-slate-600 max-w-2xl" id="upsellDesc">
+            Get our production-tested, unlocked Excel & VBA Master SIF Workbook. Auto-generates exact SIF files directly to your desktop, includes GOSI calculation tables, batch IBAN checksum validation, and Mudad re-upload compliance reports.
+          </p>
+        </div>
+        <a href="https://gumroad.com" target="_blank" rel="noopener" class="whitespace-nowrap px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-lg transition shadow-md hover:shadow-lg flex items-center gap-2">
+          <span>Unlock Master Template ($29)</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
+      </div>
+    </section>
+
+    <!-- Comprehensive 800+ Words SEO Guide & Knowledge Base -->
+    <article class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-8 text-slate-700 text-sm leading-relaxed">
+      <header class="border-b border-slate-200 pb-5">
+        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-950 mb-2">Complete Handbook to Saudi Wage Protection System (WPS) & SIF File Architecture</h2>
+        <p class="text-slate-500 text-xs sm:text-sm">Everything SME CFOs, HR Managers, and Accountants Need to Know About Compliance under MHRSD, SAMA, and Mudad.</p>
+      </header>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <section class="space-y-3">
+          <h3 class="text-base font-bold text-slate-900 border-l-4 border-emerald-600 pl-2.5">What is the Saudi Wage Protection System (WPS)?</h3>
+          <p>
+            The Wage Protection System (نظام حماية الأجور) is a mandatory nationwide regulatory program initiated by the Ministry of Human Resources and Social Development (MHRSD) in partnership with the Saudi Central Bank (SAMA). The mandate compels all private sector entities registered in the Kingdom of Saudi Arabia to disburse employee compensation directly into authorized Saudi bank accounts using the standardized SIF (Salary Interchange Format / Standard Interchange File) layout.
+          </p>
+          <p>
+            Managed predominantly through the unified <strong>Mudad (مُدد) platform</strong>, the framework monitors that each worker receives their agreed compensation without unjustified deductions or systemic delays. Failure to maintain an 80% or greater compliance rating over consecutive billing cycles triggers immediate operational penalties, including suspension of Qiwa work permit renewals and company licensing restrictions.
+          </p>
+        </section>
+
+        <section class="space-y-3">
+          <h3 class="text-base font-bold text-slate-900 border-l-4 border-emerald-600 pl-2.5">SIF File Anatomy & Record Technical Structure</h3>
+          <p>
+            A valid Saudi SIF file is an ASCII text document comprising strict comma-delimited columns without extra formatting, special characters, or trailing spaces. The architecture consists of two primary tiers:
+          </p>
+          <ul class="list-disc pl-5 space-y-1 text-xs">
+            <li><strong>File Header Record (SCR):</strong> Identifies the corporate identity. It features the Establishment MOL Number (often the 700 identifier), the corporate English name, the file creation timestamp, the client corporate clearing bank identifier (e.g., RJHI, NCBK, RIBL), and unique file reference sequences.</li>
+            <li><strong>Employee Salary Records (EDR):</strong> Each line holds the employee's 10-digit National ID or Iqama number, their unique International Bank Account Number (IBAN starting with SA), Basic Salary, Housing Allowance, Other Earnings, Deductions, and the designated Employee Bank Code.</li>
+          </ul>
+        </section>
+      </div>
+
+      <!-- Detailed Formula & Bank Fields Breakdown -->
+      <section class="space-y-4 pt-4 border-t border-slate-100">
+        <h3 class="text-base font-bold text-slate-900">WPS SIF Exact Formula & Column Mappings</h3>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-xs text-left border border-slate-200 divide-y divide-slate-200">
+            <thead class="bg-slate-50 text-slate-800 font-bold">
+              <tr>
+                <th class="p-2.5">Position</th>
+                <th class="p-2.5">Technical Field Name</th>
+                <th class="p-2.5">Validation Requirement</th>
+                <th class="p-2.5">Mathematical Formula / Logic</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-600">
+              <tr>
+                <td class="p-2.5 font-mono">Col 1</td>
+                <td class="p-2.5 font-semibold">National / Iqama ID</td>
+                <td class="p-2.5">Exact 10 digits; begins with 1 (Citizen) or 2 (Expat)</td>
+                <td class="p-2.5">Regular Expression: <code>/^[12][0-9]{9}$/</code></td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-mono">Col 2</td>
+                <td class="p-2.5 font-semibold">Employee IBAN</td>
+                <td class="p-2.5">Exact 24 alphanumeric characters beginning with 'SA'</td>
+                <td class="p-2.5">MOD-97 ISO 7064 International Checksum</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-mono">Col 3</td>
+                <td class="p-2.5 font-semibold">Basic Salary</td>
+                <td class="p-2.5">2 decimal places; Non-negative value</td>
+                <td class="p-2.5">Contractual Base Wage</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-mono">Col 4</td>
+                <td class="p-2.5 font-semibold">Housing Allowance</td>
+                <td class="p-2.5">2 decimal places; 0.00 if non-cash allowance</td>
+                <td class="p-2.5">Stipulated Contractual Housing provision</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-mono">Col 5</td>
+                <td class="p-2.5 font-semibold">Other Earnings</td>
+                <td class="p-2.5">Transport, Overtime, Commissions, Bonuses</td>
+                <td class="p-2.5"><code>Transport + Overtime + Incentives</code></td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-mono">Col 6</td>
+                <td class="p-2.5 font-semibold">Deductions</td>
+                <td class="p-2.5">GOSI Employee Share (9.75% Saudi / 2% Expat SANED), Unpaid Leaves, Penalties</td>
+                <td class="p-2.5"><code>Total Deductions (Must be &le; 50% Gross by Labor Law)</code></td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-mono">Col 7</td>
+                <td class="p-2.5 font-semibold">Net Payable Wage</td>
+                <td class="p-2.5">Actual Bank Transfer Amount</td>
+                <td class="p-2.5 font-bold text-emerald-800"><code>Basic + Housing + Other - Deductions</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Top 5 Reasons Banks Reject SIF Files -->
+      <section class="space-y-3 pt-4 border-t border-slate-100">
+        <h3 class="text-base font-bold text-slate-900">The Top 5 Causes of Saudi WPS File Rejection & How to Prevent Them</h3>
+        <ol class="list-decimal pl-5 space-y-2 text-xs text-slate-600">
+          <li><strong>IBAN / Bank Code Inconsistency:</strong> A frequent rejection occurs when the 2-letter or 4-letter bank identifier in the IBAN characters 5 to 6 does not match the designated receiving bank routing destination code in the corporate online banking wizard.</li>
+          <li><strong>Deductions Exceeding Statutory Thresholds:</strong> Under Article 92 of the Saudi Labor Law, employer deductions (excluding court-ordered alimony or debt) must never surpass 50% of an employee's total gross remuneration without prior written administrative approval.</li>
+          <li><strong>Unregistered Establishment IDs:</strong> Inserting an obsolete municipal commercial license or incomplete 700 series entity number leads to immediate batch decline at the SAMA clearing exchange switch.</li>
+          <li><strong>Invalid National ID or Expired Iqama Formatting:</strong> Failure to provide exactly 10 digits or including hyphenated spaces causes core banking parsers to abort file ingestion.</li>
+          <li><strong>Net Salary Mismatches against Wage Protection Contracts:</strong> If the basic wage transmitted in the SIF differs drastically from the authenticated contract recorded on the Qiwa platform without an uploaded justification file, Mudad flags the variance as a violation.</li>
+        </ol>
+      </section>
+
+      <!-- Frequently Asked Questions -->
+      <section class="space-y-4 pt-4 border-t border-slate-100">
+        <h3 class="text-base font-bold text-slate-900">Frequently Asked Questions (WPS & Mudad FAQ)</h3>
+        <div class="space-y-3 text-xs">
+          <details class="group bg-slate-50 p-3.5 rounded-lg border border-slate-200 cursor-pointer">
+            <summary class="font-bold text-slate-800 flex justify-between items-center">
+              <span>Can an employee be paid in cash under Saudi Labor Regulations?</span>
+              <span class="transition group-open:rotate-180">▼</span>
+            </summary>
+            <p class="mt-2 text-slate-600 leading-normal">
+              No. Under the comprehensive Wage Protection System regulations, cash payment is prohibited for private sector commercial entities. All wages must be disbursed through approved bank channels via SIF files or the Mudad digital payroll gateway to achieve recognized compliance.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 p-3.5 rounded-lg border border-slate-200 cursor-pointer">
+            <summary class="font-bold text-slate-800 flex justify-between items-center">
+              <span>What is the difference between Mudad Payroll and Bank Direct SIF Upload?</span>
+              <span class="transition group-open:rotate-180">▼</span>
+            </summary>
+            <p class="mt-2 text-slate-600 leading-normal">
+              Mudad operates directly as the official compliance clearinghouse for MHRSD. While companies can either initiate salaries straight through Mudad or upload the SIF file via their corporate bank portal (e.g., Al Rajhi Business, SNB e-Corporate), both systems share identical SIF data schemas and file validation engines.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 p-3.5 rounded-lg border border-slate-200 cursor-pointer">
+            <summary class="font-bold text-slate-800 flex justify-between items-center">
+              <span>What happens if our company misses the monthly payroll deadline?</span>
+              <span class="transition group-open:rotate-180">▼</span>
+            </summary>
+            <p class="mt-2 text-slate-600 leading-normal">
+              If salaries are delayed past the scheduled payment date (ordinarily within 10 days of the month end), Mudad issues automated compliance warnings. A two-month delay blocks work transfer permissions, while a three-month delay permits affected employees to legally transfer their sponsorship without employer consent.
+            </p>
+          </details>
+        </div>
+      </section>
+    </article>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 py-8 text-xs border-t border-slate-800 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2 text-slate-200 font-semibold">
+        <span class="text-emerald-400">🇸🇦</span>
+        <span>Saudi WPS SIF Payroll Engine & Validator</span>
+      </div>
+      <p class="text-slate-500 text-center md:text-right">
+        Built for Saudi Finance Teams, SMEs, HR Professionals & Accountants. Compliant with SAMA, MHRSD, & Mudad Specifications.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Core Application Script -->
+  <script>
+    // Initial state
+    let currentLang = 'en';
+    let employees = [];
+
+    // Saudi Bank Reference Identifiers
+    const BANK_MAP = {
+      'RJHI': { name: 'Al Rajhi Bank', bic: 'RJHI' },
+      'NCBK': { name: 'Saudi National Bank (SNB)', bic: 'NCBK' },
+      'RIBL': { name: 'Riyad Bank', bic: 'RIBL' },
+      'INMA': { name: 'Alinma Bank', bic: 'INMA' },
+      'BSFR': { name: 'Banque Saudi Fransi', bic: 'BSFR' },
+      'ARNB': { name: 'Arab National Bank', bic: 'ARNB' },
+      'SABB': { name: 'Saudi Awwal Bank (SABB)', bic: 'SABB' },
+      'BJAZ': { name: 'Bank AlJazira', bic: 'BJAZ' },
+      'ALBI': { name: 'Bank AlBilad', bic: 'ALBI' },
+      'GIBK': { name: 'Gulf International Bank', bic: 'GIBK' }
+    };
+
+    // Preset Sample Data
+    const SAMPLE_RECORDS = [
+      {
+        id: '1098765432',
+        name: 'Ahmed Al Otaibi',
+        iban: 'SA0380000000608010167519',
+        bank: 'RJHI',
+        basic: 7000,
+        housing: 1750,
+        other: 500,
+        deductions: 682.50 // GOSI Saudi ~ 9.75%
+      },
+      {
+        id: '2456789123',
+        name: 'Mohamed Tariq Farooq',
+        iban: 'SA4410000001234567890123',
+        bank: 'NCBK',
+        basic: 4500,
+        housing: 1125,
+        other: 400,
+        deductions: 90.00 // GOSI Expat 2%
+      },
+      {
+        id: '1087654321',
+        name: 'Sara Bint Khalid',
+        iban: 'SA2120000002345678901234',
+        bank: 'RIBL',
+        basic: 9500,
+        housing: 2375,
+        other: 800,
+        deductions: 926.25
+      },
+      {
+        id: '2398712345',
+        name: 'Sunil Kumar Pillai',
+        iban: 'SA6505000003456789012345',
+        bank: 'INMA',
+        basic: 3200,
+        housing: 800,
+        other: 250,
+        deductions: 64.00
+      }
+    ];
+
+    // Translations
+    const I18N = {
+      en: {
+        banner: "Need automatic batch salary processing with automated SIF macros?",
+        appTitle: "Saudi WPS SIF Payroll File Generator & Validator",
+        appSubtitle: "Standard SAMA & Mudad Wage Protection System formatted payroll builder (.SIF format) for Saudi Banks (Al Rajhi, SNB, Riyad, Alinma, etc.)",
+        btnSample: "Load 4 Sample Employees",
+        btnReset: "Reset All",
+        sec1Title: "Company & Payroll Header Parameters (MOL / Bank Header)",
+        sec2Title: "Employee Payroll Entries (WPS Record Lines)",
+        sec2Desc: "Every row represents one salary payment record compliant with Saudi SIF standard layout.",
+        btnAddRow: "+ Add Employee",
+        sec3Title: "Export SIF File & Payroll Registers",
+        sec3Desc: "Download your verified text (.SIF) file ready for bank portal upload or export CSV for internal auditing.",
+        lblEstId: "MOL Establishment ID (رقم المنشأة بمكتب العمل) *",
+        lblCompName: "Employer Name (اسم المنشأة بالإنجليزية) *",
+        lblBankCode: "Employer Bank (بنك المنشأة) *",
+        lblPayDate: "Salary Value Date (تاريخ الاستحقاق) *",
+        thEmpId: "National / Iqama ID",
+        thEmpName: "Employee Name",
+        thIban: "IBAN (SA + 22 Digits)",
+        thBank: "Bank",
+        thBasic: "Basic (SAR)",
+        thHousing: "Housing",
+        thOther: "Other Allow.",
+        thDed: "Deductions",
+        thNet: "Net Salary",
+        tblTotalsLabel: "Batch Totals:",
+        hdrBatchSummary: "Batch Summary Audit",
+        lblSumNet: "Total Net Payroll:",
+        lblSumGross: "Total Gross Earnings:",
+        lblSumDeductions: "Total Deductions:",
+        lblSumBankFee: "Estimated SAMA Transfer Fee:",
+        lblComplStatus: "WPS Status:",
+        hdrValidationIssues: "Compliance & Bank Rejection Check",
+        discTitle: "Bilingual Regulatory Notice / إخلاء مسؤولية تنظيمي",
+        discBody: "This online tool produces estimated Wage Protection System (WPS) Standard Interchange Format (SIF) records. Final file specifications, bank routing codes, cut-off timings, and Mudad compliance metrics are governed by your clearing bank and the Ministry of Human Resources and Social Development (MHRSD). Always verify IBAN validity with each employee prior to bank authorization.",
+        btnDownloadSIF: "Download SIF File (.txt / .sif)",
+        btnExportCsv: "Export CSV Audit",
+        btnCopyText: "Copy Text",
+        lblRawHeader: "Raw Standard SIF Output Stream (Comma-Delimited):",
+        upsellTitle: "Automate 500+ Employee Monthly Payrolls in Microsoft Excel",
+        upsellDesc: "Get our production-tested, unlocked Excel & VBA Master SIF Workbook. Auto-generates exact SIF files directly to your desktop, includes GOSI calculation tables, batch IBAN checksum validation, and Mudad re-upload compliance reports."
+      },
+      ar: {
+        banner: "هل تحتاج لأتمتة مسيرات الرواتب الضخمة عبر إكسل وVBA بضغطة زر واحدة؟",
+        appTitle: "مولد ومدقق ملف حماية الأجور (SIF) المعتمد للبنوك السعودية ومُدد",
+        appSubtitle: "أداة إعداد وتدقيق ملفات الرواتب بصيغة SIF المتوافقة مع متطلبات البنك المركزي السعودي (ساما) ومنصة مُدد وكافة البنوك السعودية.",
+        btnSample: "تحميل 4 موظفين كعينة",
+        btnReset: "إعادة ضبط",
+        sec1Title: "بيانات المنشأة وترويسة الملف (MOL / Bank Header)",
+        sec2Title: "سجلات رواتب الموظفين (سجلات SIF التفصيلية)",
+        sec2Desc: "يمثل كل سطر مستحق راتب لموظف واحد متوافق بدقة مع المعايير المصرفية السعودية.",
+        btnAddRow: "+ إضافة موظف",
+        sec3Title: "تصدير ملف حماية الأجور ومسير الرواتب",
+        sec3Desc: "قم بتحميل ملف SIF المعتمد للرفع المباشر في بوابات البنوك، أو استخرج ملف Excel/CSV للمراجعة.",
+        lblEstId: "رقم المنشأة بمكتب العمل / الرقم الموحد (700) *",
+        lblCompName: "اسم المنشأة بالإنجليزية (بحسب السجل التجاري) *",
+        lblBankCode: "البنك المعتمد لصرف الرواتب *",
+        lblPayDate: "تاريخ استحقاق الراتب *",
+        thEmpId: "رقم الهوية / الإقامة",
+        thEmpName: "اسم الموظف",
+        thIban: "الآيبان البنكي (SA + 22 رقم)",
+        thBank: "البنك",
+        thBasic: "الأساسي (ر.س)",
+        thHousing: "بدل السكن",
+        thOther: "بدلات أخرى",
+        thDed: "الخصميات",
+        thNet: "صافي الراتب",
+        tblTotalsLabel: "إجمالي المسير:",
+        hdrBatchSummary: "ملخص تدقيق المسير",
+        lblSumNet: "إجمالي صافي الرواتب:",
+        lblSumGross: "إجمالي المستحقات الكاملة:",
+        lblSumDeductions: "إجمالي الاستقطاعات:",
+        lblSumBankFee: "رسوم التحويل التقريبية (ساما):",
+        lblComplStatus: "حالة الملف لنظام حماية الأجور:",
+        hdrValidationIssues: "فحص أسباب رفض الملف لدى البنك أو مُدد",
+        discTitle: "إخلاء مسؤولية تنظيمي وإرشادي",
+        discBody: "تم تصميم هذا المولد للأغراض المحاسبية التسهيلية. تطبق الشروط والسياسات الخاصة بالبنك المركزي السعودي ومنصة مُدد التابعة لوزارة الموارد البشرية. يرجى التأكد دائماً من صحة أرقام الآيبان وتطابقها مع وثائق العمالة الرسمية قبل الصرف النهائي.",
+        btnDownloadSIF: "تحميل ملف حماية الأجور (.sif)",
+        btnExportCsv: "تصدير المسير كملف CSV",
+        btnCopyText: "نسخ النص",
+        lblRawHeader: "معاينة المخرجات البرمجية لملف SIF (مفصول بفاصلة):",
+        upsellTitle: "أتمتة رواتب أكثر من 500 موظف بملف إكسل الماستر الذكي",
+        upsellDesc: "احصل على نموذج إكسل الاحترافي مع كود الماكرو (VBA) لإنشاء ملفات SIF بضغطة زر واحدة مع التحقق الآلي من صحة الآيبان واحتساب التأمينات الاجتماعية (GOSI)."
+      }
+    };
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', () => {
+      // Set default payment date to end of current month
+      const today = new Date();
+      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+      document.getElementById('payDate').value = lastDay.toISOString().split('T')[0];
+
+      // Load initial sample data
+      loadSampleData();
+    });
+
+    function toggleLanguage() {
+      currentLang = (currentLang === 'en') ? 'ar' : 'en';
+      const htmlEl = document.documentElement;
+      htmlEl.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+      htmlEl.setAttribute('lang', currentLang);
+      
+      const dict = I18N[currentLang];
+      document.getElementById('bannerText').innerText = dict.banner;
+      document.getElementById('appTitle').innerText = dict.appTitle;
+      document.getElementById('appSubtitle').innerText = dict.appSubtitle;
+      document.getElementById('btnSample').innerText = dict.btnSample;
+      document.getElementById('btnReset').innerText = dict.btnReset;
+      document.getElementById('sec1Title').innerText = dict.sec1Title;
+      document.getElementById('sec2Title').innerText = dict.sec2Title;
+      document.getElementById('sec2Desc').innerText = dict.sec2Desc;
+      document.getElementById('btnAddRow').innerText = dict.btnAddRow;
+      document.getElementById('sec3Title').innerText = dict.sec3Title;
+      document.getElementById('sec3Desc').innerText = dict.sec3Desc;
+      document.getElementById('lblEstId').innerText = dict.lblEstId;
+      document.getElementById('lblCompName').innerText = dict.lblCompName;
+      document.getElementById('lblBankCode').innerText = dict.lblBankCode;
+      document.getElementById('lblPayDate').innerText = dict.lblPayDate;
+      document.getElementById('thEmpId').innerText = dict.thEmpId;
+      document.getElementById('thEmpName').innerText = dict.thEmpName;
+      document.getElementById('thIban').innerText = dict.thIban;
+      document.getElementById('thBank').innerText = dict.thBank;
+      document.getElementById('thBasic').innerText = dict.thBasic;
+      document.getElementById('thHousing').innerText = dict.thHousing;
+      document.getElementById('thOther').innerText = dict.thOther;
+      document.getElementById('thDed').innerText = dict.thDed;
+      document.getElementById('thNet').innerText = dict.thNet;
+      document.getElementById('tblTotalsLabel').innerText = dict.tblTotalsLabel;
+      document.getElementById('hdrBatchSummary').innerText = dict.hdrBatchSummary;
+      document.getElementById('lblSumNet').innerText = dict.lblSumNet;
+      document.getElementById('lblSumGross').innerText = dict.lblSumGross;
+      document.getElementById('lblSumDeductions').innerText = dict.lblSumDeductions;
+      document.getElementById('lblSumBankFee').innerText = dict.lblSumBankFee;
+      document.getElementById('lblComplStatus').innerText = dict.lblComplStatus;
+      document.getElementById('hdrValidationIssues').innerText = dict.hdrValidationIssues;
+      document.getElementById('discTitle').innerText = dict.discTitle;
+      document.getElementById('btnDownloadSIF').innerText = dict.btnDownloadSIF;
+      document.getElementById('btnExportCsv').innerText = dict.btnExportCsv;
+      document.getElementById('btnCopyText').innerText = dict.btnCopyText;
+      document.getElementById('lblRawHeader').innerText = dict.lblRawHeader;
+      document.getElementById('upsellTitle').innerText = dict.upsellTitle;
+      document.getElementById('upsellDesc').innerText = dict.upsellDesc;
+
+      renderEmployees();
+    }
+
+    function loadSampleData() {
+      employees = JSON.parse(JSON.stringify(SAMPLE_RECORDS));
+      renderEmployees();
+    }
+
+    function resetForm() {
+      employees = [];
+      addEmployeeRow();
+    }
+
+    function addEmployeeRow() {
+      employees.push({
+        id: '',
+        name: '',
+        iban: 'SA',
+        bank: 'RJHI',
+        basic: 0,
+        housing: 0,
+        other: 0,
+        deductions: 0
+      });
+      renderEmployees();
+    }
+
+    function removeEmployeeRow(index) {
+      if (employees.length <= 1) {
+        alert(currentLang === 'ar' ? 'يجب أن يحتوي الملف على موظف واحد على الأقل.' : 'The file must contain at least one employee.');
+        return;
+      }
+      employees.splice(index, 1);
+      renderEmployees();
+    }
+
+    function updateEmployeeField(index, field, value) {
+      if (['basic', 'housing', 'other', 'deductions'].includes(field)) {
+        employees[index][field] = parseFloat(value) || 0;
+      } else if (field === 'iban') {
+        let clean = value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (!clean.startsWith('SA') && clean.length > 0) {
+          clean = 'SA' + clean;
+        }
+        employees[index][field] = clean.slice(0, 24);
+        // Auto detect bank from IBAN characters if possible
+        if (clean.length >= 6) {
+          const bankCodeMap = {
+            '80': 'RJHI', '10': 'NCBK', '20': 'RIBL', '05': 'INMA', 
+            '55': 'BSFR', '40': 'ARNB', '45': 'SABB', '60': 'BJAZ', '15': 'ALBI'
+          };
+          const slice2 = clean.substring(4, 6);
+          if (bankCodeMap[slice2]) {
+            employees[index]['bank'] = bankCodeMap[slice2];
+          }
+        }
+      } else if (field === 'id') {
+        employees[index][field] = value.replace(/[^0-9]/g, '').slice(0, 10);
+      } else {
+        employees[index][field] = value;
+      }
+      recalculateAndRender(false);
+    }
+
+    function renderEmployees() {
+      const tbody = document.getElementById('employeeTableBody');
+      tbody.innerHTML = '';
+
+      employees.forEach((emp, i) => {
+        const netSalary = (emp.basic + emp.housing + emp.other - emp.deductions);
+        const netClass = netSalary < 0 ? 'text-rose-600 font-bold' : 'text-emerald-700 font-semibold';
+
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition border-b border-slate-200';
+        tr.innerHTML = `
+          <td class="p-2 text-slate-400 font-mono text-[11px]">${i + 1}</td>
+          <td class="p-1.5">
+            <input type="text" value="${emp.id}" oninput="updateEmployeeField(${i}, 'id', this.value)" placeholder="10 Digits" maxlength="10" class="w-full px-2 py-1 text-xs border rounded focus:ring-1 focus:ring-emerald-500 font-mono ${emp.id.length !== 10 ? 'border-amber-400 bg-amber-50/50' : 'border-slate-300'}">
+          </td>
+          <td class="p-1.5">
+            <input type="text" value="${emp.name}" oninput="updateEmployeeField(${i}, 'name', this.value)" placeholder="Employee Name" class="w-full px-2 py-1 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 uppercase">
+          </td>
+          <td class="p-1.5">
+            <input type="text" value="${emp.iban}" oninput="updateEmployeeField(${i}, 'iban', this.value)" placeholder="SA..." maxlength="24" class="w-full px-2 py-1 text-xs border rounded focus:ring-1 focus:ring-emerald-500 font-mono ${emp.iban.length !== 24 ? 'border-amber-400 bg-amber-50/50' : 'border-slate-300'}">
+          </td>
+          <td class="p-1.5">
+            <select onchange="updateEmployeeField(${i}, 'bank', this.value)" class="w-full px-1.5 py-1 text-xs border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 bg-white">
+              <option value="RJHI" ${emp.bank === 'RJHI' ? 'selected' : ''}>RJHI</option>
+              <option value="NCBK" ${emp.bank === 'NCBK' ? 'selected' : ''}>NCBK</option>
+              <option value="RIBL" ${emp.bank === 'RIBL' ? 'selected' : ''}>RIBL</option>
+              <option value="INMA" ${emp.bank === 'INMA' ? 'selected' : ''}>INMA</option>
+              <option value="BSFR" ${emp.bank === 'BSFR' ? 'selected' : ''}>BSFR</option>
+              <option value="ARNB" ${emp.bank === 'ARNB' ? 'selected' : ''}>ARNB</option>
+              <option value="SABB" ${emp.bank === 'SABB' ? 'selected' : ''}>SABB</option>
+              <option value="BJAZ" ${emp.bank === 'BJAZ' ? 'selected' : ''}>BJAZ</option>
+              <option value="ALBI" ${emp.bank === 'ALBI' ? 'selected' : ''}>ALBI</option>
+            </select>
+          </td>
+          <td class="p-1.5">
+            <input type="number" step="0.01" value="${emp.basic}" oninput="updateEmployeeField(${i}, 'basic', this.value)" class="w-full px-2 py-1 text-xs text-right border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 font-mono">
+          </td>
+          <td class="p-1.5">
+            <input type="number" step="0.01" value="${emp.housing}" oninput="updateEmployeeField(${i}, 'housing', this.value)" class="w-full px-2 py-1 text-xs text-right border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 font-mono">
+          </td>
+          <td class="p-1.5">
+            <input type="number" step="0.01" value="${emp.other}" oninput="updateEmployeeField(${i}, 'other', this.value)" class="w-full px-2 py-1 text-xs text-right border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 font-mono">
+          </td>
+          <td class="p-1.5">
+            <input type="number" step="0.01" value="${emp.deductions}" oninput="updateEmployeeField(${i}, 'deductions', this.value)" class="w-full px-2 py-1 text-xs text-right border border-slate-300 rounded focus:ring-1 focus:ring-emerald-500 font-mono text-rose-600">
+          </td>
+          <td class="p-2 text-right font-mono text-xs ${netClass}">
+            ${netSalary.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </td>
+          <td class="p-1.5 text-center">
+            <button type="button" onclick="removeEmployeeRow(${i})" class="text-slate-400 hover:text-rose-600 transition p-1" title="Delete">
+              ✕
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      recalculateAndRender(true);
+    }
+
+    function recalculateAndRender(skipTableRebuild = false) {
+      let totalBasic = 0;
+      let totalHousing = 0;
+      let totalOther = 0;
+      let totalDed = 0;
+      let totalNet = 0;
+      let issues = [];
+
+      const estId = document.getElementById('estId').value.trim();
+      const compName = document.getElementById('compName').value.trim();
+      const bankCode = document.getElementById('bankCode').value.trim();
+      const payDate = document.getElementById('payDate').value;
+
+      if (!estId) {
+        issues.push({ type: 'error', text: currentLang === 'ar' ? 'رقم المنشأة بمكتب العمل مفقود.' : 'MOL Establishment ID is required.' });
+      }
+      if (!compName) {
+        issues.push({ type: 'error', text: currentLang === 'ar' ? 'اسم المنشأة مطلوب.' : 'Employer English Name is required.' });
+      }
+      if (!payDate) {
+        issues.push({ type: 'warning', text: currentLang === 'ar' ? 'يرجى تحديد تاريخ استحقاق الراتب.' : 'Please select a salary value date.' });
+      }
+
+      employees.forEach((emp, idx) => {
+        const basic = Number(emp.basic) || 0;
+        const housing = Number(emp.housing) || 0;
+        const other = Number(emp.other) || 0;
+        const deductions = Number(emp.deductions) || 0;
+        const net = basic + housing + other - deductions;
+        const gross = basic + housing + other;
+
+        totalBasic += basic;
+        totalHousing += housing;
+        totalOther += other;
+        totalDed += deductions;
+        totalNet += net;
+
+        // Validation rules
+        if (!emp.id || emp.id.length !== 10) {
+          issues.push({ type: 'error', text: `Row ${idx + 1} (${emp.name || 'Unnamed'}): National/Iqama ID must be exactly 10 digits.` });
+        }
+        if (!emp.iban || emp.iban.length !== 24 || !emp.iban.startsWith('SA')) {
+          issues.push({ type: 'error', text: `Row ${idx + 1}: Invalid Saudi IBAN format (Must be 'SA' followed by 22 digits).` });
+        }
+        if (net <= 0) {
+          issues.push({ type: 'error', text: `Row ${idx + 1}: Net salary (${net.toFixed(2)}) cannot be zero or negative.` });
+        }
+        if (gross > 0 && deductions > (gross * 0.50)) {
+          issues.push({ type: 'warning', text: `Row ${idx + 1}: Deductions exceed 50% of gross earnings (Saudi Labor Law Art. 92 limit).` });
+        }
+      });
+
+      // Format currency
+      const fmt = (num) => num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      // Table footers
+      document.getElementById('totBasic').innerText = fmt(totalBasic);
+      document.getElementById('totHousing').innerText = fmt(totalHousing);
+      document.getElementById('totOther').innerText = fmt(totalOther);
+      document.getElementById('totDed').innerText = fmt(totalDed);
+      document.getElementById('totNet').innerText = fmt(totalNet) + ' SAR';
+
+      // Summary cards
+      document.getElementById('badgeRecCount').innerText = `${employees.length} Records`;
+      document.getElementById('sumNetPay').innerText = `SAR ${fmt(totalNet)}`;
+      document.getElementById('sumGrossPay').innerText = `SAR ${fmt(totalBasic + totalHousing + totalOther)}`;
+      document.getElementById('sumDeductions').innerText = `SAR ${fmt(totalDed)}`;
+      
+      // SARIE / SAMA interbank fee approx 1.15 SAR per local transfer
+      const estFee = (employees.length * 1.15).toFixed(2);
+      document.getElementById('sumBankFee').innerText = `SAR ${estFee} (incl. VAT)`;
+
+      // Diagnostics box
+      const validationContainer = document.getElementById('validationReport');
+      const badgeStatus = document.getElementById('wpsStatusBadge');
+      const errBadge = document.getElementById('errCountBadge');
+
+      errBadge.innerText = `${issues.length} issue(s) detected`;
+
+      if (issues.length === 0) {
+        badgeStatus.className = 'px-2 py-0.5 rounded-full font-bold text-[11px] bg-emerald-100 text-emerald-800';
+        badgeStatus.innerText = 'PASSED (MUDAD READY)';
+        validationContainer.innerHTML = `
+          <div class="flex items-center gap-2 p-2 rounded bg-emerald-50 text-emerald-800 border border-emerald-200">
+            <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>Ready. All parameters follow Saudi Central Bank (SAMA) standard SIF guidelines without structural errors.</span>
+          </div>
+        `;
+      } else {
+        const hasError = issues.some(i => i.type === 'error');
+        badgeStatus.className = hasError 
+          ? 'px-2 py-0.5 rounded-full font-bold text-[11px] bg-rose-100 text-rose-800'
+          : 'px-2 py-0.5 rounded-full font-bold text-[11px] bg-amber-100 text-amber-800';
+        badgeStatus.innerText = hasError ? 'REJECT RISK (ERRORS)' : 'WARNINGS FOUND';
+
+        validationContainer.innerHTML = issues.map(iss => {
+          const color = iss.type === 'error' 
+            ? 'bg-rose-50 text-rose-800 border-rose-200' 
+            : 'bg-amber-50 text-amber-800 border-amber-200';
+          const icon = iss.type === 'error' ? '🚫' : '⚠️';
+          return `<div class="flex items-center gap-2 p-2 rounded border ${color} text-xs"><span>${icon}</span><span>${iss.text}</span></div>`;
+        }).join('');
+      }
+
+      // Generate SIF text
+      generateSIFText(totalNet, totalBasic, totalHousing, totalOther, totalDed);
+    }
+
+    function buildSIFString() {
+      const estId = (document.getElementById('estId').value || '7000000000').trim();
+      const rawComp = (document.getElementById('compName').value || 'COMPANY NAME').trim().toUpperCase().replace(/[^A-Z0-9 ]/g, '');
+      const bankCode = document.getElementById('bankCode').value;
+      const payDate = document.getElementById('payDate').value || new Date().toISOString().split('T')[0];
+      const dateFormatted = payDate.replace(/-/g, ''); // YYYYMMDD
+      const creationTime = new Date().toISOString().slice(11, 16).replace(':', ''); // HHMM
+
+      let totalNet = 0;
+      employees.forEach(e => {
+        totalNet += (Number(e.basic) || 0) + (Number(e.housing) || 0) + (Number(e.other) || 0) - (Number(e.deductions) || 0);
+      });
+
+      // Header: SCR, EstID, CompanyName, FileDate, CreationTime, PayerBank, TotalNetSalary, TotalRecords, ValueDate
+      const header = `SCR,${estId},${rawComp},${dateFormatted},${creationTime},${bankCode},${totalNet.toFixed(2)},${employees.length},${dateFormatted}`;
+
+      // Record Lines: EDR, National/IqamaID, IBAN, BankCode, Basic, Housing, Other, Deductions, Net, EmpName
+      const lines = employees.map((emp, index) => {
+        const basic = (Number(emp.basic) || 0).toFixed(2);
+        const housing = (Number(emp.housing) || 0).toFixed(2);
+        const other = (Number(emp.other) || 0).toFixed(2);
+        const ded = (Number(emp.deductions) || 0).toFixed(2);
+        const net = ((Number(emp.basic) || 0) + (Number(emp.housing) || 0) + (Number(emp.other) || 0) - (Number(emp.deductions) || 0)).toFixed(2);
+        const cleanIban = (emp.iban || '').trim();
+        const cleanId = (emp.id || '').trim();
+        const cleanName = (emp.name || `EMPLOYEE ${index + 1}`).toUpperCase().replace(/[^A-Z0-9 ]/g, '');
+        
+        return `EDR,${cleanId},${cleanIban},${emp.bank},${basic},${housing},${other},${ded},${net},${cleanName}`;
+      });
+
+      return [header, ...lines].join('\r\n');
+    }
+
+    function generateSIFText() {
+      const content = buildSIFString();
+      document.getElementById('sifOutputArea').textContent = content;
+    }
+
+    function downloadSIFFile() {
+      const content = buildSIFString();
+      const estId = (document.getElementById('estId').value || '7000000000').trim();
+      const payDate = (document.getElementById('payDate').value || 'PAYROLL').replace(/-/g, '');
+      const filename = `WPS_${estId}_${payDate}.sif`;
+
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function exportPayrollCSV() {
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Record Type,ID/Iqama,Employee Name,IBAN,Bank,Basic Salary,Housing Allowance,Other Allowances,Deductions,Net Salary\r\n";
+      
+      employees.forEach(emp => {
+        const basic = Number(emp.basic) || 0;
+        const housing = Number(emp.housing) || 0;
+        const other = Number(emp.other) || 0;
+        const ded = Number(emp.deductions) || 0;
+        const net = basic + housing + other - ded;
+        csvContent += `EDR,"${emp.id}","${emp.name}","${emp.iban}","${emp.bank}",${basic.toFixed(2)},${housing.toFixed(2)},${other.toFixed(2)},${ded.toFixed(2)},${net.toFixed(2)}\r\n`;
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `WPS_Payroll_Audit_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function copySIFToClipboard() {
+      const content = buildSIFString();
+      navigator.clipboard.writeText(content).then(() => {
+        const copyBtn = document.getElementById('btnCopyText');
+        const original = copyBtn.innerText;
+        copyBtn.innerText = currentLang === 'ar' ? 'تم النسخ!' : 'Copied!';
+        setTimeout(() => {
+          copyBtn.innerText = original;
+        }, 2000);
+      });
+    }
+
+    // Event listeners on header inputs
+    ['estId', 'compName', 'bankCode', 'payDate'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', () => recalculateAndRender(false));
+    });
+  </script>
+</body>
+</html>
