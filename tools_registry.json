@@ -103,5 +103,12 @@
     "title_ar": "حاسبة رسوم تجديد الإقامة ورخص العمل والمقابل المالي والمرافقين",
     "description_en": "Calculate Saudi Iqama renewal fees, Maktab Amal work permit financial levy, dependent fees, and medical insurance costs with instant export.",
     "date": "2026-11-04"
+  },
+  {
+    "slug": "saudi-customs-duty-and-import-vat-calculator",
+    "title_en": "Saudi Customs Duty, Import VAT & Landed Cost Calculator (ZATCA & FASAH)",
+    "title_ar": "حاسبة الرسوم الجمركية وضريبة القيمة المضافة وتكلفة الاستيراد (منصة فسح وهيئة الزكاة)",
+    "description_en": "Calculate Saudi customs duties, 15% import VAT, clearance fees, and landed cost for commercial shipments per ZATCA & FASAH regulations.",
+    "date": "2026-11-05"
   }
 ]
