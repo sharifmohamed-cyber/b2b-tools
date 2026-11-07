@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi Labor Law Article 77 Termination Compensation & Settlement Calculator</title>
+  <meta name="description" content="Calculate lawful compensation under Article 77 of Saudi Labor Law, notice pay, unused leave balance, and full termination settlement for HR and employers." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    [dir="rtl"] body, [dir="rtl"] * { font-family: 'Cairo', sans-serif; }
+    .tab-active { border-color: #0d9488; color: #0f766e; background-color: #f0fdfa; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Top Banner -->
+  <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <div class="w-9 h-9 rounded-lg bg-teal-500 text-white flex items-center justify-center font-extrabold text-lg shadow-sm">§77</div>
+        <div>
+          <h1 class="text-base font-bold tracking-tight text-white" id="header-title">Saudi Labor Law Article 77 Termination Calculator</h1>
+          <p class="text-xs text-slate-400" id="header-subtitle">HR Compliance &amp; Settlement Audit Engine (Saudi Labor Law)</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <button type="button" onclick="toggleLanguage()" id="lang-toggle-btn" class="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-md border border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700 transition">
+          <span id="lang-btn-text">العربية (RTL)</span>
+        </button>
+        <a href="https://gumroad.com" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 text-xs font-bold rounded-md bg-teal-500 hover:bg-teal-400 text-slate-950 shadow-sm transition">
+          <span id="banner-cta-text">Get Excel Audit Template ($29)</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sticky Upsell Strip -->
+  <div class="bg-gradient-to-r from-teal-900 via-slate-900 to-indigo-950 text-teal-100 border-b border-teal-800/40 text-xs py-2 px-4 shadow-inner">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left rtl:sm:text-right">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse">
+        <span class="inline-block w-2 h-2 rounded-full bg-teal-400 animate-pulse"></span>
+        <span id="sticky-text"><strong>HR &amp; Legal Bundle:</strong> Fully automated Excel &amp; VBA Model for Qiwa, Article 77 Disputes &amp; WPS Settlement Letters.</span>
+      </div>
+      <a href="https://gumroad.com" target="_blank" rel="noopener" class="underline font-semibold hover:text-white shrink-0" id="sticky-link">Download Master Model ($29) &rarr;</a>
+    </div>
+  </div>
+
+  <!-- Main Workspace -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+    
+    <!-- Intro Heading -->
+    <div class="mb-8">
+      <span class="text-xs font-bold uppercase tracking-wider text-teal-600 bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-full" id="badge-tag">HR Legal Compliance</span>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-2" id="page-h2">Termination Indemnity &amp; Settlement Audit Engine</h2>
+      <p class="text-sm text-slate-600 mt-1 max-w-3xl" id="page-desc">
+        Compute contractual liability under Article 77 of the Saudi Labor Law for arbitrary or non-cause dismissals, incorporating unserved notice penalties, accrued unused leaves, and EOSB statutory gratuity.
+      </p>
+    </div>
+
+    <!-- Grid layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Form Inputs Column (7 Cols) -->
+      <div class="lg:col-span-7 bg-white rounded-xl shadow-sm border border-slate-200 p-6 sm:p-7 space-y-6">
+        <h3 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
+          <span id="form-heading">Employee &amp; Contract Parameters</span>
+          <span class="text-xs text-slate-400 font-normal" id="form-subtext">Updated for Ministry of HRSD Regulations</span>
+        </h3>
+
+        <!-- Contract Type & Nationality -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1.5" id="lbl-contract-type">Contract Type</label>
+            <select id="contract_type" onchange="calculateTermination()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+              <option value="fixed">Fixed-Term Contract (محدد المدة)</option>
+              <option value="indefinite">Indefinite-Term Contract (غير محدد المدة)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1.5" id="lbl-nationality">Employee Nationality</label>
+            <select id="nationality" onchange="onNationalityChange()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+              <option value="saudi">Saudi National (مواطن)</option>
+              <option value="expat">Expatriate / Non-Saudi (وافد)</option>
+            </select>
+            <p class="text-[11px] text-amber-600 mt-1 hidden" id="expat-note">*Note: Per Article 37, non-Saudis are legally considered fixed-term contracts.</p>
+          </div>
+        </div>
+
+        <!-- Salary Details -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1.5" id="lbl-basic-wage">Basic Monthly Wage (SAR)</label>
+            <input type="number" id="basic_wage" value="8000" min="0" step="100" oninput="calculateTermination()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-teal-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1.5" id="lbl-housing">Housing Allowance (SAR)</label>
+            <input type="number" id="housing_wage" value="2000" min="0" step="50" oninput="calculateTermination()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-teal-500 focus:outline-none" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1.5" id="lbl-transport">Transport / Other (SAR)</label>
+            <input type="number" id="other_allowances" value="1000" min="0" step="50" oninput="calculateTermination()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm font-medium focus:ring-2 focus:ring-teal-500 focus:outline-none" />
+          </div>
+        </div>
+
+        <!-- Full Wage Indicator Badge -->
+        <div class="p-3 bg-slate-100 rounded-lg flex items-center justify-between text-xs text-slate-600">
+          <span id="lbl-gross-calc">Gross Monthly Wage (Wage considered for Article 77):</span>
+          <span class="text-sm font-bold text-slate-900"><span id="display_gross_wage">11,000.00</span> SAR</span>
+        </div>
+
+        <!-- Tenure & Remaining Contract Duration -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1.5" id="lbl-tenure-years">Completed Total Tenure (Years)</label>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <input type="number" id="tenure_years" value="3" min="0" step="1" placeholder="Years" oninput="calculateTermination()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none" />
+                <span class="text-[10px] text-slate-400 mt-0.5 block" id="lbl-sub-years">Years</span>
+              </div>
+              <div>
+                <input type="number" id="tenure_months" value="6" min="0" max="11" step="1" placeholder="Months" oninput="calculateTermination()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none" />
+                <span class="text-[10px] text-slate-400 mt-0.5 block" id="lbl-sub-months">Months</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="fixed-duration-group">
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1.5" id="lbl-rem-contract">Remaining on Contract (Months)</label>
+            <input type="number" id="remaining_months" value="5" min="0" step="0.5" oninput="calculateTermination()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none" />
+            <p class="text-[11px] text-slate-400 mt-1" id="rem-help">Full wages of unexpired period (Min 2 months apply).</p>
+          </div>
+        </div>
+
+        <!-- Agreed Compensation in Contract -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1.5" id="lbl-custom-stip">Agreed Article 77 Clause in Contract?</label>
+            <select id="has_custom_clause" onchange="toggleCustomClause()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+              <option value="no">No (Apply Statutory Default Formula)</option>
+              <option value="yes">Yes (Specific Contract Clause Stated)</option>
+            </select>
+          </div>
+          <div id="custom-clause-amount-box" class="hidden">
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1.5" id="lbl-custom-amount">Contractual Agreed Sum (SAR)</label>
+            <input type="number" id="custom_agreed_amount" value="0" min="0" step="500" oninput="calculateTermination()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none" />
+          </div>
+        </div>
+
+        <!-- Notice Period & Leave Balance -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1.5" id="lbl-notice-status">Notice Period Status (Article 75/76)</label>
+            <select id="notice_status" onchange="calculateTermination()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none">
+              <option value="served">Notice Worked / Served (0 SAR Penalty)</option>
+              <option value="unserved_30">Unserved - 30 Days Pay in Lieu</option>
+              <option value="unserved_60">Unserved - 60 Days Pay in Lieu (Standard Indefinite)</option>
+              <option value="unserved_90">Unserved - 90 Days Pay in Lieu</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase mb-1.5" id="lbl-unused-leave">Unused Annual Leave Balance (Days)</label>
+            <input type="number" id="unused_leave_days" value="14" min="0" step="1" oninput="calculateTermination()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-teal-500 focus:outline-none" />
+          </div>
+        </div>
+
+        <!-- Involuntary Termination End of Service Inclusion -->
+        <div class="flex items-center space-x-3 rtl:space-x-reverse pt-2 border-t border-slate-100">
+          <input type="checkbox" id="include_eosb" checked onchange="calculateTermination()" class="w-4 h-4 text-teal-600 rounded border-slate-300 focus:ring-teal-500" />
+          <label for="include_eosb" class="text-xs font-semibold text-slate-700 cursor-pointer" id="lbl-include-eosb">
+            Include Involuntary End-of-Service Gratuity (EOSB Article 84: 100% full entitlement for termination by employer)
+          </label>
+        </div>
+      </div>
+
+      <!-- Output / Results Column (5 Cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-white rounded-xl shadow-lg border border-teal-200 overflow-hidden">
+          <div class="bg-slate-900 text-white p-5 border-b border-slate-800">
+            <span class="text-xs text-teal-400 font-semibold tracking-wide uppercase" id="res-badge">Official Settlement Summary</span>
+            <h3 class="text-xl font-bold text-white mt-1" id="res-headline">Total Company Settlement Payout</h3>
+            <div class="mt-3 text-3xl font-extrabold text-teal-400 tracking-tight">
+              <span id="res_total_payout">0.00</span> <span class="text-sm text-slate-300 font-normal">SAR</span>
+            </div>
+          </div>
+
+          <!-- Line Item Breakdown -->
+          <div class="p-5 space-y-4 text-sm">
+            
+            <!-- Item 1: Article 77 Compensation -->
+            <div class="flex justify-between items-start pb-3 border-b border-slate-100">
+              <div>
+                <span class="font-semibold text-slate-800 block" id="item-art77-name">Article 77 Indemnity</span>
+                <span class="text-xs text-slate-500" id="item-art77-sub">Arbitrary termination statutory remedy</span>
+              </div>
+              <div class="text-right rtl:text-left">
+                <span class="font-bold text-slate-900" id="res_art77_amount">0.00 SAR</span>
+                <span class="block text-[10px] text-teal-600" id="res_art77_rule">Calculated</span>
+              </div>
+            </div>
+
+            <!-- Item 2: Notice Period Compensation -->
+            <div class="flex justify-between items-start pb-3 border-b border-slate-100">
+              <div>
+                <span class="font-semibold text-slate-800 block" id="item-notice-name">Notice Period in Lieu</span>
+                <span class="text-xs text-slate-500" id="item-notice-sub">Article 75 &amp; 76 breach compensation</span>
+              </div>
+              <div class="text-right rtl:text-left">
+                <span class="font-bold text-slate-900" id="res_notice_amount">0.00 SAR</span>
+              </div>
+            </div>
+
+            <!-- Item 3: Accrued Leave -->
+            <div class="flex justify-between items-start pb-3 border-b border-slate-100">
+              <div>
+                <span class="font-semibold text-slate-800 block" id="item-leave-name">Unused Annual Leave Encashment</span>
+                <span class="text-xs text-slate-500" id="item-leave-sub">Article 111 wage for remaining leave</span>
+              </div>
+              <div class="text-right rtl:text-left">
+                <span class="font-bold text-slate-900" id="res_leave_amount">0.00 SAR</span>
+              </div>
+            </div>
+
+            <!-- Item 4: Statutory EOSB -->
+            <div class="flex justify-between items-start pb-3 border-b border-slate-100">
+              <div>
+                <span class="font-semibold text-slate-800 block" id="item-eosb-name">End of Service Gratuity (EOSB)</span>
+                <span class="text-xs text-slate-500" id="item-eosb-sub">Article 84 (Involuntary Full Award)</span>
+              </div>
+              <div class="text-right rtl:text-left">
+                <span class="font-bold text-slate-900" id="res_eosb_amount">0.00 SAR</span>
+              </div>
+            </div>
+
+            <!-- Print / Export Buttons -->
+            <div class="pt-2 flex flex-col sm:flex-row gap-2">
+              <button onclick="window.print()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-3 rounded-lg text-xs transition text-center flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                <span id="btn-print-text">Print Audit PDF</span>
+              </button>
+              <button onclick="exportCSV()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-3 rounded-lg text-xs transition text-center flex items-center justify-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span id="btn-csv-text">Export CSV File</span>
+              </button>
+            </div>
+
+            <!-- Commercial Upsell Pitch Card inside Results -->
+            <div class="mt-4 p-4 rounded-lg bg-teal-50 border border-teal-200 space-y-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold bg-teal-600 text-white px-2 py-0.5 rounded">PRO HR ADD-ON</span>
+                <span class="text-xs font-semibold text-teal-900" id="pro-box-title">Automated Settlement &amp; Qiwa Excel Suite</span>
+              </div>
+              <p class="text-xs text-slate-600" id="pro-box-desc">
+                Includes ready-to-sign English/Arabic Termination Agreement, Labor Court Settlement formulas, and mass redundancy financial models.
+              </p>
+              <a href="https://gumroad.com" target="_blank" rel="noopener" class="block w-full py-2.5 px-4 bg-teal-600 hover:bg-teal-700 text-white font-bold text-center text-xs rounded-lg transition shadow-sm" id="pro-box-btn">
+                Get Automated Excel &amp; VBA Master Template &mdash; $29
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Bilingual Official Disclaimer -->
+        <div class="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs leading-relaxed">
+          <p class="font-bold mb-1 flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+            <span id="disclaimer-title">Statutory Notice &amp; Legal Disclaimer / تنبيه نظامي وإخلاء مسؤولية</span>
+          </p>
+          <p class="mb-1 text-[11px] text-slate-700" id="disclaimer-en">
+            <strong>Notice:</strong> Outputs are mathematical simulations based on Articles 75, 76, 77, 84, and 111 of Royal Decree No. (M/51). Actual legal obligations and final court awards are subject to Ministry of Human Resources &amp; Social Development (MHRSD) regulations, Labor Court judicial discretion, valid written contracts, and collective bargaining terms. Always seek legal counsel before issuing official termination letters.
+          </p>
+          <p class="text-[11px] text-slate-700 font-arabic" dir="rtl" id="disclaimer-ar">
+            <strong>تنبيه قانوني:</strong> النتائج الصادرة عن هذه الحاسبة هي تقديرات استرشادية مبنية على نصوص المواد 75 و76 و77 و84 و111 من نظام العمل السعودي الصادر بالمرسوم الملكي رقم (م/51). قد تختلف التسوية الفعلية بناءً على بنود عقد العمل الموثق عبر منصة «قوى» وتكييف المحاكم العمالية للسبب المشروع. يُرجى مراجعة المستشار القانوني قبل اعتماد سندات المخالصة النهائية.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comprehensive 800+ Word Educational & SEO Guide Section -->
+    <section class="mt-16 pt-10 border-t border-slate-200 space-y-12">
+      
+      <!-- Article 77 In-Depth Breakdown -->
+      <div>
+        <h2 class="text-2xl font-bold text-slate-900" id="guide-h2">Comprehensive Legal Guide: Article 77 of the Saudi Labor Law</h2>
+        <p class="text-slate-600 mt-2 text-sm leading-relaxed" id="guide-intro">
+          Article 77 represents one of the most commercially critical and frequently litigated statutes in Saudi Arabia's labor and employment jurisprudence. Reformed to create a predictable financial mechanism for terminating employment contracts when valid justifiable cause (as restricted by Article 80) is absent, Article 77 establishes statutory floors, default metrics, and limits of financial compensation for both employers and employees.
+        </p>
+      </div>
+
+      <!-- Key Legal Mechanisms Matrix -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
+        <div class="p-5 bg-white rounded-xl border border-slate-200 shadow-sm space-y-2">
+          <div class="w-8 h-8 rounded bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-sm">01</div>
+          <h3 class="font-bold text-slate-900" id="matrix-1-title">Indefinite-Term Contracts</h3>
+          <p class="text-xs text-slate-600 leading-relaxed" id="matrix-1-text">
+            Applicable principally to Saudi nationals (non-Saudis cannot hold indefinite contracts under Article 37). Unless a different higher or lower compensation is specified in the employment agreement, compensation equals <strong>15 days of the employee's total gross wage for each completed year</strong> of service.
+          </p>
+        </div>
+
+        <div class="p-5 bg-white rounded-xl border border-slate-200 shadow-sm space-y-2">
+          <div class="w-8 h-8 rounded bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-sm">02</div>
+          <h3 class="font-bold text-slate-900" id="matrix-2-title">Fixed-Term Contracts</h3>
+          <p class="text-xs text-slate-600 leading-relaxed" id="matrix-2-text">
+            Mandatory for expatriates and agreed fixed durations. If terminated unilaterally without lawful cause prior to expiration, the aggrieved party is entitled to <strong>the full wage for the remaining duration</strong> of the contractual period, unless the agreement explicitly specifies an alternative compensation clause.
+          </p>
+        </div>
+
+        <div class="p-5 bg-white rounded-xl border border-slate-200 shadow-sm space-y-2">
+          <div class="w-8 h-8 rounded bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-sm">03</div>
+          <h3 class="font-bold text-slate-900" id="matrix-3-title">Statutory Minimum Floor (2 Months)</h3>
+          <p class="text-xs text-slate-600 leading-relaxed" id="matrix-3-text">
+            Crucially, Article 77 establishes an immutable statutory threshold: the compensation awarded under paragraphs (1) or (2) <strong>must not be less than two months' full wages</strong>, even if the tenure is just 6 months or the remaining contract duration is only 15 days.
+          </p>
+        </div>
+      </div>
+
+      <!-- Detailed Mathematical Breakdown -->
+      <div class="bg-white rounded-xl border border-slate-200 p-6 md:p-8 space-y-6 text-sm text-slate-700 leading-relaxed shadow-sm">
+        <h3 class="text-xl font-bold text-slate-900" id="math-h3">The Article 77 Settlement Calculation Engine: Formula Breakdown</h3>
+        
+        <div class="space-y-4">
+          <p id="math-p1">
+            A legally compliant separation settlement involves four separate components that must not be conflated:
+          </p>
+          <div class="bg-slate-50 p-4 rounded-lg font-mono text-xs border border-slate-200 space-y-2">
+            <div><strong class="text-teal-700">Total Company Liability</strong> = Article 77 Indemnity + Pay in Lieu of Notice (Articles 75 &amp; 76) + Unused Accrued Vacation Encashment (Article 111) + Statutory End of Service Gratuity (Article 84)</div>
+            <div class="text-slate-500 pt-2 border-t border-slate-200">Where Wage Base = Basic Wage + Housing Allowance + Transportation Allowance + Fixed Guaranteed Allowances.</div>
+          </div>
+          
+          <h4 class="font-bold text-slate-800 pt-2" id="math-sub-1">1. Article 77 Indemnity Computation</h4>
+          <ul class="list-disc pl-5 rtl:pr-5 space-y-1.5 text-xs text-slate-600" id="math-ul-1">
+            <li><strong>Fixed-Term Default:</strong> <code>Max( Remaining Months × Gross Wage , 2 × Gross Wage )</code></li>
+            <li><strong>Indefinite Default:</strong> <code>Max( (Total Tenure in Years) × (0.5 × Gross Wage) , 2 × Gross Wage )</code></li>
+            <li><strong>Contractual Stipulation Exception:</strong> If the signed contract contains an agreed compensation figure (e.g., 3 months' wage or a set lump sum), that agreed amount supersedes statutory defaults provided it respects labor judicial standards.</li>
+          </ul>
+
+          <h4 class="font-bold text-slate-800 pt-2" id="math-sub-2">2. Notice Period in Lieu (Articles 75 &amp; 76)</h4>
+          <p class="text-xs text-slate-600" id="math-p2">
+            For indefinite contracts terminated by the employer, Article 75 mandates a minimum written notice of <strong>60 days</strong> before separation. For fixed contracts or when specified, at least 30 days is standard. Failure to let the employee work through the notice period obliges the employer to pay the employee an indemnity equivalent to the worker’s wage for the duration of the unserved notice period (Article 76).
+          </p>
+
+          <h4 class="font-bold text-slate-800 pt-2" id="math-sub-3">3. Involuntary EOSB Statutory Gratuity (Article 84)</h4>
+          <p class="text-xs text-slate-600" id="math-p3">
+            Unlike employee resignation (Article 85), where EOSB is tiered (0% for under 2 years, 33.3% for 2-5 years, 66.6% for 5-10 years), <strong>involuntary employer-initiated termination triggers 100% full entitlement under Article 84</strong> from day one:
+          </p>
+          <ul class="list-disc pl-5 rtl:pr-5 space-y-1 text-xs text-slate-600" id="math-ul-2">
+            <li>First 5 years of service: Half-month's gross wage for each completed year.</li>
+            <li>Subsequent years (Year 6+): One full month's gross wage for each completed year.</li>
+            <li>Prorated fractions of a year calculated on exact fractional days.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Comparison Table: Resignation vs Employer Termination -->
+      <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200">
+          <h3 class="text-base font-bold text-slate-900" id="table-title">Comparison Matrix: Resignation vs. Article 77 Company Dismissal</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-slate-200 text-xs">
+            <thead class="bg-slate-100 font-semibold text-slate-700">
+              <tr>
+                <th class="px-4 py-3 text-left rtl:text-right" id="th-element">Settlement Component</th>
+                <th class="px-4 py-3 text-left rtl:text-right" id="th-resign">Voluntary Resignation (Article 85)</th>
+                <th class="px-4 py-3 text-left rtl:text-right text-teal-800" id="th-art77">Employer Termination (Article 77)</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 text-slate-600">
+              <tr>
+                <td class="px-4 py-3 font-semibold text-slate-800" id="row-1-name">Article 77 Indemnity</td>
+                <td class="px-4 py-3 text-red-600 font-medium" id="row-1-resign">0 SAR (Employee not eligible)</td>
+                <td class="px-4 py-3 text-teal-700 font-bold" id="row-1-art77">Mandatory: Min 2 months or remaining/tenure wage</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-semibold text-slate-800" id="row-2-name">Notice Period Obligation</td>
+                <td class="px-4 py-3" id="row-2-resign">Employee must serve notice or pay company in lieu</td>
+                <td class="px-4 py-3 font-medium" id="row-2-art77">Company must grant notice or pay employee full wage in lieu</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-semibold text-slate-800" id="row-3-name">EOSB Gratuity Rate</td>
+                <td class="px-4 py-3" id="row-3-resign">Graduated: 0% (&lt;2y), 33.3% (2-5y), 66.6% (5-10y), 100% (&gt;10y)</td>
+                <td class="px-4 py-3 text-teal-700 font-bold" id="row-3-art77">100% Full Statutory Entitlement (Art 84) from Year 1</td>
+              </tr>
+              <tr>
+                <td class="px-4 py-3 font-semibold text-slate-800" id="row-4-name">Accrued Leave Encashment</td>
+                <td class="px-4 py-3" id="row-4-resign">100% paid out at current wage rate</td>
+                <td class="px-4 py-3" id="row-4-art77">100% paid out at current wage rate</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Frequently Asked Questions (FAQ) -->
+      <div class="space-y-4">
+        <h3 class="text-xl font-bold text-slate-900" id="faq-heading">Frequently Asked Questions (HR &amp; Legal Counsel)</h3>
+        
+        <div class="space-y-3">
+          <details class="bg-white rounded-lg border border-slate-200 p-4 shadow-sm group">
+            <summary class="font-semibold text-sm text-slate-900 cursor-pointer list-none flex justify-between items-center">
+              <span id="faq-1-q">Can an employer fire an employee under Article 77 without any justification?</span>
+              <span class="text-slate-400 group-open:rotate-180 transition">&darr;</span>
+            </summary>
+            <p class="mt-2 text-xs text-slate-600 leading-relaxed" id="faq-1-a">
+              Yes, Article 77 specifically addresses termination "for an invalid / non-lawful cause". While the termination takes effect and terminates the contractual relationship, it legally obligates the terminating party to pay the strict financial penalties calculated above. However, if the termination is discriminatory or retaliatory (e.g. pregnancy, filing a wage complaint), labor courts may order back-pay and special compensation.
+            </p>
+          </details>
+
+          <details class="bg-white rounded-lg border border-slate-200 p-4 shadow-sm group">
+            <summary class="font-semibold text-sm text-slate-900 cursor-pointer list-none flex justify-between items-center">
+              <span id="faq-2-q">Is Article 77 compensation calculated based on Basic Salary or Total Gross Salary?</span>
+              <span class="text-slate-400 group-open:rotate-180 transition">&darr;</span>
+            </summary>
+            <p class="mt-2 text-xs text-slate-600 leading-relaxed" id="faq-2-a">
+              Under the prevailing precedents of the Saudi Labor Courts and Article 2 of the Saudi Labor Law, "Wage" (الأجر) unless specifically restricted means the actual total wage, including housing allowances, transportation, and regular commissions. Therefore, Article 77 calculations must incorporate basic salary plus all steady allowances.
+            </p>
+          </details>
+
+          <details class="bg-white rounded-lg border border-slate-200 p-4 shadow-sm group">
+            <summary class="font-semibold text-sm text-slate-900 cursor-pointer list-none flex justify-between items-center">
+              <span id="faq-3-q">Can the employment contract specify 1 month wage instead of the 2-month statutory minimum?</span>
+              <span class="text-slate-400 group-open:rotate-180 transition">&darr;</span>
+            </summary>
+            <p class="mt-2 text-xs text-slate-600 leading-relaxed" id="faq-3-a">
+              No. Labor Law Article 8 establishes that any contractual stipulation that contradicts the statutory protections of the law or provides less than the worker's minimum statutory right is void ab initio. The two months' gross wage minimum floor is an absolute legal mandate that cannot be waived or contracted out of.
+            </p>
+          </details>
+
+          <details class="bg-white rounded-lg border border-slate-200 p-4 shadow-sm group">
+            <summary class="font-semibold text-sm text-slate-900 cursor-pointer list-none flex justify-between items-center">
+              <span id="faq-4-q">Does paying Article 77 compensation exempt the employer from paying End of Service Gratuity (EOSB)?</span>
+              <span class="text-slate-400 group-open:rotate-180 transition">&darr;</span>
+            </summary>
+            <p class="mt-2 text-xs text-slate-600 leading-relaxed" id="faq-4-a">
+              No. Article 77 indemnity is damages for the untimely or wrongful breach of the contract duration. It is completely independent of the employee's vested statutory rights under Article 84 (End of Service Gratuity) and Article 111 (Accrued Annual Leave balance). Both must be paid alongside Article 77.
+            </p>
+          </details>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Bottom Sticky Footer CTA Banner -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-white py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+      <div class="space-y-1 text-center md:text-left rtl:md:text-right">
+        <p class="font-bold text-slate-200">Saudi SME &amp; HR Operational Tooling Hub</p>
+        <p>&copy; <span id="year"></span> Enterprise Employment Compliance Systems. All calculations follow Royal Decree No. (M/51).</p>
+      </div>
+      <div class="flex items-center space-x-4 rtl:space-x-reverse">
+        <a href="https://gumroad.com" target="_blank" rel="noopener" class="bg-teal-500 hover:bg-teal-400 text-slate-950 px-4 py-2 rounded-lg font-bold transition shadow">
+          Download Complete Excel Template ($29)
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Engine Script -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Language Dictionary
+    let currentLang = 'en';
+    const i18n = {
+      en: {
+        headerTitle: "Saudi Labor Law Article 77 Termination Calculator",
+        headerSub: "HR Compliance & Settlement Audit Engine (Saudi Labor Law)",
+        langBtn: "العربية (RTL)",
+        bannerCta: "Get Excel Audit Template ($29)",
+        stickyText: "<strong>HR &amp; Legal Bundle:</strong> Fully automated Excel &amp; VBA Model for Qiwa, Article 77 Disputes &amp; WPS Settlement Letters.",
+        stickyLink: "Download Master Model ($29) &rarr;",
+        badgeTag: "HR Legal Compliance",
+        pageH2: "Termination Indemnity & Settlement Audit Engine",
+        pageDesc: "Compute contractual liability under Article 77 of the Saudi Labor Law for arbitrary or non-cause dismissals, incorporating unserved notice penalties, accrued unused leaves, and EOSB statutory gratuity.",
+        formHeading: "Employee & Contract Parameters",
+        formSubtext: "Updated for Ministry of HRSD Regulations",
+        lblContractType: "Contract Type",
+        lblNationality: "Employee Nationality",
+        lblBasicWage: "Basic Monthly Wage (SAR)",
+        lblHousing: "Housing Allowance (SAR)",
+        lblTransport: "Transport / Other (SAR)",
+        lblGrossCalc: "Gross Monthly Wage (Wage considered for Article 77):",
+        lblTenureYears: "Completed Total Tenure (Years & Months)",
+        lblSubYears: "Years",
+        lblSubMonths: "Months",
+        lblRemContract: "Remaining on Contract (Months)",
+        remHelp: "Full wages of unexpired period (Min 2 months apply).",
+        lblCustomStip: "Agreed Article 77 Clause in Contract?",
+        lblCustomAmount: "Contractual Agreed Sum (SAR)",
+        lblNoticeStatus: "Notice Period Status (Article 75/76)",
+        lblUnusedLeave: "Unused Annual Leave Balance (Days)",
+        lblIncludeEosb: "Include Involuntary End-of-Service Gratuity (EOSB Article 84: 100% full entitlement for termination by employer)",
+        resBadge: "Official Settlement Summary",
+        resHeadline: "Total Company Settlement Payout",
+        itemArt77Name: "Article 77 Indemnity",
+        itemArt77Sub: "Arbitrary termination statutory remedy",
+        itemNoticeName: "Notice Period in Lieu",
+        itemNoticeSub: "Article 75 & 76 breach compensation",
+        itemLeaveName: "Unused Annual Leave Encashment",
+        itemLeaveSub: "Article 111 wage for remaining leave",
+        itemEosbName: "End of Service Gratuity (EOSB)",
+        itemEosbSub: "Article 84 (Involuntary Full Award)",
+        btnPrint: "Print Audit PDF",
+        btnCsv: "Export CSV File",
+        proTitle: "Automated Settlement & Qiwa Excel Suite",
+        proDesc: "Includes ready-to-sign English/Arabic Termination Agreement, Labor Court Settlement formulas, and mass redundancy financial models.",
+        proBtn: "Get Automated Excel & VBA Master Template — $29",
+        disclaimerTitle: "Statutory Notice & Legal Disclaimer / تنبيه نظامي وإخلاء مسؤولية",
+        tableTitle: "Comparison Matrix: Resignation vs. Article 77 Company Dismissal"
+      },
+      ar: {
+        headerTitle: "حاسبة تعويض المادة 77 من نظام العمل السعودي",
+        headerSub: "محرك تسوية وإنهاء العقود لمدراء الموارد البشرية والشركات",
+        langBtn: "English (LTR)",
+        bannerCta: "تحميل قالب الإكسل الشامل (29$)",
+        stickyText: "<strong>حقيبة الموارد البشرية والقانون العمالي:</strong> نموذج إكسل متكامل لحسابات قوى والمادة 77 ومسيرات مخالصة الرواتب.",
+        stickyLink: "تحميل النموذج الاحترافي (29$) &larr;",
+        badgeTag: "الامتثال لنظام العمل السعودي",
+        pageH2: "محرك حساب تعويضات إنهاء العقد ومخالصات الفصل",
+        pageDesc: "احسب المستحقات المالية الإلزامية بموجب المادة 77 لإنهاء العقود لسبب غير مشروع، مع بدل مهلة الإشعار، ورصيد الإجازات ومكافأة نهاية الخدمة.",
+        formHeading: "بيانات الموظف وشروط عقد العمل",
+        formSubtext: "متوافق مع لوائح وزارة الموارد البشرية والتنمية الاجتماعية",
+        lblContractType: "نوع عقد العمل",
+        lblNationality: "جنسية الموظف",
+        lblBasicWage: "الأجر الأساسي الشهري (ريال)",
+        lblHousing: "بدل السكن الشهري (ريال)",
+        lblTransport: "بدل النقل / بدلات ثابتة (ريال)",
+        lblGrossCalc: "الأجر الفعلي الشامل (الأجر المعتمد لاحتساب المادة 77):",
+        lblTenureYears: "مدة الخدمة المكتملة (سنوات وأشهر)",
+        lblSubYears: "سنوات",
+        lblSubMonths: "أشهر",
+        lblRemContract: "المدة المتبقية في العقد (أشهر)",
+        remHelp: "أجر المدة المتبقية كاملة (بحد أدنى أجر شهرين).",
+        lblCustomStip: "هل يوجد بند تعويض محدد بالعقد؟",
+        lblCustomAmount: "مبلغ التعويض المشترط بالعقد (ريال)",
+        lblNoticeStatus: "حالة مهلة الإشعار (المادتان 75 و76)",
+        lblUnusedLeave: "رصيد الإجازات السنوية غير المستنفذة (أيام)",
+        lblIncludeEosb: "إدراج مكافأة نهاية الخدمة كاملة (المادة 84: استحقاق 100% لإنهاء العقد من طرف المنشأة)",
+        resBadge: "ملخص المخالصة والالتزامات النظامية",
+        resHeadline: "إجمالي مستحقات التصفية للموظف",
+        itemArt77Name: "تعويض المادة 77 من نظام العمل",
+        itemArt77Sub: "جبر الضرر لإنهاء العقد لسبب غير مشروع",
+        itemNoticeName: "بدل مهلة الإشعار",
+        itemNoticeSub: "تعويض عدم التقيد بمهلة الإشعار (م 75 و76)",
+        itemLeaveName: "بدل رصيد الإجازات المستحقة",
+        itemLeaveSub: "المادة 111 تعويض الإجازات غير المستخدمة",
+        itemEosbName: "مكافأة نهاية الخدمة (EOSB)",
+        itemEosbSub: "المادة 84 (استحقاق كامل للفصل غير التأديبي)",
+        btnPrint: "طباعة تقرير التسوية (PDF)",
+        btnCsv: "تصدير ملف مالي (CSV)",
+        proTitle: "حزمة إكسل المخالصات العمالية ونماذج قوى",
+        proDesc: "تتضمن نموذج اتفاقية مخالصة ثنائية معتمدة، وقوالب النزاعات العمالية، وحسابات التسوية الجماعية.",
+        proBtn: "احصل على نموذج الإكسل المتقدم — 29 دولار",
+        disclaimerTitle: "تنبيه نظامي وإخلاء مسؤولية قانوني",
+        tableTitle: "مقارنة: الاستقالة الرضائية مقابل الفصل والإنهاء بالمادة 77"
+      }
+    };
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      const docEl = document.documentElement;
+      
+      if (currentLang === 'ar') {
+        docEl.setAttribute('dir', 'rtl');
+        docEl.setAttribute('lang', 'ar');
+      } else {
+        docEl.setAttribute('dir', 'ltr');
+        docEl.setAttribute('lang', 'en');
+      }
+
+      const t = i18n[currentLang];
+      document.getElementById('header-title').textContent = t.headerTitle;
+      document.getElementById('header-subtitle').textContent = t.headerSub;
+      document.getElementById('lang-btn-text').textContent = t.langBtn;
+      document.getElementById('banner-cta-text').textContent = t.bannerCta;
+      document.getElementById('sticky-text').innerHTML = t.stickyText;
+      document.getElementById('sticky-link').innerHTML = t.stickyLink;
+      document.getElementById('badge-tag').textContent = t.badgeTag;
+      document.getElementById('page-h2').textContent = t.pageH2;
+      document.getElementById('page-desc').textContent = t.pageDesc;
+      document.getElementById('form-heading').textContent = t.formHeading;
+      document.getElementById('form-subtext').textContent = t.formSubtext;
+      document.getElementById('lbl-contract-type').textContent = t.lblContractType;
+      document.getElementById('lbl-nationality').textContent = t.lblNationality;
+      document.getElementById('lbl-basic-wage').textContent = t.lblBasicWage;
+      document.getElementById('lbl-housing').textContent = t.lblHousing;
+      document.getElementById('lbl-transport').textContent = t.lblTransport;
+      document.getElementById('lbl-gross-calc').textContent = t.lblGrossCalc;
+      document.getElementById('lbl-tenure-years').textContent = t.lblTenureYears;
+      document.getElementById('lbl-sub-years').textContent = t.lblSubYears;
+      document.getElementById('lbl-sub-months').textContent = t.lblSubMonths;
+      document.getElementById('lbl-rem-contract').textContent = t.lblRemContract;
+      document.getElementById('rem-help').textContent = t.remHelp;
+      document.getElementById('lbl-custom-stip').textContent = t.lblCustomStip;
+      document.getElementById('lbl-custom-amount').textContent = t.lblCustomAmount;
+      document.getElementById('lbl-notice-status').textContent = t.lblNoticeStatus;
+      document.getElementById('lbl-unused-leave').textContent = t.lblUnusedLeave;
+      document.getElementById('lbl-include-eosb').textContent = t.lblIncludeEosb;
+      document.getElementById('res-badge').textContent = t.resBadge;
+      document.getElementById('res-headline').textContent = t.resHeadline;
+      document.getElementById('item-art77-name').textContent = t.itemArt77Name;
+      document.getElementById('item-art77-sub').textContent = t.itemArt77Sub;
+      document.getElementById('item-notice-name').textContent = t.itemNoticeName;
+      document.getElementById('item-notice-sub').textContent = t.itemNoticeSub;
+      document.getElementById('item-leave-name').textContent = t.itemLeaveName;
+      document.getElementById('item-leave-sub').textContent = t.itemLeaveSub;
+      document.getElementById('item-eosb-name').textContent = t.itemEosbName;
+      document.getElementById('item-eosb-sub').textContent = t.itemEosbSub;
+      document.getElementById('btn-print-text').textContent = t.btnPrint;
+      document.getElementById('btn-csv-text').textContent = t.btnCsv;
+      document.getElementById('pro-box-title').textContent = t.proTitle;
+      document.getElementById('pro-box-desc').textContent = t.proDesc;
+      document.getElementById('pro-box-btn').textContent = t.proBtn;
+      document.getElementById('disclaimer-title').textContent = t.disclaimerTitle;
+      document.getElementById('table-title').textContent = t.tableTitle;
+
+      calculateTermination();
+    }
+
+    function onNationalityChange() {
+      const nationality = document.getElementById('nationality').value;
+      const contractType = document.getElementById('contract_type');
+      const expatNote = document.getElementById('expat-note');
+      
+      if (nationality === 'expat') {
+        contractType.value = 'fixed';
+        contractType.disabled = true;
+        expatNote.classList.remove('hidden');
+      } else {
+        contractType.disabled = false;
+        expatNote.classList.add('hidden');
+      }
+      calculateTermination();
+    }
+
+    function toggleCustomClause() {
+      const hasCustom = document.getElementById('has_custom_clause').value;
+      const box = document.getElementById('custom-clause-amount-box');
+      if (hasCustom === 'yes') {
+        box.classList.remove('hidden');
+      } else {
+        box.classList.add('hidden');
+      }
+      calculateTermination();
+    }
+
+    function calculateTermination() {
+      // Wages
+      const basic = parseFloat(document.getElementById('basic_wage').value) || 0;
+      const housing = parseFloat(document.getElementById('housing_wage').value) || 0;
+      const other = parseFloat(document.getElementById('other_allowances').value) || 0;
+      const gross = basic + housing + other;
+      document.getElementById('display_gross_wage').textContent = gross.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      // Tenure
+      const tYears = parseFloat(document.getElementById('tenure_years').value) || 0;
+      const tMonths = parseFloat(document.getElementById('tenure_months').value) || 0;
+      const totalTenureYears = tYears + (tMonths / 12);
+
+      // Contract Type & Article 77
+      const contractType = document.getElementById('contract_type').value;
+      const remainingMonths = parseFloat(document.getElementById('remaining_months').value) || 0;
+      const hasCustom = document.getElementById('has_custom_clause').value === 'yes';
+      const customAmount = parseFloat(document.getElementById('custom_agreed_amount').value) || 0;
+
+      // Visibility of remaining months
+      const fixedGroup = document.getElementById('fixed-duration-group');
+      if (contractType === 'fixed') {
+        fixedGroup.style.display = 'block';
+      } else {
+        fixedGroup.style.display = 'none';
+      }
+
+      // 1. Calculate Article 77 Indemnity
+      let art77Amount = 0;
+      let art77RuleDesc = '';
+
+      if (hasCustom) {
+        art77Amount = customAmount;
+        art77RuleDesc = currentLang === 'ar' ? 'بناءً على البند المتفق عليه بالعقد' : 'Contract Agreed Clause Applied';
+      } else {
+        const statutoryMinFloor = 2 * gross;
+        if (contractType === 'fixed') {
+          // Wage of remaining period
+          const rawRemainingAmount = remainingMonths * gross;
+          if (rawRemainingAmount >= statutoryMinFloor) {
+            art77Amount = rawRemainingAmount;
+            art77RuleDesc = currentLang === 'ar' ? `أجر المدة المتبقية (${remainingMonths} شهر)` : `Unexpired ${remainingMonths} months full wage`;
+          } else {
+            art77Amount = statutoryMinFloor;
+            art77RuleDesc = currentLang === 'ar' ? 'الحد الأدنى النظامي (أجر شهرين)' : 'Statutory Minimum Floor (2 Months)';
+          }
+        } else {
+          // Indefinite: 15 days wage for each year (0.5 * gross * years)
+          const rawIndefinite = totalTenureYears * (0.5 * gross);
+          if (rawIndefinite >= statutoryMinFloor) {
+            art77Amount = rawIndefinite;
+            art77RuleDesc = currentLang === 'ar' ? `أجر 15 يوماً لكل سنة (${totalTenureYears.toFixed(1)} سنة)` : `15 days per year (${totalTenureYears.toFixed(1)} yrs)`;
+          } else {
+            art77Amount = statutoryMinFloor;
+            art77RuleDesc = currentLang === 'ar' ? 'الحد الأدنى النظامي (أجر شهرين)' : 'Statutory Minimum Floor (2 Months)';
+          }
+        }
+      }
+
+      // 2. Notice period pay in lieu (gross wage based)
+      const dailyGross = gross / 30;
+      const noticeStatus = document.getElementById('notice_status').value;
+      let noticeAmount = 0;
+      if (noticeStatus === 'unserved_30') noticeAmount = dailyGross * 30;
+      else if (noticeStatus === 'unserved_60') noticeAmount = dailyGross * 60;
+      else if (noticeStatus === 'unserved_90') noticeAmount = dailyGross * 90;
+
+      // 3. Unused annual leave encashment (Article 111)
+      const leaveDays = parseFloat(document.getElementById('unused_leave_days').value) || 0;
+      const leaveAmount = leaveDays * dailyGross;
+
+      // 4. Involuntary End of Service Gratuity (Article 84)
+      const includeEOSB = document.getElementById('include_eosb').checked;
+      let eosbAmount = 0;
+      if (includeEOSB && totalTenureYears > 0) {
+        if (totalTenureYears <= 5) {
+          eosbAmount = totalTenureYears * (0.5 * gross);
+        } else {
+          const firstFive = 5 * (0.5 * gross);
+          const remainingYears = totalTenureYears - 5;
+          eosbAmount = firstFive + (remainingYears * gross);
+        }
+      }
+
+      // Total
+      const totalPayout = art77Amount + noticeAmount + leaveAmount + eosbAmount;
+
+      // Render outputs
+      document.getElementById('res_art77_amount').textContent = art77Amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' SAR';
+      document.getElementById('res_art77_rule').textContent = art77RuleDesc;
+      document.getElementById('res_notice_amount').textContent = noticeAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' SAR';
+      document.getElementById('res_leave_amount').textContent = leaveAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' SAR';
+      document.getElementById('res_eosb_amount').textContent = eosbAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' SAR';
+      document.getElementById('res_total_payout').textContent = totalPayout.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function exportCSV() {
+      const gross = document.getElementById('display_gross_wage').textContent;
+      const art77 = document.getElementById('res_art77_amount').textContent;
+      const notice = document.getElementById('res_notice_amount').textContent;
+      const leave = document.getElementById('res_leave_amount').textContent;
+      const eosb = document.getElementById('res_eosb_amount').textContent;
+      const total = document.getElementById('res_total_payout').textContent;
+      
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Audit Component,Amount in SAR,Legal Reference\n";
+      csvContent += `"Gross Monthly Wage","${gross}","Articles 2 & 77"\n`;
+      csvContent += `"Article 77 Termination Indemnity","${art77}","Labor Law Article 77"\n`;
+      csvContent += `"Pay in Lieu of Notice Period","${notice}","Labor Law Articles 75 & 76"\n`;
+      csvContent += `"Unused Leave Balance Encashment","${leave}","Labor Law Article 111"\n`;
+      csvContent += `"Involuntary End of Service Gratuity","${eosb}","Labor Law Article 84"\n`;
+      csvContent += `"TOTAL COMPANY SETTLEMENT LIABILITY","${total} SAR","Comprehensive Settlement"\n`;
+      
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `saudi_article_77_settlement_audit_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initial run
+    calculateTermination();
+  </script>
+</body>
+</html>

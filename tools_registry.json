@@ -117,5 +117,12 @@
     "title_ar": "مولد ومدقق ملف حماية الأجور (SIF) المعتمد للبنوك السعودية ومُدد",
     "description_en": "Generate and validate compliant Saudi Wage Protection System (WPS) SIF bank payroll files. Audit IBANs, IDs, allowances, and avoid Mudad rejection.",
     "date": "2026-11-05"
+  },
+  {
+    "slug": "saudi-article-77-termination-compensation-calculator",
+    "title_en": "Saudi Labor Law Article 77 Termination Compensation & Settlement Calculator",
+    "title_ar": "حاسبة تعويض إنهاء عقد العمل والتسوية الودية وفق المادة 77 من نظام العمل السعودي",
+    "description_en": "Calculate lawful compensation under Article 77 of Saudi Labor Law, notice pay, unused leave balance, and full termination settlement for HR and employers.",
+    "date": "2026-11-07"
   }
 ]
