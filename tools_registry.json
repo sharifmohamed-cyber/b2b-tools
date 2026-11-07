@@ -124,5 +124,12 @@
     "title_ar": "حاسبة تعويض إنهاء عقد العمل والتسوية الودية وفق المادة 77 من نظام العمل السعودي",
     "description_en": "Calculate lawful compensation under Article 77 of Saudi Labor Law, notice pay, unused leave balance, and full termination settlement for HR and employers.",
     "date": "2026-11-07"
+  },
+  {
+    "slug": "saudi-article-117-sick-leave-salary-calculator",
+    "title_en": "Saudi Labor Law Article 117 Sick Leave Salary & Deductions Calculator",
+    "title_ar": "حاسبة رواتب واقتطاعات الإجازة المرضية - المادة 117 من نظام العمل السعودي",
+    "description_en": "Calculate Saudi Labor Law Article 117 sick leave payroll deductions, 100%/75%/unpaid brackets, cumulative year tracking, and net pay impact for HR.",
+    "date": "2026-11-07"
   }
 ]

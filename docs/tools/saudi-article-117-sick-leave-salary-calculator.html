@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi Labor Law Article 117 Sick Leave & Payroll Deductions Calculator | حاسبة الإجازات المرضية</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            cairo: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            emerald: {
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .font-ar { font-family: 'Cairo', sans-serif; }
+    .font-en { font-family: 'Inter', sans-serif; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-en transition-colors duration-200">
+
+  <!-- Top Notification & Conversion Bar -->
+  <header class="bg-slate-900 text-white border-b border-slate-800 no-print sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse">
+        <span class="inline-block px-2 py-0.5 rounded bg-emerald-600 text-white font-semibold text-xs">KSA HR 2025</span>
+        <span id="bannerText">Compliant with Ministry of Human Resources & Article 117 Rules</span>
+      </div>
+      <div class="flex items-center space-x-4 rtl:space-x-reverse">
+        <a href="https://gumroad.com" target="_blank" class="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-slate-950 font-bold px-3 py-1.5 rounded-lg shadow-sm transition-all transform hover:scale-105 inline-flex items-center gap-1.5">
+          <span>⚡ Download Excel &amp; VBA Master Payroll Suite ($29)</span>
+        </a>
+        <button id="langToggleBtn" onclick="toggleLanguage()" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+          العربية
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Hero & Title -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+    <div class="mb-8 text-center max-w-3xl mx-auto">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 text-xs font-semibold mb-3 border border-emerald-200">
+        <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+        <span data-i18n="badge">Official Saudi Labor Law Formula Engine</span>
+      </div>
+      <h1 class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2" data-i18n="mainTitle">
+        Saudi Labor Law Article 117 Sick Leave &amp; Deduction Calculator
+      </h1>
+      <p class="text-sm sm:text-base text-slate-600" data-i18n="mainSubtitle">
+        Calculate payroll deductions, pay-scale brackets (100%, 75%, unpaid), and remaining annual sick quotas according to Saudi labor regulations.
+      </p>
+    </div>
+
+    <!-- Main Grid: Input Form + Instant Results -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Form Inputs Card (7 cols) -->
+      <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+        <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            <span data-i18n="salaryDetails">Employee Salary &amp; Leave Parameters</span>
+          </h2>
+          <button type="button" onclick="resetDefaults()" class="text-xs text-slate-500 hover:text-emerald-600 underline" data-i18n="resetFields">Reset Form</button>
+        </div>
+
+        <!-- Salary Inputs -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="basicSalaryLabel">
+              Basic Monthly Salary (SAR)
+            </label>
+            <div class="relative rounded-lg shadow-sm">
+              <div class="absolute inset-y-0 left-0 rtl:right-0 rtl:left-auto pl-3 rtl:pr-3 flex items-center pointer-events-none text-slate-400 text-sm font-semibold">SAR</div>
+              <input type="number" id="basicSalary" value="6000" min="0" step="50" class="w-full pl-12 rtl:pr-12 pr-4 rtl:pl-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 font-semibold text-sm outline-none transition" oninput="calculate()" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="allowanceSalaryLabel">
+              Fixed Allowances (Housing / Transport) (SAR)
+            </label>
+            <div class="relative rounded-lg shadow-sm">
+              <div class="absolute inset-y-0 left-0 rtl:right-0 rtl:left-auto pl-3 rtl:pr-3 flex items-center pointer-events-none text-slate-400 text-sm font-semibold">SAR</div>
+              <input type="number" id="allowanceSalary" value="2000" min="0" step="50" class="w-full pl-12 rtl:pr-12 pr-4 rtl:pl-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 font-semibold text-sm outline-none transition" oninput="calculate()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Allowance Policy Toggle -->
+        <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs space-y-2">
+          <label class="font-semibold text-slate-800 block" data-i18n="wageBasisLabel">Sick Leave Deduction Wage Calculation Basis:</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-emerald-500 transition">
+              <input type="radio" name="wageBasis" value="gross" checked onchange="calculate()" class="text-emerald-600 focus:ring-emerald-500" />
+              <div>
+                <span class="font-medium block text-slate-900" data-i18n="wageGross">Gross / Actual Wage (Basic + Allowances)</span>
+                <span class="text-[11px] text-slate-500 leading-tight block" data-i18n="wageGrossDesc">Standard Saudi statutory practice (Article 2 definition)</span>
+              </div>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-white border border-slate-200 cursor-pointer hover:border-emerald-500 transition">
+              <input type="radio" name="wageBasis" value="basic" onchange="calculate()" class="text-emerald-600 focus:ring-emerald-500" />
+              <div>
+                <span class="font-medium block text-slate-900" data-i18n="wageBasic">Basic Wage Only</span>
+                <span class="text-[11px] text-slate-500 leading-tight block" data-i18n="wageBasicDesc">If specified by company bylaws or internal policy</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Sick Days History & Current Month Inputs -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-100">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="priorDaysLabel">
+              Prior Sick Days Taken in Current Service Year
+            </label>
+            <input type="number" id="priorDays" value="15" min="0" max="365" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 font-semibold text-sm outline-none transition" oninput="calculate()" />
+            <span class="text-[11px] text-slate-500 mt-1 block" data-i18n="priorDaysHelper">Days consumed in the employee's current contractual year</span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="newDaysLabel">
+              New Sick Leave Days in Current Pay Period
+            </label>
+            <input type="number" id="currentSickDays" value="25" min="1" max="120" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-slate-900 font-semibold text-sm outline-none transition" oninput="calculate()" />
+            <span class="text-[11px] text-slate-500 mt-1 block" data-i18n="newDaysHelper">Certified by official medical report (e.g. Seha / صحة)</span>
+          </div>
+        </div>
+
+        <!-- Month Length Selector -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="dailyDivisorLabel">
+            Payroll Daily Divisor Standard
+          </label>
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <label class="flex items-center gap-2 p-2.5 border rounded-lg bg-slate-50 cursor-pointer">
+              <input type="radio" name="dailyDivisor" value="30" checked onchange="calculate()" class="text-emerald-600 focus:ring-emerald-500" />
+              <span class="font-medium" data-i18n="divisor30">Standard 30 Days (Saudi Labor Law Norm)</span>
+            </label>
+            <label class="flex items-center gap-2 p-2.5 border rounded-lg bg-slate-50 cursor-pointer">
+              <input type="radio" name="dailyDivisor" value="calendar" onchange="calculate()" class="text-emerald-600 focus:ring-emerald-500" />
+              <span class="font-medium" data-i18n="divisorCalendar">Calendar Days (28, 29, 30, or 31)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Seha Platform Compliance Notice -->
+        <div class="p-3 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg text-xs text-blue-900 flex items-start gap-2.5 rtl:border-l-0 rtl:border-r-4 rtl:rounded-l-lg rtl:rounded-r-none">
+          <svg class="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+          <p data-i18n="sehaNote">Under Saudi MHRSD directives, official sick leaves must be verified and issued through the approved national platform (Seha / منصة صحة) with a verifiable leave code.</p>
+        </div>
+      </div>
+
+      <!-- Output Results Card (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+          <div class="bg-slate-900 text-white p-5">
+            <div class="flex justify-between items-center">
+              <h3 class="text-sm font-bold uppercase tracking-wider text-slate-300" data-i18n="payrollSummaryTitle">Payroll Impact Summary</h3>
+              <span class="px-2.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30" data-i18n="liveAudit">Live Calculation</span>
+            </div>
+            <div class="mt-4">
+              <div class="text-xs text-slate-400 uppercase tracking-wider" data-i18n="totalDeductionLabel">Total Sick Leave Deduction</div>
+              <div class="text-3xl font-extrabold text-red-400 tracking-tight mt-1" id="displayTotalDeduction">SAR 0.00</div>
+              <div class="text-xs text-slate-400 mt-1" id="displayDailyRateDetail">Daily Rate: SAR 0.00 / day</div>
+            </div>
+          </div>
+
+          <!-- Breakdown Section -->
+          <div class="p-6 space-y-4 text-sm">
+            <div>
+              <div class="flex justify-between font-semibold text-slate-700 mb-1">
+                <span data-i18n="netPayableWage">Estimated Payable Salary for Period:</span>
+                <span class="text-emerald-700 font-bold text-base" id="displayNetWage">SAR 0.00</span>
+              </div>
+              <div class="text-xs text-slate-500 mb-4" data-i18n="netWageExpl">Regular Gross Salary minus Sick Leave Deductions</div>
+            </div>
+
+            <!-- Bracket Tier Consumption for Current Request -->
+            <div class="space-y-2.5 pt-3 border-t border-slate-100">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500" data-i18n="tierBreakdownHeading">Current Leave Allocation by Tier:</h4>
+              
+              <!-- Tier 1: 100% -->
+              <div class="flex justify-between items-center p-2 rounded-lg bg-emerald-50 border border-emerald-100">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+                  <div>
+                    <span class="font-medium text-xs text-emerald-950" data-i18n="tier1Label">Tier 1 (First 30 Days @ 100% Pay)</span>
+                    <div class="text-[11px] text-emerald-700" id="t1DaysDetail">0 days • 0% deduction</div>
+                  </div>
+                </div>
+                <span class="font-semibold text-xs text-emerald-800" id="t1Deduction">SAR 0.00</span>
+              </div>
+
+              <!-- Tier 2: 75% -->
+              <div class="flex justify-between items-center p-2 rounded-lg bg-amber-50 border border-amber-100">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+                  <div>
+                    <span class="font-medium text-xs text-amber-950" data-i18n="tier2Label">Tier 2 (Next 60 Days @ 75% Pay)</span>
+                    <div class="text-[11px] text-amber-700" id="t2DaysDetail">0 days • 25% deduction</div>
+                  </div>
+                </div>
+                <span class="font-semibold text-xs text-amber-800" id="t2Deduction">SAR 0.00</span>
+              </div>
+
+              <!-- Tier 3: 0% -->
+              <div class="flex justify-between items-center p-2 rounded-lg bg-rose-50 border border-rose-100">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span>
+                  <div>
+                    <span class="font-medium text-xs text-rose-950" data-i18n="tier3Label">Tier 3 (Next 30 Days @ Unpaid 0%)</span>
+                    <div class="text-[11px] text-rose-700" id="t3DaysDetail">0 days • 100% deduction</div>
+                  </div>
+                </div>
+                <span class="font-semibold text-xs text-rose-800" id="t3Deduction">SAR 0.00</span>
+              </div>
+
+              <!-- Tier 4: Exceeded 120 Days -->
+              <div id="tier4Card" class="hidden flex justify-between items-center p-2 rounded-lg bg-purple-50 border border-purple-200">
+                <div class="flex items-center gap-2">
+                  <span class="w-2.5 h-2.5 rounded-full bg-purple-600"></span>
+                  <div>
+                    <span class="font-medium text-xs text-purple-950" data-i18n="tier4Label">Exceeded 120 Days (Article 82 Termination Right)</span>
+                    <div class="text-[11px] text-purple-700" id="t4DaysDetail">0 days • 100% deduction</div>
+                  </div>
+                </div>
+                <span class="font-semibold text-xs text-purple-800" id="t4Deduction">SAR 0.00</span>
+              </div>
+            </div>
+
+            <!-- Remaining Annual Sick Quota Progress -->
+            <div class="pt-4 border-t border-slate-100 space-y-2">
+              <div class="flex justify-between text-xs text-slate-600 font-semibold">
+                <span data-i18n="annualQuotaTitle">Cumulative Quota Used This Year:</span>
+                <span id="quotaText">40 / 120 Days</span>
+              </div>
+              <div class="w-full bg-slate-200 rounded-full h-3 overflow-hidden flex">
+                <div id="barT1" class="bg-emerald-500 h-full transition-all" style="width: 25%"></div>
+                <div id="barT2" class="bg-amber-400 h-full transition-all" style="width: 8%"></div>
+                <div id="barT3" class="bg-rose-500 h-full transition-all" style="width: 0%"></div>
+              </div>
+              <div class="flex justify-between text-[11px] text-slate-500">
+                <span>0 d</span>
+                <span>30 d (100%)</span>
+                <span>90 d (75%)</span>
+                <span>120 d (Unpaid)</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons: Print & CSV -->
+            <div class="pt-4 flex gap-2 no-print">
+              <button onclick="window.print()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-3 rounded-lg text-xs flex items-center justify-center gap-1.5 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                <span data-i18n="btnPrint">Print / PDF</span>
+              </button>
+              <button onclick="exportCSV()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2 px-3 rounded-lg text-xs flex items-center justify-center gap-1.5 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                <span data-i18n="btnCsv">Export CSV</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- High-Converting CTA Box for Excel Sheet -->
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-5 shadow-sm no-print">
+          <div class="flex items-start gap-3.5">
+            <div class="p-2.5 rounded-xl bg-amber-500 text-white font-bold text-lg shadow-sm flex-shrink-0">
+              📊
+            </div>
+            <div class="space-y-1">
+              <h4 class="text-sm font-bold text-slate-900" data-i18n="ctaBoxTitle">Need Batch Sick Leave Audit for 100+ Staff?</h4>
+              <p class="text-xs text-slate-600 leading-relaxed" data-i18n="ctaBoxDesc">
+                Get the Complete Offline Automated Excel &amp; VBA Master Payroll &amp; Sick Leave Tracker. Handles cumulative years, Seha codes, GOSI, and WPS-compliant SIF files automatically. Instant download with lifetime updates.
+              </p>
+              <div class="pt-2">
+                <a href="https://gumroad.com" target="_blank" class="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold px-4 py-2 rounded-lg text-xs shadow hover:shadow-md transition">
+                  <span data-i18n="ctaBoxBtn">Get Automated Excel Template ($29)</span>
+                  <span>&rarr;</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mandatory Bilingual Disclaimer -->
+        <div class="p-4 bg-amber-50/70 border border-amber-200 rounded-xl text-xs text-amber-900 leading-relaxed">
+          <strong class="font-bold block mb-1" data-i18n="disclaimerTitle">⚠️ Legal &amp; Regulatory Notice / إخلاء مسؤولية قانوني:</strong>
+          <p data-i18n="disclaimerTextEn">
+            This calculator produces estimates strictly for operational guidance based on Saudi Labor Law Article 117. Official company bylaws, contractual definitions of wage, and executive labor dispute rulings take precedence. Results must be validated by certified HR or legal counsel before executing payroll deductions.
+          </p>
+          <p class="mt-2 font-ar text-[11px] text-amber-800 rtl:text-right" data-i18n="disclaimerTextAr">
+            هذه الحاسبة تقدم نتائج تقديرية استرشادية مستندة إلى المادة 117 من نظام العمل السعودي. تعد اللوائح التنظيمية المعتمدة للمنشأة والأحكام القضائية هي المرجع النهائي، ويجب التحقق من المخرجات عبر مستشار قانوني أو مسؤول موارد بشرية معتمد قبل تطبيق الخصم على مسير الرواتب.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO & Technical Knowledge Base Section (800+ Words) -->
+    <section class="mt-16 bg-white rounded-2xl border border-slate-200 p-8 sm:p-10 text-slate-700 space-y-8 leading-relaxed">
+      
+      <!-- Article Intro -->
+      <div>
+        <h2 class="text-2xl font-bold text-slate-900 mb-4" data-i18n="seoHeading1">
+          In-Depth Guide to Sick Leave Regulations Under Saudi Labor Law (Article 117)
+        </h2>
+        <p class="mb-3 text-sm sm:text-base">
+          Handling employee sickness and payroll continuity is one of the most critical responsibilities for human resources and payroll operations teams across the Kingdom of Saudi Arabia (KSA). Governed by <strong>Royal Decree No. M/51</strong>, the Saudi Labor Law outlines strict, non-negotiable statutory protections for workers who fall ill or suffer non-work-related physical incapacity. Central to these protections is <strong>Article 117 (المادة السابعة عشرة بعد المائة)</strong>, which establishes a tiered pay scale covering up to 120 days of sick leave within any single contractual service year.
+        </p>
+        <p class="text-sm sm:text-base">
+          Failing to compute Article 117 sick leave correctly can expose an enterprise to severe labor violation penalties under the Ministry of Human Resources and Social Development (MHRSD) wage protection enforcement, as well as contractual labor tribunal disputes. This guide details the four statutory tiers, cumulative calculation mechanics, medical authentication rules, and interaction with annual leave and contract termination.
+        </p>
+      </div>
+
+      <!-- Statutory Tier Breakdown -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+        <div class="p-5 rounded-xl bg-slate-50 border border-slate-200">
+          <div class="text-emerald-700 font-bold text-sm mb-1">Tier 1: Days 1 – 30</div>
+          <div class="text-xl font-extrabold text-slate-900 mb-2">100% Full Pay</div>
+          <p class="text-xs text-slate-600 leading-normal">
+            The employee is legally entitled to their complete wage with zero deductions for the first 30 days of authenticated medical absence throughout their contractual employment year, whether taken continuously or intermittently.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-xl bg-slate-50 border border-slate-200">
+          <div class="text-amber-700 font-bold text-sm mb-1">Tier 2: Days 31 – 90</div>
+          <div class="text-xl font-extrabold text-slate-900 mb-2">75% Pay (Three-Quarters)</div>
+          <p class="text-xs text-slate-600 leading-normal">
+            For the subsequent 60 calendar days, the employee receives three-quarters (75%) of their wage. The payroll department deducts exactly 25% of the daily wage rate for each day taken within this 60-day bracket.
+          </p>
+        </div>
+
+        <div class="p-5 rounded-xl bg-slate-50 border border-slate-200">
+          <div class="text-rose-700 font-bold text-sm mb-1">Tier 3: Days 91 – 120</div>
+          <div class="text-xl font-extrabold text-slate-900 mb-2">0% (Unpaid Leave)</div>
+          <p class="text-xs text-slate-600 leading-normal">
+            For the following 30 calendar days, the employee retains job protection and healthcare insurance coverage, but the employer has no statutory obligation to pay cash wages. The daily rate is deducted at 100%.
+          </p>
+        </div>
+      </div>
+
+      <!-- Mathematical Formulas -->
+      <div class="space-y-4 pt-4 border-t border-slate-100">
+        <h3 class="text-xl font-bold text-slate-900" data-i18n="seoHeading2">The Mathematical Payroll Formulation</h3>
+        <p class="text-sm">
+          Payroll engines and accounting professionals compute Article 117 deductions utilizing two core variables: the <strong>Determined Daily Wage Rate</strong> and the <strong>Bracket Allocation Split</strong>.
+        </p>
+        <div class="bg-slate-900 text-slate-100 rounded-xl p-5 font-mono text-xs sm:text-sm overflow-x-auto space-y-3">
+          <div>
+            <span class="text-emerald-400 font-bold"># 1. Daily Wage Computation:</span><br>
+            Daily Rate = Monthly Wage Basis / Daily Divisor (Normally 30 days)<br>
+            <span class="text-slate-400">// Gross Wage Basis = Basic Salary + Housing Allowance + Transport Allowance</span>
+          </div>
+          <div>
+            <span class="text-emerald-400 font-bold"># 2. Sick Leave Deduction Calculation:</span><br>
+            Deduction = (Tier 1 Days &times; Daily Rate &times; 0.00) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ (Tier 2 Days &times; Daily Rate &times; 0.25) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ (Tier 3 Days &times; Daily Rate &times; 1.00) <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;+ (Tier 4 Exceeded Days &times; Daily Rate &times; 1.00)
+          </div>
+          <div>
+            <span class="text-emerald-400 font-bold"># 3. Net Payable Salary for Cycle:</span><br>
+            Net Period Pay = Monthly Gross Wage - Deduction - GOSI Contributions - Other Deductions
+          </div>
+        </div>
+      </div>
+
+      <!-- Critical HR Rules & Nuances -->
+      <div class="space-y-4 pt-4 border-t border-slate-100 text-sm">
+        <h3 class="text-xl font-bold text-slate-900" data-i18n="seoHeading3">Critical Operational &amp; Legal Nuances for HR Teams</h3>
+        
+        <div class="space-y-3">
+          <div>
+            <h4 class="font-bold text-slate-900">1. Single Service Year vs. Calendar Year</h4>
+            <p class="text-slate-600">
+              A widespread payroll error in Saudi Arabia is resetting sick leave balances on January 1st of every calendar year. Under Article 117, the 120-day quota operates strictly on the <em>employee's contractual service year</em> (beginning from the date of joining or contractual renewal date), unless enterprise internal regulations approved by MHRSD explicitly state otherwise in favor of the employee.
+            </p>
+          </div>
+
+          <div>
+            <h4 class="font-bold text-slate-900">2. Continuous vs. Intermittent Leave (التتابع والتجزئة)</h4>
+            <p class="text-slate-600">
+              Article 117 states that the 120 days apply <em>"whether these leaves are continuous or intermittent"</em> (سواءً أكانت هذه الإجازات متصلة أم متقطعة). An employee who takes 3 days in March, 10 days in June, and 20 days in September must have those days aggregated chronologically. The 31st cumulative day triggers the 75% rate, regardless of the gap between episodes.
+            </p>
+          </div>
+
+          <div>
+            <h4 class="font-bold text-slate-900">3. Medical Authentication via Seha Platform (منصة صحة)</h4>
+            <p class="text-slate-600">
+              Medical excuses issued on arbitrary paper clinic slips are no longer legally compliant for labor dispute defense. The Kingdom’s Ministry of Health and MHRSD mandate electronic reports generated via the Seha digital portal, which automatically synchronizes with the Qiwa and GOSI platforms. Employers must authenticate the SL-Code (Sick Leave Code) before approving payroll disbursements.
+            </p>
+          </div>
+
+          <div>
+            <h4 class="font-bold text-slate-900">4. Contract Termination Restrictions (Article 82)</h4>
+            <p class="text-slate-600">
+              Under <strong>Article 82 of the Saudi Labor Law</strong>, an employer is strictly prohibited from terminating an employee’s contract on the grounds of health or illness prior to the employee fully exhausting the 120-day statutory sick leave quota. Furthermore, the employee retains the right to request attaching their accumulated paid annual vacation days to their sick leave before any termination proceeding may be initiated.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ Accordion -->
+      <div class="space-y-4 pt-4 border-t border-slate-100">
+        <h3 class="text-xl font-bold text-slate-900" data-i18n="faqHeading">Frequently Asked Questions (FAQ)</h3>
+        
+        <div class="space-y-3 text-sm">
+          <details class="p-4 rounded-xl bg-slate-50 border border-slate-200 group">
+            <summary class="font-bold text-slate-800 cursor-pointer flex justify-between items-center">
+              <span>Does sick leave deduction include housing and transportation allowances?</span>
+              <span class="text-emerald-600 group-open:rotate-180 transition-transform">&darr;</span>
+            </summary>
+            <p class="mt-2 text-slate-600 leading-relaxed text-xs sm:text-sm">
+              According to Article 2 of the Saudi Labor Law, the term "Wage" (الأجر) encompasses the actual basic salary plus all regular increments and allowances allocated to the worker. Unless internal organizational bylaws specify otherwise with Ministry certification, deductions for 75% and unpaid days are computed on the total regular wage.
+            </p>
+          </details>
+
+          <details class="p-4 rounded-xl bg-slate-50 border border-slate-200 group">
+            <summary class="font-bold text-slate-800 cursor-pointer flex justify-between items-center">
+              <span>Can an employer combine sick leave with annual leave?</span>
+              <span class="text-emerald-600 group-open:rotate-180 transition-transform">&darr;</span>
+            </summary>
+            <p class="mt-2 text-slate-600 leading-relaxed text-xs sm:text-sm">
+              Yes. Article 82 grants the employee the legal prerogative to connect their accrued annual leave balance to their sick leave. If an employee exhausts the 30 full-pay days and 60 partial-pay days, they can consume paid annual leave rather than entering the unpaid 30-day tier.
+            </p>
+          </details>
+
+          <details class="p-4 rounded-xl bg-slate-50 border border-slate-200 group">
+            <summary class="font-bold text-slate-800 cursor-pointer flex justify-between items-center">
+              <span>What happens if the sick leave is caused by a workplace injury (Occupational Hazard)?</span>
+              <span class="text-emerald-600 group-open:rotate-180 transition-transform">&darr;</span>
+            </summary>
+            <p class="mt-2 text-slate-600 leading-relaxed text-xs sm:text-sm">
+              Work injuries and occupational diseases do not follow Article 117. Instead, they fall under <strong>Article 137 of the Labor Law and GOSI Occupational Hazard regulations</strong>. For work-related injuries, the employee is entitled to 100% full wage for 60 days, followed by 75% wage paid directly by GOSI during medical rehabilitation up to one full year or permanent disability declaration.
+            </p>
+          </details>
+
+          <details class="p-4 rounded-xl bg-slate-50 border border-slate-200 group">
+            <summary class="font-bold text-slate-800 cursor-pointer flex justify-between items-center">
+              <span>Can an employee be dismissed while on approved sick leave?</span>
+              <span class="text-emerald-600 group-open:rotate-180 transition-transform">&darr;</span>
+            </summary>
+            <p class="mt-2 text-slate-600 leading-relaxed text-xs sm:text-sm">
+              No. Article 82 specifically forbids termination during the sick leave entitlement period of 120 days. Any dismissal executed during this statutory timeframe is deemed arbitrary dismissal under Article 77, obligating the employer to pay statutory indemnities.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 py-8 border-t border-slate-800 mt-12 text-xs no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+        <span class="font-semibold text-slate-200">Saudi B2B HR Tools Engine</span>
+        <span>&copy; 2025. All Rights Reserved.</span>
+      </div>
+      <div class="flex items-center gap-6">
+        <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;" class="hover:text-white transition">Back to Top &uarr;</a>
+        <a href="https://gumroad.com" target="_blank" class="hover:text-amber-400 font-semibold transition">Payroll Excel Toolkit ($29)</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Embedded Logic & Bilingual Engine -->
+  <script>
+    // Translation Dictionary
+    const i18nData = {
+      en: {
+        bannerText: "Compliant with Ministry of Human Resources & Article 117 Rules",
+        badge: "Official Saudi Labor Law Formula Engine",
+        mainTitle: "Saudi Labor Law Article 117 Sick Leave & Deduction Calculator",
+        mainSubtitle: "Calculate payroll deductions, pay-scale brackets (100%, 75%, unpaid), and remaining annual sick quotas according to Saudi labor regulations.",
+        salaryDetails: "Employee Salary & Leave Parameters",
+        resetFields: "Reset Form",
+        basicSalaryLabel: "Basic Monthly Salary (SAR)",
+        allowanceSalaryLabel: "Fixed Allowances (Housing / Transport) (SAR)",
+        wageBasisLabel: "Sick Leave Deduction Wage Calculation Basis:",
+        wageGross: "Gross / Actual Wage (Basic + Allowances)",
+        wageGrossDesc: "Standard Saudi statutory practice (Article 2 definition)",
+        wageBasic: "Basic Wage Only",
+        wageBasicDesc: "If specified by company bylaws or internal policy",
+        priorDaysLabel: "Prior Sick Days Taken in Current Service Year",
+        priorDaysHelper: "Days consumed in the employee's current contractual year",
+        newDaysLabel: "New Sick Leave Days in Current Pay Period",
+        newDaysHelper: "Certified by official medical report (e.g. Seha / صحة)",
+        dailyDivisorLabel: "Payroll Daily Divisor Standard",
+        divisor30: "Standard 30 Days (Saudi Labor Law Norm)",
+        divisorCalendar: "Calendar Days (28, 29, 30, or 31)",
+        sehaNote: "Under Saudi MHRSD directives, official sick leaves must be verified and issued through the approved national platform (Seha / منصة صحة) with a verifiable leave code.",
+        payrollSummaryTitle: "Payroll Impact Summary",
+        liveAudit: "Live Calculation",
+        totalDeductionLabel: "Total Sick Leave Deduction",
+        netPayableWage: "Estimated Payable Salary for Period:",
+        netWageExpl: "Regular Gross Salary minus Sick Leave Deductions",
+        tierBreakdownHeading: "Current Leave Allocation by Tier:",
+        tier1Label: "Tier 1 (First 30 Days @ 100% Pay)",
+        tier2Label: "Tier 2 (Next 60 Days @ 75% Pay)",
+        tier3Label: "Tier 3 (Next 30 Days @ Unpaid 0%)",
+        tier4Label: "Exceeded 120 Days (Article 82 Termination Right)",
+        annualQuotaTitle: "Cumulative Quota Used This Year:",
+        btnPrint: "Print / PDF",
+        btnCsv: "Export CSV",
+        ctaBoxTitle: "Need Batch Sick Leave Audit for 100+ Staff?",
+        ctaBoxDesc: "Get the Complete Offline Automated Excel & VBA Master Payroll & Sick Leave Tracker. Handles cumulative years, Seha codes, GOSI, and WPS-compliant SIF files automatically. Instant download with lifetime updates.",
+        ctaBoxBtn: "Get Automated Excel Template ($29)",
+        disclaimerTitle: "⚠️ Legal & Regulatory Notice / إخلاء مسؤولية قانوني:",
+        disclaimerTextEn: "This calculator produces estimates strictly for operational guidance based on Saudi Labor Law Article 117. Official company bylaws, contractual definitions of wage, and executive labor dispute rulings take precedence. Results must be validated by certified HR or legal counsel before executing payroll deductions.",
+        disclaimerTextAr: "هذه الحاسبة تقدم نتائج تقديرية استرشادية مستندة إلى المادة 117 من نظام العمل السعودي. تعد اللوائح التنظيمية المعتمدة للمنشأة والأحكام القضائية هي المرجع النهائي، ويجب التحقق من المخرجات عبر مستشار قانوني أو مسؤول موارد بشرية معتمد قبل تطبيق الخصم على مسير الرواتب.",
+        seoHeading1: "In-Depth Guide to Sick Leave Regulations Under Saudi Labor Law (Article 117)",
+        seoHeading2: "The Mathematical Payroll Formulation",
+        seoHeading3: "Critical Operational & Legal Nuances for HR Teams",
+        faqHeading: "Frequently Asked Questions (FAQ)"
+      },
+      ar: {
+        bannerText: "متوافق مع أنظمة وزارة الموارد البشرية والمادة 117 من نظام العمل",
+        badge: "المحرك الرسمي لمعادلات نظام العمل السعودي",
+        mainTitle: "حاسبة رواتب واقتطاعات الإجازة المرضية - المادة 117 من نظام العمل",
+        mainSubtitle: "احسب خصومات الرواتب وشرائح الأجر (100%، 75%، بدون أجر) والرصيد التراكمي المتبقي وفقاً للأنظمة واللوائح السعودية.",
+        salaryDetails: "بيانات الراتب وتفاصيل الإجازة المرضية",
+        resetFields: "إعادة التعيين",
+        basicSalaryLabel: "الراتب الأساسي الشهري (ريال)",
+        allowanceSalaryLabel: "البدلات الثابتة (سكن / مواصلات) (ريال)",
+        wageBasisLabel: "أساس احتساب أجر الخصم للإجازة المرضية:",
+        wageGross: "الأجر الفعلي / الإجمالي (أساسي + بدلات)",
+        wageGrossDesc: "المعيار النظامي المعتمد بنظام العمل (تعريف المادة 2)",
+        wageBasic: "الراتب الأساسي فقط",
+        wageBasicDesc: "إذا نصت اللائحة الداخلية للمنشأة المعتمدة على ذلك",
+        priorDaysLabel: "أيام الإجازات المرضية السابقة المستهلكة في سنة الخدمة الحالية",
+        priorDaysHelper: "الأيام التي استهلكها الموظف في سنة عقده الحالية",
+        newDaysLabel: "أيام الإجازة المرضية الجديدة المراد احتسابها في المسير",
+        newDaysHelper: "المعتمدة بتقرير طبي رسمي صادر عبر منصة صحة",
+        dailyDivisorLabel: "معيار قسمة أجر اليوم الواحد",
+        divisor30: "المعيار الثابت 30 يوماً (المعتمد في نظام العمل)",
+        divisorCalendar: "أيام الشهر التقويمي (28 أو 29 أو 30 أو 31)",
+        sehaNote: "وفقاً لتعليمات وزارة الموارد البشرية، يجب أن تكون الإجازات المرضية صادرة إلكترونياً عبر منصة (صحة) التابعة لوزارة الصحة برمز استعلام معتمد.",
+        payrollSummaryTitle: "ملخص التأثير المالي على مسير الرواتب",
+        liveAudit: "حساب فوري مباشر",
+        totalDeductionLabel: "إجمالي مبلغ الخصم من الراتب",
+        netPayableWage: "صافي الراتب المستحق عن الفترة:",
+        netWageExpl: "إجمالي الراتب النظامي مخصوماً منه استقطاع المرضية",
+        tierBreakdownHeading: "توزيع أيام الإجازة على الشرائح النظامية:",
+        tier1Label: "الشريحة الأولى (أول 30 يوماً بأجر كامل 100%)",
+        tier2Label: "الشريحة الثانية (الـ 60 يوماً التالية بثلاثة أرباع الأجر 75%)",
+        tier3Label: "الشريحة الثالثة (الـ 30 يوماً التالية بدون أجر 0%)",
+        tier4Label: "تجاوز 120 يوماً (حق إنهاء العقد وفق المادة 82)",
+        annualQuotaTitle: "الرصيد التراكمي المستهلك خلال سنة الخدمة:",
+        btnPrint: "طباعة / تصدير PDF",
+        btnCsv: "تصدير ملف CSV",
+        ctaBoxTitle: "هل تدير مسيرات رواتب وإجازات لأكثر من 100 موظف؟",
+        ctaBoxDesc: "احصل على نموذج الإكسل المتقدم المؤتمت بـ VBA لحساب الإجازات المرضية التراكمية، وربط كود صحة، وملفات حماية الأجور SIF فوراً بدون اشتراكات دورية.",
+        ctaBoxBtn: "تحميل قالب الإكسل الذكي ($29)",
+        disclaimerTitle: "⚠️ إخلاء مسؤولية نظامي وقانوني / Legal Notice:",
+        disclaimerTextEn: "This calculator produces estimates strictly for operational guidance based on Saudi Labor Law Article 117. Official company bylaws, contractual definitions of wage, and executive labor dispute rulings take precedence. Results must be validated by certified HR or legal counsel before executing payroll deductions.",
+        disclaimerTextAr: "هذه الحاسبة تقدم نتائج تقديرية استرشادية مستندة إلى المادة 117 من نظام العمل السعودي. تعد اللوائح التنظيمية المعتمدة للمنشأة والأحكام القضائية هي المرجع النهائي، ويجب التحقق من المخرجات عبر مستشار قانوني أو مسؤول موارد بشرية معتمد قبل تطبيق الخصم على مسير الرواتب.",
+        seoHeading1: "دليل شامل لإجازات المرض وفق المادة 117 من نظام العمل السعودي",
+        seoHeading2: "المعادلات الرياضية لاحتساب خصومات مسير الرواتب",
+        seoHeading3: "قواعد تشغيلية وإرشادات جوهرية لفرق الموارد البشرية",
+        faqHeading: "الأسئلة الشائعة والأحكام النظامية (FAQ)"
+      }
+    };
+
+    let currentLang = 'en';
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      const htmlTag = document.documentElement;
+      const bodyTag = document.body;
+      const toggleBtn = document.getElementById('langToggleBtn');
+
+      if (currentLang === 'ar') {
+        htmlTag.setAttribute('dir', 'rtl');
+        htmlTag.setAttribute('lang', 'ar');
+        bodyTag.classList.remove('font-en');
+        bodyTag.classList.add('font-ar');
+        toggleBtn.innerText = 'English';
+      } else {
+        htmlTag.setAttribute('dir', 'ltr');
+        htmlTag.setAttribute('lang', 'en');
+        bodyTag.classList.remove('font-ar');
+        bodyTag.classList.add('font-en');
+        toggleBtn.innerText = 'العربية';
+      }
+
+      // Translate marked elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18nData[currentLang][key]) {
+          el.innerHTML = i18nData[currentLang][key];
+        }
+      });
+
+      // Update banner text
+      document.getElementById('bannerText').innerText = i18nData[currentLang].bannerText;
+      calculate();
+    }
+
+    // Main calculation engine
+    let calcSnapshot = {};
+
+    function calculate() {
+      const basic = parseFloat(document.getElementById('basicSalary').value) || 0;
+      const allowances = parseFloat(document.getElementById('allowanceSalary').value) || 0;
+      const wageBasisOption = document.querySelector('input[name="wageBasis"]:checked').value;
+      const priorDays = Math.max(0, parseInt(document.getElementById('priorDays').value) || 0);
+      const newDays = Math.max(0, parseInt(document.getElementById('currentSickDays').value) || 0);
+      const divisorOption = document.querySelector('input[name="dailyDivisor"]:checked').value;
+
+      const grossWage = basic + allowances;
+      const calculationWage = (wageBasisOption === 'basic') ? basic : grossWage;
+
+      const divisor = (divisorOption === '30') ? 30 : 30.416; // approximate average calendar month or 30 days
+      const dailyRate = calculationWage / divisor;
+
+      // Track allocation of newDays across tiers based on priorDays
+      // Tier 1: 0 to 30 days (100% pay => 0% deduction)
+      // Tier 2: 30 to 90 days [60 days cap] (75% pay => 25% deduction)
+      // Tier 3: 90 to 120 days [30 days cap] (0% pay => 100% deduction)
+      // Tier 4: > 120 days (unpaid => 100% deduction)
+
+      let daysRemaining = newDays;
+      let currentCumulative = priorDays;
+
+      let t1Days = 0;
+      let t2Days = 0;
+      let t3Days = 0;
+      let t4Days = 0;
+
+      // Process each day
+      for (let i = 0; i < newDays; i++) {
+        let dayNumberInYear = currentCumulative + 1;
+        if (dayNumberInYear <= 30) {
+          t1Days++;
+        } else if (dayNumberInYear <= 90) {
+          t2Days++;
+        } else if (dayNumberInYear <= 120) {
+          t3Days++;
+        } else {
+          t4Days++;
+        }
+        currentCumulative++;
+      }
+
+      // Deductions
+      const t1DeductionAmount = 0;
+      const t2DeductionAmount = t2Days * dailyRate * 0.25;
+      const t3DeductionAmount = t3Days * dailyRate * 1.00;
+      const t4DeductionAmount = t4Days * dailyRate * 1.00;
+
+      const totalDeduction = t1DeductionAmount + t2DeductionAmount + t3DeductionAmount + t4DeductionAmount;
+      const netWage = Math.max(0, grossWage - totalDeduction);
+
+      // Format currency
+      const fmtSAR = (num) => 'SAR ' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      // Render to DOM
+      document.getElementById('displayTotalDeduction').innerText = fmtSAR(totalDeduction);
+      document.getElementById('displayDailyRateDetail').innerText = `${currentLang === 'ar' ? 'أجر اليوم الواحد' : 'Daily Wage Rate'}: ${fmtSAR(dailyRate)}`;
+      document.getElementById('displayNetWage').innerText = fmtSAR(netWage);
+
+      // Tier Details
+      document.getElementById('t1DaysDetail').innerText = `${t1Days} ${currentLang === 'ar' ? 'يوم • خصم 0%' : 'days • 0% deduction'}`;
+      document.getElementById('t1Deduction').innerText = fmtSAR(t1DeductionAmount);
+
+      document.getElementById('t2DaysDetail').innerText = `${t2Days} ${currentLang === 'ar' ? 'يوم • خصم 25%' : 'days • 25% deduction'}`;
+      document.getElementById('t2Deduction').innerText = fmtSAR(t2DeductionAmount);
+
+      document.getElementById('t3DaysDetail').innerText = `${t3Days} ${currentLang === 'ar' ? 'يوم • خصم 100%' : 'days • 100% deduction'}`;
+      document.getElementById('t3Deduction').innerText = fmtSAR(t3DeductionAmount);
+
+      const t4Card = document.getElementById('tier4Card');
+      if (t4Days > 0) {
+        t4Card.classList.remove('hidden');
+        document.getElementById('t4DaysDetail').innerText = `${t4Days} ${currentLang === 'ar' ? 'يوم • خصم 100% (تجاوز 120 يوماً)' : 'days • 100% deduction (>120 limit)'}`;
+        document.getElementById('t4Deduction').innerText = fmtSAR(t4DeductionAmount);
+      } else {
+        t4Card.classList.add('hidden');
+      }
+
+      // Progress bar & quota indicator
+      const totalCumulativeDays = priorDays + newDays;
+      document.getElementById('quotaText').innerText = `${totalCumulativeDays} / 120 ${currentLang === 'ar' ? 'يوماً' : 'Days'}`;
+
+      // Cumulative segments inside 120 days
+      const cumT1 = Math.min(30, totalCumulativeDays);
+      const cumT2 = Math.min(60, Math.max(0, totalCumulativeDays - 30));
+      const cumT3 = Math.min(30, Math.max(0, totalCumulativeDays - 90));
+
+      const p1 = (cumT1 / 120) * 100;
+      const p2 = (cumT2 / 120) * 100;
+      const p3 = (cumT3 / 120) * 100;
+
+      document.getElementById('barT1').style.width = p1 + '%';
+      document.getElementById('barT2').style.width = p2 + '%';
+      document.getElementById('barT3').style.width = p3 + '%';
+
+      // Store for CSV Export
+      calcSnapshot = {
+        basicSalary: basic,
+        allowances: allowances,
+        grossWage: grossWage,
+        wageBasis: wageBasisOption,
+        priorDays: priorDays,
+        newDays: newDays,
+        totalDaysThisYear: totalCumulativeDays,
+        dailyRate: dailyRate.toFixed(2),
+        tier1Days: t1Days,
+        tier2Days: t2Days,
+        tier3Days: t3Days,
+        tier4Days: t4Days,
+        totalDeduction: totalDeduction.toFixed(2),
+        netPayableWage: netWage.toFixed(2)
+      };
+    }
+
+    function resetDefaults() {
+      document.getElementById('basicSalary').value = 6000;
+      document.getElementById('allowanceSalary').value = 2000;
+      document.getElementById('priorDays').value = 15;
+      document.getElementById('currentSickDays').value = 25;
+      document.querySelector('input[name="wageBasis"][value="gross"]').checked = true;
+      document.querySelector('input[name="dailyDivisor"][value="30"]').checked = true;
+      calculate();
+    }
+
+    function exportCSV() {
+      const headers = ["Parameter", "Value (SAR / Days)"];
+      const rows = [
+        ["Basic Salary (SAR)", calcSnapshot.basicSalary],
+        ["Fixed Allowances (SAR)", calcSnapshot.allowances],
+        ["Gross Monthly Wage (SAR)", calcSnapshot.grossWage],
+        ["Wage Basis Used", calcSnapshot.wageBasis],
+        ["Prior Sick Days in Year", calcSnapshot.priorDays],
+        ["New Sick Leave Days Requested", calcSnapshot.newDays],
+        ["Total Annual Sick Days Consumed", calcSnapshot.totalDaysThisYear],
+        ["Calculated Daily Wage (SAR)", calcSnapshot.dailyRate],
+        ["Tier 1 Days (100% Paid)", calcSnapshot.tier1Days],
+        ["Tier 2 Days (75% Paid / 25% Ded)", calcSnapshot.tier2Days],
+        ["Tier 3 Days (0% Paid / 100% Ded)", calcSnapshot.tier3Days],
+        ["Tier 4 Days (>120 Unpaid)", calcSnapshot.tier4Days],
+        ["Total Sick Leave Deduction (SAR)", calcSnapshot.totalDeduction],
+        ["Estimated Net Payable Wage (SAR)", calcSnapshot.netPayableWage]
+      ];
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += headers.join(",") + "\r\n";
+      rows.forEach(row => {
+        csvContent += row.join(",") + "\r\n";
+      });
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `saudi_sick_leave_article_117_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initial calculation on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      calculate();
+    });
+  </script>
+</body>
+</html>
