@@ -138,5 +138,12 @@
     "title_ar": "حاسبة محجوز الضمان وغرامات التأخير لعقود المقاولات في السعودية",
     "description_en": "Calculate contractor retention amounts, advance payment deductions, delay penalty caps, and VAT net payables under Saudi procurement regulations.",
     "date": "2026-11-08"
+  },
+  {
+    "slug": "saudi-aramco-iktva-score-calculator",
+    "title_en": "Saudi Aramco IKTVA Score & Local Content Calculator",
+    "title_ar": "حاسبة مؤشر برنامج اكتفاء والمحتوى المحلي لأرامكو السعودية",
+    "description_en": "Calculate your company's official IKTVA score and Saudi local content percentage. Instant tender readiness analysis and compliant spend breakdown.",
+    "date": "2026-11-08"
   }
 ]

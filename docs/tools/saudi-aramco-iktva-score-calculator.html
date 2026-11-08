@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saudi Aramco IKTVA Score & Local Content Calculator | حاسبة برنامج اكتفاء</title>
+  <meta name="description" content="Accurately estimate and optimize your Saudi Aramco IKTVA score, Saudization payroll, local procurement ratio, and supplier development metrics.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            aramco: {
+              blue: '#003366',
+              navy: '#001E3D',
+              green: '#00843D',
+              accent: '#39A935',
+              light: '#F4F7FB'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'Cairo', 'sans-serif'],
+            arabic: ['Cairo', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', 'Cairo', sans-serif; }
+    [dir="rtl"] body { font-family: 'Cairo', 'Inter', sans-serif; }
+    .gauge-circle { stroke-dashoffset: 0; transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+    @media print {
+      .no-print { display: none !important; }
+      .print-shadow { box-shadow: none !important; border: 1px solid #ddd !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Top Banner (Sticky Offer) -->
+  <div class="sticky top-0 z-50 bg-gradient-to-r from-aramco-navy via-aramco-blue to-aramco-green text-white text-xs sm:text-sm py-2 px-4 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse">
+        <span class="bg-emerald-500 text-white font-bold text-xs px-2 py-0.5 rounded-full uppercase tracking-wider">B2B Pro</span>
+        <span class="font-medium" data-en="Need full supplier audit readiness? Get the Automated Multi-Year IKTVA Excel Model ($29)" data-ar="هل تستعد لتدقيق الموردين؟ احصل على نموذج إكسل اكتفاء الآلي متعدد السنوات (29 دولار)">
+          Need full supplier audit readiness? Get the Automated Multi-Year IKTVA Excel Model ($29)
+        </span>
+      </div>
+      <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold px-3 py-1 rounded text-xs transition duration-200 shadow-sm">
+        <span data-en="Download Master Excel &rarr;" data-ar="تحميل نموذج الإكسل &larr;">Download Master Excel &rarr;</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <div class="h-10 w-10 rounded-lg bg-aramco-blue flex items-center justify-center text-white font-black text-xl shadow-inner">
+          ik
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-bold text-slate-900 leading-tight" data-en="Saudi IKTVA Score & Local Content Calculator" data-ar="حاسبة مؤشر اكتفاء والمحتوى المحلي المعتمدة">
+            Saudi IKTVA Score & Local Content Calculator
+          </h1>
+          <p class="text-xs text-slate-500" data-en="In-Kingdom Total Value Add Formula Engine v2.4" data-ar="محرك حساب القيمة المضافة الإجمالية للمملكة الإصدار 2.4">
+            In-Kingdom Total Value Add Formula Engine v2.4
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-2 rtl:space-x-reverse">
+        <button id="langToggle" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md border border-slate-300 transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+          <span id="langLabel">العربية (RTL)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Description & Intro -->
+    <div class="mb-6 bg-gradient-to-r from-blue-50 to-emerald-50 border border-blue-100 p-4 rounded-xl">
+      <p class="text-sm text-slate-700 leading-relaxed" data-en="This tool models the official Saudi Aramco IKTVA standard calculation: <strong>% IKTVA = [(A + B + C + D + R) / E] × 100</strong>. Enter your certified financial year figures (in SAR) to immediately measure tender competitiveness, benchmark against the 70% threshold, and audit your procurement ratios." data-ar="تقوم هذه الأداة بمحاكاة المعادلة الرسمية لبرنامج اكتفاء من أرامكو السعودية: <strong>نسبة اكتفاء = [(أ + ب + ج + د + ر) / هـ] × 100</strong>. أدخل أرقام سنتك المالية المعتمدة (بالريال السعودي) لقياس مدى الجاهزية للمناقصات، والمقارنة مع مستهدف 70%، وتدقيق نسب المحتوى المحلي.">
+        This tool models the official Saudi Aramco IKTVA standard calculation: <strong>% IKTVA = [(A + B + C + D + R) / E] × 100</strong>. Enter your certified financial year figures (in SAR) to immediately measure tender competitiveness, benchmark against the 70% threshold, and audit your procurement ratios.
+      </p>
+    </div>
+
+    <!-- Main Grid: Calculator & Dashboard -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Left 7 Cols: Inputs Form -->
+      <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-aramco-blue"></span>
+            <span data-en="Annual Certified Expenditure & Revenue (SAR)" data-ar="النفقات والإيرادات السنوية المعتمدة (بالريال)">Annual Certified Expenditure & Revenue (SAR)</span>
+          </h2>
+          <button id="loadSampleBtn" class="text-xs text-aramco-blue hover:underline font-semibold" data-en="Load Sample Mid-Sized Contractor" data-ar="تحميل بيانات شركة مقاولات تجريبية">
+            Load Sample Mid-Sized Contractor
+          </button>
+        </div>
+
+        <form id="iktvaForm" class="space-y-4" onsubmit="return false;">
+          
+          <!-- E: Total Revenue -->
+          <div class="p-3.5 bg-blue-50/60 rounded-xl border border-blue-200">
+            <label class="block text-xs font-bold text-slate-900 mb-1 flex justify-between">
+              <span data-en="(E) Total Revenue in KSA (Denominator)" data-ar="(هـ) إجمالي الإيرادات داخل المملكة (المقام)">(E) Total Revenue in KSA (Denominator)</span>
+              <span class="text-blue-700 font-mono text-[11px]">SAR</span>
+            </label>
+            <input type="number" min="1" step="1000" id="inputE" value="25000000" class="w-full px-3 py-2 bg-white border border-blue-300 rounded-lg text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-aramco-blue outline-none">
+            <span class="text-[11px] text-slate-500 mt-1 block" data-en="Gross revenue declared on audited Zakat/tax financials." data-ar="إجمالي الإيرادات المصرح بها في القوائم المالية المدققة للزكاة والضريبة.">Gross revenue declared on audited Zakat/tax financials.</span>
+          </div>
+
+          <!-- A: Local Goods & Services -->
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1 flex justify-between">
+              <span data-en="(A) Local Goods & Services Procured in KSA" data-ar="(أ) السلع والخدمات المشتراة محلياً داخل المملكة">(A) Local Goods & Services Procured in KSA</span>
+              <span class="text-slate-400 font-mono text-[11px]">SAR</span>
+            </label>
+            <input type="number" min="0" step="1000" id="inputA" value="8500000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-aramco-blue outline-none">
+            <span class="text-[11px] text-slate-500 mt-0.5 block" data-en="Purchases from certified KSA registered vendors & manufactured goods." data-ar="مشتريات السلع المصنعة محلياً والخدمات من موردين مسجلين في المملكة.">Purchases from certified KSA registered vendors & manufactured goods.</span>
+          </div>
+
+          <!-- B: Saudi Salaries & Compensation -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-800 mb-1 flex justify-between">
+                <span data-en="(B) Saudi Nationals Salaries & Benefits" data-ar="(ب) رواتب ومزايا الموظفين السعوديين">(B) Saudi Nationals Salaries & Benefits</span>
+              </label>
+              <input type="number" min="0" step="1000" id="inputB" value="4200000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-aramco-blue outline-none">
+              <span class="text-[11px] text-slate-500 mt-0.5 block" data-en="GOSI compliant gross wages of Saudi nationals." data-ar="الأجور الخاضعة للتأمينات للمواطنين السعوديين.">GOSI compliant gross wages of Saudi nationals.</span>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1 flex justify-between">
+                <span data-en="Total Company Payroll (All Employees)" data-ar="إجمالي مسير الرواتب لجميع العاملين">Total Company Payroll (All Employees)</span>
+              </label>
+              <input type="number" min="0" step="1000" id="inputTotalPayroll" value="9500000" class="w-full px-3 py-2 border border-slate-200 bg-slate-50 rounded-lg text-sm text-slate-700 focus:ring-2 focus:ring-slate-400 outline-none">
+              <span class="text-[11px] text-slate-400 mt-0.5 block" data-en="Used to gauge Saudization Payroll Ratio %." data-ar="تستخدم لقياس نسبة توطين الأجور.">Used to gauge Saudization Payroll Ratio %.</span>
+            </div>
+          </div>
+
+          <!-- C: Training & Development of Saudis -->
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1 flex justify-between">
+              <span data-en="(C) Training & Development for Saudi Personnel" data-ar="(ج) تدريب وتطوير الكوادر السعودية">(C) Training & Development for Saudi Personnel</span>
+              <span class="text-slate-400 font-mono text-[11px]">SAR</span>
+            </label>
+            <input type="number" min="0" step="1000" id="inputC" value="450000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-aramco-blue outline-none">
+            <span class="text-[11px] text-slate-500 mt-0.5 block" data-en="Certified technical, vocational, or executive certifications for nationals." data-ar="الشهادات المهنية، البرامج الفنية والابتعاث الداخلي المعتمد للسعوديين.">Certified technical, vocational, or executive certifications for nationals.</span>
+          </div>
+
+          <!-- D: Supplier Development Spend -->
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1 flex justify-between">
+              <span data-en="(D) Local Supplier & SME Development" data-ar="(د) تطوير الموردين المحليين والمنشآت الصغيرة">(D) Local Supplier & SME Development</span>
+              <span class="text-slate-400 font-mono text-[11px]">SAR</span>
+            </label>
+            <input type="number" min="0" step="1000" id="inputD" value="320000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-aramco-blue outline-none">
+            <span class="text-[11px] text-slate-500 mt-0.5 block" data-en="Subcontractor upgrades, vendor technical coaching, capability incubation." data-ar="تأهيل المقاولين من الباطن، نقل المعرفة وحاضنات التوريد المحلية.">Subcontractor upgrades, vendor technical coaching, capability incubation.</span>
+          </div>
+
+          <!-- R: R&D Expenditure in KSA -->
+          <div>
+            <label class="block text-xs font-bold text-slate-800 mb-1 flex justify-between">
+              <span data-en="(R) Research & Development (R&D) in KSA" data-ar="(ر) نفقات البحث والتطوير والابتكار في المملكة">(R) Research & Development (R&D) in KSA</span>
+              <span class="text-slate-400 font-mono text-[11px]">SAR</span>
+            </label>
+            <input type="number" min="0" step="1000" id="inputR" value="280000" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 focus:ring-2 focus:ring-aramco-blue outline-none">
+            <span class="text-[11px] text-slate-500 mt-0.5 block" data-en="In-Kingdom local patents, laboratory testing, university partnerships." data-ar="براءات الاختراع المحلية، الاختبارات المعملية، والشراكات البحثية الأكاديمية.">In-Kingdom local patents, laboratory testing, university partnerships.</span>
+          </div>
+
+          <!-- Action Controls -->
+          <div class="pt-4 flex flex-wrap gap-2 border-t border-slate-100">
+            <button type="button" id="resetBtn" class="px-4 py-2 border border-slate-300 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 transition" data-en="Reset Fields" data-ar="إعادة ضبط">Reset Fields</button>
+            <button type="button" id="exportCsvBtn" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span data-en="Export Audit CSV" data-ar="تصدير تقرير CSV">Export Audit CSV</span>
+            </button>
+            <button type="button" onclick="window.print()" class="px-4 py-2 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition no-print">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <span data-en="Print Summary" data-ar="طباعة الملخص">Print Summary</span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Right 5 Cols: Results Scorecard -->
+      <div class="lg:col-span-5 space-y-5">
+        
+        <!-- Main IKTVA Card -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 relative overflow-hidden">
+          <div class="absolute -right-12 -top-12 w-36 h-36 bg-blue-50 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500" data-en="Aramco IKTVA Score" data-ar="مؤشر اكتفاء النهائي">Aramco IKTVA Score</span>
+              <div class="flex items-baseline gap-2 mt-1">
+                <span id="resIktvaScore" class="text-4xl sm:text-5xl font-black text-aramco-blue font-mono">55.0%</span>
+                <span id="resScoreBadge" class="text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800">Good</span>
+              </div>
+            </div>
+            <div class="text-right rtl:text-left">
+              <span class="text-[11px] text-slate-400 block" data-en="Aramco Target" data-ar="مستهدف أرامكو">Aramco Target</span>
+              <span class="text-sm font-bold text-emerald-600 font-mono">70.0%</span>
+            </div>
+          </div>
+
+          <!-- Progress Bar to Target -->
+          <div class="space-y-1.5 mb-5">
+            <div class="flex justify-between text-xs text-slate-600">
+              <span data-en="Progress toward 70% 2025/2030 Benchmark" data-ar="مستوى التقدم نحو معيار 70%">Progress toward 70% 2025/2030 Benchmark</span>
+              <span id="resTargetGapText" class="font-medium text-amber-600">15.0% gap</span>
+            </div>
+            <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden flex">
+              <div id="resProgressBar" class="bg-gradient-to-r from-aramco-blue to-aramco-green h-full rounded-full transition-all duration-500" style="width: 78.5%"></div>
+            </div>
+          </div>
+
+          <!-- Value Breakdown List -->
+          <div class="space-y-2.5 pt-4 border-t border-slate-100 text-xs">
+            <div class="flex justify-between py-1 border-b border-slate-50">
+              <span class="text-slate-600" data-en="Total Local Value Added (A+B+C+D+R)" data-ar="إجمالي القيمة المحلية المضافة (أ+ب+ج+د+ر)">Total Local Value Added (A+B+C+D+R)</span>
+              <span id="resTotalSpend" class="font-bold font-mono text-slate-900">SAR 13,750,000</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-50">
+              <span class="text-slate-600" data-en="Saudization Wage Ratio (B / Total Payroll)" data-ar="نسبة توطين الأجور (ب / إجمالي الرواتب)">Saudization Wage Ratio (B / Total Payroll)</span>
+              <span id="resSaudizationRatio" class="font-semibold font-mono text-slate-800">44.2%</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-50">
+              <span class="text-slate-600" data-en="Local Sourcing Ratio (A / Revenue)" data-ar="نسبة التوريد المحلي (أ / الإيراد)">Local Sourcing Ratio (A / Revenue)</span>
+              <span id="resLocalSourcingRatio" class="font-semibold font-mono text-slate-800">34.0%</span>
+            </div>
+            <div class="flex justify-between py-1">
+              <span class="text-slate-600" data-en="Talent & Innovation Factor (C+D+R)/E" data-ar="مؤشر الموهبة والابتكار (ج+د+ر)/هـ">Talent & Innovation Factor (C+D+R)/E</span>
+              <span id="resInnovationFactor" class="font-semibold font-mono text-slate-800">4.2%</span>
+            </div>
+          </div>
+
+          <!-- Tender Evaluation Status -->
+          <div id="resStatusBox" class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs text-slate-700 leading-relaxed">
+            <span class="font-bold text-slate-900 block mb-0.5" data-en="Procurement Competitiveness:" data-ar="تقييم التنافسية في المناقصات:">Procurement Competitiveness:</span>
+            <span id="resStatusDescription">Competitive for standard commercial bids. Submitting an IKTVA Improvement Plan could grant preference in Aramco major EPC tenders.</span>
+          </div>
+
+          <!-- Disclaimer Box -->
+          <div class="mt-4 p-2.5 bg-amber-50/80 rounded-lg border border-amber-200/80 text-[11px] text-amber-900 leading-snug">
+            <strong data-en="Compliance Disclaimer:" data-ar="إخلاء مسؤولية:">Compliance Disclaimer:</strong>
+            <span data-en=" This calculated score is an operational estimate based on user input. Official certified IKTVA scores must undergo third-party accounting audit by Aramco-approved audit firms (e.g. PwC, EY, KPMG, Deloitte) and be issued via the official Aramco IKTVA portal." data-ar=" النتيجة المحسوبة هي تقدير تشغيلي استرشادي. يتطلب الاعتماد الرسمي لشهادة اكتفاء تدقيقاً مستقلاً من أحد مكاتب المحاسبة المعتمدة لدى أرامكو ورفع الاستبيان عبر بوابة اكتفاء الرسمية.">
+              This calculated score is an operational estimate based on user input. Official certified IKTVA scores must undergo third-party accounting audit by Aramco-approved audit firms (e.g. PwC, EY, KPMG, Deloitte) and be issued via the official Aramco IKTVA portal.
+            </span>
+          </div>
+        </div>
+
+        <!-- CTA Card for Excel Master Model -->
+        <div class="bg-gradient-to-br from-slate-900 to-aramco-navy text-white rounded-2xl p-6 shadow-md border border-slate-700">
+          <div class="inline-block px-2.5 py-0.5 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded text-[11px] font-bold uppercase tracking-wide mb-2">
+            Enterprise Solution
+          </div>
+          <h3 class="text-base font-bold text-white mb-2 leading-tight" data-en="Complete IKTVA & Local Content Excel Multi-Year Model ($29)" data-ar="نموذج إكسل الشامل لحسابات اكتفاء والمحتوى المحلي ($29)">
+            Complete IKTVA & Local Content Excel Multi-Year Model ($29)
+          </h3>
+          <p class="text-xs text-slate-300 leading-relaxed mb-4" data-en="Includes 5-year forecast simulator, 3-tier supplier breakdown matrix, automatic ERP ledger reconciliation, and official Aramco survey sheet mirror formatting." data-ar="يشمل نموذج محاكاة استشرافي لـ 5 سنوات، مصفوفة سلاسل التوريد ثلاثية المستويات، ربط قيود دفتر الأستاذ العام، وقوالب المسح الرسمية المعتمدة.">
+            Includes 5-year forecast simulator, 3-tier supplier breakdown matrix, automatic ERP ledger reconciliation, and official Aramco survey sheet mirror formatting.
+          </p>
+          <ul class="text-xs text-slate-300 space-y-1.5 mb-5 font-mono">
+            <li class="flex items-center gap-1.5"><span class="text-emerald-400 font-bold">✓</span> 100% Unlocked Formula Architecture (.xlsx)</li>
+            <li class="flex items-center gap-1.5"><span class="text-emerald-400 font-bold">✓</span> Audit Checklist for Aramco Certified Review</li>
+            <li class="flex items-center gap-1.5"><span class="text-emerald-400 font-bold">✓</span> Tender Score Weight Optimization Matrix</li>
+          </ul>
+          <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="block w-full py-2.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-center rounded-lg text-xs transition duration-150 shadow-md">
+            <span data-en="Download Master Excel Template — $29" data-ar="شراء وتحميل قالب الإكسل المعتمد — 29 دولار">Download Master Excel Template — $29</span>
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Comprehensive 800+ Words Guide, Formula Breakdown, & FAQ -->
+    <section class="mt-12 bg-white rounded-2xl p-6 sm:p-10 border border-slate-200 shadow-sm space-y-10">
+      
+      <!-- Article Title -->
+      <div class="border-b border-slate-200 pb-6">
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-tight" data-en="The Comprehensive Guide to Saudi Aramco's IKTVA Program & Scoring Mechanism" data-ar="الدليل الشامل لبرنامج اكتفاء التابع لأرامكو السعودية وآلية احتساب النقاط">
+          The Comprehensive Guide to Saudi Aramco's IKTVA Program & Scoring Mechanism
+        </h2>
+        <p class="mt-2 text-sm text-slate-500" data-en="Everything enterprise CFOs, bidding directors, and procurement managers in Saudi Arabia need to know to pass third-party audits and win energy sector contracts." data-ar="كل ما يحتاجه الرؤساء الماليون، ومدراء المناقصات وسلاسل الإمداد في السعودية لاجتياز تدقيق المحاسبين القانونيين والفوز بعقود قطاع الطاقة.">
+          Everything enterprise CFOs, bidding directors, and procurement managers in Saudi Arabia need to know to pass third-party audits and win energy sector contracts.
+        </p>
+      </div>
+
+      <!-- Section 1: Overview -->
+      <div class="prose prose-slate max-w-none text-sm text-slate-700 space-y-4">
+        <h3 class="text-lg font-bold text-slate-900" data-en="1. What is the Saudi Aramco IKTVA Program?" data-ar="1. ما هو برنامج اكتفاء (IKTVA) لأرامكو السعودية؟">1. What is the Saudi Aramco IKTVA Program?</h3>
+        <p data-en="The In-Kingdom Total Value Add (IKTVA) program was established by Saudi Aramco in December 2015 to baseline and drive domestic value creation across its entire supply chain ecosystem. Designed in harmony with Saudi Vision 2030, the overarching goal of IKTVA is to achieve 70% localization of supply chain spending while creating high-caliber industrial jobs for Saudi nationals and elevating domestic manufacturing capabilities." data-ar="أطلقت شركة أرامكو السعودية برنامج تعزيز القيمة المضافة الإجمالية لقطاع التوريد (اكتفاء - IKTVA) في ديسمبر 2015 لتوجيه الإنفاق نحو تنمية المحتوى المحلي في سلاسل الإمداد. صُمم البرنامج بتناغم تام مع رؤية المملكة 2030، حيث يستهدف رفع نسبة المشتريات المحلية إلى 70% وتوفير وظائف نوعية للكوادر الوطنية وتطوير التصنيع المحلي.">
+          The In-Kingdom Total Value Add (IKTVA) program was established by Saudi Aramco in December 2015 to baseline and drive domestic value creation across its entire supply chain ecosystem. Designed in harmony with Saudi Vision 2030, the overarching goal of IKTVA is to achieve 70% localization of supply chain spending while creating high-caliber industrial jobs for Saudi nationals and elevating domestic manufacturing capabilities.
+        </p>
+        <p data-en="Any enterprise supplying goods, heavy equipment, engineering design, field construction, or professional services to Saudi Aramco—directly as a Tier 1 supplier or indirectly as a sub-contractor—must measure, audit, and systematically improve its IKTVA ratio. An unfavorable score directly penalizes the supplier during commercial tender evaluations, while a high score provides a quantifiable competitive margin." data-ar="أي منشأة تقوم بتوريد البضائع، المعدات، التصاميم الهندسية، أعمال المقاولات، أو الخدمات الاستشارية لأرامكو السعودية — سواء كمورد مباشر (Tier 1) أو مقاول باطن — مطالبة بقياس واعتماد مؤشر اكتفاء دورياً. النتيجة المنخفضة تضعف موقف الشركة في المناقصات التنافسية، في حين يمنح المؤشر المرتفع أفضلية ترجيحية حاسمة.">
+          Any enterprise supplying goods, heavy equipment, engineering design, field construction, or professional services to Saudi Aramco—directly as a Tier 1 supplier or indirectly as a sub-contractor—must measure, audit, and systematically improve its IKTVA ratio. An unfavorable score directly penalizes the supplier during commercial tender evaluations, while a high score provides a quantifiable competitive margin.
+        </p>
+      </div>
+
+      <!-- Section 2: Mathematical Formula Breakdown -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold text-slate-900" data-en="2. Official IKTVA Mathematical Formula" data-ar="2. المعادلة الرياضية الرسمية لاحتساب اكتفاء">2. Official IKTVA Mathematical Formula</h3>
+        <div class="p-4 bg-slate-900 text-emerald-400 font-mono rounded-xl text-center text-sm sm:text-base overflow-x-auto shadow-inner">
+          % IKTVA = [ (A + B + C + D + R) / E ] × 100
+        </div>
+        <p class="text-sm text-slate-700 leading-relaxed" data-en="Each metric in the numerator and denominator represents a distinct line item validated against audited financial statements, payroll General Organization for Social Insurance (GOSI) records, and local commercial invoices:" data-ar="يمثل كل بند في البسط والمقام قيمة مالية دقيقة يتم التحقق منها ومطابقتها مع القوائم المالية المدققة، وبيانات المؤسسة العامة للتأمينات الاجتماعية، والفواتير الضريبية المحلية:">
+          Each metric in the numerator and denominator represents a distinct line item validated against audited financial statements, payroll General Organization for Social Insurance (GOSI) records, and local commercial invoices:
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-3.5 border border-slate-200 rounded-lg bg-slate-50">
+            <span class="font-bold text-aramco-blue text-sm block mb-1">A: Local Goods & Services (SAR)</span>
+            <p class="text-slate-600">Expenditures on physical goods manufactured in Saudi Arabia and services procured from vendors holding valid Saudi Commercial Registrations and ZATCA VAT numbers. Imported inventory does not count.</p>
+          </div>
+          <div class="p-3.5 border border-slate-200 rounded-lg bg-slate-50">
+            <span class="font-bold text-aramco-blue text-sm block mb-1">B: Saudi Nationals Payroll (SAR)</span>
+            <p class="text-slate-600">Total compensation, including base salaries, housing allowances, transport allowances, and annual bonuses paid strictly to registered Saudi citizen employees during the calendar/fiscal year.</p>
+          </div>
+          <div class="p-3.5 border border-slate-200 rounded-lg bg-slate-50">
+            <span class="font-bold text-aramco-blue text-sm block mb-1">C: Training & Development (SAR)</span>
+            <p class="text-slate-600">Direct funds spent on professional credentials, apprenticeships, engineering accreditations, and formal corporate training specialized for Saudi staff.</p>
+          </div>
+          <div class="p-3.5 border border-slate-200 rounded-lg bg-slate-50">
+            <span class="font-bold text-aramco-blue text-sm block mb-1">D: Supplier & SME Incubation (SAR)</span>
+            <p class="text-slate-600">Documented investments dedicated to developing local Saudi vendors, upgrading subcontractor quality control procedures, and technical technology transfers.</p>
+          </div>
+          <div class="p-3.5 border border-slate-200 rounded-lg bg-slate-50">
+            <span class="font-bold text-aramco-blue text-sm block mb-1">R: Research & Development (SAR)</span>
+            <p class="text-slate-600">Capital and operational disbursements towards applied in-Kingdom R&D, local industrial testing, patents filed with SAIP, and university joint research.</p>
+          </div>
+          <div class="p-3.5 border border-slate-200 rounded-lg bg-blue-50/50 border-blue-200">
+            <span class="font-bold text-aramco-navy text-sm block mb-1">E: Total KSA Revenue (SAR)</span>
+            <p class="text-slate-600">Total gross revenue recognized from Saudi Arabian operations. This serves as the benchmark denominator scaling your local spend into an absolute percentage.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Strategic Audit Checklist -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold text-slate-900" data-en="3. How to Pass the Aramco Authorized IKTVA Audit" data-ar="3. متطلبات اجتياز تدقيق اكتفاء المعتمد من أرامكو">3. How to Pass the Aramco Authorized IKTVA Audit</h3>
+        <p class="text-sm text-slate-700 leading-relaxed" data-en="To officially submit your IKTVA survey to Saudi Aramco, your raw data must be audited and stamped by one of the authorized Independent Third-Party Audit Firms (such as PwC, KPMG, Deloitte, EY, BDO, or Baker Tilly). Follow these core steps to ensure compliance without qualification disclaimers:" data-ar="لتقديم استبيان اكتفاء الرسمي لشركة أرامكو، يجب تدقيق واعتماد أرقامك من قبل إحدى مكاتب التدقيق المحاسبي المعتمدة. اتبع هذه الخطوات المحورية لضمان الاعتماد دون تحفظات:">
+          To officially submit your IKTVA survey to Saudi Aramco, your raw data must be audited and stamped by one of the authorized Independent Third-Party Audit Firms (such as PwC, KPMG, Deloitte, EY, BDO, or Baker Tilly). Follow these core steps to ensure compliance without qualification disclaimers:
+        </p>
+        <ul class="list-disc pl-5 rtl:pr-5 space-y-2 text-xs sm:text-sm text-slate-600">
+          <li><strong class="text-slate-800">Reconciliation with Zakat Submissions:</strong> Revenue <code>(E)</code> must match the gross operating revenue declared to the Zakat, Tax and Customs Authority (ZATCA).</li>
+          <li><strong class="text-slate-800">GOSI Certification:</strong> Total Saudi compensation <code>(B)</code> must reconcile with monthly GOSI Wage Protection System (WPS) filings, net of non-Saudi allowances.</li>
+          <li><strong class="text-slate-800">Local Vendor Proof:</strong> All local spend <code>(A)</code> must show invoices displaying a valid Saudi Tax Identification Number (TIN) and verified in-Kingdom physical presence.</li>
+          <li><strong class="text-slate-800">5-Year 70% Improvement Plan:</strong> Companies bidding on mega-contracts are required to present an official IKTVA 5-Year Headway Plan outlining how they will reach 70% through local hiring, training, and sourcing.</li>
+        </ul>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="space-y-4 pt-4 border-t border-slate-200">
+        <h3 class="text-lg font-bold text-slate-900" data-en="Frequently Asked Questions (FAQ)" data-ar="الأسئلة الشائعة">Frequently Asked Questions (FAQ)</h3>
+        
+        <div class="space-y-3">
+          <details class="group bg-slate-50 border border-slate-200 rounded-lg p-3.5 text-xs sm:text-sm cursor-pointer">
+            <summary class="font-bold text-slate-800 flex justify-between items-center">
+              <span data-en="Can the calculated IKTVA score exceed 100%?" data-ar="هل يمكن أن تتجاوز نسبة اكتفاء المحسوبة 100%؟">Can the calculated IKTVA score exceed 100%?</span>
+              <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-2 text-slate-600 leading-relaxed" data-en="Yes. In growth phases, capital expenditure (CAPEX) on localized manufacturing assets, combined with aggressive workforce training and high local sourcing, can cause total domestic spend to exceed annual recognized revenue (E). Aramco surveys accommodate scores above 100%, though auditors will perform thorough validation tests." data-ar="نعم، في حالات التوسع الرأسمالي والاستثمار المكثف في بناء المصانع المحلية، وتدريب الكوادر مع ارتفاع التوريد المحلي، قد تتجاوز النفقات المحلية إيرادات السنة المالية. يعتمد نظام أرامكو النسب التي تفوق 100% بعد التحقق الدقيق من المستندات.">
+              Yes. In growth phases, capital expenditure (CAPEX) on localized manufacturing assets, combined with aggressive workforce training and high local sourcing, can cause total domestic spend to exceed annual recognized revenue (E). Aramco surveys accommodate scores above 100%, though auditors will perform thorough validation tests.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 border border-slate-200 rounded-lg p-3.5 text-xs sm:text-sm cursor-pointer">
+            <summary class="font-bold text-slate-800 flex justify-between items-center">
+              <span data-en="What is the difference between IKTVA and the LCGPA Local Content Score?" data-ar="ما الفرق بين برنامج اكتفاء ونظام هيئة المحتوى المحلي (LCGPA)؟">What is the difference between IKTVA and the LCGPA Local Content Score?</span>
+              <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-2 text-slate-600 leading-relaxed" data-en="IKTVA is Saudi Aramco's proprietary value creation formula specifically designed for its energy and petrochemical supply chains. The Local Content and Government Procurement Authority (LCGPA) governs government ministry tenders and applies a broader baseline across all public sectors. While the underlying components (Salaries, Goods, Training, Depreciation) are conceptually aligned, their weightings and formal reporting portals differ." data-ar="برنامج اكتفاء هو الآلية المعتمدة خصيصاً لسلاسل إمداد شركة أرامكو السعودية في قطاع الطاقة. بينما هيئة المحتوى المحلي والمشتريات الحكومية (LCGPA) تشرف على مناقصات الوزارات والجهات الحكومية العامة. رغم تشابه المكونات الجوهرية (رواتب، سلع، تدريب، إهلاك)، تختلف نماذج المسح وبوابات التقديم المعتمدة.">
+              IKTVA is Saudi Aramco's proprietary value creation formula specifically designed for its energy and petrochemical supply chains. The Local Content and Government Procurement Authority (LCGPA) governs government ministry tenders and applies a broader baseline across all public sectors. While the underlying components (Salaries, Goods, Training, Depreciation) are conceptually aligned, their weightings and formal reporting portals differ.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 border border-slate-200 rounded-lg p-3.5 text-xs sm:text-sm cursor-pointer">
+            <summary class="font-bold text-slate-800 flex justify-between items-center">
+              <span data-en="How does a higher IKTVA score impact Aramco tender evaluations?" data-ar="كيف يؤثر ارتفاع مؤشر اكتفاء على تقييم عطاءات أرامكو؟">How does a higher IKTVA score impact Aramco tender evaluations?</span>
+              <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-2 text-slate-600 leading-relaxed" data-en="During commercial bidding, Aramco calculates an 'Evaluated Price' by applying an IKTVA weighting factor against the vendor's raw financial quote. A vendor with a 75% score receives a favorable evaluation pricing adjustment compared to a competitor offering the same quote with a 25% score, frequently tipping multi-million dollar contract awards." data-ar="أثناء التقييم المالي للعطاءات، تطبق أرامكو معامل ترجيح لمؤشر اكتفاء لتحديد 'السعر المقارن'. المورد الحاصل على 75% ينال تخفيضاً ترجيحياً يمنحه تفوقاً مباشراً على المنافس صاحب المؤشر الأقل (كالـ 25%) حتى لو تساوت الأسعار المبدئية.">
+              During commercial bidding, Aramco calculates an 'Evaluated Price' by applying an IKTVA weighting factor against the vendor's raw financial quote. A vendor with a 75% score receives a favorable evaluation pricing adjustment compared to a competitor offering the same quote with a 25% score, frequently tipping multi-million dollar contract awards.
+            </p>
+          </details>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-2">
+      <p data-en="Independent B2B Procurement & Accounting Tool. Not officially endorsed by or affiliated with Saudi Aramco." data-ar="أداة محاسبية وتشغيلية مستقلة لقطاع الأعمال. ليست جهة تابعة أو معتمدة رسمياً من أرامكو السعودية.">
+        Independent B2B Procurement & Accounting Tool. Not officially endorsed by or affiliated with Saudi Aramco.
+      </p>
+      <p>© 2025 Micro-SaaS B2B Tools. Built for Saudi Vision 2030 Local Content Compliance.</p>
+    </div>
+  </footer>
+
+  <!-- Calculation & Interaction Engine -->
+  <script>
+    const inputE = document.getElementById('inputE');
+    const inputA = document.getElementById('inputA');
+    const inputB = document.getElementById('inputB');
+    const inputC = document.getElementById('inputC');
+    const inputD = document.getElementById('inputD');
+    const inputR = document.getElementById('inputR');
+    const inputTotalPayroll = document.getElementById('inputTotalPayroll');
+
+    const resIktvaScore = document.getElementById('resIktvaScore');
+    const resScoreBadge = document.getElementById('resScoreBadge');
+    const resProgressBar = document.getElementById('resProgressBar');
+    const resTargetGapText = document.getElementById('resTargetGapText');
+    const resTotalSpend = document.getElementById('resTotalSpend');
+    const resSaudizationRatio = document.getElementById('resSaudizationRatio');
+    const resLocalSourcingRatio = document.getElementById('resLocalSourcingRatio');
+    const resInnovationFactor = document.getElementById('resInnovationFactor');
+    const resStatusDescription = document.getElementById('resStatusDescription');
+    const loadSampleBtn = document.getElementById('loadSampleBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const exportCsvBtn = document.getElementById('exportCsvBtn');
+    const langToggle = document.getElementById('langToggle');
+    const langLabel = document.getElementById('langLabel');
+
+    let currentLang = 'en';
+
+    function formatSAR(num) {
+      return 'SAR ' + Math.round(num).toLocaleString('en-US');
+    }
+
+    function recalculate() {
+      const e = parseFloat(inputE.value) || 0;
+      const a = parseFloat(inputA.value) || 0;
+      const b = parseFloat(inputB.value) || 0;
+      const c = parseFloat(inputC.value) || 0;
+      const d = parseFloat(inputD.value) || 0;
+      const r = parseFloat(inputR.value) || 0;
+      const totalPayroll = parseFloat(inputTotalPayroll.value) || 0;
+
+      const numerator = a + b + c + d + r;
+      let score = 0;
+      if (e > 0) {
+        score = (numerator / e) * 100;
+      }
+
+      // Render Score
+      resIktvaScore.innerText = score.toFixed(1) + '%';
+      resTotalSpend.innerText = formatSAR(numerator);
+
+      // Ratios
+      const saudRatio = totalPayroll > 0 ? (b / totalPayroll) * 100 : 0;
+      resSaudizationRatio.innerText = saudRatio.toFixed(1) + '%';
+
+      const sourceRatio = e > 0 ? (a / e) * 100 : 0;
+      resLocalSourcingRatio.innerText = sourceRatio.toFixed(1) + '%';
+
+      const innovRatio = e > 0 ? ((c + d + r) / e) * 100 : 0;
+      resInnovationFactor.innerText = innovRatio.toFixed(1) + '%';
+
+      // Target Gap (Target 70%)
+      const target = 70.0;
+      const gap = target - score;
+      const progressPercent = Math.min(Math.max((score / target) * 100, 0), 100);
+      resProgressBar.style.width = progressPercent + '%';
+
+      if (gap > 0) {
+        resTargetGapText.innerText = (currentLang === 'en') ? `${gap.toFixed(1)}% to target` : `متبقي ${gap.toFixed(1)}% للمستهدف`;
+        resTargetGapText.className = 'font-medium text-amber-600';
+      } else {
+        resTargetGapText.innerText = (currentLang === 'en') ? `Target exceeded (+${Math.abs(gap).toFixed(1)}%)` : `تجاوز المستهدف (+${Math.abs(gap).toFixed(1)}%)`;
+        resTargetGapText.className = 'font-medium text-emerald-600 font-bold';
+      }
+
+      // Badge & Status
+      if (score >= 70) {
+        resScoreBadge.innerText = (currentLang === 'en') ? 'Tier 1 Prime' : 'فئة ممتازة';
+        resScoreBadge.className = 'text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800';
+        resStatusDescription.innerText = (currentLang === 'en') 
+          ? 'Exceeds Aramco 2025/2030 baseline. Exceptional standing for long-term Corporate Procurement Agreements (CPA).' 
+          : 'يتجاوز معيار أرامكو المستهدف لعام 2025/2030. جاهزية تامة لاتفاقيات الشراء المؤسسية طويلة المدى.';
+      } else if (score >= 50) {
+        resScoreBadge.innerText = (currentLang === 'en') ? 'Competitive' : 'تنافسي';
+        resScoreBadge.className = 'text-xs font-bold px-2 py-0.5 rounded bg-blue-100 text-blue-800';
+        resStatusDescription.innerText = (currentLang === 'en')
+          ? 'Solid performance. Increasing local vendor sourcing or Saudi technical training will elevate to top-tier preference.'
+          : 'أداء تنافسي جيد. رفع نسبة المشتريات المحلية أو التدريب الفني سينقل المنشأة لأعلى فئات التفضيل.';
+      } else if (score >= 30) {
+        resScoreBadge.innerText = (currentLang === 'en') ? 'Moderate' : 'متوسط';
+        resScoreBadge.className = 'text-xs font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800';
+        resStatusDescription.innerText = (currentLang === 'en')
+          ? 'Meets baseline for smaller packages, but carries evaluation penalty in competitive engineering tenders.'
+          : 'مقبول للمشاريع الصغرى، ولكنه قد يخضع لخصم نسبي في المناقصات التنافسية الكبرى.';
+      } else {
+        resScoreBadge.innerText = (currentLang === 'en') ? 'High Risk' : 'منخفض';
+        resScoreBadge.className = 'text-xs font-bold px-2 py-0.5 rounded bg-red-100 text-red-800';
+        resStatusDescription.innerText = (currentLang === 'en')
+          ? 'Urgent IKTVA remediation required. Consider replacing foreign raw supplies with qualified domestic manufacturers.'
+          : 'يتطلب خطة تصحيحية عاجلة. يوصى باستبدال الموردين الأجانب بمصانع محلية معتمدة لرفع النسبة.';
+      }
+    }
+
+    // Event Listeners for inputs
+    [inputE, inputA, inputB, inputC, inputD, inputR, inputTotalPayroll].forEach(el => {
+      el.addEventListener('input', recalculate);
+    });
+
+    // Reset Sample
+    loadSampleBtn.addEventListener('click', () => {
+      inputE.value = '42000000';
+      inputA.value = '18500000';
+      inputB.value = '9800000';
+      inputC.value = '950000';
+      inputD.value = '650000';
+      inputR.value = '500000';
+      inputTotalPayroll.value = '18000000';
+      recalculate();
+    });
+
+    resetBtn.addEventListener('click', () => {
+      inputE.value = '10000000';
+      inputA.value = '0';
+      inputB.value = '0';
+      inputC.value = '0';
+      inputD.value = '0';
+      inputR.value = '0';
+      inputTotalPayroll.value = '0';
+      recalculate();
+    });
+
+    // Export CSV
+    exportCsvBtn.addEventListener('click', () => {
+      const e = inputE.value;
+      const a = inputA.value;
+      const b = inputB.value;
+      const c = inputC.value;
+      const d = inputD.value;
+      const r = inputR.value;
+      const score = resIktvaScore.innerText;
+
+      const csvContent = "data:text/csv;charset=utf-8," 
+        + "Saudi Aramco IKTVA Audit Summary Export\n"
+        + "Metric,Value (SAR)\n"
+        + `Total Revenue (E),${e}\n`
+        + `Local Goods and Services (A),${a}\n`
+        + `Saudi National Salaries (B),${b}\n`
+        + `Saudi Training and Development (C),${c}\n`
+        + `Local Supplier Development (D),${d}\n`
+        + `Local Research and Development (R),${r}\n`
+        + `Total Domestic Added Value,${parseFloat(a)+parseFloat(b)+parseFloat(c)+parseFloat(d)+parseFloat(r)}\n`
+        + `Calculated IKTVA Score,${score}\n`;
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `IKTVA_Audit_Estimate_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    // Bilingual Toggle
+    langToggle.addEventListener('click', () => {
+      const htmlEl = document.documentElement;
+      if (currentLang === 'en') {
+        currentLang = 'ar';
+        htmlEl.setAttribute('dir', 'rtl');
+        htmlEl.setAttribute('lang', 'ar');
+        langLabel.innerText = 'English (LTR)';
+      } else {
+        currentLang = 'en';
+        htmlEl.setAttribute('dir', 'ltr');
+        htmlEl.setAttribute('lang', 'en');
+        langLabel.innerText = 'العربية (RTL)';
+      }
+
+      document.querySelectorAll('[data-en]').forEach(el => {
+        const enText = el.getAttribute('data-en');
+        const arText = el.getAttribute('data-ar');
+        if (currentLang === 'ar' && arText) {
+          el.innerHTML = arText;
+        } else if (currentLang === 'en' && enText) {
+          el.innerHTML = enText;
+        }
+      });
+
+      recalculate();
+    });
+
+    // Initial run
+    recalculate();
+  </script>
+</body>
+</html>
