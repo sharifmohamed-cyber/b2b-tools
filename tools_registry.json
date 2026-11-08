@@ -131,5 +131,12 @@
     "title_ar": "حاسبة رواتب واقتطاعات الإجازة المرضية - المادة 117 من نظام العمل السعودي",
     "description_en": "Calculate Saudi Labor Law Article 117 sick leave payroll deductions, 100%/75%/unpaid brackets, cumulative year tracking, and net pay impact for HR.",
     "date": "2026-11-07"
+  },
+  {
+    "slug": "saudi-contractor-retention-and-liquidated-damages-calculator",
+    "title_en": "Saudi Contractor Retention & Liquidated Damages Calculator",
+    "title_ar": "حاسبة محجوز الضمان وغرامات التأخير لعقود المقاولات في السعودية",
+    "description_en": "Calculate contractor retention amounts, advance payment deductions, delay penalty caps, and VAT net payables under Saudi procurement regulations.",
+    "date": "2026-11-08"
   }
 ]

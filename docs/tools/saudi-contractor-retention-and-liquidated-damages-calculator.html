@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saudi Contractor Retention & Liquidated Damages Calculator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    [dir="rtl"] body { font-family: 'Cairo', sans-serif; }
+    .font-ar { font-family: 'Cairo', sans-serif; }
+    .font-en { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Top Sticky Conversion Banner -->
+  <div class="sticky top-0 z-50 bg-gradient-to-r from-emerald-900 via-slate-900 to-emerald-950 text-white shadow-md border-b border-emerald-500/30 px-4 py-2.5">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-sm">
+      <div class="flex items-center gap-2">
+        <span class="bg-emerald-500 text-slate-950 text-xs font-bold px-2 py-0.5 rounded uppercase tracking-wider">Excel Tool</span>
+        <span class="hidden md:inline text-slate-300" data-i18n="bannerText">Need automated billing, multi-milestone retention tracking & ZATCA e-invoicing for subcontracts?</span>
+        <span class="md:hidden font-medium" data-i18n="bannerTextMobile">Offline Excel &amp; VBA Master Template</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://gumroad.com" target="_blank" rel="noopener" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1 rounded text-xs transition duration-150 shadow-sm">
+          <span data-i18n="bannerBtn">Get Offline Excel & VBA Master Template ($29)</span>
+        </a>
+        <button id="langToggle" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-2.5 py-1 rounded text-xs font-medium transition">
+          العربية
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Wrapper -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <!-- Header -->
+    <div class="mb-8 text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200 pb-6">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight" data-i18n="mainHeading">
+          Contractor Retention & Delay Damages Calculator
+        </h1>
+        <p class="mt-1 text-slate-600 text-sm max-w-2xl" data-i18n="subHeading">
+          Estimate progress deductions, advance payment amortization, liquidated damages under Saudi GTPL & FIDIC standards, and ZATCA VAT liability.
+        </p>
+      </div>
+      <div class="flex items-center sm:justify-end gap-2">
+        <button onclick="window.print()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 shadow-sm transition">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <span data-i18n="printBtn">Print / PDF</span>
+        </button>
+        <button onclick="exportCSV()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-emerald-800 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 shadow-sm transition">
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span data-i18n="exportBtn">Export Summary (.CSV)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Calculator Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Input Form Card -->
+      <div class="lg:col-span-7 bg-white rounded-xl shadow-sm border border-slate-200 p-6 space-y-6">
+        <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <span class="p-1.5 bg-emerald-100 text-emerald-800 rounded-lg">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            </span>
+            <span data-i18n="contractConfig">Contract & Invoice Parameters</span>
+          </h2>
+          <span class="text-xs text-slate-400" data-i18n="allValuesSar">Currencies in Saudi Riyal (SAR)</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <!-- Contract Value -->
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="contractValueLabel">
+              Total Contract Value (Excluding VAT) *
+            </label>
+            <div class="relative rounded-lg shadow-sm">
+              <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center rtl:left-auto rtl:right-0 rtl:pr-3 rtl:pl-0">
+                <span class="text-slate-400 text-sm font-semibold">SAR</span>
+              </div>
+              <input type="number" id="contractValue" value="5000000" min="0" step="1000" class="block w-full rounded-lg border-slate-300 pl-14 rtl:pl-3 rtl:pr-14 pr-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500 bg-slate-50 focus:bg-white transition">
+            </div>
+          </div>
+
+          <!-- Contract Framework -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="regimeLabel">
+              Contract Regime / Legal Framework
+            </label>
+            <select id="contractRegime" class="block w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-emerald-500 focus:ring-emerald-500 bg-white transition">
+              <option value="gtpl" selected data-i18n="regimeGtpl">Saudi GTPL (Govt. 10% Max Cap)</option>
+              <option value="fidic" data-i18n="regimeFidic">Private / FIDIC (Custom Cap)</option>
+            </select>
+          </div>
+
+          <!-- Original Duration -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="durationLabel">
+              Original Contract Duration (Days) *
+            </label>
+            <input type="number" id="contractDuration" value="365" min="1" class="block w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-emerald-500 focus:ring-emerald-500 bg-slate-50 focus:bg-white transition">
+          </div>
+
+          <!-- Current Gross Certificate / Invoice Value -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="invoiceGrossLabel">
+              Current Interim Invoice (Gross) *
+            </label>
+            <div class="relative rounded-lg shadow-sm">
+              <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center rtl:left-auto rtl:right-0 rtl:pr-3 rtl:pl-0">
+                <span class="text-slate-400 text-sm font-semibold">SAR</span>
+              </div>
+              <input type="number" id="invoiceGross" value="450000" min="0" step="500" class="block w-full rounded-lg border-slate-300 pl-14 rtl:pl-3 rtl:pr-14 pr-3 py-2 text-sm focus:border-emerald-500 focus:ring-emerald-500 bg-slate-50 focus:bg-white transition">
+            </div>
+          </div>
+
+          <!-- Retention Rate -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="retentionRateLabel">
+              Retention Rate (%)
+            </label>
+            <div class="relative rounded-lg shadow-sm">
+              <input type="number" id="retentionRate" value="10" min="0" max="30" step="0.5" class="block w-full rounded-lg border-slate-300 pr-9 rtl:pr-3 rtl:pl-9 py-2 px-3 text-sm focus:border-emerald-500 focus:ring-emerald-500 bg-slate-50 focus:bg-white transition">
+              <div class="pointer-events-none absolute inset-y-0 right-0 pr-3 flex items-center rtl:right-auto rtl:left-0 rtl:pl-3 rtl:pr-0">
+                <span class="text-slate-400 text-sm font-bold">%</span>
+              </div>
+            </div>
+            <p class="mt-1 text-xs text-slate-500" data-i18n="retentionNote">Typically 5% to 10% under Saudi practice.</p>
+          </div>
+
+          <!-- Advance Payment Recovery -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="advanceAmortizationLabel">
+              Advance Payment Deduction Rate (%)
+            </label>
+            <div class="relative rounded-lg shadow-sm">
+              <input type="number" id="advanceRate" value="10" min="0" max="50" step="0.5" class="block w-full rounded-lg border-slate-300 pr-9 rtl:pr-3 rtl:pl-9 py-2 px-3 text-sm focus:border-emerald-500 focus:ring-emerald-500 bg-slate-50 focus:bg-white transition">
+              <div class="pointer-events-none absolute inset-y-0 right-0 pr-3 flex items-center rtl:right-auto rtl:left-0 rtl:pl-3 rtl:pr-0">
+                <span class="text-slate-400 text-sm font-bold">%</span>
+              </div>
+            </div>
+            <p class="mt-1 text-xs text-slate-500" data-i18n="advanceNote">Recouped proportionally from interim billings.</p>
+          </div>
+
+          <!-- Cumulative Advance Recouped Limit -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="remainingAdvanceCapLabel">
+              Remaining Advance Balance (SAR)
+            </label>
+            <input type="number" id="remainingAdvance" value="350000" min="0" step="1000" class="block w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-emerald-500 focus:ring-emerald-500 bg-slate-50 focus:bg-white transition">
+          </div>
+        </div>
+
+        <!-- Liquidated Damages Section -->
+        <div class="border-t border-slate-200 pt-5">
+          <h3 class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+            <span class="text-amber-600">⚠️</span>
+            <span data-i18n="delaySectionHeader">Delay Penalties & Liquidated Damages (L.D.)</span>
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="delayDaysLabel">Project Delay (Days)</label>
+              <input type="number" id="delayDays" value="14" min="0" class="block w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-emerald-500 focus:ring-emerald-500 bg-slate-50 focus:bg-white transition">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="penaltyMethodLabel">Calculation Method</label>
+              <select id="penaltyMethod" class="block w-full rounded-lg border-slate-300 py-2 px-2.5 text-xs sm:text-sm focus:border-emerald-500 focus:ring-emerald-500 bg-white transition">
+                <option value="gtpl_standard" selected data-i18n="gtplFormula">Saudi GTPL Art. 74 Scale</option>
+                <option value="fixed_daily" data-i18n="fixedDaily">Fixed Daily Rate (% per day)</option>
+                <option value="flat_deduction" data-i18n="flatAmount">Lump-Sum Agreed Fine</option>
+              </select>
+            </div>
+            <div id="customPenaltyContainer" class="hidden sm:block">
+              <label class="block text-xs font-semibold text-slate-700 mb-1" id="customPenaltyLabel" data-i18n="dailyRateLabel">Daily Rate (%/day)</label>
+              <input type="number" id="customPenaltyInput" value="0.1" min="0" step="0.01" class="block w-full rounded-lg border-slate-300 py-2 px-3 text-sm focus:border-emerald-500 focus:ring-emerald-500 bg-slate-50 focus:bg-white transition">
+            </div>
+          </div>
+          <div class="mt-3">
+            <label class="inline-flex items-center text-xs text-slate-600 cursor-pointer">
+              <input type="checkbox" id="applyLdThisInvoice" checked class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500 h-4 w-4">
+              <span class="ml-2 rtl:ml-0 rtl:mr-2 font-medium" data-i18n="deductLdNow">Deduct calculated delay penalty from this interim certificate</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- VAT Option -->
+        <div class="border-t border-slate-200 pt-4 flex items-center justify-between">
+          <span class="text-xs font-semibold text-slate-700 uppercase tracking-wide" data-i18n="zatcaVatLabel">ZATCA VAT Calculation (15%)</span>
+          <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="includeVat" checked class="sr-only peer">
+            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+            <span class="ml-3 rtl:ml-0 rtl:mr-3 text-xs font-bold text-slate-900" data-i18n="standard15">15% VAT</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Summary & Output Card -->
+      <div class="lg:col-span-5 space-y-5">
+        <div class="bg-white rounded-xl shadow-md border border-slate-200 p-6 relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-28 h-28 bg-emerald-50 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none"></div>
+          
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+            <h2 class="text-lg font-bold text-slate-900" data-i18n="settlementSummary">Payment Certificate Breakdown</h2>
+            <span class="text-[11px] font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full uppercase" data-i18n="liveAudit">Live Calculation</span>
+          </div>
+
+          <!-- Line Item List -->
+          <dl class="space-y-3 text-sm">
+            <div class="flex justify-between items-center text-slate-600">
+              <dt data-i18n="sumGross">Gross Certified Value</dt>
+              <dd class="font-semibold text-slate-900" id="dispGross">0.00 SAR</dd>
+            </div>
+
+            <div class="flex justify-between items-center text-slate-600 pb-2 border-b border-dashed border-slate-200">
+              <dt class="flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                <span data-i18n="sumRetention">Less: Retention Withheld</span>
+              </dt>
+              <dd class="font-medium text-amber-700" id="dispRetention">-0.00 SAR</dd>
+            </div>
+
+            <div class="flex justify-between items-center text-slate-600 pb-2 border-b border-dashed border-slate-200">
+              <dt class="flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                <span data-i18n="sumAdvance">Less: Advance Recovery</span>
+              </dt>
+              <dd class="font-medium text-blue-700" id="dispAdvance">-0.00 SAR</dd>
+            </div>
+
+            <div class="flex justify-between items-center text-slate-600 pb-2 border-b border-dashed border-slate-200">
+              <dt class="flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                <span data-i18n="sumPenalty">Less: Liquidated Damages</span>
+              </dt>
+              <dd class="font-medium text-red-700" id="dispPenalty">-0.00 SAR</dd>
+            </div>
+
+            <div class="flex justify-between items-center text-slate-800 pt-1 font-semibold text-sm">
+              <dt data-i18n="sumNetExVat">Net Invoice (Excluding VAT)</dt>
+              <dd class="text-slate-900" id="dispNetExVat">0.00 SAR</dd>
+            </div>
+
+            <div class="flex justify-between items-center text-slate-600 pb-2 border-b border-slate-200">
+              <dt data-i18n="sumVat">ZATCA VAT (15%)</dt>
+              <dd class="font-semibold text-emerald-700" id="dispVat">+0.00 SAR</dd>
+            </div>
+
+            <!-- Net Payable Highlight -->
+            <div class="bg-slate-900 text-white rounded-lg p-4 mt-4 shadow-sm">
+              <div class="text-xs text-slate-300 font-medium uppercase tracking-wider mb-1" data-i18n="sumPayable">Net Contractor Disbursable</div>
+              <div class="text-2xl sm:text-3xl font-extrabold text-emerald-400" id="dispFinalTotal">0.00 SAR</div>
+              <div class="text-[11px] text-slate-400 mt-1 flex justify-between items-center">
+                <span data-i18n="totalDeductions">Total Deductions:</span>
+                <span id="dispTotalDeductions" class="font-mono font-bold text-slate-200">0.00 SAR</span>
+              </div>
+            </div>
+          </dl>
+
+          <!-- Statutory Delay Cap Warning Box -->
+          <div id="capNotice" class="mt-4 hidden p-3 rounded-lg border text-xs leading-relaxed">
+            <!-- Dynamic status injection -->
+          </div>
+
+          <!-- Gumroad Conversion CTA Inside Card -->
+          <div class="mt-6 pt-5 border-t border-slate-100 text-center">
+            <p class="text-xs text-slate-600 mb-2 font-medium" data-i18n="excelPitch">Need multi-subcontractor retention matrices, IPC generation & cumulative schedules?</p>
+            <a href="https://gumroad.com" target="_blank" rel="noopener" class="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 px-4 rounded-lg text-sm shadow-sm transition duration-150">
+              <svg class="w-4 h-4 text-emerald-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span data-i18n="downloadMasterBtn">Download Excel & VBA IPC Suite ($29)</span>
+            </a>
+            <span class="block text-[11px] text-slate-400 mt-1.5" data-i18n="instantDelivery">Instant .xlsm download • Unlocked VBA macros • ZATCA compliant</span>
+          </div>
+        </div>
+
+        <!-- Statutory Disclaimer Card -->
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-amber-900 text-xs leading-relaxed">
+          <div class="font-bold flex items-center gap-1.5 mb-1">
+            <svg class="w-4 h-4 text-amber-700 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            <span data-i18n="disclaimerTitle">Legal & Regulatory Disclaimer</span>
+          </div>
+          <p data-i18n="disclaimerBody">
+            This tool provides computational estimates based on Saudi Government Tenders & Procurement Law (Royal Decree M/128) and FIDIC general conditions. Official contractual deductions require formal engineer verification, time extension (EOT) reviews, and certified ZATCA tax invoices. Verify all parameters with qualified legal and financial counsel before withholding disbursements.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comprehensive In-Depth Guide & SEO Section -->
+    <section class="mt-16 bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 text-slate-700 shadow-sm">
+      <article class="prose prose-slate max-w-none text-sm leading-relaxed sm:text-base">
+        <h2 class="text-xl sm:text-2xl font-extrabold text-slate-900 border-b border-slate-200 pb-3 mb-6" data-i18n="guideTitle">
+          Saudi Contractor Retention & Liquidated Damages: Complete Engineering & Accounting Guide
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div>
+            <h3 class="text-base font-bold text-slate-900 mb-2" data-i18n="guideSec1Title">1. Retention Withholding Mechanics (محجوز الضمان)</h3>
+            <p class="text-sm text-slate-600 mb-3" data-i18n="guideSec1P1">
+              In Saudi Arabia construction and engineering procurement, retention money acts as financial security to safeguard the employer (client) against defective workmanship, incomplete punch-list items, or contractor abandonment. Under standard Saudi contracting practices, employers withhold between <strong>5% and 10%</strong> from each Interim Payment Certificate (IPC).
+            </p>
+            <p class="text-sm text-slate-600" data-i18n="guideSec1P2">
+              <strong>Release Schedule:</strong> The first 50% of retention is typically released upon the issuance of the Initial Handover Certificate (التسليم الابتدائي). The remaining 50% is retained throughout the Defects Liability Period (DLP - فترة الصيانة والضمان), usually 365 days, and released upon Final Handover (التسليم النهائي) and submission of Zakat & Tax clearance (ZATCA certificate).
+            </p>
+          </div>
+
+          <div>
+            <h3 class="text-base font-bold text-slate-900 mb-2" data-i18n="guideSec2Title">2. Liquidated Damages & Delay Fines (غرامات التأخير)</h3>
+            <p class="text-sm text-slate-600 mb-3" data-i18n="guideSec2P1">
+              Under the <em>Saudi Government Tenders and Procurement Law (GTPL - نظام المنافسات والمشتريات الحكومية)</em>, liquidated damages are systematically tiered under Article 74. If a contractor exceeds the contractual completion date without an approved Extension of Time (EOT), delay fines accrue on an average daily cost formula.
+            </p>
+            <p class="text-sm text-slate-600" data-i18n="guideSec2P2">
+              Crucially, statutory regulations establish a <strong>maximum statutory ceiling (typically 10% for GTPL projects and 10% to 20% in private FIDIC contracts)</strong> of the total contract value. Once this threshold is reached, the employer may initiate default procedures, withdraw the project, or encash bank guarantees.
+            </p>
+          </div>
+        </div>
+
+        <!-- Formulas & Table -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-5 mb-8">
+          <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide mb-3" data-i18n="guideFormulasTitle">Standard Mathematical Formulas Used</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
+            <div class="bg-white p-3 rounded-lg border border-slate-200">
+              <span class="font-bold text-emerald-800 block mb-1">Retention Amount:</span>
+              <code>Retention = IPC Gross × Retention%</code>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-slate-200">
+              <span class="font-bold text-blue-800 block mb-1">Advance Recovery:</span>
+              <code>Recovery = Min(IPC Gross × Rate%, Balance)</code>
+            </div>
+            <div class="bg-white p-3 rounded-lg border border-slate-200">
+              <span class="font-bold text-red-800 block mb-1">GTPL Fine Tier:</span>
+              <code>Daily Fine = (Contract Value ÷ Duration) × Tier%</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- ZATCA VAT Context -->
+        <h3 class="text-base font-bold text-slate-900 mb-2" data-i18n="zatcaRulesTitle">3. ZATCA Value-Added Tax (VAT) Treatment on Retentions</h3>
+        <p class="text-sm text-slate-600 mb-4" data-i18n="zatcaRulesP">
+          A frequent point of audit dispute in Saudi Arabia is whether 15% VAT applies to the gross certified amount or the net payable after retention. Under ZATCA (Zakat, Tax and Customs Authority) construction guidelines, <strong>VAT becomes due upon the issuance of the tax invoice or receipt of payment (whichever occurs earlier)</strong> based on the gross value of goods and services supplied. Retention money does not reduce the taxable base when the works are billed; rather, the full invoice value is subject to VAT at 15%. Liquidated damages deducted from invoices represent compensatory damage claims, which are outside the scope of VAT and do not reduce the original supply value.
+        </p>
+
+        <!-- Frequently Asked Questions -->
+        <h3 class="text-base font-bold text-slate-900 mb-4 border-t border-slate-200 pt-6" data-i18n="faqTitle">Frequently Asked Questions (FAQ)</h3>
+        <div class="space-y-4 text-sm">
+          <details class="bg-slate-50 rounded-lg p-4 border border-slate-200">
+            <summary class="font-bold text-slate-800 cursor-pointer" data-i18n="faq1Q">Can an employer deduct liquidated damages before project completion in Saudi Arabia?</summary>
+            <p class="mt-2 text-slate-600 text-xs sm:text-sm" data-i18n="faq1A">Yes. If the contractor fails to achieve intermediate binding milestones or if delays exceed contractual grace periods, employers frequently withhold estimated liquidated damages from interim payments as a protective set-off, subject to final reconciliation upon project completion or EOT determination.</p>
+          </details>
+
+          <details class="bg-slate-50 rounded-lg p-4 border border-slate-200">
+            <summary class="font-bold text-slate-800 cursor-pointer" data-i18n="faq2Q">Can a contractor substitute cash retention with a bank guarantee in KSA?</summary>
+            <p class="mt-2 text-slate-600 text-xs sm:text-sm" data-i18n="faq2A">Yes. Under Article 64 of the Saudi GTPL and standard FIDIC Red Book Sub-Clause 14.9, contractors can replace accumulated retention monies by furnishing an unconditional, irrevocable Bank Guarantee (ضمان بنكي للدفعة المحتجزة) issued by a licensed Saudi bank.</p>
+          </details>
+
+          <details class="bg-slate-50 rounded-lg p-4 border border-slate-200">
+            <summary class="font-bold text-slate-800 cursor-pointer" data-i18n="faq3Q">What is the maximum legal penalty cap under the Saudi Government Procurement Law?</summary>
+            <p class="mt-2 text-slate-600 text-xs sm:text-sm" data-i18n="faq3A">Under Article 74 of the GTPL, the aggregate delay fines for public works and supply contracts cannot exceed 10% of the total contract value. For services and consulting contracts, the statutory ceiling is generally capped at 20%.</p>
+          </details>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <div>
+        <span class="font-bold text-white tracking-wide">Saudi Contract IPC Tools</span> &copy; <span id="currYear"></span>. Built for KSA Project Engineers, Commercial Managers & CFOs.
+      </div>
+      <div class="flex items-center gap-4 text-slate-300">
+        <a href="https://gumroad.com" target="_blank" rel="noopener" class="text-emerald-400 hover:text-emerald-300 font-medium" data-i18n="footerExcelLink">Commercial Excel Suite ($29)</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript Logic -->
+  <script>
+    const translations = {
+      en: {
+        bannerText: "Need automated billing, multi-milestone retention tracking & ZATCA e-invoicing for subcontracts?",
+        bannerTextMobile: "Offline Excel & VBA Master Template",
+        bannerBtn: "Get Offline Excel & VBA Master Template ($29)",
+        mainHeading: "Contractor Retention & Delay Damages Calculator",
+        subHeading: "Estimate progress deductions, advance payment amortization, liquidated damages under Saudi GTPL & FIDIC standards, and ZATCA VAT liability.",
+        printBtn: "Print / PDF",
+        exportBtn: "Export Summary (.CSV)",
+        contractConfig: "Contract & Invoice Parameters",
+        allValuesSar: "Currencies in Saudi Riyal (SAR)",
+        contractValueLabel: "Total Contract Value (Excluding VAT) *",
+        regimeLabel: "Contract Regime / Legal Framework",
+        regimeGtpl: "Saudi GTPL (Govt. 10% Max Cap)",
+        regimeFidic: "Private / FIDIC (Custom Cap)",
+        durationLabel: "Original Contract Duration (Days) *",
+        invoiceGrossLabel: "Current Interim Invoice (Gross) *",
+        retentionRateLabel: "Retention Rate (%)",
+        retentionNote: "Typically 5% to 10% under Saudi practice.",
+        advanceAmortizationLabel: "Advance Payment Deduction Rate (%)",
+        advanceNote: "Recouped proportionally from interim billings.",
+        remainingAdvanceCapLabel: "Remaining Advance Balance (SAR)",
+        delaySectionHeader: "Delay Penalties & Liquidated Damages (L.D.)",
+        delayDaysLabel: "Project Delay (Days)",
+        penaltyMethodLabel: "Calculation Method",
+        gtplFormula: "Saudi GTPL Art. 74 Scale",
+        fixedDaily: "Fixed Daily Rate (% per day)",
+        flatAmount: "Lump-Sum Agreed Fine",
+        dailyRateLabel: "Daily Rate (%/day)",
+        flatRateLabel: "Lump Sum Fine (SAR)",
+        deductLdNow: "Deduct calculated delay penalty from this interim certificate",
+        zatcaVatLabel: "ZATCA VAT Calculation (15%)",
+        standard15: "15% VAT",
+        settlementSummary: "Payment Certificate Breakdown",
+        liveAudit: "Live Calculation",
+        sumGross: "Gross Certified Value",
+        sumRetention: "Less: Retention Withheld",
+        sumAdvance: "Less: Advance Recovery",
+        sumPenalty: "Less: Liquidated Damages",
+        sumNetExVat: "Net Invoice (Excluding VAT)",
+        sumVat: "ZATCA VAT (15%)",
+        sumPayable: "Net Contractor Disbursable",
+        totalDeductions: "Total Deductions:",
+        excelPitch: "Need multi-subcontractor retention matrices, IPC generation & cumulative schedules?",
+        downloadMasterBtn: "Download Excel & VBA IPC Suite ($29)",
+        instantDelivery: "Instant .xlsm download • Unlocked VBA macros • ZATCA compliant",
+        disclaimerTitle: "Legal & Regulatory Disclaimer",
+        disclaimerBody: "This tool provides computational estimates based on Saudi Government Tenders & Procurement Law (Royal Decree M/128) and FIDIC general conditions. Official contractual deductions require formal engineer verification, time extension (EOT) reviews, and certified ZATCA tax invoices. Verify all parameters with qualified legal and financial counsel before withholding disbursements.",
+        guideTitle: "Saudi Contractor Retention & Liquidated Damages: Complete Engineering & Accounting Guide",
+        guideSec1Title: "1. Retention Withholding Mechanics (محجوز الضمان)",
+        guideSec1P1: "In Saudi Arabia construction and engineering procurement, retention money acts as financial security to safeguard the employer (client) against defective workmanship, incomplete punch-list items, or contractor abandonment. Under standard Saudi contracting practices, employers withhold between 5% and 10% from each Interim Payment Certificate (IPC).",
+        guideSec1P2: "Release Schedule: The first 50% of retention is typically released upon the issuance of the Initial Handover Certificate (التسليم الابتدائي). The remaining 50% is retained throughout the Defects Liability Period (DLP - فترة الصيانة والضمان), usually 365 days, and released upon Final Handover (التسليم النهائي) and submission of Zakat & Tax clearance (ZATCA certificate).",
+        guideSec2Title: "2. Liquidated Damages & Delay Fines (غرامات التأخير)",
+        guideSec2P1: "Under the Saudi Government Tenders and Procurement Law (GTPL - نظام المنافسات والمشتريات الحكومية), liquidated damages are systematically tiered under Article 74. If a contractor exceeds the contractual completion date without an approved Extension of Time (EOT), delay fines accrue on an average daily cost formula.",
+        guideSec2P2: "Crucially, statutory regulations establish a maximum statutory ceiling (typically 10% for GTPL projects and 10% to 20% in private FIDIC contracts) of the total contract value. Once this threshold is reached, the employer may initiate default procedures, withdraw the project, or encash bank guarantees.",
+        guideFormulasTitle: "Standard Mathematical Formulas Used",
+        zatcaRulesTitle: "3. ZATCA Value-Added Tax (VAT) Treatment on Retentions",
+        zatcaRulesP: "A frequent point of audit dispute in Saudi Arabia is whether 15% VAT applies to the gross certified amount or the net payable after retention. Under ZATCA (Zakat, Tax and Customs Authority) construction guidelines, VAT becomes due upon the issuance of the tax invoice or receipt of payment (whichever occurs earlier) based on the gross value of goods and services supplied. Retention money does not reduce the taxable base when the works are billed; rather, the full invoice value is subject to VAT at 15%. Liquidated damages deducted from invoices represent compensatory damage claims, which are outside the scope of VAT and do not reduce the original supply value.",
+        faqTitle: "Frequently Asked Questions (FAQ)",
+        faq1Q: "Can an employer deduct liquidated damages before project completion in Saudi Arabia?",
+        faq1A: "Yes. If the contractor fails to achieve intermediate binding milestones or if delays exceed contractual grace periods, employers frequently withhold estimated liquidated damages from interim payments as a protective set-off, subject to final reconciliation upon project completion or EOT determination.",
+        faq2Q: "Can a contractor substitute cash retention with a bank guarantee in KSA?",
+        faq2A: "Yes. Under Article 64 of the Saudi GTPL and standard FIDIC Red Book Sub-Clause 14.9, contractors can replace accumulated retention monies by furnishing an unconditional, irrevocable Bank Guarantee (ضمان بنكي للدفعة المحتجزة) issued by a licensed Saudi bank.",
+        faq3Q: "What is the maximum legal penalty cap under the Saudi Government Procurement Law?",
+        faq3A: "Under Article 74 of the GTPL, the aggregate delay fines for public works and supply contracts cannot exceed 10% of the total contract value. For services and consulting contracts, the statutory ceiling is generally capped at 20%.",
+        footerExcelLink: "Commercial Excel Suite ($29)"
+      },
+      ar: {
+        bannerText: "هل تحتاج نموذج إكسل متكامل لحساب فواتير المستخلصات، محجوز الضمان، وفاتورة الزكاة والضريبة؟",
+        bannerTextMobile: "قالب الإكسل المتقدم بنظام الماكرو (VBA)",
+        bannerBtn: "احصل على نموذج الإكسل الماستر المتقدم ($29)",
+        mainHeading: "حاسبة محجوز الضمان وغرامات التأخير لعقود المقاولات",
+        subHeading: "حساب استقطاعات المستخلصات، إطفاء الدفعة المقدمة، غرامات التأخير وفق نظام المنافسات السعودي وعقود فيديك، وضريبة القيمة المضافة.",
+        printBtn: "طباعة / PDF",
+        exportBtn: "تصدير ملخص (.CSV)",
+        contractConfig: "بيانات العقد والمستخلص الجاري",
+        allValuesSar: "جميع القيم بالريال السعودي (SAR)",
+        contractValueLabel: "إجمالي قيمة العقد (غير شامل الضريبة) *",
+        regimeLabel: "النظام التعاقدي / الإطار القانوني",
+        regimeGtpl: "نظام المنافسات والمشتريات الحكومية (سقف 10%)",
+        regimeFidic: "القطاع الخاص / عقود فيديك (سقف مخصص)",
+        durationLabel: "مدة العقد الأصلية (أيام) *",
+        invoiceGrossLabel: "قيمة المستخلص الجاري (الإجمالي المعتمد) *",
+        retentionRateLabel: "نسبة محجوز الضمان (%)",
+        retentionNote: "تتراوح عادة بين 5% و 10% في الممارسات السعودية.",
+        advanceAmortizationLabel: "نسبة استرداد الدفعة المقدمة (%)",
+        advanceNote: "تُستقطع تدريجياً بنسبة من كل مستخلص.",
+        remainingAdvanceCapLabel: "رصيد الدفعة المقدمة المتبقي (ريال)",
+        delaySectionHeader: "غرامات التأخير والتعويضات الاتفاقية",
+        delayDaysLabel: "مدة التأخير (أيام)",
+        penaltyMethodLabel: "طريقة احتساب الغرامة",
+        gtplFormula: "معادلة المادة 74 (نظام المنافسات)",
+        fixedDaily: "نسبة يومية محددة (% يومياً)",
+        flatAmount: "مبلغ مقطوع متفق عليه",
+        dailyRateLabel: "النسبة اليومية (%/يوم)",
+        flatRateLabel: "الغرامة المقطوعة (ريال)",
+        deductLdNow: "خصم غرامة التأخير المحتسبة من هذا المستخلص الجاري",
+        zatcaVatLabel: "احتساب ضريبة القيمة المضافة (15%)",
+        standard15: "ضريبة 15%",
+        settlementSummary: "ملخص شهادة الدفع والمستخلص",
+        liveAudit: "حساب فوري مباشر",
+        sumGross: "إجمالي الأعمال المنجزة المعتمدة",
+        sumRetention: "يُخصم: محجوز الضمان",
+        sumAdvance: "يُخصم: استرداد الدفعة المقدمة",
+        sumPenalty: "يُخصم: غرامة التأخير المحتسبة",
+        sumNetExVat: "صافي المستخلص (قبل الضريبة)",
+        sumVat: "ضريبة القيمة المضافة (15%)",
+        sumPayable: "الصافي المستحق للصرف للمقاول",
+        totalDeductions: "إجمالي الاستقطاعات:",
+        excelPitch: "هل تدير عدة مقاولي باطن وتحتاج جدول إكسل احترافي لحساب شهادات الدفع الدورية؟",
+        downloadMasterBtn: "تحميل حزمة قوالب الإكسل الماستر ($29)",
+        instantDelivery: "تحميل فوري .xlsm • ماكرو مفتوح بالكامل • متوافق مع هيئة الزكاة والضريبة",
+        disclaimerTitle: "إخلاء مسؤولية قانوني وتنظيمي",
+        disclaimerBody: "تقدم هذه الأداة تقديرات حسابية استرشادية بناءً على نظام المنافسات والمشتريات الحكومية السعودي والشروط العامة لعقود المقاولات. تخضع الخصومات الرسمية لاعتماد المهندس المشرف، ودراسة التمديدات الزمنية، وإصدار الفواتير الضريبية المعتمدة. يجب التحقق من كافة البنود مع المستشار القانوني والمالي قبل صرف المستحقات.",
+        guideTitle: "دليل محجوز الضمان وغرامات التأخير في عقود المقاولات السعودية",
+        guideSec1Title: "1. آلية اقتطاع محجوز الضمان (Retention Money)",
+        guideSec1P1: "في قطاع الإنشاءات السعودي، يعمل محجوز الضمان كأداة حماية لصاحب العمل لضمان التزام المقاول بإصلاح العيوب واستكمال الملاحظات. وفقاً للعرف الهندسي والنظامي السائد، يُستقطع ما بين 5% إلى 10% من قيمة كل مستخلص دوري جاري (IPC).",
+        guideSec1P2: "مراحل الإفراج: يُفرج عن أول 50% من المحجوز فور صدور شهادة التسليم الابتدائي للمشروع، ويُحتجز المتبقي (50%) طوال فترة الضمان والصيانة (DLP) والتي تمتد عادة لمدة 365 يوماً، وتُصرف بعد التسليم النهائي وتقديم الشهادة النهائية من هيئة الزكاة والضريبة والجمارك.",
+        guideSec2Title: "2. غرامات التأخير والحد النظامي الأقصى (Liquidated Damages)",
+        guideSec2P1: "حددت المادة 74 من نظام المنافسات والمشتريات الحكومية السعودي ولائحته التنفيذية طريقة متدرجة لحساب غرامة التأخير اليومية على أساس متوسط التكلفة اليومية للمشروع في حال تجاوز المقاول للمدة دون أمر تغيير زمني معتمد.",
+        guideSec2P2: "الأهم من ذلك، يضع النظام سقفاً نظامياً أقصى لا يمكن تجاوزه (10% في عقود الأشغال العامة، وقد يصل إلى 20% في عقود الخدمات الاستشارية أو القطاع الخاص). وعند بلوغ هذا السقف، يحق لجهة العمل اتخاذ إجراءات سحب العمل أو تسييل الضمانات.",
+        guideFormulasTitle: "المعادلات الحسابية المعتمدة",
+        zatcaRulesTitle: "3. المعاملة الضريبية لمحجوز الضمان وفق هيئة الزكاة (ZATCA)",
+        zatcaRulesP: "من أكثر النقاط إثارة للجدل المحاسبي: هل تُحسب ضريبة 15% على إجمالي المستخلص أم على الصافي بعد استقطاع محجوز الضمان؟ وفقاً للأدلة الإرشادية لهيئة الزكاة والضريبة والجمارك لقطاع المقاولات، تستحق الضريبة على كامل القيمة المعتمدة للأعمال المنجزة (Gross) بمجرد إصدار الفاتورة أو استلام الدفعة أيهما أسبق، ولا يُخفض محجوز الضمان الوعاء الضريبي للفاتورة. كما أن غرامات التأخير المستقطعة تعد تعويضات تخرج عن نطاق الضريبة.",
+        faqTitle: "الأسئلة الشائعة (FAQ)",
+        faq1Q: "هل يحق لصاحب العمل خصم غرامات التأخير من المستخلصات الجارية قبل انتهاء المشروع؟",
+        faq1A: "نعم، في حال تعثر المقاول في تحقيق المعالم التعاقدية الملزمة (Milestones) أو حدوث تأخير جوهري غير مبرر، يُطبق الخصم كإجراء تحوطي لحين إجراء التسوية الختامية أو البت في مطالبات التمديد الزمني (EOT).",
+        faq2Q: "هل يمكن للمقاول استبدال محجوز الضمان النقدي بضمان بنكي؟",
+        faq2A: "نعم، تتيح المادة 64 من نظام المنافسات والمشتريات الحكومية وعقود فيديك للمقاول تقديم ضمان بنكي غير مشروط لصالح جهة العمل للإفراج عن مبالغ المحجوزات النقدية وتحسين السيولة المالية للمشروع.",
+        faq3Q: "ما هو السقف النظامي الأقصى لغرامات التأخير في العقود الحكومية؟",
+        faq3A: "وفقاً للمادة 74 من نظام المنافسات، لا يجوز أن يتجاوز مجموع غرامات التأخير 10% من إجمالي قيمة العقد في مشاريع الإنشاءات والتوريد، ولا يتجاوز 20% في عقود الخدمات والاستشارات.",
+        footerExcelLink: "باقة إكسل المقاولات ($29)"
+      }
+    };
+
+    let currentLang = 'en';
+
+    function setLanguage(lang) {
+      currentLang = lang;
+      const htmlTag = document.documentElement;
+      if (lang === 'ar') {
+        htmlTag.setAttribute('dir', 'rtl');
+        htmlTag.setAttribute('lang', 'ar');
+        document.getElementById('langToggle').innerText = 'English';
+      } else {
+        htmlTag.setAttribute('dir', 'ltr');
+        htmlTag.setAttribute('lang', 'en');
+        document.getElementById('langToggle').innerText = 'العربية';
+      }
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang][key]) {
+          el.innerHTML = translations[lang][key];
+        }
+      });
+
+      updateCustomPenaltyLabel();
+      calculate();
+    }
+
+    function updateCustomPenaltyLabel() {
+      const method = document.getElementById('penaltyMethod').value;
+      const label = document.getElementById('customPenaltyLabel');
+      if (method === 'flat_deduction') {
+        label.innerText = translations[currentLang].flatRateLabel || 'Lump Sum Fine (SAR)';
+      } else {
+        label.innerText = translations[currentLang].dailyRateLabel || 'Daily Rate (%/day)';
+      }
+    }
+
+    function formatCurrency(val) {
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(val) + ' SAR';
+    }
+
+    function calculate() {
+      const contractVal = parseFloat(document.getElementById('contractValue').value) || 0;
+      const contractDays = Math.max(1, parseFloat(document.getElementById('contractDuration').value) || 1);
+      const invoiceGross = parseFloat(document.getElementById('invoiceGross').value) || 0;
+      const retentionRate = (parseFloat(document.getElementById('retentionRate').value) || 0) / 100;
+      const advanceRate = (parseFloat(document.getElementById('advanceRate').value) || 0) / 100;
+      const remainingAdvance = parseFloat(document.getElementById('remainingAdvance').value) || 0;
+      const delayDays = Math.max(0, parseFloat(document.getElementById('delayDays').value) || 0);
+      const penaltyMethod = document.getElementById('penaltyMethod').value;
+      const customPenaltyVal = parseFloat(document.getElementById('customPenaltyInput').value) || 0;
+      const regime = document.getElementById('contractRegime').value;
+      const deductLdNow = document.getElementById('applyLdThisInvoice').checked;
+      const includeVat = document.getElementById('includeVat').checked;
+
+      // 1. Retention
+      const retentionAmount = invoiceGross * retentionRate;
+
+      // 2. Advance Amortization
+      const calculatedAdvanceDed = invoiceGross * advanceRate;
+      const advanceRecoveryAmount = Math.min(calculatedAdvanceDed, remainingAdvance);
+
+      // 3. Liquidated Damages / Delay Fine
+      let totalPenalty = 0;
+      const averageDailyCost = contractDays > 0 ? (contractVal / contractDays) : 0;
+
+      if (delayDays > 0) {
+        if (penaltyMethod === 'gtpl_standard') {
+          // Article 74 standard KSA Procurement guideline approximation:
+          // 1st tier (days 1-15): 0.25 * average daily cost per day
+          // 2nd tier (days 16-30): 0.50 * average daily cost per day
+          // 3rd tier (days 31-45): 0.75 * average daily cost per day
+          // days 45+: 1.00 * average daily cost per day
+          for (let d = 1; d <= delayDays; d++) {
+            let factor = 1.0;
+            if (d <= 15) factor = 0.25;
+            else if (d <= 30) factor = 0.50;
+            else if (d <= 45) factor = 0.75;
+            totalPenalty += (averageDailyCost * factor);
+          }
+        } else if (penaltyMethod === 'fixed_daily') {
+          // Daily percent of contract value
+          const dailyPercent = customPenaltyVal / 100;
+          totalPenalty = delayDays * (contractVal * dailyPercent);
+        } else if (penaltyMethod === 'flat_deduction') {
+          totalPenalty = customPenaltyVal;
+        }
+      }
+
+      // Maximum Statutory Cap
+      const capRate = (regime === 'gtpl') ? 0.10 : 0.15;
+      const maxCapAmount = contractVal * capRate;
+      let isCapped = false;
+
+      if (totalPenalty > maxCapAmount) {
+        totalPenalty = maxCapAmount;
+        isCapped = true;
+      }
+
+      // Penalty to deduct on THIS certificate
+      const penaltyDeduction = deductLdNow ? totalPenalty : 0;
+
+      // 4. Net before VAT
+      const totalDeductions = retentionAmount + advanceRecoveryAmount + penaltyDeduction;
+      const netExVat = Math.max(0, invoiceGross - totalDeductions);
+
+      // 5. VAT (15% on Gross under ZATCA guidelines for supplies)
+      // In Saudi practice, VAT is billed on the taxable gross supply, but client pays VAT along with net
+      const vatAmount = includeVat ? (invoiceGross * 0.15) : 0;
+      const finalPayable = netExVat + vatAmount;
+
+      // Update Display
+      document.getElementById('dispGross').innerText = formatCurrency(invoiceGross);
+      document.getElementById('dispRetention').innerText = '-' + formatCurrency(retentionAmount);
+      document.getElementById('dispAdvance').innerText = '-' + formatCurrency(advanceRecoveryAmount);
+      document.getElementById('dispPenalty').innerText = '-' + formatCurrency(penaltyDeduction);
+      document.getElementById('dispNetExVat').innerText = formatCurrency(netExVat);
+      document.getElementById('dispVat').innerText = '+' + formatCurrency(vatAmount);
+      document.getElementById('dispFinalTotal').innerText = formatCurrency(finalPayable);
+      document.getElementById('dispTotalDeductions').innerText = formatCurrency(totalDeductions);
+
+      // Cap Notice Box
+      const capNotice = document.getElementById('capNotice');
+      if (isCapped) {
+        capNotice.className = "mt-4 block p-3 rounded-lg border border-red-200 bg-red-50 text-red-800 text-xs leading-relaxed";
+        if (currentLang === 'ar') {
+          capNotice.innerHTML = `<strong>تنبيه السقف النظامي:</strong> بلغت غرامة التأخير الحد الأقصى المسموح به (${(capRate * 100)}% = ${formatCurrency(maxCapAmount)}). لا يجوز نظاماً فرض مبالغ إضافية بموجب المادة 74 من نظام المنافسات دون اتخاذ إجراءات سحب المشروع.`;
+        } else {
+          capNotice.innerHTML = `<strong>Statutory Cap Reached:</strong> Liquidated damages have hit the legal maximum ceiling of ${(capRate * 100)}% (${formatCurrency(maxCapAmount)}). Under GTPL Art. 74, further delay penalties cannot be accumulated without contract default actions.`;
+        }
+      } else if (delayDays > 0) {
+        capNotice.className = "mt-4 block p-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-800 text-xs leading-relaxed";
+        if (currentLang === 'ar') {
+          capNotice.innerHTML = `<strong>ملاحظة التأخير:</strong> غرامة التأخير المحتسبة: ${formatCurrency(totalPenalty)} (${((totalPenalty / (contractVal || 1)) * 100).toFixed(2)}% من إجمالي العقد، السقف الأقصى: ${formatCurrency(maxCapAmount)}).`;
+        } else {
+          capNotice.innerHTML = `<strong>Delay Audit:</strong> Accrued penalty: ${formatCurrency(totalPenalty)} (${((totalPenalty / (contractVal || 1)) * 100).toFixed(2)}% of contract, legal cap: ${formatCurrency(maxCapAmount)}).`;
+        }
+      } else {
+        capNotice.className = "hidden";
+      }
+    }
+
+    function exportCSV() {
+      const contractVal = document.getElementById('contractValue').value;
+      const gross = document.getElementById('invoiceGross').value;
+      const retention = document.getElementById('dispRetention').innerText.replace('-', '');
+      const advance = document.getElementById('dispAdvance').innerText.replace('-', '');
+      const ld = document.getElementById('dispPenalty').innerText.replace('-', '');
+      const netEx = document.getElementById('dispNetExVat').innerText;
+      const vat = document.getElementById('dispVat').innerText.replace('+', '');
+      const finalTotal = document.getElementById('dispFinalTotal').innerText;
+
+      const rows = [
+        ["Item", "Amount"],
+        ["Total Contract Value (Excl. VAT)", contractVal],
+        ["Gross Certified Work (Current IPC)", gross],
+        ["Retention Deducted", retention],
+        ["Advance Payment Recouped", advance],
+        ["Delay Liquidated Damages", ld],
+        ["Net Certified Payable (Before VAT)", netEx],
+        ["ZATCA 15% VAT on Supply", vat],
+        ["Net Disbursable Payment", finalTotal]
+      ];
+
+      let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Contractor_IPC_Settlement_Saudi.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('currYear').innerText = new Date().getFullYear();
+
+      const inputs = [
+        'contractValue', 'contractDuration', 'invoiceGross',
+        'retentionRate', 'advanceRate', 'remainingAdvance',
+        'delayDays', 'customPenaltyInput'
+      ];
+
+      inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('input', calculate);
+      });
+
+      ['penaltyMethod', 'contractRegime', 'applyLdThisInvoice', 'includeVat'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', () => {
+          if (id === 'penaltyMethod') {
+            const method = el.value;
+            const custDiv = document.getElementById('customPenaltyContainer');
+            if (method === 'gtpl_standard') {
+              custDiv.classList.add('hidden');
+            } else {
+              custDiv.classList.remove('hidden');
+            }
+            updateCustomPenaltyLabel();
+          }
+          calculate();
+        });
+      });
+
+      document.getElementById('langToggle').addEventListener('click', () => {
+        setLanguage(currentLang === 'en' ? 'ar' : 'en');
+      });
+
+      // Initial trigger
+      calculate();
+    });
+  </script>
+</body>
+</html>
