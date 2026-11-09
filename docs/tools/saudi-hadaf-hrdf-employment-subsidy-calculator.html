@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saudi HRDF (Hadaf) Subsidy & Net Cost Calculator | حاسبة دعم هدف</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            cairo: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .font-cairo-ar { font-family: 'Cairo', sans-serif; }
+    .font-inter-en { font-family: 'Inter', sans-serif; }
+    input[type=range] { accent-color: #059669; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-shadow-none { box-shadow: none !important; border: 1px solid #e2e8f0; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased font-inter-en selection:bg-brand-500 selection:text-white">
+
+  <!-- Top Promo Ribbon -->
+  <div class="bg-slate-900 text-white text-xs sm:text-sm py-2 px-4 text-center font-medium sticky top-0 z-50 border-b border-brand-500/30 flex items-center justify-between shadow-md no-print">
+    <div class="flex-1 flex items-center justify-center gap-2">
+      <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span id="ribbonText">Updated for 2024-2025 HRDF Employment Support Regulations (Qiwa / Hadaf)</span>
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="toggleLanguage()" id="langToggleBtn" class="bg-brand-600 hover:bg-brand-700 text-white text-xs px-2.5 py-1 rounded transition font-bold">
+        عربي / English
+      </button>
+      <a href="https://gumroad.com" target="_blank" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1 rounded text-xs transition">
+        Excel Template ($29)
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-brand-50 border border-brand-200 rounded-full text-brand-800 text-xs font-semibold uppercase tracking-wider mb-3">
+        <svg class="w-4 h-4 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span id="badgeLabel">KSA HR & Saudization Financial Optimization</span>
+      </div>
+      <h1 id="mainHeading" class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
+        Saudi HRDF (Hadaf) Employment Subsidy & Net Cost Calculator
+      </h1>
+      <p id="subHeading" class="text-slate-600 max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+        Accurately estimate 24-month government wage support, employer GOSI obligations, demographic bonus tiers, and net cost-to-company for Saudi national hires.
+      </p>
+    </div>
+
+    <!-- Main Interactive Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- Form Column (7 Cols) -->
+      <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 space-y-6">
+        <div class="border-b border-slate-100 pb-4 flex justify-between items-center">
+          <h2 id="inputSectionTitle" class="text-lg font-bold text-slate-800 flex items-center gap-2">
+            <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+            Candidate & Salary Parameters
+          </h2>
+          <span class="text-xs text-slate-400 font-mono">Hadaf Program 30%-50%</span>
+        </div>
+
+        <!-- Monthly Gross Wage -->
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label id="labelGrossSalary" class="text-sm font-semibold text-slate-700">Monthly Registered Wage (Basic + Housing) [SAR]</label>
+            <span class="text-xs font-mono text-brand-700 bg-brand-50 px-2 py-0.5 rounded font-bold" id="wageDisplay">SAR 6,000</span>
+          </div>
+          <p class="text-xs text-slate-500 mb-2" id="wageHelp">Minimum qualifying wage is SAR 3,200; Cap for HRDF calculation is SAR 15,000.</p>
+          <input type="number" id="inputWage" min="3200" max="50000" step="250" value="6000"
+                 class="w-full border border-slate-300 rounded-lg px-3.5 py-2.5 text-base font-semibold focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none">
+          <input type="range" id="sliderWage" min="3200" max="25000" step="250" value="6000" class="w-full mt-2 cursor-pointer">
+        </div>
+
+        <!-- Company Classification Size -->
+        <div>
+          <label id="labelCompanySize" class="text-sm font-semibold text-slate-700 block mb-1.5">Company Establishment Size (Monsha'at / Nitaqat)</label>
+          <div class="grid grid-cols-3 gap-2.5">
+            <label class="border rounded-lg p-2.5 text-center cursor-pointer transition hover:border-brand-500 has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50/50">
+              <input type="radio" name="companySize" value="micro_small" checked class="sr-only onchange-trigger">
+              <span class="block text-xs font-bold text-slate-800" id="sizeSmallLabel">Micro / Small</span>
+              <span class="block text-[10px] text-slate-500" id="sizeSmallSub">1 - 49 Employees (+10%)</span>
+            </label>
+            <label class="border rounded-lg p-2.5 text-center cursor-pointer transition hover:border-brand-500 has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50/50">
+              <input type="radio" name="companySize" value="medium" class="sr-only onchange-trigger">
+              <span class="block text-xs font-bold text-slate-800" id="sizeMediumLabel">Medium</span>
+              <span class="block text-[10px] text-slate-500" id="sizeMediumSub">50 - 499 Employees</span>
+            </label>
+            <label class="border rounded-lg p-2.5 text-center cursor-pointer transition hover:border-brand-500 has-[:checked]:border-brand-600 has-[:checked]:bg-brand-50/50">
+              <input type="radio" name="companySize" value="large" class="sr-only onchange-trigger">
+              <span class="block text-xs font-bold text-slate-800" id="sizeLargeLabel">Large / Giant</span>
+              <span class="block text-[10px] text-slate-500" id="sizeLargeSub">500+ Employees</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Demographics & Targeted Bonus Tiers -->
+        <div class="space-y-3 pt-2">
+          <label id="labelTargetedBonuses" class="text-sm font-semibold text-slate-700 block">Targeted Bonus Multipliers (Max Cap: 50% Total Subsidy)</label>
+          
+          <label class="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition">
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="checkFemale" class="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500 onchange-trigger">
+              <div>
+                <span class="text-sm font-medium text-slate-800" id="optFemaleTitle">Female Saudi Hire</span>
+                <p class="text-xs text-slate-500" id="optFemaleDesc">HRDF incentive grant for empowering women in workforce (+10%)</p>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">+10%</span>
+          </label>
+
+          <label class="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition">
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="checkDisability" class="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500 onchange-trigger">
+              <div>
+                <span class="text-sm font-medium text-slate-800" id="optDisabledTitle">Person with Disability (Mowaqafah)</span>
+                <p class="text-xs text-slate-500" id="optDisabledDesc">Specialized employment support for inclusive workplaces (+10%)</p>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">+10%</span>
+          </label>
+
+          <label class="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition">
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="checkRemoteRegion" class="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500 onchange-trigger">
+              <div>
+                <span class="text-sm font-medium text-slate-800" id="optRegionTitle">Outside Major Cities / Remote Governorates</span>
+                <p class="text-xs text-slate-500" id="optRegionDesc">Hiring outside Riyadh, Jeddah, and Eastern Metro area (+10%)</p>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">+10%</span>
+          </label>
+
+          <label class="flex items-center justify-between p-3 border border-slate-200 rounded-lg cursor-pointer hover:bg-slate-50 transition">
+            <div class="flex items-center gap-3">
+              <input type="checkbox" id="checkCriticalProfession" class="w-4 h-4 text-brand-600 rounded border-slate-300 focus:ring-brand-500 onchange-trigger">
+              <div>
+                <span class="text-sm font-medium text-slate-800" id="optProfessionTitle">Critical / Targeted Sector Occupation</span>
+                <p class="text-xs text-slate-500" id="optProfessionDesc">Approved specialized technical or engineering localized roles (+10%)</p>
+              </div>
+            </div>
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded">+10%</span>
+          </label>
+        </div>
+
+        <!-- GOSI & Other Cost Factors -->
+        <div class="pt-2 border-t border-slate-100">
+          <label id="labelGosiSetting" class="text-sm font-semibold text-slate-700 block mb-2">GOSI Employer Contribution Inclusions</label>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+              <span class="text-xs text-slate-500 block" id="gosiRateLabel">Employer GOSI Rate (Annuities + Hazards + SANED)</span>
+              <span class="text-sm font-bold text-slate-800">11.75% of Registered Wage</span>
+            </div>
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+              <span class="text-xs text-slate-500 block" id="gosiCapLabel">Max Subsidized Cap (Hadaf Limit)</span>
+              <span class="text-sm font-bold text-slate-800">SAR 3,000 / month max</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Results & Breakdown Column (5 Cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        
+        <div class="bg-white rounded-2xl shadow-lg border border-brand-200 p-6 relative overflow-hidden print-shadow-none">
+          <div class="absolute -right-8 -top-8 w-28 h-28 bg-brand-50 rounded-full pointer-events-none"></div>
+          
+          <div class="flex justify-between items-start mb-4 relative z-10">
+            <div>
+              <span class="text-xs uppercase font-bold text-brand-700 tracking-wider" id="resBadge">Monthly Financial Forecast</span>
+              <h3 class="text-xl font-bold text-slate-900" id="resSummaryTitle">Employer Cost Overview</h3>
+            </div>
+            <span id="subsidyPctBadge" class="bg-brand-600 text-white font-extrabold text-sm px-3 py-1 rounded-full shadow-sm">
+              40% Subsidy
+            </span>
+          </div>
+
+          <!-- Main High Impact Metric -->
+          <div class="bg-brand-50/70 rounded-xl p-4 border border-brand-100 mb-5">
+            <span class="text-xs text-slate-600 font-medium block mb-1" id="netCostMonthlyLabel">Net Monthly Employer Out-of-Pocket Cost</span>
+            <div class="flex items-baseline gap-2">
+              <span id="netMonthlyCost" class="text-3xl sm:text-4xl font-extrabold text-slate-950">SAR 4,305</span>
+              <span class="text-xs text-slate-500 font-medium">/ month (Year 1)</span>
+            </div>
+            <p class="text-[11px] text-emerald-800 mt-1" id="netSavingsHelper">Includes GOSI employer liability minus Hadaf direct monthly subsidy credit.</p>
+          </div>
+
+          <!-- Detailed Monthly Breakdown -->
+          <div class="space-y-3 text-sm pb-4 border-b border-slate-100">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-600" id="rowGrossWage">Registered Gross Wage:</span>
+              <span id="valGrossWage" class="font-semibold text-slate-900">SAR 6,000</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-slate-600" id="rowEmployerGosi">+ Employer GOSI Share (11.75%):</span>
+              <span id="valEmployerGosi" class="font-semibold text-amber-700">+ SAR 705</span>
+            </div>
+            <div class="flex justify-between items-center text-emerald-700">
+              <span class="font-medium" id="rowMonthlySubsidy">- Hadaf Direct Subsidy (Year 1):</span>
+              <span id="valMonthlySubsidy" class="font-bold text-emerald-700">- SAR 2,400</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-500 text-xs">
+              <span id="rowYear2Subsidy">- Hadaf Direct Subsidy (Year 2):</span>
+              <span id="valYear2Subsidy" class="font-medium">- SAR 2,400</span>
+            </div>
+          </div>
+
+          <!-- 24-Month Aggregate Savings Table -->
+          <div class="pt-4 space-y-2.5">
+            <div class="flex justify-between items-center font-bold text-slate-900 text-base">
+              <span id="labelTwoYearSavings">Total 24-Month HRDF Subsidy:</span>
+              <span id="valTwoYearSavings" class="text-brand-600 text-lg">SAR 57,600</span>
+            </div>
+            <div class="flex justify-between items-center text-xs text-slate-600">
+              <span id="labelFullCostNoSubsidy">Total 2-Yr Cost Without Subsidy:</span>
+              <span id="valFullCostNoSubsidy" class="font-medium text-slate-800">SAR 160,920</span>
+            </div>
+            <div class="flex justify-between items-center text-xs text-slate-600">
+              <span id="labelFullCostWithSubsidy">Net 2-Yr Cost With Hadaf:</span>
+              <span id="valFullCostWithSubsidy" class="font-bold text-slate-900">SAR 103,320</span>
+            </div>
+          </div>
+
+          <!-- Export and Print Buttons -->
+          <div class="mt-6 pt-4 border-t border-slate-100 flex gap-2 no-print">
+            <button onclick="window.print()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              <span id="btnPrint">Print Summary</span>
+            </button>
+            <button onclick="exportCSV()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span id="btnExport">Export CSV</span>
+            </button>
+          </div>
+
+          <!-- Official Disclaimer -->
+          <div class="mt-5 p-3 rounded-lg bg-amber-50/80 border border-amber-200/80 text-[11px] text-amber-900 leading-relaxed">
+            <p class="font-bold mb-0.5" id="disclaimerTitle">⚠️ Legal & Regulatory Disclaimer / إخلاء مسؤولية نظامي:</p>
+            <p id="disclaimerBody">
+              Calculations are estimates based on standard HRDF (Hadaf) program frameworks and GOSI schedules. Subsidy approval requires active Qiwa compliance, establishment eligibility, clean Nitaqat status, and official HRDF portal authorization. Verify all agreements directly through the Taqat / HRDF platform.
+            </p>
+          </div>
+        </div>
+
+        <!-- High Converting CTA Card -->
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-6 shadow-md border border-slate-700 text-center no-print">
+          <span class="bg-amber-400 text-slate-950 text-[10px] uppercase tracking-wider font-extrabold px-2.5 py-0.5 rounded-full inline-block mb-3">
+            B2B HR Toolkit (Saudi Arabia)
+          </span>
+          <h4 id="ctaTitle" class="text-lg font-bold mb-2">Complete Offline Automated Excel & VBA Master Template</h4>
+          <p id="ctaDesc" class="text-xs text-slate-300 mb-4 leading-relaxed">
+            Multi-employee batch simulator, Qiwa wage compliance auditor, 24-month cash flow scheduler, and Nitaqat impact model in one unlocked macro workbook.
+          </p>
+          <a href="https://gumroad.com" target="_blank" class="block w-full py-3 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl transition duration-150 shadow-md text-sm">
+            <span id="ctaBtnText">Download Excel Master Model — $29</span>
+          </a>
+          <p class="text-[10px] text-slate-400 mt-2" id="ctaGuarantee">Instant Download • VAT Invoice Included • Lifetime Updates</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Comprehensive 800+ Word SEO Guide, Formula Breakdown & FAQ -->
+    <div class="mt-16 bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 shadow-sm">
+      
+      <!-- Article Header -->
+      <div class="border-b border-slate-200 pb-6 mb-8">
+        <h2 id="guideHeading" class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-3">
+          Saudi HRDF (Hadaf) Wage Support Program: Executive Guide for HR & CFOs
+        </h2>
+        <p class="text-slate-600 text-sm leading-relaxed" id="guideSubheading">
+          A comprehensive breakdown of the Employment Support Program (برنامج دعم التوظيف) managed by the Human Resources Development Fund (صندوق تنمية الموارد البشرية - هدف) in the Kingdom of Saudi Arabia.
+        </p>
+      </div>
+
+      <!-- Content Sections -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-slate-700 text-sm leading-relaxed">
+        
+        <div>
+          <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2" id="sec1Title">
+            <span class="w-6 h-6 rounded bg-brand-100 text-brand-800 text-xs inline-flex items-center justify-center font-bold">1</span>
+            Overview & Purpose of Hadaf Support
+          </h3>
+          <p class="mb-3" id="sec1P1">
+            To accelerate Saudization and reduce private sector talent acquisition risks, the Human Resources Development Fund (HRDF) provides monthly cash subsidies directly offsetting the salary of eligible Saudi citizens. The initiative targets job seekers entering private entities registered on the national Qiwa and Taqat portals.
+          </p>
+          <p id="sec1P2">
+            The standard framework offers a base support rate of 30% of the employee’s registered monthly wage in Year 1 and Year 2, with targeted demographic escalations increasing the government contribution up to a maximum cap of 50% or SAR 3,000 per month (whichever is lower).
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2" id="sec2Title">
+            <span class="w-6 h-6 rounded bg-brand-100 text-brand-800 text-xs inline-flex items-center justify-center font-bold">2</span>
+            Wage Caps & Eligibility Rules
+          </h3>
+          <p class="mb-3" id="sec2P1">
+            To prevent wage inflation and support baseline equitable employment, HRDF enforces statutory minimums and maximum caps:
+          </p>
+          <ul class="list-disc pl-5 space-y-1.5 text-xs text-slate-600" id="sec2List">
+            <li><strong>Minimum Qualifying Wage:</strong> The employee’s registered wage in GOSI (Basic + Housing Allowance) must be at least SAR 3,200.</li>
+            <li><strong>Maximum Registered Ceiling:</strong> The wage can be up to SAR 15,000 for eligibility consideration.</li>
+            <li><strong>Absolute Monthly Cap:</strong> Under no circumstance does the monthly subsidy disburse more than SAR 3,000 per employee.</li>
+            <li><strong>Tenure Limitation:</strong> Maximum duration is capped at 24 calendar months per verified employee registration.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2" id="sec3Title">
+            <span class="w-6 h-6 rounded bg-brand-100 text-brand-800 text-xs inline-flex items-center justify-center font-bold">3</span>
+            Mathematical Formula & Calculation Engine
+          </h3>
+          <p class="mb-2" id="sec3P1">Our tool models the exact compounding criteria used in Qiwa approval matrices:</p>
+          <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 font-mono text-xs text-slate-800 space-y-1 mb-3">
+            <p><strong>Base Rate:</strong> 30%</p>
+            <p><strong>Adders (+10% each):</strong> Female (+10%), Disability (+10%), SME 1-49 (+10%), Remote Governorate (+10%), Critical Sector (+10%)</p>
+            <p><strong>Effective Rate:</strong> Min(Base Rate + Sum(Adders), 50%)</p>
+            <p><strong>Monthly Subsidy:</strong> Min(Effective Rate × Gross Wage, 3000 SAR)</p>
+            <p><strong>Employer Net Cost:</strong> (Gross Wage + GOSI 11.75%) - Monthly Subsidy</p>
+          </div>
+          <p class="text-xs text-slate-500" id="sec3P2">
+            The employer GOSI rate includes Old Age, Disability & Death annuities (9%), Occupational Hazards insurance (2%), and SANED Unemployment Insurance (0.75%), totaling 11.75% for Saudi personnel.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2" id="sec4Title">
+            <span class="w-6 h-6 rounded bg-brand-100 text-brand-800 text-xs inline-flex items-center justify-center font-bold">4</span>
+            Common Disqualification Pitfalls
+          </h3>
+          <p class="mb-2" id="sec4P1">Saudi SMEs frequently lose HRDF disbursements due to clerical and compliance mistakes:</p>
+          <ul class="list-disc pl-5 space-y-1.5 text-xs text-slate-600" id="sec4List">
+            <li>Submitting the support request past the statutory 120-day Qiwa onboarding window.</li>
+            <li>Discrepancy between GOSI registered salary and the Qiwa digital employment contract.</li>
+            <li>Establishment slipping into Red or Low Green Nitaqat Saudization zones.</li>
+            <li>Delinquency in Mudad Wage Protection System (WPS) monthly payroll compliance certifications.</li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="mt-10 pt-8 border-t border-slate-200">
+        <h3 class="text-xl font-bold text-slate-900 mb-6" id="faqHeading">Frequently Asked Questions (FAQ)</h3>
+        <div class="space-y-4">
+          <details class="group bg-slate-50 p-4 rounded-xl border border-slate-200 cursor-pointer">
+            <summary class="font-semibold text-slate-800 list-none flex justify-between items-center text-sm">
+              <span id="q1Text">Can an employee receive HRDF support more than once?</span>
+              <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed" id="a1Text">
+              As per the updated Hadaf regulations, a Saudi citizen who previously benefited from Hadaf support can potentially benefit again if at least 2 years have elapsed since the end of the previous subsidy period, provided their cumulative historical subsidy usage does not exceed the total lifetime allowable threshold (generally 24 months).
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 p-4 rounded-xl border border-slate-200 cursor-pointer">
+            <summary class="font-semibold text-slate-800 list-none flex justify-between items-center text-sm">
+              <span id="q2Text">Does HRDF disburse payments to the company or the employee directly?</span>
+              <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed" id="a2Text">
+              The enterprise pays the full contractual salary to the employee via the Mudad Wage Protection System (WPS) monthly. After payment verification and GOSI confirmation, HRDF deposits the approved subsidy directly into the employer's registered IBAN account on a monthly reimbursement cycle.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 p-4 rounded-xl border border-slate-200 cursor-pointer">
+            <summary class="font-semibold text-slate-800 list-none flex justify-between items-center text-sm">
+              <span id="q3Text">How does the subsidy interact with the Saudization (Nitaqat) score?</span>
+              <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed" id="a3Text">
+              Subsidized Saudi hires count toward your organization's Saudization quota as long as their registered salary is at or above SAR 4,000 for a full 1.0 Nitaqat credit (wages between SAR 3,000 and 3,999 count as half an employee in Nitaqat metrics).
+            </p>
+          </details>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="mt-12 text-center text-xs text-slate-400 pb-8">
+      <p>© 2025 Saudi B2B SaaS Calculator Suite. Built for Financial Controllers, HR Directors & SME Owners in KSA.</p>
+    </div>
+
+  </div>
+
+  <!-- Bilingual Content & JavaScript Engine -->
+  <script>
+    let currentLang = 'en';
+
+    const translations = {
+      en: {
+        ribbon: "Updated for 2024-2025 HRDF Employment Support Regulations (Qiwa / Hadaf)",
+        badge: "KSA HR & Saudization Financial Optimization",
+        mainHeading: "Saudi HRDF (Hadaf) Employment Subsidy & Net Cost Calculator",
+        subHeading: "Accurately estimate 24-month government wage support, employer GOSI obligations, demographic bonus tiers, and net cost-to-company for Saudi national hires.",
+        inputSectionTitle: "Candidate & Salary Parameters",
+        labelGrossSalary: "Monthly Registered Wage (Basic + Housing) [SAR]",
+        wageHelp: "Minimum qualifying wage is SAR 3,200; Cap for HRDF calculation is SAR 15,000.",
+        labelCompanySize: "Company Establishment Size (Monsha'at / Nitaqat)",
+        sizeSmallLabel: "Micro / Small",
+        sizeSmallSub: "1 - 49 Employees (+10%)",
+        sizeMediumLabel: "Medium",
+        sizeMediumSub: "50 - 499 Employees",
+        sizeLargeLabel: "Large / Giant",
+        sizeLargeSub: "500+ Employees",
+        labelTargetedBonuses: "Targeted Bonus Multipliers (Max Cap: 50% Total Subsidy)",
+        optFemaleTitle: "Female Saudi Hire",
+        optFemaleDesc: "HRDF incentive grant for empowering women in workforce (+10%)",
+        optDisabledTitle: "Person with Disability (Mowaqafah)",
+        optDisabledDesc: "Specialized employment support for inclusive workplaces (+10%)",
+        optRegionTitle: "Outside Major Cities / Remote Governorates",
+        optRegionDesc: "Hiring outside Riyadh, Jeddah, and Eastern Metro area (+10%)",
+        optProfessionTitle: "Critical / Targeted Sector Occupation",
+        optProfessionDesc: "Approved specialized technical or engineering localized roles (+10%)",
+        labelGosiSetting: "GOSI Employer Contribution Inclusions",
+        gosiRateLabel: "Employer GOSI Rate (Annuities + Hazards + SANED)",
+        gosiCapLabel: "Max Subsidized Cap (Hadaf Limit)",
+        resBadge: "Monthly Financial Forecast",
+        resSummaryTitle: "Employer Cost Overview",
+        netCostMonthlyLabel: "Net Monthly Employer Out-of-Pocket Cost",
+        netSavingsHelper: "Includes GOSI employer liability minus Hadaf direct monthly subsidy credit.",
+        rowGrossWage: "Registered Gross Wage:",
+        rowEmployerGosi: "+ Employer GOSI Share (11.75%):",
+        rowMonthlySubsidy: "- Hadaf Direct Subsidy (Year 1):",
+        rowYear2Subsidy: "- Hadaf Direct Subsidy (Year 2):",
+        labelTwoYearSavings: "Total 24-Month HRDF Subsidy:",
+        labelFullCostNoSubsidy: "Total 2-Yr Cost Without Subsidy:",
+        labelFullCostWithSubsidy: "Net 2-Yr Cost With Hadaf:",
+        btnPrint: "Print Summary",
+        btnExport: "Export CSV",
+        disclaimerTitle: "⚠️ Legal & Regulatory Disclaimer:",
+        disclaimerBody: "Calculations are estimates based on standard HRDF (Hadaf) program frameworks and GOSI schedules. Subsidy approval requires active Qiwa compliance, establishment eligibility, clean Nitaqat status, and official HRDF portal authorization. Verify all agreements directly through the Taqat / HRDF platform.",
+        ctaTitle: "Complete Offline Automated Excel & VBA Master Template",
+        ctaDesc: "Multi-employee batch simulator, Qiwa wage compliance auditor, 24-month cash flow scheduler, and Nitaqat impact model in one unlocked macro workbook.",
+        ctaBtnText: "Download Excel Master Model — $29",
+        ctaGuarantee: "Instant Download • VAT Invoice Included • Lifetime Updates",
+        guideHeading: "Saudi HRDF (Hadaf) Wage Support Program: Executive Guide for HR & CFOs",
+        guideSubheading: "A comprehensive breakdown of the Employment Support Program (برنامج دعم التوظيف) managed by the Human Resources Development Fund (صندوق تنمية الموارد البشرية - هدف) in the Kingdom of Saudi Arabia.",
+        sec1Title: "1. Overview & Purpose of Hadaf Support",
+        sec1P1: "To accelerate Saudization and reduce private sector talent acquisition risks, the Human Resources Development Fund (HRDF) provides monthly cash subsidies directly offsetting the salary of eligible Saudi citizens. The initiative targets job seekers entering private entities registered on the national Qiwa and Taqat portals.",
+        sec1P2: "The standard framework offers a base support rate of 30% of the employee's registered monthly wage in Year 1 and Year 2, with targeted demographic escalations increasing the government contribution up to a maximum cap of 50% or SAR 3,000 per month (whichever is lower).",
+        sec2Title: "2. Wage Caps & Eligibility Rules",
+        sec2P1: "To prevent wage inflation and support baseline equitable employment, HRDF enforces statutory minimums and maximum caps:",
+        sec3Title: "3. Mathematical Formula & Calculation Engine",
+        sec3P1: "Our tool models the exact compounding criteria used in Qiwa approval matrices:",
+        sec3P2: "The employer GOSI rate includes Old Age, Disability & Death annuities (9%), Occupational Hazards insurance (2%), and SANED Unemployment Insurance (0.75%), totaling 11.75% for Saudi personnel.",
+        sec4Title: "4. Common Disqualification Pitfalls",
+        sec4P1: "Saudi SMEs frequently lose HRDF disbursements due to clerical and compliance mistakes:",
+        faqHeading: "Frequently Asked Questions (FAQ)",
+        q1Text: "Can an employee receive HRDF support more than once?",
+        a1Text: "As per the updated Hadaf regulations, a Saudi citizen who previously benefited from Hadaf support can potentially benefit again if at least 2 years have elapsed since the end of the previous subsidy period, provided their cumulative historical subsidy usage does not exceed the total lifetime allowable threshold (generally 24 months).",
+        q2Text: "Does HRDF disburse payments to the company or the employee directly?",
+        a2Text: "The enterprise pays the full contractual salary to the employee via the Mudad Wage Protection System (WPS) monthly. After payment verification and GOSI confirmation, HRDF deposits the approved subsidy directly into the employer's registered IBAN account on a monthly reimbursement cycle.",
+        q3Text: "How does the subsidy interact with the Saudization (Nitaqat) score?",
+        a3Text: "Subsidized Saudi hires count toward your organization's Saudization quota as long as their registered salary is at or above SAR 4,000 for a full 1.0 Nitaqat credit (wages between SAR 3,000 and 3,999 count as half an employee in Nitaqat metrics)."
+      },
+      ar: {
+        ribbon: "محدث طبقاً لضوابط برنامج دعم التوظيف لصندوق هدف ومنصة قوى 2024-2025",
+        badge: "إدارة الموارد البشرية والامتثال المالي للتوطين في السعودية",
+        mainHeading: "حاسبة دعم التوظيف لصندوق الموارد البشرية (هدف) وصافي تكلفة الموظف",
+        subHeading: "حساب دقيق لمقدار الدعم المالي الحكومي لمدة 24 شهراً، واشتراكات التأمينات الاجتماعية (GOSI)، ومضاعفات الدعم الإضافية وصافي التكلفة الفعلية على المنشأة.",
+        inputSectionTitle: "بيانات الموظف والراتب الأساسي والبدلات",
+        labelGrossSalary: "الأجر الشهري المسجل بالتأمينات (أساسي + سكن) [ريال]",
+        wageHelp: "الحد الأدنى للأجر المؤهل للدعم هو 3,200 ريال؛ وسقف الاحتساب للدعم 15,000 ريال.",
+        labelCompanySize: "حجم المنشأة (منشآت / نطاقات)",
+        sizeSmallLabel: "متناهية الصغر / صغيرة",
+        sizeSmallSub: "1 - 49 موظف (+10%)",
+        sizeMediumLabel: "متوسطة",
+        sizeMediumSub: "50 - 499 موظف",
+        sizeLargeLabel: "كبيرة / عملاقة",
+        sizeLargeSub: "500 موظف فأكثر",
+        labelTargetedBonuses: "محددات الدعم الإضافي (الحد الأقصى الإجمالي للدعم 50%)",
+        optFemaleTitle: "توظيف الإناث",
+        optFemaleDesc: "ميزة إضافية لتمكين وتوظيف الكفاءات النسائية (+10%)",
+        optDisabledTitle: "الأشخاص ذوي الإعاقة (قادرون باختلاف)",
+        optDisabledDesc: "دعم مخصص لتشجيع بيئات العمل الشاملة (+10%)",
+        optRegionTitle: "خارج المدن الرئيسية / المحافظات النائية",
+        optRegionDesc: "التوظيف خارج نطاق الرياض، جدة، وحاضرة الدمام (+10%)",
+        optProfessionTitle: "المهن والأنشطة المستهدفة بالدعم النوعي",
+        optProfessionDesc: "وظائف هندسية وفنية وتقنية معتمدة ضمن المهن ذات الأولوية (+10%)",
+        labelGosiSetting: "احتساب اشتراكات المؤسسة العامة للتأمينات الاجتماعية",
+        gosiRateLabel: "نسبة صاحب العمل بالتأمينات (معاشات + أخطار + ساند)",
+        gosiCapLabel: "الحد الأقصى للدعم الشهري من هدف",
+        resBadge: "التوقعات المالية الشهرية",
+        resSummaryTitle: "ملخص التكلفة على المنشأة",
+        netCostMonthlyLabel: "صافي التكلفة الشهرية الفعلية على المنشأة",
+        netSavingsHelper: "تشمل حصة صاحب العمل بالتأمينات مخصوماً منها دعم هدف المودع بالحساب.",
+        rowGrossWage: "الأجر الشهري المسجل:",
+        rowEmployerGosi: "+ حصة صاحب العمل بالتأمينات (11.75%):",
+        rowMonthlySubsidy: "- الدعم المباشر الشهري من هدف (السنة 1):",
+        rowYear2Subsidy: "- الدعم المباشر الشهري من هدف (السنة 2):",
+        labelTwoYearSavings: "إجمالي الدعم الحكومي خلال سنتين (24 شهر):",
+        labelFullCostNoSubsidy: "تكلفة الموظف الإجمالية سنتين بدون دعم:",
+        labelFullCostWithSubsidy: "صافي تكلفة الموظف الإجمالية سنتين مع هدف:",
+        btnPrint: "طباعة التقرير",
+        btnExport: "تصدير ملف CSV",
+        disclaimerTitle: "⚠️ إخلاء مسؤولية نظامي وقانوني:",
+        disclaimerBody: "هذه الحاسبة أداة تقديرية مبنية على لوائح صندوق تنمية الموارد البشرية (هدف) ونظام التأمينات الاجتماعية. يخضع استحقاق وصرف الدعم للأهلية المعتمدة لدى منصة قوى وبوابة طاقات وخلو سجل المنشأة من الملاحظات. يرجى مراجعة البوابة الرسمية للتحقق النهائي.",
+        ctaTitle: "نموذج الإكسل المتقدم المؤتمت للشركات (Excel & VBA Master)",
+        ctaDesc: "محاكي الرواتب المجمعة للموظفين، فاحص الامتثال لمدد وقوى، جدولة التدفقات النقدية لـ 24 شهراً، وتأثير نطاقات في ملف واحد مفتوح المصدر.",
+        ctaBtnText: "تحميل نموذج الإكسل الشامل — 29 دولار",
+        ctaGuarantee: "تحميل فوري • فاتورة ضريبية رسمية • تحديثات مدى الحياة",
+        guideHeading: "الدليل التنفيذي لبرنامج دعم التوظيف من هدف للمدراء الماليين والموارد البشرية",
+        guideSubheading: "تحليل شامل لآليات وشروط برنامج دعم التوظيف التابع لصندوق تنمية الموارد البشرية (هدف) في المملكة العربية السعودية.",
+        sec1Title: "1. نبذة عن برنامج الدعم والهدف الاستراتيجي",
+        sec1P1: "يهدف صندوق تنمية الموارد البشرية (هدف) إلى تحفيز منشآت القطاع الخاص على توظيف الكفاءات الوطنية السعودية من خلال المساهمة في دفع نسبة من الأجر الشهري للموظف لمدة تصل إلى 24 شهراً لتحقيق الاستقرار الوظيفي وخفض تكلفة التأسيس.",
+        sec1P2: "النسبة الأساسية للدعم هي 30% من الأجر الشهري المسجل للسنة الأولى والثانية، وترتفع لتصل إلى 50% بحد أقصى (3,000 ريال شهرياً) عند استيفاء المنشأة أو المرشح للمحددات الإضافية المعتمدة.",
+        sec2Title: "2. حدود الأجور وشروط الاستحقاق النظامية",
+        sec2P1: "يضع الصندوق اشتراطات وضوابط صارمة للرواتب المؤهلة لبرنامج الدعم:",
+        sec3Title: "3. المعادلة الرياضية لاحتساب الدعم والتأمينات",
+        sec3P1: "تقوم الحاسبة بتطبيق ذات الخوارزميات المعتمدة في منصة قوى وطاقات:",
+        sec3P2: "تشمل حصة صاحب العمل في التأمينات الاجتماعية للسعوديين: فرع المعاشات (9%)، فرع الأخطار المهنية (2%)، والتعطل عن العمل - ساند (0.75%) بإجمالي 11.75%.",
+        sec4Title: "4. أخطاء شائعة تؤدي لحرمان المنشأة من الصرف",
+        sec4P1: "تفقد العديد من الشركات مستحقات الدعم بسبب مخالفات إجرائية شائعة:",
+        faqHeading: "الأسئلة الأكثر شيوعاً حول برنامج دعم هدف",
+        q1Text: "هل يجوز للموظف الاستفادة من دعم هدف أكثر من مرة؟",
+        a1Text: "وفقاً للتحديثات التنظيمية، يحق للمواطن الاستفادة مجدداً في حال مضي سنتين كاملتين من تاريخ انتهاء الدعم السابق، وبشرط ألا يتجاوز مجموع فترات الدعم التراكمية السقف المحدد نظاماً.",
+        q2Text: "هل يُصرف مبلغ الدعم لحساب الشركة أم لحساب الموظف؟",
+        a2Text: "تلتزم المنشأة بتحويل كامل أجر الموظف التعاقدي عبر نظام حماية الأجور (منصة مَدَد)، ثم يقوم صندوق هدف بعد التحقق من السداد بإيداع مبلغ الدعم مباشرة في الحساب البنكي (IBAN) للمنشأة كتعويض شهري.",
+        q3Text: "كيف يؤثر أجر الموظف المدعوم على نقاط برنامج نطاقات؟",
+        a3Text: "يُحتسب الموظف السعودي بواقع 1 كامل في نطاقات إذا كان راتبه المسجل 4,000 ريال أو أكثر، ويحتسب بواقع نصف موظف (0.5) إذا كان الأجر بين 3,000 و3,999 ريال وفقاً لضوابط وزارة الموارد البشرية."
+      }
+    };
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+      
+      if (currentLang === 'ar') {
+        document.body.classList.remove('font-inter-en');
+        document.body.classList.add('font-cairo-ar');
+      } else {
+        document.body.classList.remove('font-cairo-ar');
+        document.body.classList.add('font-inter-en');
+      }
+      
+      const t = translations[currentLang];
+      document.getElementById('ribbonText').innerText = t.ribbon;
+      document.getElementById('badgeLabel').innerText = t.badge;
+      document.getElementById('mainHeading').innerText = t.mainHeading;
+      document.getElementById('subHeading').innerText = t.subHeading;
+      document.getElementById('inputSectionTitle').innerHTML = `<svg class="w-5 h-5 text-brand-600 inline ml-1 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>` + t.inputSectionTitle;
+      document.getElementById('labelGrossSalary').innerText = t.labelGrossSalary;
+      document.getElementById('wageHelp').innerText = t.wageHelp;
+      document.getElementById('labelCompanySize').innerText = t.labelCompanySize;
+      document.getElementById('sizeSmallLabel').innerText = t.sizeSmallLabel;
+      document.getElementById('sizeSmallSub').innerText = t.sizeSmallSub;
+      document.getElementById('sizeMediumLabel').innerText = t.sizeMediumLabel;
+      document.getElementById('sizeMediumSub').innerText = t.sizeMediumSub;
+      document.getElementById('sizeLargeLabel').innerText = t.sizeLargeLabel;
+      document.getElementById('sizeLargeSub').innerText = t.sizeLargeSub;
+      document.getElementById('labelTargetedBonuses').innerText = t.labelTargetedBonuses;
+      document.getElementById('optFemaleTitle').innerText = t.optFemaleTitle;
+      document.getElementById('optFemaleDesc').innerText = t.optFemaleDesc;
+      document.getElementById('optDisabledTitle').innerText = t.optDisabledTitle;
+      document.getElementById('optDisabledDesc').innerText = t.optDisabledDesc;
+      document.getElementById('optRegionTitle').innerText = t.optRegionTitle;
+      document.getElementById('optRegionDesc').innerText = t.optRegionDesc;
+      document.getElementById('optProfessionTitle').innerText = t.optProfessionTitle;
+      document.getElementById('optProfessionDesc').innerText = t.optProfessionDesc;
+      document.getElementById('labelGosiSetting').innerText = t.labelGosiSetting;
+      document.getElementById('gosiRateLabel').innerText = t.gosiRateLabel;
+      document.getElementById('gosiCapLabel').innerText = t.gosiCapLabel;
+      document.getElementById('resBadge').innerText = t.resBadge;
+      document.getElementById('resSummaryTitle').innerText = t.resSummaryTitle;
+      document.getElementById('netCostMonthlyLabel').innerText = t.netCostMonthlyLabel;
+      document.getElementById('netSavingsHelper').innerText = t.netSavingsHelper;
+      document.getElementById('rowGrossWage').innerText = t.rowGrossWage;
+      document.getElementById('rowEmployerGosi').innerText = t.rowEmployerGosi;
+      document.getElementById('rowMonthlySubsidy').innerText = t.rowMonthlySubsidy;
+      document.getElementById('rowYear2Subsidy').innerText = t.rowYear2Subsidy;
+      document.getElementById('labelTwoYearSavings').innerText = t.labelTwoYearSavings;
+      document.getElementById('labelFullCostNoSubsidy').innerText = t.labelFullCostNoSubsidy;
+      document.getElementById('labelFullCostWithSubsidy').innerText = t.labelFullCostWithSubsidy;
+      document.getElementById('btnPrint').innerText = t.btnPrint;
+      document.getElementById('btnExport').innerText = t.btnExport;
+      document.getElementById('disclaimerTitle').innerText = t.disclaimerTitle;
+      document.getElementById('disclaimerBody').innerText = t.disclaimerBody;
+      document.getElementById('ctaTitle').innerText = t.ctaTitle;
+      document.getElementById('ctaDesc').innerText = t.ctaDesc;
+      document.getElementById('ctaBtnText').innerText = t.ctaBtnText;
+      document.getElementById('ctaGuarantee').innerText = t.ctaGuarantee;
+      
+      document.getElementById('guideHeading').innerText = t.guideHeading;
+      document.getElementById('guideSubheading').innerText = t.guideSubheading;
+      document.getElementById('sec1Title').innerHTML = `<span class="w-6 h-6 rounded bg-brand-100 text-brand-800 text-xs inline-flex items-center justify-center font-bold mr-1 ml-1">1</span>` + t.sec1Title;
+      document.getElementById('sec1P1').innerText = t.sec1P1;
+      document.getElementById('sec1P2').innerText = t.sec1P2;
+      document.getElementById('sec2Title').innerHTML = `<span class="w-6 h-6 rounded bg-brand-100 text-brand-800 text-xs inline-flex items-center justify-center font-bold mr-1 ml-1">2</span>` + t.sec2Title;
+      document.getElementById('sec2P1').innerText = t.sec2P1;
+      document.getElementById('sec3Title').innerHTML = `<span class="w-6 h-6 rounded bg-brand-100 text-brand-800 text-xs inline-flex items-center justify-center font-bold mr-1 ml-1">3</span>` + t.sec3Title;
+      document.getElementById('sec3P1').innerText = t.sec3P1;
+      document.getElementById('sec3P2').innerText = t.sec3P2;
+      document.getElementById('sec4Title').innerHTML = `<span class="w-6 h-6 rounded bg-brand-100 text-brand-800 text-xs inline-flex items-center justify-center font-bold mr-1 ml-1">4</span>` + t.sec4Title;
+      document.getElementById('sec4P1').innerText = t.sec4P1;
+      document.getElementById('faqHeading').innerText = t.faqHeading;
+      document.getElementById('q1Text').innerText = t.q1Text;
+      document.getElementById('a1Text').innerText = t.a1Text;
+      document.getElementById('q2Text').innerText = t.q2Text;
+      document.getElementById('a2Text').innerText = t.a2Text;
+      document.getElementById('q3Text').innerText = t.q3Text;
+      document.getElementById('a3Text').innerText = t.a3Text;
+
+      recalculate();
+    }
+
+    // Inputs
+    const inputWage = document.getElementById('inputWage');
+    const sliderWage = document.getElementById('sliderWage');
+    const wageDisplay = document.getElementById('wageDisplay');
+    const checkFemale = document.getElementById('checkFemale');
+    const checkDisability = document.getElementById('checkDisability');
+    const checkRemoteRegion = document.getElementById('checkRemoteRegion');
+    const checkCriticalProfession = document.getElementById('checkCriticalProfession');
+
+    // Sync Slider and Input
+    inputWage.addEventListener('input', () => {
+      sliderWage.value = inputWage.value;
+      recalculate();
+    });
+    sliderWage.addEventListener('input', () => {
+      inputWage.value = sliderWage.value;
+      recalculate();
+    });
+
+    // Trigger listeners
+    document.querySelectorAll('.onchange-trigger').forEach(el => {
+      el.addEventListener('change', recalculate);
+    });
+
+    function formatSAR(val) {
+      return 'SAR ' + Math.round(val).toLocaleString();
+    }
+
+    function recalculate() {
+      let wage = parseFloat(inputWage.value) || 0;
+      if (wage < 3200) wage = 3200; // minimum Hadaf baseline threshold
+      wageDisplay.innerText = formatSAR(wage);
+
+      // Base Subsidy is 30%
+      let rate = 0.30;
+
+      // Size: micro/small adds 10%
+      const sizeVal = document.querySelector('input[name="companySize"]:checked').value;
+      if (sizeVal === 'micro_small') {
+        rate += 0.10;
+      }
+
+      // Checkbox Adders (10% each)
+      if (checkFemale.checked) rate += 0.10;
+      if (checkDisability.checked) rate += 0.10;
+      if (checkRemoteRegion.checked) rate += 0.10;
+      if (checkCriticalProfession.checked) rate += 0.10;
+
+      // Maximum cap is 50%
+      if (rate > 0.50) rate = 0.50;
+
+      // Subsidy Monthly Calculation (Capped at SAR 3,000 / month)
+      const unCappedSubsidy = wage * rate;
+      const monthlySubsidy = Math.min(unCappedSubsidy, 3000);
+
+      // GOSI Employer Share = 11.75% (9% Retirement + 2% Hazards + 0.75% SANED)
+      const gosiEmployerRate = 0.1175;
+      const employerGosiShare = wage * gosiEmployerRate;
+
+      // Total Employer Gross Outlay before subsidy
+      const employerGrossMonthly = wage + employerGosiShare;
+
+      // Net Monthly Employer Cost
+      const netMonthly = employerGrossMonthly - monthlySubsidy;
+
+      // 24 Month aggregates
+      const total2YrSubsidy = monthlySubsidy * 24;
+      const total2YrWithoutSubsidy = employerGrossMonthly * 24;
+      const total2YrWithSubsidy = netMonthly * 24;
+
+      // Update DOM
+      const pctDisplay = Math.round(rate * 100) + '% ' + (currentLang === 'ar' ? 'دعم' : 'Subsidy');
+      document.getElementById('subsidyPctBadge').innerText = pctDisplay;
+      
+      document.getElementById('netMonthlyCost').innerText = formatSAR(netMonthly);
+      document.getElementById('valGrossWage').innerText = formatSAR(wage);
+      document.getElementById('valEmployerGosi').innerText = '+ ' + formatSAR(employerGosiShare);
+      document.getElementById('valMonthlySubsidy').innerText = '- ' + formatSAR(monthlySubsidy);
+      document.getElementById('valYear2Subsidy').innerText = '- ' + formatSAR(monthlySubsidy);
+      
+      document.getElementById('valTwoYearSavings').innerText = formatSAR(total2YrSubsidy);
+      document.getElementById('valFullCostNoSubsidy').innerText = formatSAR(total2YrWithoutSubsidy);
+      document.getElementById('valFullCostWithSubsidy').innerText = formatSAR(total2YrWithSubsidy);
+    }
+
+    function exportCSV() {
+      const wage = inputWage.value;
+      const net = document.getElementById('netMonthlyCost').innerText.replace(/[^0-9]/g, '');
+      const subsidy = document.getElementById('valMonthlySubsidy').innerText.replace(/[^0-9]/g, '');
+      const gosi = document.getElementById('valEmployerGosi').innerText.replace(/[^0-9]/g, '');
+      const twoYearSavings = document.getElementById('valTwoYearSavings').innerText.replace(/[^0-9]/g, '');
+
+      const csvContent = "data:text/csv;charset=utf-8," 
+        + "Item,Amount (SAR)\n"
+        + "Registered Gross Wage," + wage + "\n"
+        + "Employer GOSI Contribution (11.75%)," + gosi + "\n"
+        + "Monthly Hadaf HRDF Subsidy," + subsidy + "\n"
+        + "Net Monthly Employer Outlay," + net + "\n"
+        + "Total 24-Month Projected Subsidy Received," + twoYearSavings + "\n";
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "saudi_hrdf_hadaf_cost_analysis.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initial run
+    recalculate();
+  </script>
+</body>
+</html>
