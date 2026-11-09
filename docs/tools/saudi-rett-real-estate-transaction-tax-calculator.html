@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saudi Real Estate Transaction Tax (RETT) Calculator | حاسبة ضريبة التصرفات العقارية</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Cairo', 'sans-serif'],
+            arabic: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            emerald: {
+              850: '#064e3b',
+              950: '#022c22',
+            },
+            amber: {
+              450: '#f59e0b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', 'Cairo', sans-serif; }
+    .arabic { font-family: 'Cairo', sans-serif; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-shadow { box-shadow: none !important; border: 1px solid #e5e7eb !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Top Sticky Conversion Banner -->
+  <div class="no-print sticky top-0 z-50 bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 text-white shadow-md border-b border-emerald-700/50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse">
+        <span class="bg-amber-400 text-slate-900 font-bold px-2 py-0.5 rounded text-[11px] tracking-wide uppercase">B2B Toolkit</span>
+        <span class="hidden md:inline font-medium text-emerald-100">Need bulk off-plan deed modeling &amp; ZATCA real estate tax automation?</span>
+        <span class="md:hidden font-medium text-emerald-100">Real Estate Financial &amp; Tax Model (KSA)</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-semibold px-3.5 py-1.5 rounded-lg shadow-sm transition-all transform active:scale-95 inline-flex items-center gap-1.5 text-xs sm:text-sm">
+          <span>Get Master Excel &amp; VBA Model ($29)</span>
+          <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+        <button id="langToggle" onclick="toggleLanguage()" class="bg-emerald-700 hover:bg-emerald-600 border border-emerald-500/40 text-emerald-100 px-2.5 py-1 rounded text-xs transition font-semibold">
+          العربية
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="px-2.5 py-0.5 text-xs font-semibold bg-emerald-100 text-emerald-800 rounded-full border border-emerald-200" data-i18n="badge">ZATCA / Royal Decree A/84 Compliant</span>
+          <span class="px-2.5 py-0.5 text-xs font-semibold bg-slate-100 text-slate-600 rounded-full border border-slate-200">5% Statutory Rate</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight" data-i18n="title">Saudi Real Estate Transaction Tax (RETT) Calculator</h1>
+        <p class="text-sm text-slate-500 mt-1 max-w-2xl" data-i18n="subtitle">Calculate statutory 5% RETT (ضريبة التصرفات العقارية), citizen first-home exemptions up to SAR 1M, broker commissions, and notary settlement outlays.</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="window.print()" class="no-print inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium shadow-sm transition">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <span data-i18n="btnPrint">Print / PDF</span>
+        </button>
+        <button onclick="exportCSV()" class="no-print inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs font-medium shadow-sm transition">
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <span data-i18n="btnCSV">Export CSV</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Calculator Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Input Column (7 cols) -->
+    <section class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 sm:p-7">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+          <span data-i18n="sectionDealDetails">Deal &amp; Property Parameters</span>
+        </h2>
+        <span class="text-xs text-slate-400 font-mono">Form: RETT-2025</span>
+      </div>
+
+      <div class="space-y-5">
+        <!-- Property Value -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="lblPropValue">
+            Agreed Property Value / Selling Price (SAR)
+          </label>
+          <div class="relative rounded-xl shadow-sm">
+            <div class="pointer-events-none absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 font-semibold text-sm rtl:left-auto rtl:right-0 rtl:pr-3.5 rtl:pl-0">
+              SAR
+            </div>
+            <input type="number" id="propValue" min="0" step="1000" value="1850000" class="block w-full rounded-xl border border-slate-300 py-3 pl-14 pr-4 text-slate-900 text-base font-semibold focus:border-emerald-600 focus:ring-emerald-600 rtl:pr-14 rtl:pl-4 transition" placeholder="e.g. 1,500,000" oninput="calculateRETT()">
+          </div>
+          <p class="text-xs text-slate-500 mt-1" data-i18n="hintPropValue">Must be the agreed sales price or market fair valuation, whichever is higher.</p>
+        </div>
+
+        <!-- Transaction Category / Exemption Status -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="lblTxType">
+            Transaction Nature &amp; Exemption Category
+          </label>
+          <select id="txType" onchange="handleTxTypeChange()" class="block w-full rounded-xl border border-slate-300 py-2.5 px-3.5 text-sm font-medium text-slate-800 focus:border-emerald-600 focus:ring-emerald-600 transition bg-white">
+            <option value="standard" selected>Standard Commercial / Residential Sale (5% Taxable)</option>
+            <option value="first_home">Saudi Citizen First-Home Buyer (Exempt up to SAR 1,000,000)</option>
+            <option value="family_gift">Gift / Waqf to Spouse or Relative (Up to 3rd Degree) (100% Exempt)</option>
+            <option value="inheritance">Inheritance Liquidation / Estate Partition (100% Exempt)</option>
+            <option value="in_kind_capital">In-Kind Capital Contribution to Saudi Joint Stock Co. (100% Exempt)</option>
+            <option value="merger_demerger">Corporate Reorganization / Merger &amp; Acquisition (100% Exempt)</option>
+            <option value="gov_expropriation">Government Expropriation for Public Utility (100% Exempt)</option>
+          </select>
+          <p id="exemptionNote" class="text-xs text-emerald-700 mt-1.5 hidden font-medium flex items-center gap-1.5">
+            <svg class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            <span id="exemptionNoteText">This transaction is classified as statutory exempt under ZATCA Article 3 regulations.</span>
+          </p>
+        </div>
+
+        <!-- First-time Buyer Specific Sub-card -->
+        <div id="firstHomeCard" class="p-4 rounded-xl bg-emerald-50/80 border border-emerald-200">
+          <div class="flex items-start gap-3">
+            <div class="mt-0.5 text-emerald-700">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+            </div>
+            <div>
+              <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-wide" data-i18n="firstHomeTitle">Royal Decree Citizen Housing Relief</h4>
+              <p class="text-xs text-emerald-800 mt-1 leading-relaxed" data-i18n="firstHomeDesc">The Saudi Government covers 5% RETT on real estate value up to SAR 1,000,000 (Maximum benefit: SAR 50,000). The buyer only pays 5% on the portion exceeding SAR 1M.</p>
+              <div class="mt-2.5 flex items-center gap-2">
+                <label class="text-xs font-medium text-slate-700" data-i18n="lblCitizenCert">Has Ministry of Housing First-Home Certificate?</label>
+                <input type="checkbox" id="hasHousingCert" checked onchange="calculateRETT()" class="h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Brokerage & Ancillary Costs -->
+        <div class="pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="lblBrokerPct">
+              Real Estate Broker Fee Rate (%)
+            </label>
+            <div class="relative rounded-xl shadow-sm">
+              <input type="number" id="brokerRate" min="0" max="10" step="0.25" value="2.5" class="block w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm font-semibold focus:border-emerald-600 focus:ring-emerald-600" oninput="calculateRETT()">
+              <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs font-semibold text-slate-400 rtl:right-auto rtl:left-0 rtl:pl-3">%</span>
+            </div>
+            <span class="text-[11px] text-slate-400 mt-0.5 block" data-i18n="hintMaxBroker">Saudi Real Estate GAstat ceiling: 2.50%</span>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5" data-i18n="lblBrokerPayer">
+              Brokerage Payable By
+            </label>
+            <select id="brokerPayer" onchange="calculateRETT()" class="block w-full rounded-xl border border-slate-300 py-2.5 px-3 text-sm font-medium text-slate-800 focus:border-emerald-600 focus:ring-emerald-600 bg-white">
+              <option value="buyer" selected>Buyer Only (100%)</option>
+              <option value="seller">Seller Only (100%)</option>
+              <option value="split">Split 50% Buyer / 50% Seller</option>
+              <option value="none">No Broker Involved (Direct)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Licensed Real Estate Developer Checkbox -->
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+          <label class="flex items-start gap-3 cursor-pointer">
+            <input type="checkbox" id="isDevRefundable" onchange="calculateRETT()" class="mt-1 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+            <div>
+              <span class="text-xs font-bold text-slate-800" data-i18n="lblDevCheckbox">Licensed Real Estate Developer (ZATCA Input VAT Refund Qualified)</span>
+              <p class="text-xs text-slate-500 mt-0.5" data-i18n="descDevCheckbox">Accredited developers under ZATCA scheme can recover 15% input VAT paid on construction materials &amp; services against tax-exempt residential unit supplies.</p>
+            </div>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary & Output Column (5 cols) -->
+    <section class="lg:col-span-5 flex flex-col gap-6">
+      
+      <!-- Main Calculation Card -->
+      <div class="bg-white rounded-2xl border border-slate-200/90 shadow-lg shadow-slate-200/50 p-6 sm:p-7 relative overflow-hidden print-shadow">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-50 rounded-bl-full pointer-events-none -z-0 rtl:right-auto rtl:left-0 rtl:rounded-bl-none rtl:rounded-br-full"></div>
+        
+        <div class="relative z-10">
+          <div class="flex items-center justify-between mb-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200" data-i18n="badgeZatcaPayable">
+              Net ZATCA Liability
+            </span>
+            <span class="text-xs text-slate-400 font-medium" data-i18n="statutoryTax">Statutory: 5.0%</span>
+          </div>
+
+          <div class="mb-6">
+            <div class="text-xs font-medium text-slate-500 mb-1" data-i18n="lblTotalRettDue">Net RETT Due to ZATCA</div>
+            <div class="flex items-baseline gap-2">
+              <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight" id="resNetRett">SAR 42,500</span>
+              <span class="text-xs text-slate-400 font-semibold">SAR</span>
+            </div>
+            <p class="text-xs text-emerald-700 mt-1 font-semibold" id="resExemptionSavingsNotice">State Subsidy Applied: -SAR 50,000</p>
+          </div>
+
+          <!-- Detailed Breakdown Table -->
+          <div class="space-y-3 py-4 border-t border-b border-slate-100 text-xs">
+            <div class="flex justify-between items-center text-slate-600">
+              <span data-i18n="rowBaseTax">Gross RETT (5% Base):</span>
+              <span class="font-semibold text-slate-800 font-mono" id="resGrossTax">SAR 92,500</span>
+            </div>
+            <div class="flex justify-between items-center text-emerald-700 font-medium">
+              <span data-i18n="rowReliefDeduction">Exemption / State Relief:</span>
+              <span class="font-mono font-bold" id="resReliefAmount">- SAR 50,000</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-600">
+              <span data-i18n="rowBrokerFee">Broker Fee (Excl. VAT):</span>
+              <span class="font-semibold text-slate-800 font-mono" id="resBrokerFee">SAR 46,250</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-600">
+              <span data-i18n="rowBrokerVat">15% VAT on Broker Service:</span>
+              <span class="font-semibold text-slate-800 font-mono" id="resBrokerVat">SAR 6,938</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-900 pt-2 border-t border-slate-100 font-semibold">
+              <span data-i18n="rowBuyerTotalOutlay">Total Buyer Outlay (Price + Tax + Fee):</span>
+              <span class="font-bold font-mono text-emerald-800 text-sm" id="resBuyerTotal">SAR 1,945,688</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-600">
+              <span data-i18n="rowSellerNetReceivable">Seller Net Proceeds:</span>
+              <span class="font-semibold font-mono text-slate-800" id="resSellerNet">SAR 1,850,000</span>
+            </div>
+          </div>
+
+          <!-- Payment Instructions Info -->
+          <div class="mt-4 p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-[11px] text-slate-600 space-y-1">
+            <div class="flex items-center gap-1.5 font-bold text-slate-700">
+              <svg class="w-3.5 h-3.5 text-amber-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+              <span data-i18n="zatcaNoticeTitle">ZATCA Real Estate SADAD Requirement</span>
+            </div>
+            <p data-i18n="zatcaNoticeBody">RETT invoice (سداد) must be paid prior to Ministry of Justice notarization (إفراغ عقاري). Failure to pay prior to transfer results in deed freezing and 5% monthly delay fines.</p>
+          </div>
+
+          <!-- CTA Button -->
+          <div class="mt-5 no-print">
+            <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold py-3 px-4 rounded-xl shadow-md transition transform active:scale-95 text-xs sm:text-sm tracking-wide">
+              <span data-i18n="btnCtaMaster">Download Enterprise Real Estate Tax &amp; Portfolio Model ($29)</span>
+            </a>
+            <p class="text-[11px] text-center text-slate-400 mt-2" data-i18n="ctaHint">Instant Excel download with multi-unit batch tax schedules, IFRS 16 &amp; RETT journal entries.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Legal Disclaimer Card (Mandatory Bilingual) -->
+      <div class="bg-amber-50/70 border border-amber-200/90 rounded-xl p-4 text-xs text-amber-900 leading-relaxed shadow-sm">
+        <div class="font-bold flex items-center gap-1.5 mb-1">
+          <svg class="w-4 h-4 text-amber-600 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+          <span data-i18n="discTitle">Bilingual Regulatory Disclaimer / إخلاء مسؤولية تنظيمي</span>
+        </div>
+        <p class="mb-2" data-i18n="discTextEn">
+          <strong>English:</strong> The outputs provided by this calculator are automated estimates intended solely for preliminary operational and budgeting guidance under Kingdom of Saudi Arabia regulations. RETT exemptions and obligations are governed definitively by the Zakat, Tax and Customs Authority (ZATCA) and Royal Decree No. A/84. Always verify property transaction declarations via the official ZATCA Portal before formal notarization.
+        </p>
+        <p class="arabic text-[11px] leading-relaxed text-amber-950" data-i18n="discTextAr">
+          <strong>العربية:</strong> تُعد كافة المخرجات والأرقام الصادرة عن هذه الحاسبة تقديرات استرشادية فقط لتسهيل التخطيط المالي والتنفيذي وفق الأنظمة المرعية في المملكة العربية السعودية. تخضع قرارات الإعفاء الضريبي النهائية لضوابط هيئة الزكاة والضريبة والجمارك (ZATCA) والأمر الملكي رقم (أ/84). يلزم التحقق من رقم السداد والإقرار الضريبي عبر بوابة هيئة الزكاة والضريبة والجمارك الرسمية قبل استكمال إجراءات الإفراغ العقاري لدى وزارة العدل.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- In-Depth 800+ Word Authority Guide & Documentation Section -->
+  <article class="bg-white border-t border-slate-200 mt-12 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-5xl mx-auto space-y-10 text-slate-700 leading-relaxed">
+      
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-4" data-i18n="h2Guide">Executive Guide: Saudi Real Estate Transaction Tax (RETT / ضريبة التصرفات العقارية)</h2>
+        <p class="text-sm sm:text-base leading-relaxed mb-4">
+          In October 2020, through <strong>Royal Decree No. (A/84)</strong>, the Kingdom of Saudi Arabia radically overhauled real estate fiscal policy by carving out all immovable property transactions from the standard 15% Value Added Tax (VAT) framework and establishing a separate, dedicated <strong>Real Estate Transaction Tax (RETT)</strong> levied at a flat statutory rate of <strong>5%</strong>. This reform was primarily enacted to stimulate residential homeownership for Saudi citizens (supporting Vision 2030 targets), lower market frictional costs, and provide commercial liquidity to commercial development and corporate restructuring transactions.
+        </p>
+        <p class="text-sm sm:text-base leading-relaxed">
+          Administered strictly by the <strong>Zakat, Tax and Customs Authority (ZATCA)</strong> in collaboration with the <strong>Ministry of Justice (Najiz)</strong>, RETT is a transactional tax that attaches to the gross value of real estate disposition—whether land, residential housing, commercial office towers, industrial facilities, or long-term leaseholds exceeding 50 years. Understanding the operational mechanism, exact exemption categories, and broker VAT interactions is essential for Chief Financial Officers, corporate legal counsels, and individual home buyers.
+        </p>
+      </div>
+
+      <!-- Statutory Formulas Breakdown -->
+      <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 sm:p-8 space-y-4">
+        <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <span class="p-1.5 bg-emerald-100 text-emerald-800 rounded-lg">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>
+          </span>
+          <span data-i18n="formulaTitle">Core Mathematical Calculations &amp; Statutory Logic</span>
+        </h3>
+        <p class="text-xs sm:text-sm text-slate-600">
+          The calculation methodology adheres strictly to Executive Regulations issued under Resolution No. (3805) and subsequent Ministry of Finance updates:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <div class="font-bold text-slate-800 font-sans mb-1 text-sm">Standard Property Transaction:</div>
+            <div class="text-emerald-700 font-semibold">Gross RETT = Value × 0.05</div>
+            <div class="text-slate-500 mt-1 font-sans">Where Value = MAX (Agreed Contract Price, Fair Market Valuation).</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <div class="font-bold text-slate-800 font-sans mb-1 text-sm">Citizen First-Home Purchase:</div>
+            <div class="text-emerald-700 font-semibold">Relief = MIN (Value, 1,000,000) × 0.05</div>
+            <div class="text-slate-500 mt-1 font-sans">Net RETT = MAX (0, (Value - 1,000,000) × 0.05). Maximum state burden is SAR 50,000.</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <div class="font-bold text-slate-800 font-sans mb-1 text-sm">Brokerage &amp; Service VAT:</div>
+            <div class="text-emerald-700 font-semibold">Broker Commission = Value × Rate (max 2.5%)</div>
+            <div class="text-slate-500 mt-1 font-sans">Broker VAT = Commission × 0.15 (Standard VAT applies to brokerage, NOT RETT).</div>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200">
+            <div class="font-bold text-slate-800 font-sans mb-1 text-sm">Total Buyer Cash Settlement:</div>
+            <div class="text-emerald-700 font-semibold">Total = Value + Net RETT + Commission + VAT</div>
+            <div class="text-slate-500 mt-1 font-sans">All disbursements payable simultaneously at notarization or Najiz release.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detailed Statutory Exemptions Table (Article 3) -->
+      <div>
+        <h3 class="text-xl font-bold text-slate-900 mb-3" data-i18n="exemptionSectionTitle">Statutory Exemptions under ZATCA Article 3</h3>
+        <p class="text-sm text-slate-600 mb-4">
+          Not all real estate title transfers incur the 5% tax. ZATCA maintains an exhaustive list of legally qualified tax exemptions. Filing a formal waiver request on ZATCA's e-portal is mandatory prior to notarization:
+        </p>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-left text-xs sm:text-sm border border-slate-200 rounded-xl overflow-hidden">
+            <thead class="bg-slate-100 text-slate-700 font-bold">
+              <tr>
+                <th class="p-3.5 border-b border-slate-200">Exemption Clause</th>
+                <th class="p-3.5 border-b border-slate-200">Legal Description</th>
+                <th class="p-3.5 border-b border-slate-200">Mandatory Documentation</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 bg-white">
+              <tr>
+                <td class="p-3.5 font-bold text-slate-900">Family Gift (هبة عائلية)</td>
+                <td class="p-3.5 text-slate-600">Property donated gratuitously without monetary consideration to a spouse or relative up to the <strong>3rd degree</strong> (parents, children, grandparents, siblings, grandchildren).</td>
+                <td class="p-3.5 text-slate-500">Absher / Family record proving familial kinship within allowable degrees.</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-bold text-slate-900">Inheritance Distribution (قسمة التركات)</td>
+                <td class="p-3.5 text-slate-600">Division and formal distribution of bequeathed estate real estate among legal heirs in accordance with Sharia inheritance deeds.</td>
+                <td class="p-3.5 text-slate-500">Inheritance Deed (حصر ورثة) &amp; Estate Partition ruling from Ministry of Justice.</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-bold text-slate-900">In-Kind Capital Contribution (حصة عينية)</td>
+                <td class="p-3.5 text-slate-600">Transferring real property to a Saudi capital company in exchange for corporate shares, on condition shares are not sold for 5 continuous years.</td>
+                <td class="p-3.5 text-slate-500">Ministry of Commerce Articles of Association &amp; independent certified valuer (Taqeem) report.</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-bold text-slate-900">Mergers &amp; Demergers (اندماج وتقسيم)</td>
+                <td class="p-3.5 text-slate-600">Corporate structural reorganization where titles move between legal entities under common control or statutory mergers.</td>
+                <td class="p-3.5 text-slate-500">Certified commercial register and statutory corporate restructuring resolutions.</td>
+              </tr>
+              <tr>
+                <td class="p-3.5 font-bold text-slate-900">Charitable Waqf (وقف خيري أو أهلي)</td>
+                <td class="p-3.5 text-slate-600">Transfer of deed to an accredited philanthropic organization or endowed family trust recognized by the General Authority for Awqaf.</td>
+                <td class="p-3.5 text-slate-500">Valid Endowment Deed registered with the General Authority for Awqaf.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Accredited Real Estate Developers VAT Refund Scheme -->
+      <div>
+        <h3 class="text-xl font-bold text-slate-900 mb-3" data-i18n="devSectionTitle">The Accredited Real Estate Developer VAT Refund Mechanism</h3>
+        <p class="text-sm text-slate-600 leading-relaxed mb-3">
+          Because real estate sales are exempt from 15% VAT (attracting 5% RETT instead), developers would ordinarily suffer "tax cascading"—meaning they cannot recover the 15% VAT paid on subcontractors, civil works, architectural consulting, and building materials (cement, rebar, finishes). To eliminate this burden, ZATCA established the <strong>Eligible Real Estate Developers Refund Scheme (برنامج المطورين العقاريين المرخصين)</strong>.
+        </p>
+        <p class="text-sm text-slate-600 leading-relaxed">
+          Under this special facility, licensed developers registered with the Wafi program and ZATCA can submit periodic refund claims to recoup 100% of the input VAT incurred on residential property developments. This preserves developer margins, prevents cost inflation on off-plan and ready-built housing, and ensures Saudi real estate supply remains competitive.
+        </p>
+      </div>
+
+      <!-- Comprehensive FAQ Section -->
+      <div class="space-y-4 pt-6 border-t border-slate-200">
+        <h3 class="text-xl font-bold text-slate-900 mb-4" data-i18n="faqTitle">Frequently Asked Questions (ZATCA &amp; Najiz Guidance)</h3>
+        
+        <div class="border border-slate-200 rounded-xl p-4.5 bg-slate-50/50">
+          <h4 class="font-bold text-slate-900 text-sm mb-1">Who is legally responsible for paying the 5% RETT to ZATCA?</h4>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Under ZATCA regulations, the <strong>Seller (Disposer / المتصرف)</strong> is legally liable for registering the transaction on the ZATCA portal and settling the RETT SADAD invoice. However, in standard market practice, contractual agreements typically stipulate that the Buyer pays the tax directly into the generated ZATCA SADAD bill on behalf of the seller prior to notarization at the Ministry of Justice. Both parties remain jointly accountable until the SADAD bill is settled.
+          </p>
+        </div>
+
+        <div class="border border-slate-200 rounded-xl p-4.5 bg-slate-50/50">
+          <h4 class="font-bold text-slate-900 text-sm mb-1">How does the first-time Saudi homebuyer exemption work if the home costs SAR 1,400,000?</h4>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            By Royal Decree, the state pays the 5% tax on the first SAR 1,000,000 of the residential purchase price. For a home valued at SAR 1,400,000, the total 5% RETT would normally be SAR 70,000. The government covers SAR 50,000 (5% of SAR 1,000,000), and the citizen homebuyer only pays SAR 20,000 (5% on the remaining SAR 400,000).
+          </p>
+        </div>
+
+        <div class="border border-slate-200 rounded-xl p-4.5 bg-slate-50/50">
+          <h4 class="font-bold text-slate-900 text-sm mb-1">Does RETT apply to off-plan sales (بيع على الخارطة) under the Wafi program?</h4>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Yes, off-plan sales under Wafi are subject to the 5% RETT. However, payment terms are aligned with construction escrow disbursements, and qualified off-plan buyers who are first-time citizen home buyers can still apply their SAR 1,000,000 exemption certificate to the contract value.
+          </p>
+        </div>
+
+        <div class="border border-slate-200 rounded-xl p-4.5 bg-slate-50/50">
+          <h4 class="font-bold text-slate-900 text-sm mb-1">What are the penalties for under-declaring real estate value to avoid RETT?</h4>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+            Deliberately declaring a property sale value lower than the actual consideration exchanged or fair market value is classified as statutory tax evasion. ZATCA penalizes offenders with fines ranging between <strong>100% and 300%</strong> of the unpaid tax difference, alongside deed invalidation proceedings and potential criminal prosecution.
+          </p>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse">
+        <span class="text-white font-bold text-sm tracking-wide">SaudiRETT.io</span>
+        <span>— Autonomous Saudi Real Estate &amp; ZATCA Financial Utility</span>
+      </div>
+      <div>
+        <p class="text-slate-500">&copy; 2025 All Rights Reserved. Engineered for Corporate CFOs, Real Estate Developers &amp; Property Advisors.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Calculation & Localization Script -->
+  <script>
+    let currentLang = 'en';
+
+    const translations = {
+      en: {
+        badge: 'ZATCA / Royal Decree A/84 Compliant',
+        title: 'Saudi Real Estate Transaction Tax (RETT) Calculator',
+        subtitle: 'Calculate statutory 5% RETT (ضريبة التصرفات العقارية), citizen first-home exemptions up to SAR 1M, broker commissions, and notary settlement outlays.',
+        btnPrint: 'Print / PDF',
+        btnCSV: 'Export CSV',
+        sectionDealDetails: 'Deal & Property Parameters',
+        lblPropValue: 'Agreed Property Value / Selling Price (SAR)',
+        hintPropValue: 'Must be the agreed sales price or market fair valuation, whichever is higher.',
+        lblTxType: 'Transaction Nature & Exemption Category',
+        firstHomeTitle: 'Royal Decree Citizen Housing Relief',
+        firstHomeDesc: 'The Saudi Government covers 5% RETT on real estate value up to SAR 1,000,000 (Maximum benefit: SAR 50,000). The buyer only pays 5% on the portion exceeding SAR 1M.',
+        lblCitizenCert: 'Has Ministry of Housing First-Home Certificate?',
+        lblBrokerPct: 'Real Estate Broker Fee Rate (%)',
+        hintMaxBroker: 'Saudi Real Estate GAstat ceiling: 2.50%',
+        lblBrokerPayer: 'Brokerage Payable By',
+        lblDevCheckbox: 'Licensed Real Estate Developer (ZATCA Input VAT Refund Qualified)',
+        descDevCheckbox: 'Accredited developers under ZATCA scheme can recover 15% input VAT paid on construction materials & services against tax-exempt residential unit supplies.',
+        badgeZatcaPayable: 'Net ZATCA Liability',
+        statutoryTax: 'Statutory: 5.0%',
+        lblTotalRettDue: 'Net RETT Due to ZATCA',
+        rowBaseTax: 'Gross RETT (5% Base):',
+        rowReliefDeduction: 'Exemption / State Relief:',
+        rowBrokerFee: 'Broker Fee (Excl. VAT):',
+        rowBrokerVat: '15% VAT on Broker Service:',
+        rowBuyerTotalOutlay: 'Total Buyer Outlay (Price + Tax + Fee):',
+        rowSellerNetReceivable: 'Seller Net Proceeds:',
+        zatcaNoticeTitle: 'ZATCA Real Estate SADAD Requirement',
+        zatcaNoticeBody: 'RETT invoice (سداد) must be paid prior to Ministry of Justice notarization (إفراغ عقاري). Failure to pay prior to transfer results in deed freezing and 5% monthly delay fines.',
+        btnCtaMaster: 'Download Enterprise Real Estate Tax & Portfolio Model ($29)',
+        ctaHint: 'Instant Excel download with multi-unit batch tax schedules, IFRS 16 & RETT journal entries.',
+        discTitle: 'Bilingual Regulatory Disclaimer / إخلاء مسؤولية تنظيمي',
+        discTextEn: 'English: The outputs provided by this calculator are automated estimates intended solely for preliminary operational and budgeting guidance under Kingdom of Saudi Arabia regulations. RETT exemptions and obligations are governed definitively by the Zakat, Tax and Customs Authority (ZATCA) and Royal Decree No. A/84. Always verify property transaction declarations via the official ZATCA Portal before formal notarization.',
+        discTextAr: 'العربية: تُعد كافة المخرجات والأرقام الصادرة عن هذه الحاسبة تقديرات استرشادية فقط لتسهيل التخطيط المالي والتنفيذي وفق الأنظمة المرعية في المملكة العربية السعودية. تخضع قرارات الإعفاء الضريبي النهائية لضوابط هيئة الزكاة والضريبة والجمارك (ZATCA) والأمر الملكي رقم (أ/84). يلزم التحقق من رقم السداد والإقرار الضريبي عبر بوابة هيئة الزكاة والضريبة والجمارك الرسمية قبل استكمال إجراءات الإفراغ العقاري لدى وزارة العدل.',
+        h2Guide: 'Executive Guide: Saudi Real Estate Transaction Tax (RETT / ضريبة التصرفات العقارية)',
+        formulaTitle: 'Core Mathematical Calculations & Statutory Logic',
+        exemptionSectionTitle: 'Statutory Exemptions under ZATCA Article 3',
+        devSectionTitle: 'The Accredited Real Estate Developer VAT Refund Mechanism',
+        faqTitle: 'Frequently Asked Questions (ZATCA & Najiz Guidance)',
+        exemptionActiveNotice: 'This transaction is classified as statutory exempt under ZATCA Article 3 regulations.'
+      },
+      ar: {
+        badge: 'معتمد وفق أنظمة هيئة الزكاة والضريبة والجمارك والأمر الملكي أ/84',
+        title: 'حاسبة ضريبة التصرفات العقارية والإعفاءات الرسمية',
+        subtitle: 'حساب ضريبة التصرفات العقارية 5%، إعفاء المسكن الأول للمواطن حتى 1,000,000 ريال، عمولة السعي، وتكلفة الإفراغ الإجمالية.',
+        btnPrint: 'طباعة / ملخص PDF',
+        btnCSV: 'تصدير جدول CSV',
+        sectionDealDetails: 'بيانات العقار والصفقة',
+        lblPropValue: 'قيمة العقار المتفق عليها / ثمن البيع (ريال)',
+        hintPropValue: 'يجب أن تكون القيمة أعلى قيمتي البيع الفعلي أو التقييم العادل المعتمد.',
+        lblTxType: 'نوع التصرف العقاري وحالة الإعفاء',
+        firstHomeTitle: 'تحمل الدولة لضريبة المسكن الأول للمواطن',
+        firstHomeDesc: 'تتحمل الدولة ضريبة التصرفات العقارية بنسبة 5% عما لا يتجاوز 1,000,000 ريال من قيمة العقار (بحد أقصى للدعم 50,000 ريال). يدفع المشتري الضريبة على ما زاد عن ذلك فقط.',
+        lblCitizenCert: 'هل تتوفر شهادة إعفاء المسكن الأول من وزارة الإسكان؟',
+        lblBrokerPct: 'نسبة عمولة السعي / الوساطة العقارية (%)',
+        hintMaxBroker: 'الحد الأقصى للوساطة العقارية نظاماً: 2.50%',
+        lblBrokerPayer: 'الطرف الملزم بعمولة السعي',
+        lblDevCheckbox: 'مطور عقاري مرخص (مؤهل لاسترداد مدخلات ضريبة القيمة المضافة)',
+        descDevCheckbox: 'يحق للمطورين العقاريين المعتمدين لدى الزكاة والجمارك استرداد ضريبة القيمة المضافة 15% المدفوعة على مواد وتكاليف البناء للوحدات السكنية.',
+        badgeZatcaPayable: 'المبلغ المستحق لهيئة الزكاة والجمارك',
+        statutoryTax: 'النسبة النظامية: 5.0%',
+        lblTotalRettDue: 'صافي ضريبة التصرفات المستحقة (سداد)',
+        rowBaseTax: 'إجمالي الضريبة الأساسية (5%):',
+        rowReliefDeduction: 'الإعفاء النظامي / الدعم الحكومي:',
+        rowBrokerFee: 'أتعاب السعي (بدون ضريبة):',
+        rowBrokerVat: 'ضريبة 15% على خدمة السعي:',
+        rowBuyerTotalOutlay: 'إجمالي التكلفة على المشتري (العقار + الضريبة + السعي):',
+        rowSellerNetReceivable: 'صافي مستحقات البائع:',
+        zatcaNoticeTitle: 'متطلب سداد الإلكتروني قبل الإفراغ',
+        zatcaNoticeBody: 'يجب سداد فاتورة سداد الصادرة لضريبة التصرفات العقارية قبل إتمام الإفراغ لدى الموثق أو عبر منصة ناجز. التأخير يعرض المعاملة للإيقاف وغرامات تأخير بنسبة 5% شهرياً.',
+        btnCtaMaster: 'تحميل حقيبة النماذج المتقدمة للإكسل وVBA للضرائب العقارية ($29)',
+        ctaHint: 'ملف إكسل شامل ومؤتمت لحساب محافظ العقارات المتعددة، قيود IFRS 16، وإقرارات الزكاة والضريبة.',
+        discTitle: 'إخلاء مسؤولية تنظيمي وقانوني',
+        discTextEn: 'English: The outputs provided by this calculator are automated estimates intended solely for preliminary operational and budgeting guidance under Kingdom of Saudi Arabia regulations. RETT exemptions and obligations are governed definitively by the Zakat, Tax and Customs Authority (ZATCA) and Royal Decree No. A/84. Always verify property transaction declarations via the official ZATCA Portal before formal notarization.',
+        discTextAr: 'العربية: تُعد كافة المخرجات والأرقام الصادرة عن هذه الحاسبة تقديرات استرشادية فقط لتسهيل التخطيط المالي والتنفيذي وفق الأنظمة المرعية في المملكة العربية السعودية. تخضع قرارات الإعفاء الضريبي النهائية لضوابط هيئة الزكاة والضريبة والجمارك (ZATCA) والأمر الملكي رقم (أ/84). يلزم التحقق من رقم السداد والإقرار الضريبي عبر بوابة هيئة الزكاة والضريبة والجمارك الرسمية قبل استكمال إجراءات الإفراغ العقاري لدى وزارة العدل.',
+        h2Guide: 'الدليل التنفيذي: ضريبة التصرفات العقارية بالمملكة العربية السعودية',
+        formulaTitle: 'المعادلات الرياضية والمنهجية النظامية المطبقة',
+        exemptionSectionTitle: 'حالات الإعفاء النظامية وفق المادة الثالثة للائحة',
+        devSectionTitle: 'آلية استرداد ضريبة المدخلات للمطور العقاري المرخص',
+        faqTitle: 'الأسئلة الشائعة والأحكام الإجرائية (ناجز وهيئة الزكاة والجمارك)',
+        exemptionActiveNotice: 'تُصنف هذه المعاملة كمعاملة معفاة نظاماً بالكامل بموجب المادة الثالثة من لائحة ضريبة التصرفات العقارية.'
+      }
+    };
+
+    function formatSAR(num) {
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      }).format(num);
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      const htmlTag = document.documentElement;
+      const langBtn = document.getElementById('langToggle');
+      
+      if (currentLang === 'ar') {
+        htmlTag.setAttribute('dir', 'rtl');
+        htmlTag.setAttribute('lang', 'ar');
+        document.body.classList.add('arabic');
+        langBtn.innerText = 'English';
+      } else {
+        htmlTag.setAttribute('dir', 'ltr');
+        htmlTag.setAttribute('lang', 'en');
+        document.body.classList.remove('arabic');
+        langBtn.innerText = 'العربية';
+      }
+
+      // Translate text elements
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[currentLang][key]) {
+          el.innerText = translations[currentLang][key];
+        }
+      });
+
+      calculateRETT();
+    }
+
+    function handleTxTypeChange() {
+      const txType = document.getElementById('txType').value;
+      const firstHomeCard = document.getElementById('firstHomeCard');
+      const exemptionNote = document.getElementById('exemptionNote');
+      const exemptionNoteText = document.getElementById('exemptionNoteText');
+
+      if (txType === 'first_home') {
+        firstHomeCard.classList.remove('hidden');
+        exemptionNote.classList.add('hidden');
+      } else if (txType === 'standard') {
+        firstHomeCard.classList.add('hidden');
+        exemptionNote.classList.add('hidden');
+      } else {
+        firstHomeCard.classList.add('hidden');
+        exemptionNote.classList.remove('hidden');
+        exemptionNoteText.innerText = translations[currentLang].exemptionActiveNotice;
+      }
+
+      calculateRETT();
+    }
+
+    function calculateRETT() {
+      const propValue = Math.max(0, parseFloat(document.getElementById('propValue').value) || 0);
+      const txType = document.getElementById('txType').value;
+      const hasHousingCert = document.getElementById('hasHousingCert').checked;
+      const brokerRate = Math.max(0, parseFloat(document.getElementById('brokerRate').value) || 0) / 100;
+      const brokerPayer = document.getElementById('brokerPayer').value;
+
+      const grossTax = propValue * 0.05;
+      let reliefAmount = 0;
+      let netRett = grossTax;
+
+      if (txType === 'standard') {
+        reliefAmount = 0;
+        netRett = grossTax;
+      } else if (txType === 'first_home') {
+        if (hasHousingCert) {
+          // State bears 5% up to SAR 1,000,000
+          const coveredPortion = Math.min(propValue, 1000000);
+          reliefAmount = coveredPortion * 0.05;
+          netRett = Math.max(0, (propValue - 1000000) * 0.05);
+        } else {
+          reliefAmount = 0;
+          netRett = grossTax;
+        }
+      } else {
+        // Complete legal exemptions (family gift, inheritance, merger, capital contribution, etc.)
+        reliefAmount = grossTax;
+        netRett = 0;
+      }
+
+      // Brokerage calculation
+      const brokerFeeGross = (brokerPayer !== 'none') ? (propValue * brokerRate) : 0;
+      const brokerVat = brokerFeeGross * 0.15;
+      const brokerFeeTotal = brokerFeeGross + brokerVat;
+
+      // Apportion broker fee based on payer
+      let buyerBrokerShare = 0;
+      let sellerBrokerShare = 0;
+
+      if (brokerPayer === 'buyer') {
+        buyerBrokerShare = brokerFeeTotal;
+      } else if (brokerPayer === 'seller') {
+        sellerBrokerShare = brokerFeeTotal;
+      } else if (brokerPayer === 'split') {
+        buyerBrokerShare = brokerFeeTotal / 2;
+        sellerBrokerShare = brokerFeeTotal / 2;
+      }
+
+      // Total Outlay
+      // Typically in KSA, Buyer pays net RETT + agreed share of broker fee + property price
+      const buyerTotalOutlay = propValue + netRett + buyerBrokerShare;
+      const sellerNetProceeds = propValue - sellerBrokerShare;
+
+      // Update DOM
+      document.getElementById('resNetRett').innerText = 'SAR ' + formatSAR(netRett);
+      document.getElementById('resGrossTax').innerText = 'SAR ' + formatSAR(grossTax);
+      document.getElementById('resReliefAmount').innerText = (reliefAmount > 0 ? '- ' : '') + 'SAR ' + formatSAR(reliefAmount);
+      document.getElementById('resBrokerFee').innerText = 'SAR ' + formatSAR(brokerFeeGross);
+      document.getElementById('resBrokerVat').innerText = 'SAR ' + formatSAR(brokerVat);
+      document.getElementById('resBuyerTotal').innerText = 'SAR ' + formatSAR(buyerTotalOutlay);
+      document.getElementById('resSellerNet').innerText = 'SAR ' + formatSAR(sellerNetProceeds);
+
+      const savingsNotice = document.getElementById('resExemptionSavingsNotice');
+      if (reliefAmount > 0) {
+        savingsNotice.classList.remove('hidden');
+        savingsNotice.innerText = currentLang === 'ar' 
+          ? `تم تطبيق دعم/إعفاء معتمد: - ${formatSAR(reliefAmount)} ريال` 
+          : `Relief / Subsidy Applied: - SAR ${formatSAR(reliefAmount)}`;
+      } else {
+        savingsNotice.classList.add('hidden');
+      }
+    }
+
+    function exportCSV() {
+      const propVal = document.getElementById('propValue').value;
+      const txType = document.getElementById('txType').value;
+      const netTax = document.getElementById('resNetRett').innerText;
+      const grossTax = document.getElementById('resGrossTax').innerText;
+      const relief = document.getElementById('resReliefAmount').innerText;
+      const broker = document.getElementById('resBrokerFee').innerText;
+      const brokerVat = document.getElementById('resBrokerVat').innerText;
+      const buyerOutlay = document.getElementById('resBuyerTotal').innerText;
+      const sellerProceeds = document.getElementById('resSellerNet').innerText;
+
+      const rows = [
+        ['Parameter / Field', 'Value'],
+        ['Property Valuation (SAR)', propVal],
+        ['Transaction Category', txType],
+        ['Statutory RETT Rate', '5.0%'],
+        ['Gross Base RETT', grossTax],
+        ['Relief / Exemption Applied', relief],
+        ['Net RETT Payable to ZATCA (SADAD)', netTax],
+        ['Broker Commission Fee', broker],
+        ['15% VAT on Broker Service', brokerVat],
+        ['Total Buyer Cash Outlay', buyerOutlay],
+        ['Seller Net Settlement Proceeds', sellerProceeds],
+        ['Calculation Timestamp', new Date().toISOString()]
+      ];
+
+      let csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.map(i => `"${i}"`).join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `ZATCA_RETT_Assessment_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initial setup
+    window.addEventListener('DOMContentLoaded', () => {
+      calculateRETT();
+    });
+  </script>
+</body>
+</html>

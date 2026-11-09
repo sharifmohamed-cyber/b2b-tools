@@ -145,5 +145,12 @@
     "title_ar": "حاسبة مؤشر برنامج اكتفاء والمحتوى المحلي لأرامكو السعودية",
     "description_en": "Calculate your company's official IKTVA score and Saudi local content percentage. Instant tender readiness analysis and compliant spend breakdown.",
     "date": "2026-11-08"
+  },
+  {
+    "slug": "saudi-rett-real-estate-transaction-tax-calculator",
+    "title_en": "Saudi Real Estate Transaction Tax (RETT) & Exemption Calculator",
+    "title_ar": "حاسبة ضريبة التصرفات العقارية والإعفاءات الرسمية - هيئة الزكاة والضريبة والجمارك",
+    "description_en": "Calculate Saudi Real Estate Transaction Tax (RETT 5%), citizen first-home exemptions (up to SAR 1M), brokerage fees, and ZATCA settlement net costs.",
+    "date": "2026-11-09"
   }
 ]
