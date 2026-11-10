@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi Pro-Rata Salary & Partial Month Payroll Calculator | حاسبة الراتب النسبي</title>
+  <meta name="description" content="B2B HR tool to calculate Saudi pro-rata salaries, mid-month hire/exit pay, unpaid leave, and absence deductions in compliance with Saudi Labor Law." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .font-ar {
+      font-family: 'Cairo', sans-serif;
+    }
+    [dir="rtl"] .font-ar-toggle {
+      font-family: 'Cairo', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-ar-toggle">
+
+  <!-- Top Notification / Value Proposition Sticky Bar -->
+  <div class="sticky top-0 z-50 bg-slate-900 border-b border-emerald-500/30 text-white px-4 py-2.5 text-xs sm:text-sm font-medium shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse">
+        <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span data-i18n="banner-tagline">KSA Labor Law Standard: Month Base = 30 Days (Art. 131)</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1 rounded transition-colors text-xs flex items-center gap-1.5 shadow-sm">
+          <span data-i18n="banner-cta">Get Complete Automated Excel & VBA Payroll Kit ($29)</span>
+          <svg class="w-3.5 h-3.5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        </a>
+        <button id="langToggleBtn" class="border border-slate-700 bg-slate-800 hover:bg-slate-700 text-slate-200 px-2.5 py-1 rounded text-xs transition">
+          <span id="langLabel">عربي</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="bg-white border-b border-slate-200 py-4 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <div class="p-2.5 bg-emerald-600 text-white rounded-xl shadow-lg shadow-emerald-600/20">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight" data-i18n="header-title">Saudi Pro-Rata Salary & Payroll Deduction Engine</h1>
+          <p class="text-xs text-slate-500 hidden sm:block" data-i18n="header-sub">Compliant with Saudi Labor Law Articles 89, 90, 116 & 131</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="printBtn" class="inline-flex items-center gap-1.5 border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          <span data-i18n="action-print">Print / PDF</span>
+        </button>
+        <button id="exportCsvBtn" class="inline-flex items-center gap-1.5 bg-slate-800 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <span data-i18n="action-csv">Export CSV</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Form Inputs Column (7 Cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        <div class="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 shadow-sm">
+          <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-sm font-bold">1</span>
+              <h2 class="text-base font-bold text-slate-900" data-i18n="sec-contract">Contract & Base Compensation (SAR)</h2>
+            </div>
+            <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold" data-i18n="curr-sar">SAR Currency</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="lbl-basic-salary">Monthly Basic Salary</label>
+              <div class="relative">
+                <input type="number" id="basicSalary" value="8000" min="0" step="50" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                <span class="absolute top-2.5 end-3 text-xs text-slate-400 font-medium">SAR</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="lbl-housing">Housing Allowance</label>
+              <div class="relative">
+                <input type="number" id="housingAllowance" value="2000" min="0" step="50" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                <span class="absolute top-2.5 end-3 text-xs text-slate-400 font-medium">SAR</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="lbl-transport">Transportation Allowance</label>
+              <div class="relative">
+                <input type="number" id="transportAllowance" value="800" min="0" step="25" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                <span class="absolute top-2.5 end-3 text-xs text-slate-400 font-medium">SAR</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="lbl-other">Other Fixed Allowances</label>
+              <div class="relative">
+                <input type="number" id="otherAllowance" value="0" min="0" step="25" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-sm font-semibold text-slate-900 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+                <span class="absolute top-2.5 end-3 text-xs text-slate-400 font-medium">SAR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- GOSI & Nationality Settings -->
+          <div class="mt-4 pt-4 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="lbl-nationality">Employee Nationality (GOSI Rule)</label>
+              <select id="employeeNationality" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <option value="saudi" selected data-i18n="opt-saudi">Saudi National (9.75% Employee GOSI + Saned)</option>
+                <option value="expat" data-i18n="opt-expat">Expatriate / Non-Saudi (0% Employee GOSI)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="lbl-gosi-cap">GOSI Base Salary Cap</label>
+              <div class="text-xs text-slate-500 mt-2 flex items-center gap-1.5">
+                <span class="inline-block px-2 py-0.5 bg-slate-100 rounded text-slate-700 font-medium">45,000 SAR Max Cap Auto-applied</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pro-Rata Adjustment Details -->
+        <div class="bg-white rounded-2xl p-6 sm:p-7 border border-slate-200/80 shadow-sm">
+          <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span class="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg text-sm font-bold">2</span>
+              <h2 class="text-base font-bold text-slate-900" data-i18n="sec-calculation-type">Adjustment Type & Calculation Method</h2>
+            </div>
+            <span class="text-xs bg-emerald-100 text-emerald-800 font-medium px-2 py-0.5 rounded-full" data-i18n="tag-active-engine">Live Engine</span>
+          </div>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="lbl-calc-event">Payroll Event Type</label>
+              <select id="payrollEvent" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-xs font-semibold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <option value="mid_joiner" selected data-i18n="opt-joiner">Mid-Month Joiner (New Hire Joined Mid-Period)</option>
+                <option value="mid_leaver" data-i18n="opt-leaver">Mid-Month Exit / Resignation (Left Mid-Period)</option>
+                <option value="unpaid_leave" data-i18n="opt-unpaid">Unpaid Leave / Article 116 Absence</option>
+                <option value="custom_days" data-i18n="opt-custom">Custom Payable Days or Deduction Days</option>
+              </select>
+            </div>
+
+            <!-- Method Switcher -->
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="lbl-calc-method">Daily Rate Calculation Basis (Denominator)</label>
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <label class="relative flex flex-col p-3 border rounded-xl cursor-pointer hover:border-emerald-500 transition border-emerald-500 bg-emerald-50/40 basis-radio-card">
+                  <input type="radio" name="denomBasis" value="30" checked class="sr-only" />
+                  <span class="text-xs font-bold text-slate-900" data-i18n="basis-30-title">Fixed 30 Days</span>
+                  <span class="text-[11px] text-slate-500 mt-0.5" data-i18n="basis-30-desc">Saudi Labor Law standard (Article 131)</span>
+                </label>
+                <label class="relative flex flex-col p-3 border rounded-xl cursor-pointer hover:border-slate-300 transition border-slate-200 bg-white basis-radio-card">
+                  <input type="radio" name="denomBasis" value="calendar" class="sr-only" />
+                  <span class="text-xs font-bold text-slate-900" data-i18n="basis-cal-title">Actual Calendar Days</span>
+                  <span class="text-[11px] text-slate-500 mt-0.5" data-i18n="basis-cal-desc">28, 29, 30, or 31 in payroll month</span>
+                </label>
+                <label class="relative flex flex-col p-3 border rounded-xl cursor-pointer hover:border-slate-300 transition border-slate-200 bg-white basis-radio-card">
+                  <input type="radio" name="denomBasis" value="working" class="sr-only" />
+                  <span class="text-xs font-bold text-slate-900" data-i18n="basis-work-title">Working Days Basis</span>
+                  <span class="text-[11px] text-slate-500 mt-0.5" data-i18n="basis-work-desc">Usually 22 or 26 days/mo (excluding weekends)</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Payroll Month selector and Working Days if applicable -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="lbl-month">Payroll Month</label>
+                <select id="payrollMonth" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800">
+                  <option value="1">January (31 days)</option>
+                  <option value="2">February (28/29 days)</option>
+                  <option value="3">March (31 days)</option>
+                  <option value="4" selected>April (30 days)</option>
+                  <option value="5">May (31 days)</option>
+                  <option value="6">June (30 days)</option>
+                  <option value="7">July (31 days)</option>
+                  <option value="8">August (31 days)</option>
+                  <option value="9">September (30 days)</option>
+                  <option value="10">October (31 days)</option>
+                  <option value="11">November (30 days)</option>
+                  <option value="12">December (31 days)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="lbl-cal-days">Days in Selected Month</label>
+                <input type="number" id="monthTotalDays" value="30" min="28" max="31" class="w-full bg-slate-100 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-700 cursor-not-allowed" readonly />
+              </div>
+              <div id="workingDaysDiv" class="hidden">
+                <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="lbl-monthly-workdays">Total Workdays in Month</label>
+                <input type="number" id="totalWorkdays" value="22" min="1" max="31" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-800" />
+              </div>
+            </div>
+
+            <!-- Date Range or Days Count -->
+            <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold text-slate-800" id="daysCountLabel" data-i18n="lbl-input-mode">Effective Days Calculation</span>
+                <div class="flex items-center gap-2 text-xs">
+                  <label class="inline-flex items-center gap-1 cursor-pointer">
+                    <input type="radio" name="entryMode" value="days" checked class="text-emerald-600 focus:ring-emerald-500" />
+                    <span data-i18n="mode-direct">Direct Days Count</span>
+                  </label>
+                  <label class="inline-flex items-center gap-1 cursor-pointer ml-2 rtl:mr-2">
+                    <input type="radio" name="entryMode" value="dates" class="text-emerald-600 focus:ring-emerald-500" />
+                    <span data-i18n="mode-dates">Date Range Selector</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Direct Days Container -->
+              <div id="directDaysContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-slate-600 mb-1" id="dynamicDaysLabel" data-i18n="lbl-active-worked-days">Eligible / Worked Calendar Days</label>
+                  <input type="number" id="directDaysInput" value="14" min="0" max="31" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500" />
+                  <p class="text-[11px] text-slate-400 mt-1" id="dynamicDaysHelper" data-i18n="help-joiner-days">E.g., Joined on April 17th -> 14 days worked in a 30-day month.</p>
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-600 mb-1" data-i18n="lbl-unauthorized">Unauthorized Absence (Deducted at 100%)</label>
+                  <input type="number" id="absenceDaysInput" value="0" min="0" max="30" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm font-bold text-rose-600 focus:ring-2 focus:ring-rose-500" />
+                  <p class="text-[11px] text-slate-400 mt-1" data-i18n="help-absence-deduct">Additional unexcused leave to deduct.</p>
+                </div>
+              </div>
+
+              <!-- Date Range Container -->
+              <div id="dateRangeContainer" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs font-medium text-slate-600 mb-1" data-i18n="lbl-start-date">Start Date (Within Month)</label>
+                  <input type="date" id="startDateInput" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-900" />
+                </div>
+                <div>
+                  <label class="block text-xs font-medium text-slate-600 mb-1" data-i18n="lbl-end-date">End Date (Within Month)</label>
+                  <input type="date" id="endDateInput" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-900" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary & Results Column (5 Cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-white rounded-2xl p-6 sm:p-7 border border-emerald-500/30 shadow-lg shadow-emerald-500/5 relative overflow-hidden">
+          <div class="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-emerald-500 to-teal-400"></div>
+          
+          <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-100">
+            <h3 class="text-sm font-bold text-slate-900 uppercase tracking-wide" data-i18n="res-title">Payroll Settlement Summary</h3>
+            <span class="px-2 py-0.5 text-[11px] font-semibold bg-emerald-100 text-emerald-800 rounded" id="calcStatusBadge">Exact Breakdown</span>
+          </div>
+
+          <!-- Main Result Callout -->
+          <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-5 rounded-xl shadow-inner mb-5">
+            <span class="text-xs text-slate-300 font-medium block" data-i18n="res-net-payable">Net Payable Take-Home Salary</span>
+            <div class="flex items-baseline gap-2 mt-1">
+              <span class="text-3xl sm:text-4xl font-extrabold tracking-tight text-emerald-400" id="resNetPayable">0.00</span>
+              <span class="text-sm font-medium text-slate-300">SAR</span>
+            </div>
+            <div class="mt-3 pt-3 border-t border-slate-700/60 flex justify-between text-xs text-slate-300">
+              <span data-i18n="res-total-gross-earned">Pro-Rata Gross Salary:</span>
+              <span class="font-bold text-white" id="resGrossEarned">0.00 SAR</span>
+            </div>
+          </div>
+
+          <!-- Itemized Breakdown -->
+          <div class="space-y-3 text-xs">
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+              <span class="text-slate-600" data-i18n="res-full-gross">Full Monthly Contract Package:</span>
+              <span class="font-semibold text-slate-900" id="resFullGross">0.00 SAR</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+              <span class="text-slate-600" data-i18n="res-daily-wage">Standard Daily Wage Rate:</span>
+              <span class="font-semibold text-slate-900" id="resDailyRate">0.00 SAR / day</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+              <span class="text-slate-600" data-i18n="res-hourly-rate">Hourly Rate (8-hr workday standard):</span>
+              <span class="font-semibold text-slate-900" id="resHourlyRate">0.00 SAR / hr</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+              <span class="text-slate-600" data-i18n="res-paid-days">Billable / Paid Days:</span>
+              <span class="font-bold text-emerald-700" id="resBillableDays">0 days</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+              <span class="text-slate-600" data-i18n="res-deducted-days">Unpaid / Deducted Days:</span>
+              <span class="font-semibold text-rose-600" id="resDeductedDays">0 days</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100 text-rose-600 bg-rose-50/50 px-2 rounded">
+              <span data-i18n="res-total-deductions">Unpaid/Absence Gross Deduction:</span>
+              <span class="font-bold" id="resGrossDeduction">-0.00 SAR</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100 text-amber-700 bg-amber-50/50 px-2 rounded">
+              <span data-i18n="res-gosi-employee">Employee GOSI Deduction:</span>
+              <span class="font-bold" id="resGosiDeduction">-0.00 SAR</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100 text-slate-500 px-2">
+              <span data-i18n="res-gosi-employer">Employer GOSI Cost (11.75% / 2%):</span>
+              <span class="font-medium" id="resGosiEmployer">0.00 SAR</span>
+            </div>
+          </div>
+
+          <!-- Official Disclaimer Card -->
+          <div class="mt-5 p-3 rounded-lg bg-amber-50/80 border border-amber-200/80 text-[11px] text-amber-900 leading-relaxed">
+            <div class="flex items-start gap-2">
+              <svg class="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <div>
+                <span class="font-bold" data-i18n="disc-title">Legal Notice & Disclaimer:</span>
+                <span data-i18n="disc-body">This tool provides estimations based on Saudi Labor Law standard 30-day benchmarks (Article 131) and GOSI calculation policies. All figures must be verified against your employment contract terms, Internal Work Regulations (لائحة تنظيم العمل الداخلية), and official Qiwa/MHRSD directives before executing bank WPS transfers.</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gumroad Upsell Card -->
+          <div class="mt-6 p-4 rounded-xl bg-slate-900 border border-emerald-500/40 text-white relative shadow-md">
+            <span class="absolute -top-2.5 right-4 bg-emerald-500 text-slate-950 text-[10px] uppercase font-black px-2 py-0.5 rounded shadow">HR Automation Kit</span>
+            <h4 class="text-xs font-bold text-white mb-1" data-i18n="upsell-box-title">Download Complete Offline Payroll & WPS Generator</h4>
+            <p class="text-[11px] text-slate-300 leading-relaxed mb-3" data-i18n="upsell-box-desc">
+              Pre-built Excel model with VBA macro automation: generates bank SIF WPS files, manages 200+ employees with pro-rata joining, overtime, GOSI, and Qiwa compliance.
+            </p>
+            <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="block w-full py-2.5 text-center bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg text-xs transition duration-150 shadow-md" data-i18n="upsell-box-btn">
+              Get Master Template & SIF Generator ($29)
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Comprehensive 800+ Words SEO Article & Knowledge Base -->
+    <section class="mt-12 pt-10 border-t border-slate-200">
+      <div class="max-w-4xl mx-auto prose prose-slate text-slate-700">
+        
+        <h2 class="text-2xl font-extrabold text-slate-900 mb-4" data-i18n="seo-h2-title">The Ultimate Guide to Pro-Rata Salary Calculations Under Saudi Labor Law</h2>
+        
+        <p class="text-sm leading-relaxed mb-4" data-i18n="seo-p1">
+          In Saudi Arabia, administering partial month payroll is one of the most contentious operational challenges faced by HR generalists, payroll accountants, and enterprise ERP implementers. Whether an employee joins mid-month, resigns prior to the payroll cut-off, takes unauthorized leaves of absence, or agrees to unpaid leave under Article 116 of the Saudi Labor Law, calculating exact pro-rata remuneration demands rigorous compliance with the Ministry of Human Resources and Social Development (MHRSD) guidelines, the Saudi Labor Law (Royal Decree No. M/51), and the General Organization for Social Insurance (GOSI).
+        </p>
+
+        <h3 class="text-lg font-bold text-slate-900 mt-6 mb-2" data-i18n="seo-h3-1">1. The 30-Day Rule vs. Calendar Days: Legal Foundations (Article 131)</h3>
+        <p class="text-sm leading-relaxed mb-3" data-i18n="seo-p2">
+          Under Article 131 of the Saudi Labor Law, whenever wages or contractual entitlements are designated by the month or year without specifying exact calendar variations, a calendar month is legally deemed to comprise <strong>30 days</strong>. Consequently, in the absence of an explicit employment clause stating otherwise, the statutory daily wage formula is:
+        </p>
+        <div class="p-3.5 bg-slate-100 rounded-lg text-xs font-mono text-slate-800 my-3">
+          <strong>Statutory Daily Wage Rate</strong> = Total Monthly Wage (Basic + Guaranteed Allowances) &divide; 30 Days
+        </div>
+        <p class="text-sm leading-relaxed mb-3" data-i18n="seo-p3">
+          However, enterprises often operate using one of three widespread accounting methodologies:
+        </p>
+        <ul class="list-disc list-inside text-sm space-y-1.5 mb-4">
+          <li><strong>Standard 30-Day Divisor (Recommended by Labor Courts):</strong> Daily wage is calculated by dividing monthly compensation by 30, regardless of whether the month has 28, 29, 30, or 31 days. Worked days are credited based on remaining calendar days in that month.</li>
+          <li><strong>Actual Calendar Days Divisor:</strong> Divides the monthly wage by the exact number of calendar days in that specific month (e.g., 31 in January, 28 in February). While mathematically intuitive, it yields varying daily rates throughout the year for identical base salaries.</li>
+          <li><strong>Actual Working Days Divisor (Net Working Days):</strong> Excludes scheduled weekly rest days (Fridays/Saturdays). This method is occasionally applied in non-standard consultancy or hourly contracts, but must be explicitly documented in the company's approved Internal Work Regulations (لائحة تنظيم العمل الداخلية).</li>
+        </ul>
+
+        <h3 class="text-lg font-bold text-slate-900 mt-6 mb-2" data-i18n="seo-h3-2">2. Joiners, Leavers, and Unpaid Leave (Article 116)</h3>
+        <p class="text-sm leading-relaxed mb-3" data-i18n="seo-p4">
+          <strong>Mid-Month Joiners:</strong> If an employee’s contract commences on April 16 in a 30-day month, they are entitled to pay for 15 days (April 16 through 30 inclusive), including the weekly rest days falling within that period.
+        </p>
+        <p class="text-sm leading-relaxed mb-3" data-i18n="seo-p5">
+          <strong>Unpaid Leave (Article 116):</strong> With the employer’s explicit written consent, an employee may take leave without pay. In this circumstance, the employment contract is considered legally suspended beyond 20 days unless otherwise agreed. For payroll deduction purposes, each day of unpaid leave reduces gross remuneration by one standard daily wage (Monthly Package &divide; 30).
+        </p>
+        <p class="text-sm leading-relaxed mb-3" data-i18n="seo-p6">
+          <strong>Weekly Rest Day Entitlement (Article 89):</strong> Employees are entitled to at least one full day of paid weekly rest (commonly two days in modern 40-hour/48-hour schemes). Mid-month calculations must not deduct scheduled weekly rest days unless the employee was absent without authorization both immediately preceding and following that rest period, pursuant to standard disciplinary regulations.
+        </p>
+
+        <h3 class="text-lg font-bold text-slate-900 mt-6 mb-2" data-i18n="seo-h3-3">3. GOSI Contribution Mechanics on Partial Month Wages</h3>
+        <p class="text-sm leading-relaxed mb-3" data-i18n="seo-p7">
+          A frequent source of payroll discrepancy involves social insurance deductions. Under GOSI regulations:
+        </p>
+        <ul class="list-disc list-inside text-sm space-y-1.5 mb-4">
+          <li><strong>Contributory Wage Definition:</strong> GOSI calculates contributions based on Basic Salary + Housing Allowance (fixed monthly allowance or 2 months basic equivalent if company-provided), capped at a statutory ceiling of 45,000 SAR per month.</li>
+          <li><strong>Full Month Rule in GOSI Portal:</strong> GOSI's portal often records full monthly contribution liabilities when an employee is registered as active for any portion of the contribution month, unless reported through specific entry/exit date APIs. When prorating employee take-home pay, companies typically deduct the full employee share or a pro-rata share based on the company's GOSI reconciliation practice.</li>
+          <li><strong>Contribution Percentages:</strong> For Saudi nationals, the employee contribution is 9.75% (9% Annuities + 0.75% SANED Unemployment Insurance). The employer contributes 11.75% (9% Annuities + 0.75% SANED + 2% Occupational Hazards). For expatriates, the employee pays 0%, while the employer pays 2% for Occupational Hazards.</li>
+        </ul>
+
+        <!-- Step-by-Step Practical Calculation Example -->
+        <div class="bg-slate-100 p-5 rounded-xl border border-slate-200 my-6">
+          <h4 class="text-sm font-bold text-slate-900 mb-2" data-i18n="seo-example-title">Practical Calculation Scenario: Mid-Month Joiner</h4>
+          <div class="text-xs text-slate-700 space-y-2 leading-relaxed">
+            <p><strong>Employee:</strong> Saudi National joining on the 11th of May (31-day month).</p>
+            <p><strong>Compensation Package:</strong> Basic: 9,000 SAR | Housing: 3,000 SAR | Transport: 1,000 SAR | Total Gross: 13,000 SAR.</p>
+            <p><strong>30-Day Basis Calculation:</strong></p>
+            <ul class="list-disc list-inside space-y-1 font-mono text-[11px]">
+              <li>Daily Rate = 13,000 &divide; 30 = 433.33 SAR / day</li>
+              <li>Payable Days (May 11 to 31) = 21 calendar days</li>
+              <li>Earned Gross Salary = 21 &times; 433.33 = 9,099.93 SAR</li>
+              <li>GOSI Contributory Base (Basic + Housing) = 12,000 SAR</li>
+              <li>Pro-Rata GOSI Base = (12,000 &divide; 30) &times; 21 = 8,400.00 SAR</li>
+              <li>Employee GOSI Deduction (9.75%) = 8,400 &times; 0.0975 = 819.00 SAR</li>
+              <li><strong>Net Payable Take-Home Salary:</strong> 9,099.93 - 819.00 = <strong>8,280.93 SAR</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Frequently Asked Questions -->
+        <h3 class="text-lg font-bold text-slate-900 mt-8 mb-4" data-i18n="faq-main-title">Frequently Asked Questions (FAQ)</h3>
+        
+        <div class="space-y-4">
+          <div class="p-4 bg-white border border-slate-200 rounded-xl">
+            <h4 class="text-xs sm:text-sm font-bold text-slate-900" data-i18n="faq-q1">Does Saudi Labor Law mandate 30 days for salary deductions in February and 31-day months?</h4>
+            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed" data-i18n="faq-a1">
+              Yes. Article 131 states that unless expressly agreed otherwise, the month is legally treated as 30 days. Most labor courts and HR auditors enforce 30 days as the default denominator to avoid penalizing employees during shorter months (February) or creating arbitrary rate swings in 31-day months.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white border border-slate-200 rounded-xl">
+            <h4 class="text-xs sm:text-sm font-bold text-slate-900" data-i18n="faq-q2">Can an employer deduct weekends if an employee takes unpaid leave?</h4>
+            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed" data-i18n="faq-a2">
+              If an employee takes approved unpaid leave from Sunday to Thursday (5 working days), the subsequent Friday and Saturday (statutory rest days) should not be deducted unless the leave explicitly spans over contiguous weeks as specified in the agreed unpaid leave request form.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white border border-slate-200 rounded-xl">
+            <h4 class="text-xs sm:text-sm font-bold text-slate-900" data-i18n="faq-q3">How does pro-rata payroll integrate with the Saudi Wage Protection System (WPS)?</h4>
+            <p class="text-xs text-slate-600 mt-1.5 leading-relaxed" data-i18n="faq-a3">
+              Under the MHRSD Wage Protection System (نظام حماية الأجور - مداد / منصة قوى), variances between the registered contract salary and the net bank transfer that exceed 20% will trigger a compliance justification flag. When uploading partial-month SIF files, HR must log appropriate deduction reason codes (e.g., unpaid leave or mid-month start) to avoid green/platinum Nitaqat rating flags.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p data-i18n="footer-rights">&copy; 2025 Saudi B2B Operational Tools. Built for Gulf HR & Financial Compliance.</p>
+      <div class="flex items-center space-x-4 rtl:space-x-reverse text-slate-600">
+        <span data-i18n="footer-privacy">Strictly local in-browser calculation &bull; No sensitive payroll data transmitted</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Interactive Calculation & Internationalization Script -->
+  <script>
+    const i18nData = {
+      en: {
+        "banner-tagline": "KSA Labor Law Standard: Month Base = 30 Days (Art. 131)",
+        "banner-cta": "Get Complete Automated Excel & VBA Payroll Kit ($29)",
+        "header-title": "Saudi Pro-Rata Salary & Payroll Deduction Engine",
+        "header-sub": "Compliant with Saudi Labor Law Articles 89, 90, 116 & 131",
+        "action-print": "Print / PDF",
+        "action-csv": "Export CSV",
+        "sec-contract": "Contract & Base Compensation (SAR)",
+        "curr-sar": "SAR Currency",
+        "lbl-basic-salary": "Monthly Basic Salary",
+        "lbl-housing": "Housing Allowance",
+        "lbl-transport": "Transportation Allowance",
+        "lbl-other": "Other Fixed Allowances",
+        "lbl-nationality": "Employee Nationality (GOSI Rule)",
+        "opt-saudi": "Saudi National (9.75% Employee GOSI + Saned)",
+        "opt-expat": "Expatriate / Non-Saudi (0% Employee GOSI)",
+        "lbl-gosi-cap": "GOSI Base Salary Cap",
+        "sec-calculation-type": "Adjustment Type & Calculation Method",
+        "tag-active-engine": "Live Engine",
+        "lbl-calc-event": "Payroll Event Type",
+        "opt-joiner": "Mid-Month Joiner (New Hire Joined Mid-Period)",
+        "opt-leaver": "Mid-Month Exit / Resignation (Left Mid-Period)",
+        "opt-unpaid": "Unpaid Leave / Article 116 Absence",
+        "opt-custom": "Custom Payable Days or Deduction Days",
+        "lbl-calc-method": "Daily Rate Calculation Basis (Denominator)",
+        "basis-30-title": "Fixed 30 Days",
+        "basis-30-desc": "Saudi Labor Law standard (Article 131)",
+        "basis-cal-title": "Actual Calendar Days",
+        "basis-cal-desc": "28, 29, 30, or 31 in payroll month",
+        "basis-work-title": "Working Days Basis",
+        "basis-work-desc": "Usually 22 or 26 days/mo (excluding weekends)",
+        "lbl-month": "Payroll Month",
+        "lbl-cal-days": "Days in Selected Month",
+        "lbl-monthly-workdays": "Total Workdays in Month",
+        "lbl-input-mode": "Effective Days Calculation",
+        "mode-direct": "Direct Days Count",
+        "mode-dates": "Date Range Selector",
+        "lbl-active-worked-days": "Eligible / Worked Calendar Days",
+        "help-joiner-days": "E.g., Joined on April 17th -> 14 days worked in a 30-day month.",
+        "lbl-unauthorized": "Unauthorized Absence (Deducted at 100%)",
+        "help-absence-deduct": "Additional unexcused leave to deduct.",
+        "lbl-start-date": "Start Date (Within Month)",
+        "lbl-end-date": "End Date (Within Month)",
+        "res-title": "Payroll Settlement Summary",
+        "res-net-payable": "Net Payable Take-Home Salary",
+        "res-total-gross-earned": "Pro-Rata Gross Salary:",
+        "res-full-gross": "Full Monthly Contract Package:",
+        "res-daily-wage": "Standard Daily Wage Rate:",
+        "res-hourly-rate": "Hourly Rate (8-hr workday standard):",
+        "res-paid-days": "Billable / Paid Days:",
+        "res-deducted-days": "Unpaid / Deducted Days:",
+        "res-total-deductions": "Unpaid/Absence Gross Deduction:",
+        "res-gosi-employee": "Employee GOSI Deduction:",
+        "res-gosi-employer": "Employer GOSI Cost (11.75% / 2%):",
+        "disc-title": "Legal Notice & Disclaimer:",
+        "disc-body": "This tool provides estimations based on Saudi Labor Law standard 30-day benchmarks (Article 131) and GOSI calculation policies. All figures must be verified against your employment contract terms, Internal Work Regulations (لائحة تنظيم العمل الداخلية), and official Qiwa/MHRSD directives before executing bank WPS transfers.",
+        "upsell-box-title": "Download Complete Offline Payroll & WPS Generator",
+        "upsell-box-desc": "Pre-built Excel model with VBA macro automation: generates bank SIF WPS files, manages 200+ employees with pro-rata joining, overtime, GOSI, and Qiwa compliance.",
+        "upsell-box-btn": "Get Master Template & SIF Generator ($29)",
+        "seo-h2-title": "The Ultimate Guide to Pro-Rata Salary Calculations Under Saudi Labor Law",
+        "seo-p1": "In Saudi Arabia, administering partial month payroll is one of the most contentious operational challenges faced by HR generalists, payroll accountants, and enterprise ERP implementers. Whether an employee joins mid-month, resigns prior to the payroll cut-off, takes unauthorized leaves of absence, or agrees to unpaid leave under Article 116 of the Saudi Labor Law, calculating exact pro-rata remuneration demands rigorous compliance with the Ministry of Human Resources and Social Development (MHRSD) guidelines, the Saudi Labor Law (Royal Decree No. M/51), and the General Organization for Social Insurance (GOSI).",
+        "seo-h3-1": "1. The 30-Day Rule vs. Calendar Days: Legal Foundations (Article 131)",
+        "seo-p2": "Under Article 131 of the Saudi Labor Law, whenever wages or contractual entitlements are designated by the month or year without specifying exact calendar variations, a calendar month is legally deemed to comprise 30 days. Consequently, in the absence of an explicit employment clause stating otherwise, the statutory daily wage formula is:",
+        "seo-p3": "However, enterprises often operate using one of three widespread accounting methodologies:",
+        "seo-h3-2": "2. Joiners, Leavers, and Unpaid Leave (Article 116)",
+        "seo-p4": "Mid-Month Joiners: If an employee’s contract commences on April 16 in a 30-day month, they are entitled to pay for 15 days (April 16 through 30 inclusive), including the weekly rest days falling within that period.",
+        "seo-p5": "Unpaid Leave (Article 116): With the employer’s explicit written consent, an employee may take leave without pay. In this circumstance, the employment contract is considered legally suspended beyond 20 days unless otherwise agreed. For payroll deduction purposes, each day of unpaid leave reduces gross remuneration by one standard daily wage (Monthly Package ÷ 30).",
+        "seo-p6": "Weekly Rest Day Entitlement (Article 89): Employees are entitled to at least one full day of paid weekly rest (commonly two days in modern 40-hour/48-hour schemes). Mid-month calculations must not deduct scheduled weekly rest days unless the employee was absent without authorization both immediately preceding and following that rest period, pursuant to standard disciplinary regulations.",
+        "seo-h3-3": "3. GOSI Contribution Mechanics on Partial Month Wages",
+        "seo-p7": "A frequent source of payroll discrepancy involves social insurance deductions. Under GOSI regulations:",
+        "seo-example-title": "Practical Calculation Scenario: Mid-Month Joiner",
+        "faq-main-title": "Frequently Asked Questions (FAQ)",
+        "faq-q1": "Does Saudi Labor Law mandate 30 days for salary deductions in February and 31-day months?",
+        "faq-a1": "Yes. Article 131 states that unless expressly agreed otherwise, the month is legally treated as 30 days. Most labor courts and HR auditors enforce 30 days as the default denominator to avoid penalizing employees during shorter months (February) or creating arbitrary rate swings in 31-day months.",
+        "faq-q2": "Can an employer deduct weekends if an employee takes unpaid leave?",
+        "faq-a2": "If an employee takes approved unpaid leave from Sunday to Thursday (5 working days), the subsequent Friday and Saturday (statutory rest days) should not be deducted unless the leave explicitly spans over contiguous weeks as specified in the agreed unpaid leave request form.",
+        "faq-q3": "How does pro-rata payroll integrate with the Saudi Wage Protection System (WPS)?",
+        "faq-a3": "Under the MHRSD Wage Protection System (نظام حماية الأجور - مداد / منصة قوى), variances between the registered contract salary and the net bank transfer that exceed 20% will trigger a compliance justification flag. When uploading partial-month SIF files, HR must log appropriate deduction reason codes (e.g., unpaid leave or mid-month start) to avoid green/platinum Nitaqat rating flags.",
+        "footer-rights": "© 2025 Saudi B2B Operational Tools. Built for Gulf HR & Financial Compliance.",
+        "footer-privacy": "Strictly local in-browser calculation • No sensitive payroll data transmitted"
+      },
+      ar: {
+        "banner-tagline": "معيار نظام العمل السعودي: أساس الشهر = 30 يوماً (المادة 131)",
+        "banner-cta": "احصل على ملف الإكسيل والماكرو الآلي المتكامل لإعداد الرواتب (29$)",
+        "header-title": "حاسبة الراتب النسبي واستقطاعات مسيرات الرواتب السعودية",
+        "header-sub": "متوافقة مع أحكام نظام العمل السعودي: المواد 89، 90، 116 و 131",
+        "action-print": "طباعة / PDF",
+        "action-csv": "تصدير كملف CSV",
+        "sec-contract": "بيانات العقد والتعويض الشهري (ريال سعودي)",
+        "curr-sar": "العملة: ريال سعودي",
+        "lbl-basic-salary": "الراتب الأساسي الشهري",
+        "lbl-housing": "بدل السكن الشهري",
+        "lbl-transport": "بدل النقل الشهري",
+        "lbl-other": "بدلات ثابتة أخرى",
+        "lbl-nationality": "جنسية الموظف (قواعد التأمينات الاجتماعية GOSI)",
+        "opt-saudi": "مواطن سعودي (خصم 9.75% تأمينات وساند)",
+        "opt-expat": "مقيم / غير سعودي (خصم 0% على الموظف)",
+        "lbl-gosi-cap": "سقف الأجر الخاضع للاشتراك",
+        "sec-calculation-type": "نوع المعاملة وطريقة احتساب الأجر اليومي",
+        "tag-active-engine": "محرك احتساب فوري",
+        "lbl-calc-event": "نوع العملية في المسير",
+        "opt-joiner": "مباشرة عمل خلال الشهر (موظف جديد)",
+        "opt-leaver": "استقالة / نهاية خدمة خلال الشهر",
+        "opt-unpaid": "إجازة غير مدفوعة الأجر (المادة 116)",
+        "opt-custom": "تحديد يدوي لأيام الاستحقاق أو الخصم",
+        "lbl-calc-method": "أساس حساب أجر اليوم الواحد (المقام)",
+        "basis-30-title": "أساس 30 يوماً ثابت",
+        "basis-30-desc": "المعيار القانوني لنظام العمل (المادة 131)",
+        "basis-cal-title": "أيام الشهر الفعلية",
+        "basis-cal-desc": "28 أو 29 أو 30 أو 31 حسب الشهر الميلادي",
+        "basis-work-title": "أيام العمل الفعلية فقط",
+        "basis-work-desc": "عادة 22 أو 26 يوماً (باستبعاد العطلات الأسبوعية)",
+        "lbl-month": "شهر المسير",
+        "lbl-cal-days": "إجمالي أيام الشهر المحدد",
+        "lbl-monthly-workdays": "إجمالي أيام العمل المقررة في الشهر",
+        "lbl-input-mode": "طريقة تحديد الأيام المؤهلة",
+        "mode-direct": "إدخال عدد الأيام مباشرة",
+        "mode-dates": "تحديد التواريخ بالفترة",
+        "lbl-active-worked-days": "أيام العمل المستحقة (شاملة الراحة الأسبوعية)",
+        "help-joiner-days": "مثال: باشر في 17 أبريل -> 14 يوماً مستحقاً في شهر من 30 يوماً.",
+        "lbl-unauthorized": "أيام الغياب غير المبرر (تُخصم 100%)",
+        "help-absence-deduct": "أيام غياب إضافية للخصم المباشر من الراتب.",
+        "lbl-start-date": "تاريخ البداية (خلال الشهر)",
+        "lbl-end-date": "تاريخ النهاية (خلال الشهر)",
+        "res-title": "ملخص التسوية والراتب المستحق",
+        "res-net-payable": "صافي الراتب المستحق للصرف",
+        "res-total-gross-earned": "إجمالي الأجر النسبي المكتسب:",
+        "res-full-gross": "إجمالي الأجر التعاقدي الكامل:",
+        "res-daily-wage": "أجر اليوم الواحد المعتمد:",
+        "res-hourly-rate": "أجر ساعة العمل (معيار 8 ساعات):",
+        "res-paid-days": "عدد الأيام المستحقة للصرف:",
+        "res-deducted-days": "عدد الأيام المخصومة / غير المستحقة:",
+        "res-total-deductions": "إجمالي الخصم عن أيام الغياب/عدم العمل:",
+        "res-gosi-employee": "حصة الموظف في التأمينات (GOSI):",
+        "res-gosi-employer": "تكلفة المنشأة في التأمينات (11.75% / 2%):",
+        "disc-title": "إخلاء مسؤولية وتنبيه نظامي:",
+        "disc-body": "هذه الأداة تقدم مخرجات استرشادية مبنية على معيار الـ 30 يوماً وفق المادة 131 من نظام العمل السعودي ولوائح التأمينات الاجتماعية. يجب مطابقة المخرجات مع لائحة تنظيم العمل الداخلية للمنشأة وشروط العقد الموثق عبر منصة قوى قبل رفع ملف حماية الأجور (SIF).",
+        "upsell-box-title": "حمّل قالب مسيرات الرواتب الآلي الشامل بصيغة إكسيل",
+        "upsell-box-desc": "نموذج متكامل مع ماكرو VBA: ينشئ ملفات حماية الأجور SIF المعتمدة لدى البنوك، ويدير أكثر من 200 موظف مع احتساب البدلات والنسب والإضافي ومطابقة قوى.",
+        "upsell-box-btn": "احصل على القالب الآلي المتكامل ومولد SIF (29$)",
+        "seo-h2-title": "الدليل الشامل لحساب الراتب النسبي والاستقطاعات وفق نظام العمل السعودي",
+        "seo-p1": "يُعد احتساب الرواتب للأشهر غير المكتملة من أكثر التحديات دقة لدى مسؤولي الموارد البشرية والمحاسبين الماليين في المملكة العربية السعودية. فسواء التحق الموظف بالعمل في منتصف الشهر، أو انتهت علاقته التعاقدية قبل تاريخ إقفال المسير، أو حصل على إجازة دون أجر بموجب المادة 116، فإن التحديد الدقيق للأجر المستحق يتطلب امتثالاً صارماً لأنظمة وزارة الموارد البشرية والتنمية الاجتماعية ونظام العمل السعودي والمؤسسة العامة للتأمينات الاجتماعية.",
+        "seo-h3-1": "1. قاعدة الـ 30 يوماً مقابل أيام الشهر الفعلية: الأساس النظامي (المادة 131)",
+        "seo-p2": "تنص المادة 131 من نظام العمل السعودي على أنه إذا كان الأجر محدداً بالشهر أو بالسنة فيُحسب الشهر بثلاثين يوماً ما لم ينص العقد على خلاف ذلك. وبناءً عليه، فإن الأجر اليومي القياسي يُحسب بالمعادلة التالية:",
+        "seo-p3": "وعلى الرغم من ذلك، تطبق الشركات إحدى الطرق المحاسبية الثلاث التالية:",
+        "seo-h3-2": "2. المباشرون الجدد، المستقيلون، والإجازة بدون راتب (المادة 116)",
+        "seo-p4": "المباشرة في منتصف الشهر: إذا باشر الموظف عمله يوم 16 أبريل في شهر مدته 30 يوماً، استحق أجر 15 يوماً (من 16 إلى 30 أبريل ضمناً)، وتدخل أيام الراحة الأسبوعية الواقعة ضمن تلك الفترة في استحقاق الراتب.",
+        "seo-p5": "الإجازة دون أجر (المادة 116): يجوز للموظف بموافقة صاحب العمل الكتابية الحصول على إجازة بدون أجر، ويُعد العقد موقوفاً إذا زادت الإجازة عن 20 يوماً ما لم يتفق الطرفان على خلاف ذلك. ولأغراض الخصم، يخصم أجر اليوم الواحد المحسوب من إجمالي الراتب عن كل يوم إجازة.",
+        "seo-p6": "استحقاق الراحة الأسبوعية (المادة 89): يحق للعامل يوم راحة أسبوعية مدفوع الأجر كحد أدنى (أو يومين في منشآت الـ 40 ساعة). لا يجوز خصم يوم الراحة الأسبوعية الواقع خلال الشهر إلا إذا تغيب العامل غياباً غير مبرر يسبق ويلحق يوم الراحة مباشرة طبقاً للائحة الجزاءات.",
+        "seo-h3-3": "3. آلية اشتراكات التأمينات الاجتماعية (GOSI) في الأشهر غير المكتملة",
+        "seo-p7": "تخضع الاشتراكات لأجر الاشتراك الأساسي (الأساسي + بدل السكن النقدي أو العيني بمقدار راتب شهرين) بحد أقصى 45,000 ريال سعودي شهرياً:",
+        "seo-example-title": "مثال تطبيقي عملي: مباشرة عمل في منتصف الشهر",
+        "faq-main-title": "الأسئلة الشائعة حول احتساب الراتب النسبي (FAQ)",
+        "faq-q1": "هل يلزم نظام العمل السعودي بقسمة الراتب على 30 يوماً في شهر فبراير أو الأشهر ذات الـ 31 يوماً؟",
+        "faq-a1": "نعم، المادة 131 تعتبر الشهر 30 يوماً ما لم ينص العقد على غير ذلك. وهو الأساس المفضل في المحاكم العمالية لتوحيد قيمة اليوم وتجنب تذبذب الأجر اليومي للموظف بين الشهور.",
+        "faq-q2": "هل يحق للمنشأة خصم عطلة نهاية الأسبوع في حال الإجازة بدون راتب؟",
+        "faq-a2": "إذا كانت الإجازة غير المدفوعة لأيام عمل محددة (مثل من الأحد إلى الخميس - 5 أيام)، فإن يومي الجمعة والسبت لا يخصمان، إلا إذا تم التقدم بطلب إجازة متصلة تغطي كامل الأسبوع ضمناً.",
+        "faq-q3": "كيف يؤثر الراتب النسبي على التزام المنشأة في نظام حماية الأجور (WPS)؟",
+        "faq-a3": "إذا انخفض الراتب المحول عبر البنك عن 80% من الراتب المسجل في العقد لدى منصة قوى، يتم تسجيل ملاحظة تبرير على المنشأة. لذلك يجب إدراج كود التبرير الصحيح (مباشرة عمل حديثة أو إجازة بدون راتب) لتفادي التأثير على نسبة الالتزام وتصنيف نطاقات.",
+        "footer-rights": "© 2025 أدوات الأعمال السعودية B2B. مخصصة للامتثال الإداري والمالي في المملكة.",
+        "footer-privacy": "معالجة فورية مشفرة محلياً داخل المتصفح • لا يتم إرسال أية بيانات رواتب لخوادم خارجية"
+      }
+    };
+
+    let currentLang = 'en';
+
+    // Elements
+    const basicSalaryInput = document.getElementById('basicSalary');
+    const housingAllowanceInput = document.getElementById('housingAllowance');
+    const transportAllowanceInput = document.getElementById('transportAllowance');
+    const otherAllowanceInput = document.getElementById('otherAllowance');
+    const employeeNationalitySelect = document.getElementById('employeeNationality');
+    const payrollEventSelect = document.getElementById('payrollEvent');
+    const payrollMonthSelect = document.getElementById('payrollMonth');
+    const monthTotalDaysInput = document.getElementById('monthTotalDays');
+    const workingDaysDiv = document.getElementById('workingDaysDiv');
+    const totalWorkdaysInput = document.getElementById('totalWorkdays');
+    const directDaysInput = document.getElementById('directDaysInput');
+    const absenceDaysInput = document.getElementById('absenceDaysInput');
+    const startDateInput = document.getElementById('startDateInput');
+    const endDateInput = document.getElementById('endDateInput');
+    const directDaysContainer = document.getElementById('directDaysContainer');
+    const dateRangeContainer = document.getElementById('dateRangeContainer');
+
+    // Result Elements
+    const resNetPayable = document.getElementById('resNetPayable');
+    const resGrossEarned = document.getElementById('resGrossEarned');
+    const resFullGross = document.getElementById('resFullGross');
+    const resDailyRate = document.getElementById('resDailyRate');
+    const resHourlyRate = document.getElementById('resHourlyRate');
+    const resBillableDays = document.getElementById('resBillableDays');
+    const resDeductedDays = document.getElementById('resDeductedDays');
+    const resGrossDeduction = document.getElementById('resGrossDeduction');
+    const resGosiDeduction = document.getElementById('resGosiDeduction');
+    const resGosiEmployer = document.getElementById('resGosiEmployer');
+
+    const monthDaysMap = {
+      1: 31, 2: 28, 3: 31, 4: 30, 5: 31, 6: 30,
+      7: 31, 8: 31, 9: 30, 10: 31, 11: 30, 12: 31
+    };
+
+    function updateMonthDays() {
+      const m = parseInt(payrollMonthSelect.value, 10);
+      const days = monthDaysMap[m] || 30;
+      monthTotalDaysInput.value = days;
+    }
+
+    function getSelectedDenomBasis() {
+      const selected = document.querySelector('input[name="denomBasis"]:checked');
+      return selected ? selected.value : '30';
+    }
+
+    function getSelectedEntryMode() {
+      const selected = document.querySelector('input[name="entryMode"]:checked');
+      return selected ? selected.value : 'days';
+    }
+
+    function calculate() {
+      const basic = Math.max(0, parseFloat(basicSalaryInput.value) || 0);
+      const housing = Math.max(0, parseFloat(housingAllowanceInput.value) || 0);
+      const transport = Math.max(0, parseFloat(transportAllowanceInput.value) || 0);
+      const other = Math.max(0, parseFloat(otherAllowanceInput.value) || 0);
+      const fullGross = basic + housing + transport + other;
+
+      const m = parseInt(payrollMonthSelect.value, 10);
+      const calendarDaysInMonth = monthDaysMap[m] || 30;
+      const denomBasis = getSelectedDenomBasis();
+      const eventType = payrollEventSelect.value;
+
+      // Determine Denominator for Daily Rate
+      let divisor = 30;
+      if (denomBasis === '30') {
+        divisor = 30;
+      } else if (denomBasis === 'calendar') {
+        divisor = calendarDaysInMonth;
+      } else if (denomBasis === 'working') {
+        divisor = Math.max(1, parseFloat(totalWorkdaysInput.value) || 22);
+      }
+
+      const dailyRate = fullGross / divisor;
+      const hourlyRate = dailyRate / 8; // standard 8 hours
+
+      // Determine Billable / Paid Days
+      let payableDays = 0;
+      let deductedDays = 0;
+      const entryMode = getSelectedEntryMode();
+      const absenceDays = Math.max(0, parseFloat(absenceDaysInput.value) || 0);
+
+      if (entryMode === 'dates' && startDateInput.value && endDateInput.value) {
+        const start = new Date(startDateInput.value);
+        const end = new Date(endDateInput.value);
+        if (end >= start) {
+          const diffTime = Math.abs(end - start);
+          const countedDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+          payableDays = Math.min(divisor, countedDays);
+        } else {
+          payableDays = 0;
+        }
+      } else {
+        payableDays = Math.max(0, parseFloat(directDaysInput.value) || 0);
+      }
+
+      // Logic based on event type
+      if (eventType === 'unpaid_leave') {
+        // directDaysInput represents unpaid days
+        deductedDays = payableDays + absenceDays;
+        payableDays = Math.max(0, divisor - deductedDays);
+      } else if (eventType === 'mid_joiner' || eventType === 'mid_leaver') {
+        // payableDays is worked days
+        payableDays = Math.max(0, payableDays - absenceDays);
+        deductedDays = Math.max(0, divisor - payableDays);
+      } else {
+        // custom
+        deductedDays = Math.max(0, divisor - payableDays + absenceDays);
+        payableDays = Math.max(0, payableDays - absenceDays);
+      }
+
+      // Pro-rata Gross Earned
+      const grossEarned = Math.max(0, Math.min(fullGross, dailyRate * payableDays));
+      const grossDeduction = Math.max(0, dailyRate * deductedDays);
+
+      // GOSI Calculation (Basic + Housing capped at 45,000)
+      const isSaudi = employeeNationalitySelect.value === 'saudi';
+      const gosiEligibleBase = Math.min(45000, basic + housing);
+      
+      // Pro-rata GOSI base proportional to payable ratio
+      const proRataRatio = divisor > 0 ? (payableDays / divisor) : 0;
+      const proRataGosiBase = gosiEligibleBase * proRataRatio;
+
+      let empGosi = 0;
+      let erGosi = 0;
+      if (isSaudi) {
+        // 9% Annuities + 0.75% Saned = 9.75%
+        empGosi = proRataGosiBase * 0.0975;
+        // Employer: 9% Annuities + 0.75% Saned + 2% Hazards = 11.75%
+        erGosi = proRataGosiBase * 0.1175;
+      } else {
+        // Expat: 0% employee, 2% employer hazard
+        empGosi = 0;
+        erGosi = proRataGosiBase * 0.02;
+      }
+
+      const netPayable = Math.max(0, grossEarned - empGosi);
+
+      // Render to DOM
+      const fmt = (num) => Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      
+      resNetPayable.textContent = fmt(netPayable);
+      resGrossEarned.textContent = fmt(grossEarned) + ' SAR';
+      resFullGross.textContent = fmt(fullGross) + ' SAR';
+      resDailyRate.textContent = fmt(dailyRate) + ' SAR';
+      resHourlyRate.textContent = fmt(hourlyRate) + ' SAR';
+      resBillableDays.textContent = payableDays.toFixed(1) + (currentLang === 'ar' ? ' يوم' : ' days');
+      resDeductedDays.textContent = deductedDays.toFixed(1) + (currentLang === 'ar' ? ' يوم' : ' days');
+      resGrossDeduction.textContent = '-' + fmt(grossDeduction) + ' SAR';
+      resGosiDeduction.textContent = '-' + fmt(empGosi) + ' SAR';
+      resGosiEmployer.textContent = fmt(erGosi) + ' SAR';
+    }
+
+    // Radio style updates & listener
+    function setupBasisRadios() {
+      const radios = document.querySelectorAll('input[name="denomBasis"]');
+      radios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          document.querySelectorAll('.basis-radio-card').forEach(card => {
+            card.classList.remove('border-emerald-500', 'bg-emerald-50/40');
+            card.classList.add('border-slate-200', 'bg-white');
+          });
+          const parent = radio.closest('.basis-radio-card');
+          if (parent) {
+            parent.classList.add('border-emerald-500', 'bg-emerald-50/40');
+            parent.classList.remove('border-slate-200', 'bg-white');
+          }
+          if (radio.value === 'working') {
+            workingDaysDiv.classList.remove('hidden');
+          } else {
+            workingDaysDiv.classList.add('hidden');
+          }
+          calculate();
+        });
+      });
+
+      const entryRadios = document.querySelectorAll('input[name="entryMode"]');
+      entryRadios.forEach(r => {
+        r.addEventListener('change', () => {
+          if (r.value === 'dates') {
+            directDaysContainer.classList.add('hidden');
+            dateRangeContainer.classList.remove('hidden');
+          } else {
+            directDaysContainer.classList.remove('hidden');
+            dateRangeContainer.classList.add('hidden');
+          }
+          calculate();
+        });
+      });
+    }
+
+    // Dynamic Label according to event
+    function updateEventLabels() {
+      const evt = payrollEventSelect.value;
+      const directLabel = document.getElementById('dynamicDaysLabel');
+      const directHelp = document.getElementById('dynamicDaysHelper');
+
+      if (evt === 'unpaid_leave') {
+        directLabel.textContent = currentLang === 'ar' ? 'عدد أيام الإجازة غير المدفوعة للخصم' : 'Unpaid Leave Days to Deduct';
+        directHelp.textContent = currentLang === 'ar' ? 'سيتم خصم هذه الأيام مباشرة من أجر الشهر الكامل.' : 'These days will be subtracted from the standard monthly base.';
+        directDaysInput.value = '5';
+      } else if (evt === 'mid_leaver') {
+        directLabel.textContent = currentLang === 'ar' ? 'أيام العمل حتى تاريخ الاستقالة / الاستبعاد' : 'Worked Days Until Exit Date';
+        directHelp.textContent = currentLang === 'ar' ? 'الأيام المستحقة للصرف من بداية الشهر وحتى آخر يوم عمل.' : 'Eligible payable days from the 1st of month until exit date.';
+        directDaysInput.value = '12';
+      } else {
+        directLabel.textContent = currentLang === 'ar' ? 'أيام العمل المستحقة (شاملة الراحة الأسبوعية)' : 'Eligible / Worked Calendar Days';
+        directHelp.textContent = currentLang === 'ar' ? 'مثال: باشر في 17 أبريل -> 14 يوماً مستحقاً في شهر من 30 يوماً.' : 'E.g., Joined on April 17th -> 14 days worked in a 30-day month.';
+        directDaysInput.value = '14';
+      }
+      calculate();
+    }
+
+    // Language Switcher
+    function setLanguage(lang) {
+      currentLang = lang;
+      const htmlTag = document.documentElement;
+      const toggleBtn = document.getElementById('langLabel');
+      
+      if (lang === 'ar') {
+        htmlTag.setAttribute('dir', 'rtl');
+        htmlTag.setAttribute('lang', 'ar');
+        toggleBtn.textContent = 'English';
+      } else {
+        htmlTag.setAttribute('dir', 'ltr');
+        htmlTag.setAttribute('lang', 'en');
+        toggleBtn.textContent = 'عربي';
+      }
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18nData[lang] && i18nData[lang][key]) {
+          el.textContent = i18nData[lang][key];
+        }
+      });
+
+      updateEventLabels();
+      calculate();
+    }
+
+    // CSV Export
+    function exportCSV() {
+      const rows = [
+        ['Parameter / Metric', 'Value', 'Unit'],
+        ['Basic Salary', basicSalaryInput.value, 'SAR'],
+        ['Housing Allowance', housingAllowanceInput.value, 'SAR'],
+        ['Transport Allowance', transportAllowanceInput.value, 'SAR'],
+        ['Other Allowance', otherAllowanceInput.value, 'SAR'],
+        ['Full Contract Gross', resFullGross.textContent, 'SAR'],
+        ['Daily Rate Standard', resDailyRate.textContent, 'SAR'],
+        ['Hourly Rate', resHourlyRate.textContent, 'SAR'],
+        ['Billable Days', resBillableDays.textContent, 'Days'],
+        ['Deducted Days', resDeductedDays.textContent, 'Days'],
+        ['Gross Deductions', resGrossDeduction.textContent, 'SAR'],
+        ['Pro-Rata Gross Salary', resGrossEarned.textContent, 'SAR'],
+        ['Employee GOSI Deduction', resGosiDeduction.textContent, 'SAR'],
+        ['Employer GOSI Cost', resGosiEmployer.textContent, 'SAR'],
+        ['Net Payable Take-Home Salary', resNetPayable.textContent, 'SAR']
+      ];
+
+      let csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', 'Saudi_Pro_Rata_Payroll_Calculation.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Event Listeners Initialization
+    window.addEventListener('DOMContentLoaded', () => {
+      setupBasisRadios();
+      updateMonthDays();
+
+      const inputs = [
+        basicSalaryInput, housingAllowanceInput, transportAllowanceInput, otherAllowanceInput,
+        employeeNationalitySelect, totalWorkdaysInput, directDaysInput, absenceDaysInput,
+        startDateInput, endDateInput
+      ];
+
+      inputs.forEach(input => {
+        input.addEventListener('input', calculate);
+        input.addEventListener('change', calculate);
+      });
+
+      payrollMonthSelect.addEventListener('change', () => {
+        updateMonthDays();
+        calculate();
+      });
+
+      payrollEventSelect.addEventListener('change', updateEventLabels);
+
+      document.getElementById('langToggleBtn').addEventListener('click', () => {
+        setLanguage(currentLang === 'en' ? 'ar' : 'en');
+      });
+
+      document.getElementById('printBtn').addEventListener('click', () => window.print());
+      document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
+
+      calculate();
+    });
+  </script>
+</body>
+</html>
