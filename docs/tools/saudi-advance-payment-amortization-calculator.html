@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi Contractor Advance Payment & IPC Amortization Calculator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Cairo', 'sans-serif'],
+            cairo: ['Cairo', 'sans-serif']
+          },
+          colors: {
+            emerald: {
+              850: '#064e3b',
+              950: '#022c22'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', 'Cairo', sans-serif; }
+    .arabic-text { font-family: 'Cairo', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- Top Notification Sticky Banner -->
+  <div class="sticky top-0 z-50 bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 text-white px-4 py-2.5 shadow-md border-b border-emerald-700/50">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-sm">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center justify-center bg-amber-400 text-slate-950 text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Excel Tool</span>
+        <span class="font-medium text-slate-100" id="banner-text-en">Manage multi-million SAR contractor billing? Get the automated IPC & Advance Amortization Excel Ledger.</span>
+        <span class="font-medium text-slate-100 hidden" id="banner-text-ar">هل تدير مستخلصات مشاريع بملايين الريالات؟ حمّل نموذج الإكسل المتقدم لإطفاء الدفعة المقدمة.</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://gumroad.com" target="_blank" class="bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-3 py-1 rounded text-xs transition duration-150 ease-in-out shadow-sm">
+          Get Excel Master Template ($29)
+        </a>
+        <button id="langToggle" onclick="toggleLanguage()" class="text-xs bg-emerald-700/60 hover:bg-emerald-700 px-2.5 py-1 rounded border border-emerald-500/40 font-semibold transition">
+          العربية
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header Section -->
+  <header class="bg-white border-b border-slate-200 py-6 px-4 sm:px-6">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="px-2.5 py-0.5 text-xs font-bold rounded bg-emerald-100 text-emerald-800 uppercase tracking-wide">KSA Etimad & FIDIC Compliant</span>
+          <span class="text-slate-400">•</span>
+          <span class="text-xs text-slate-500 font-medium">Saudi Government Tenders & Procurement Law</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight" id="main-title">
+          Saudi Project Advance Payment & IPC Amortization Calculator
+        </h1>
+        <p class="text-slate-600 text-sm mt-1 max-w-3xl" id="main-subtitle">
+          Calculate advance bank guarantee (APG) amounts, monthly interim payment certificate (IPC) recovery deductions, retention reserve, and VAT cashflow for construction and procurement contracts in Saudi Arabia.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 text-right">
+        <button onclick="window.print()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg border border-slate-300 flex items-center gap-1.5 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+          </svg>
+          <span id="btn-print">Print / PDF</span>
+        </button>
+        <button onclick="exportCSV()" class="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 text-xs font-semibold rounded-lg border border-emerald-300 flex items-center gap-1.5 transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+          </svg>
+          <span id="btn-csv">Export CSV</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Body -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-grow w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Form Inputs Column (5 Cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
+            <span id="sec-contract-params">1. Contract & Advance Terms</span>
+            <span class="text-xs text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-mono">GTPL / FIDIC 14.2</span>
+          </h2>
+          
+          <div class="space-y-4 text-sm">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1" id="lbl-contract-value">
+                Contract Value (Excl. VAT) - SAR
+              </label>
+              <div class="relative rounded-md shadow-sm">
+                <input type="number" id="contractValue" value="5000000" min="1000" step="1000" class="w-full rounded-md border border-slate-300 pl-3 pr-16 py-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-mono text-slate-900 text-right" oninput="calculateAll()">
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400 font-medium text-xs">SAR</div>
+              </div>
+              <p class="text-xs text-slate-500 mt-1" id="sub-contract-value">Total lump sum or remeasured contract amount without 15% VAT.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1" id="lbl-adv-pct">
+                  Advance % (Max 10-20%)
+                </label>
+                <div class="relative rounded-md shadow-sm">
+                  <input type="number" id="advPct" value="10" min="0" max="50" step="0.5" class="w-full rounded-md border border-slate-300 pl-3 pr-8 py-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-mono text-slate-900 text-right" oninput="calculateAll()">
+                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400 font-medium text-xs">%</div>
+                </div>
+                <span class="text-[11px] text-slate-400">Saudi Etimad standard is 10%</span>
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-700 mb-1" id="lbl-retention-pct">
+                  Retention Holdback %
+                </label>
+                <div class="relative rounded-md shadow-sm">
+                  <input type="number" id="retentionPct" value="10" min="0" max="20" step="0.5" class="w-full rounded-md border border-slate-300 pl-3 pr-8 py-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-mono text-slate-900 text-right" oninput="calculateAll()">
+                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400 font-medium text-xs">%</div>
+                </div>
+                <span class="text-[11px] text-slate-400">Standard warranty 5% - 10%</span>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1" id="lbl-recovery-mode">
+                Amortization / Recovery Formula Mode
+              </label>
+              <select id="recoveryMode" class="w-full rounded-md border border-slate-300 py-2 px-3 text-slate-800 bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-xs sm:text-sm" onchange="calculateAll()">
+                <option value="pro_rata">Standard Pro-Rata (Same as Advance % from every IPC)</option>
+                <option value="accelerated">Accelerated Rate (e.g. 20% IPC deduction to recover early)</option>
+                <option value="threshold">FIDIC 14.2 Threshold (Starts after 10% Progress, Completes at 80% Progress)</option>
+              </select>
+              <p class="text-xs text-slate-500 mt-1" id="sub-recovery-mode">Choose contractual method defined in Special Conditions.</p>
+            </div>
+
+            <div id="acceleratedRateDiv" class="hidden">
+              <label class="block font-semibold text-slate-700 mb-1" id="lbl-custom-rec-pct">
+                Accelerated Recovery Rate (% of Gross IPC)
+              </label>
+              <div class="relative rounded-md shadow-sm">
+                <input type="number" id="customRecPct" value="20" min="1" max="100" step="0.5" class="w-full rounded-md border border-slate-300 pl-3 pr-8 py-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-mono text-slate-900 text-right" oninput="calculateAll()">
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400 font-medium text-xs">%</div>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1" id="lbl-vat-rate">
+                VAT Applicable Rate
+              </label>
+              <select id="vatRate" class="w-full rounded-md border border-slate-300 py-2 px-3 text-slate-800 bg-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 text-xs sm:text-sm" onchange="calculateAll()">
+                <option value="0.15">15% (Standard KSA ZATCA Rate)</option>
+                <option value="0">0% (Zero-Rated / Special Economic Zone)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Current IPC Simulator Input Box -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+          <h2 class="text-base font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
+            <span id="sec-ipc-eval">2. Single IPC Reconciliation Test</span>
+            <span class="text-xs text-slate-500 font-mono">Payment Certificate</span>
+          </h2>
+
+          <div class="space-y-4 text-sm">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1" id="lbl-prev-work">
+                Cumulative Work Certified to Date (SAR Excl. VAT)
+              </label>
+              <div class="relative rounded-md shadow-sm">
+                <input type="number" id="prevCertified" value="1200000" min="0" step="1000" class="w-full rounded-md border border-slate-300 pl-3 pr-16 py-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-mono text-slate-900 text-right" oninput="calculateAll()">
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400 font-medium text-xs">SAR</div>
+              </div>
+              <span class="text-[11px] text-slate-400">Previous cumulative approved IPCs</span>
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1" id="lbl-current-work">
+                Current Month Work Claimed (SAR Excl. VAT)
+              </label>
+              <div class="relative rounded-md shadow-sm">
+                <input type="number" id="currWork" value="600000" min="0" step="1000" class="w-full rounded-md border border-slate-300 pl-3 pr-16 py-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 font-mono text-slate-900 text-right" oninput="calculateAll()">
+                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400 font-medium text-xs">SAR</div>
+              </div>
+              <span class="text-[11px] text-slate-400">Current bill gross value before statutory deductions</span>
+            </div>
+
+            <div class="pt-2">
+              <button type="button" onclick="resetDefaults()" class="w-full py-2 px-4 border border-slate-300 hover:bg-slate-50 text-slate-600 font-medium rounded-lg text-xs transition">
+                ↺ Reset to Default Example Values
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Output Summary & Table Column (7 Cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <!-- High Level Metrics Overview -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+            <p class="text-xs text-slate-500 font-medium truncate" id="stat-adv-amount">Gross Advance Payment</p>
+            <p class="text-lg font-bold text-slate-900 font-mono mt-1" id="res-adv-gross">SAR 500,000</p>
+            <p class="text-[11px] text-emerald-600 font-semibold" id="res-adv-vat">+ SAR 75,000 VAT</p>
+          </div>
+
+          <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+            <p class="text-xs text-slate-500 font-medium truncate" id="stat-apg-req">Required APG Guarantee</p>
+            <p class="text-lg font-bold text-slate-900 font-mono mt-1" id="res-apg-val">SAR 500,000</p>
+            <p class="text-[11px] text-slate-500">Unconditional Bank Letter</p>
+          </div>
+
+          <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm col-span-2 sm:col-span-1">
+            <p class="text-xs text-slate-500 font-medium truncate" id="stat-rem-adv">Remaining Advance Bal.</p>
+            <p class="text-lg font-bold text-amber-600 font-mono mt-1" id="res-adv-balance">SAR 320,000</p>
+            <p class="text-[11px] text-slate-500" id="res-adv-rec-pct">36.0% Amortized</p>
+          </div>
+        </div>
+
+        <!-- Detailed Current IPC Breakdown Card -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="bg-slate-900 text-white p-4 sm:px-6 flex items-center justify-between">
+            <div>
+              <h3 class="font-bold text-base sm:text-lg" id="card-current-ipc-title">Current IPC Payment Certificate Breakdown</h3>
+              <p class="text-xs text-slate-400 mt-0.5" id="card-current-ipc-sub">Net contractor disbursement for this evaluation period</p>
+            </div>
+            <div class="text-right">
+              <span class="text-xs uppercase tracking-wider text-slate-400">Net Payable (With VAT)</span>
+              <div class="text-xl sm:text-2xl font-black text-emerald-400 font-mono" id="res-ipc-net-vat">SAR 540,500</div>
+            </div>
+          </div>
+
+          <div class="p-6 space-y-3.5 text-sm">
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+              <span class="text-slate-600 font-medium" id="row-gross-ipc">Gross Certified Work (Current Month):</span>
+              <span class="font-mono font-bold text-slate-900" id="det-gross-ipc">SAR 600,000.00</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100 text-amber-700 bg-amber-50/50 px-2 rounded">
+              <span class="font-medium" id="row-adv-rec">Less: Advance Payment Amortization Deduction:</span>
+              <span class="font-mono font-bold" id="det-adv-rec">- SAR 60,000.00</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100 text-red-700 bg-red-50/50 px-2 rounded">
+              <span class="font-medium" id="row-ret-rec">Less: Retention Holdback (<span id="det-ret-pct-val">10</span>%):</span>
+              <span class="font-mono font-bold" id="det-ret-val">- SAR 60,000.00</span>
+            </div>
+            <div class="flex justify-between items-center py-2 border-b border-slate-200 font-semibold text-slate-800">
+              <span id="row-net-ex-vat">Net Amount Payable (Excl. VAT):</span>
+              <span class="font-mono font-bold" id="det-net-ex-vat">SAR 480,000.00</span>
+            </div>
+            <div class="flex justify-between items-center py-1.5 border-b border-slate-100 text-slate-600">
+              <span id="row-vat-amount">Plus: 15% VAT on Net Billable Base (SAR 480,000):</span>
+              <span class="font-mono font-bold text-slate-900" id="det-vat-amount">+ SAR 72,000.00</span>
+            </div>
+            <div class="flex justify-between items-center pt-2 font-bold text-base text-slate-900 bg-slate-50 p-3 rounded-lg border border-slate-200">
+              <span class="text-emerald-800" id="row-final-transfer">Final Approved Wire Transfer Amount:</span>
+              <span class="font-mono text-emerald-700 text-lg" id="det-final-transfer">SAR 552,000.00</span>
+            </div>
+          </div>
+
+          <!-- Bank Guarantee Release Info Box -->
+          <div class="bg-slate-50 border-t border-slate-200 px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
+            <div>
+              <span class="font-bold text-slate-800 block" id="bg-red-title">Eligible Advance Bank Guarantee Reduction:</span>
+              <span id="bg-red-desc">Under standard Saudi contracting, the APG can be reduced progressively as advance is recovered.</span>
+            </div>
+            <div class="text-right sm:flex-shrink-0">
+              <span class="text-slate-500 block">Adjusted APG Value:</span>
+              <span class="font-bold font-mono text-slate-900 text-sm" id="det-reduced-apg">SAR 320,000.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 10-Stage Milestone Projection Simulation Table -->
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 overflow-x-auto">
+          <h3 class="font-bold text-base text-slate-900 mb-3 flex items-center justify-between">
+            <span id="tbl-sched-title">Full Project 10-Milestone Amortization Schedule</span>
+            <span class="text-xs text-slate-400 font-normal">Linear Simulation Model</span>
+          </h3>
+          <table class="w-full text-xs text-left border-collapse">
+            <thead>
+              <tr class="bg-slate-100 text-slate-700 border-b border-slate-200 font-semibold">
+                <th class="py-2 px-2">Milestone</th>
+                <th class="py-2 px-2 text-right">Gross IPC</th>
+                <th class="py-2 px-2 text-right">Cum. Progress</th>
+                <th class="py-2 px-2 text-right">Amortized Rec.</th>
+                <th class="py-2 px-2 text-right">Retention</th>
+                <th class="py-2 px-2 text-right">Net Transfer</th>
+                <th class="py-2 px-2 text-right">APG Balance</th>
+              </tr>
+            </thead>
+            <tbody id="simulationTableBody" class="divide-y divide-slate-100 font-mono text-slate-700">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- CTA Card Gumroad Master Template -->
+        <div class="bg-gradient-to-br from-emerald-900 to-slate-900 rounded-2xl p-6 text-white shadow-xl relative overflow-hidden">
+          <div class="absolute -right-8 -bottom-8 opacity-10 pointer-events-none">
+            <svg class="w-64 h-64 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+            </svg>
+          </div>
+          <div class="relative z-10 max-w-xl">
+            <span class="bg-amber-400 text-slate-950 font-bold px-2.5 py-1 text-xs rounded-full uppercase tracking-wider">B2B Commercial Toolkit</span>
+            <h3 class="text-xl font-extrabold mt-3 mb-2 text-white" id="cta-title">Download the Full Saudi Project Commercial & IPC Excel Master Pack</h3>
+            <p class="text-slate-300 text-xs sm:text-sm mb-4 leading-relaxed" id="cta-sub">
+              Includes automated ZATCA-compliant IPC Billing generator, progressive APG reduction certificates, liquidated damages tracker, and subcontractor back-to-back retention recovery formulas in ready-to-use unlocked Excel (.xlsx & .xlsm).
+            </p>
+            <div class="flex flex-wrap items-center gap-4">
+              <a href="https://gumroad.com" target="_blank" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-extrabold px-6 py-2.5 rounded-lg text-sm transition duration-150 ease-in-out shadow-lg hover:shadow-xl inline-flex items-center gap-2">
+                <span id="cta-btn">Get Instant Access ($29)</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                </svg>
+              </a>
+              <span class="text-xs text-slate-300 font-medium">Instant download • 100% unlocked formulas</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mandatory Bilingual Regulatory Disclaimer -->
+        <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg text-xs text-amber-900 leading-relaxed">
+          <p class="font-bold mb-1">⚠️ Legal & Regulatory Disclaimer / إخلاء مسؤولية نظامي وقانوني:</p>
+          <p class="mb-1">
+            <strong>English:</strong> This tool is designed strictly as an operational estimate and calculation aid for contractors, quantity surveyors, and project engineers. Results must be verified against your specific Contract Agreement, FIDIC Conditions of Particular Application, Saudi Government Tenders and Procurement Law (GTPL Royal Decree M/128), and ZATCA VAT guidelines before submitting payment certificates or requesting bank guarantee reductions.
+          </p>
+          <p class="arabic-text">
+            <strong>العربية:</strong> تُعد هذه الأداة مخصصة للحسابات التقديرية التشغيلية للمقاولين ومسّاحي الكميات وإدارات المشاريع. يجب مطابقة المخرجات مع نصوص العقد الخاص، والشروط التعاقدية (فيديك / شروط المقاولات الموحدة)، ونظام المنافسات والمشتريات الحكومية السعودي الصادر بالمرسوم الملكي م/128، واللوائح التنفيذية لهيئة الزكاة والضريبة والجمارك (ZATCA) قبل تقديم المستخلصات أو طلب تخفيض خطابات الضمان البنكية.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 800+ Word Educational SEO Guide & Technical Knowledge Base -->
+    <section class="mt-16 bg-white rounded-2xl p-8 border border-slate-200 shadow-sm max-w-7xl mx-auto space-y-10 text-slate-700">
+      <div>
+        <h2 class="text-2xl font-black text-slate-900 mb-4" id="guide-heading">Complete Guide to Advance Payments, APG Guarantees, and Interim Payment Certificate (IPC) Deductions in Saudi Arabia</h2>
+        <p class="text-sm leading-relaxed text-slate-600 mb-4">
+          In the Kingdom of Saudi Arabia, major infrastructure developments, Vision 2030 giga-projects (NEOM, Red Sea Global, Diriyah Company, Qiddiya, ROSHN), and standard ministerial tenders governed by the <strong>Government Tenders and Procurement Law (GTPL)</strong> rely heavily on cash mobilization instruments. The Advance Payment mechanism provides contractors with working capital to mobilize site offices, procure long-lead plant and equipment, and secure baseline materials without incurring prohibitive early debt financing.
+        </p>
+        <p class="text-sm leading-relaxed text-slate-600">
+          However, managing the financial recovery (amortization) of advance payments across Interim Payment Certificates (IPCs) requires rigorous accounting to prevent cash shortfalls, premature over-deductions, or delayed releases of Advance Payment Guarantees (APG). This comprehensive guide clarifies the statutory limits, deduction mechanisms, VAT interactions, and reconciliation practices required for commercial teams in KSA.
+        </p>
+      </div>
+
+      <!-- Detailed Formula Breakdown Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+          <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 bg-emerald-600 rounded-full"></span>
+            Saudi Etimad GTPL Standard Recovery Rule
+          </h3>
+          <p class="text-xs leading-relaxed text-slate-600 mb-3">
+            Under standard Saudi public works contracts, advance payment is capped at 10% of the total contract value (or up to SAR 50,000,000 max under specific ministerial waivers). Deduction starts immediately on the first Interim Payment Certificate and is deducted pro-rata based on the percentage of total certified work performed:
+          </p>
+          <div class="bg-slate-900 text-emerald-300 font-mono text-xs p-3 rounded-lg overflow-x-auto">
+            Amortization Deduction = Current Gross IPC Work × Advance Rate %
+          </div>
+          <p class="text-[11px] text-slate-500 mt-2">
+            Example: If Advance = 10% and Current Work = SAR 1,000,000, deduction is SAR 100,000 until the total cumulative SAR received in advance is fully liquidated.
+          </p>
+        </div>
+
+        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+          <h3 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 bg-teal-600 rounded-full"></span>
+            FIDIC 1999 / 2017 Red & Yellow Book Clause 14.2
+          </h3>
+          <p class="text-xs leading-relaxed text-slate-600 mb-3">
+            Many private developers and semi-governmental PIF portfolio projects adopt the FIDIC international standard. Rather than immediate deduction, amortisation commences only when cumulative certified work exceeds a milestone threshold (typically 10% of Contract Value) and finishes before 80%:
+          </p>
+          <div class="bg-slate-900 text-teal-300 font-mono text-xs p-3 rounded-lg overflow-x-auto">
+            Deduction Rate = Advance Value ÷ [Contract Value × (80% - 10%)]
+          </div>
+          <p class="text-[11px] text-slate-500 mt-2">
+            This shields contractors from early cash depletion during low-volume earthworks and mobilization stages.
+          </p>
+        </div>
+      </div>
+
+      <!-- VAT Treatment on Advances and IPCs in KSA -->
+      <div>
+        <h3 class="text-xl font-bold text-slate-900 mb-3">ZATCA VAT Treatment: Advance Payments vs. Amortization Deductions</h3>
+        <p class="text-sm leading-relaxed text-slate-600 mb-3">
+          A frequent audit defect identified by project accountants in Saudi Arabia relates to the calculation of Value Added Tax (15%) when amortizing advance payments. Under ZATCA regulations:
+        </p>
+        <ul class="list-disc list-inside text-sm text-slate-600 space-y-2 ml-2">
+          <li><strong>Advance Payment Tax Invoice:</strong> The contractor must issue a tax invoice for the 15% VAT upon receiving the initial advance payment. Therefore, VAT has already been paid to ZATCA on the advance sum upfront.</li>
+          <li><strong>Interim Payment Certificate (IPC) Invoicing:</strong> On subsequent monthly billings, the Advance Amortization deduction is treated as an adjustment to the gross work done. The contractor calculates VAT on the net billable milestone (Gross Work minus Advance Recovery) to prevent double taxation of the recovered advance amount.</li>
+          <li><strong>Retention Holdback Note:</strong> Retention deductions (typically 5% or 10%) are security guarantees and do not reduce the immediate VAT tax base unless stipulated under certified cash accounting rules. VAT is applied to the gross work net of advance amortization.</li>
+        </ul>
+      </div>
+
+      <!-- Step-by-Step Payment Certificate Flowchart -->
+      <div>
+        <h3 class="text-xl font-bold text-slate-900 mb-4">Step-by-Step Anatomy of a Saudi IPC Calculation</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 text-center">
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="text-emerald-700 font-black text-lg mb-1">Step 1</div>
+            <div class="text-xs font-bold text-slate-800">Gross Work Verified</div>
+            <p class="text-[11px] text-slate-500 mt-1">Quantity surveyor approves physical completion of items (BoQ items + Variations).</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="text-emerald-700 font-black text-lg mb-1">Step 2</div>
+            <div class="text-xs font-bold text-slate-800">Advance Deducted</div>
+            <p class="text-[11px] text-slate-500 mt-1">Standard 10% (or contract rate) deducted from gross work to repay client advance.</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="text-emerald-700 font-black text-lg mb-1">Step 3</div>
+            <div class="text-xs font-bold text-slate-800">Retention Withheld</div>
+            <p class="text-[11px] text-slate-500 mt-1">Typically 10% withheld as defect liability security until Taking-Over Certificate (TOC).</p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4 bg-slate-50">
+            <div class="text-emerald-700 font-black text-lg mb-1">Step 4</div>
+            <div class="text-xs font-bold text-slate-800">VAT Added</div>
+            <p class="text-[11px] text-slate-500 mt-1">15% ZATCA VAT applied to net certificate value to determine final bank wire transfer.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Frequently Asked Questions Section -->
+      <div>
+        <h3 class="text-xl font-bold text-slate-900 mb-4">Frequently Asked Questions (FAQ)</h3>
+        <div class="space-y-4">
+          <div class="border border-slate-200 rounded-lg p-4">
+            <h4 class="font-bold text-sm text-slate-900 mb-1">What is an Advance Payment Guarantee (APG) and when is it required?</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              An Advance Payment Guarantee (APG) is an irrevocable, unconditional letter of guarantee issued by a licensed Saudi bank on behalf of the contractor. Before the project owner releases any advance cash, the contractor must supply the APG equal to 100% of the advance amount. This ensures the client can reclaim unspent funds if the contractor defaults during early stages.
+            </p>
+          </div>
+          <div class="border border-slate-200 rounded-lg p-4">
+            <h4 class="font-bold text-sm text-slate-900 mb-1">Can the contractor request a progressive reduction of the Bank Guarantee value?</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              Yes. Under Article 14.2 of FIDIC and standard Saudi commercial practice, as the contractor amortizes the advance through monthly IPC deductions, the bank guarantee's liability decreases. Most Saudi corporate banks (SNB, Al Rajhi, Riyad Bank, SAB) allow guarantee amount reductions upon receiving a formal verification certificate signed by the supervising project consultant and client confirming the unamortized balance.
+            </p>
+          </div>
+          <div class="border border-slate-200 rounded-lg p-4">
+            <h4 class="font-bold text-sm text-slate-900 mb-1">What happens if the project is terminated prior to full advance recovery?</h4>
+            <p class="text-xs text-slate-600 leading-relaxed">
+              If a contract is terminated under Saudi GTPL or FIDIC Clause 15/16, the outstanding balance of the unrecovered advance becomes immediately due and payable to the employer. If the contractor cannot pay within the required contractual window (usually 14 to 28 days), the employer has the unilateral right to encash the remaining balance on the Advance Payment Guarantee.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 py-8 px-4 border-t border-slate-800 text-xs text-center mt-12">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p>© <span id="year"></span> Saudi Contractor Commercial Tools. All rights reserved.</p>
+      <div class="flex items-center gap-6">
+        <a href="#" class="hover:text-white transition">Privacy Policy</a>
+        <a href="#" class="hover:text-white transition">Terms of Service</a>
+        <a href="https://gumroad.com" target="_blank" class="text-amber-400 hover:text-amber-300 font-semibold">Get Excel Template ($29)</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Vanilla Calculation Logic -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    let isArabic = false;
+
+    function formatSAR(num) {
+      return 'SAR ' + Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function toggleLanguage() {
+      isArabic = !isArabic;
+      const htmlTag = document.documentElement;
+      const btn = document.getElementById('langToggle');
+
+      if (isArabic) {
+        htmlTag.setAttribute('dir', 'rtl');
+        htmlTag.setAttribute('lang', 'ar');
+        btn.textContent = 'English';
+        
+        // Update UI text to Arabic
+        document.getElementById('banner-text-en').classList.add('hidden');
+        document.getElementById('banner-text-ar').classList.remove('hidden');
+        
+        document.getElementById('main-title').textContent = 'حاسبة استرداد الدفعة المقدمة وشهادات الدفع المرحلية (المستخلصات)';
+        document.getElementById('main-subtitle').textContent = 'احسب ضمان الدفعة المقدمة البنكي، ونسب الاسترداد الشهري من المستخلصات، ومحجوز الضمان، وتدفقات ضريبة القيمة المضافة وفق نظام المشتريات السعودي وعقود فيديك.';
+        
+        document.getElementById('sec-contract-params').textContent = '١. شروط العقد والدفعة المقدمة';
+        document.getElementById('lbl-contract-value').textContent = 'قيمة العقد (غير شاملة ضريبة القيمة المضافة) - ر.س';
+        document.getElementById('lbl-adv-pct').textContent = 'نسبة الدفعة المقدمة (غالباً 10%)';
+        document.getElementById('lbl-retention-pct').textContent = 'نسبة محجوز الضمان (5% - 10%)';
+        document.getElementById('lbl-recovery-mode').textContent = 'طريقة استرداد وإطفاء الدفعة المقدمة';
+        document.getElementById('lbl-vat-rate').textContent = 'نسبة ضريبة القيمة المضافة (ZATCA)';
+        
+        document.getElementById('sec-ipc-eval').textContent = '٢. تسوية مستخلص شهري محدد';
+        document.getElementById('lbl-prev-work').textContent = 'الأعمال المنجزة التراكمية السابقة (ر.س)';
+        document.getElementById('lbl-current-work').textContent = 'قيمة أعمال المستخلص الحالي (ر.س)';
+        
+        document.getElementById('stat-adv-amount').textContent = 'إجمالي الدفعة المقدمة';
+        document.getElementById('stat-apg-req').textContent = 'قيمة الضمان البنكي المطلوب';
+        document.getElementById('stat-rem-adv').textContent = 'الرصيد المتبقي للدفعة';
+        
+        document.getElementById('card-current-ipc-title').textContent = 'تفاصيل مستخلص الدفع المعتمد الحالي';
+        document.getElementById('card-current-ipc-sub').textContent = 'صافي المستحق للصرف في حساب المقاول البنكي';
+        
+        document.getElementById('row-gross-ipc').textContent = 'إجمالي الأعمال المعتمدة للمستخلص:';
+        document.getElementById('row-adv-rec').textContent = 'يخصم: قسط استرداد الدفعة المقدمة:';
+        document.getElementById('row-ret-rec').innerHTML = 'يخصم: محجوز الضمان المقتطع (<span id="det-ret-pct-val">10</span>%):';
+        document.getElementById('row-net-ex-vat').textContent = 'صافي المستخلص (قبل الضريبة):';
+        document.getElementById('row-vat-amount').textContent = 'يضاف: 15% ضريبة القيمة المضافة على الصافي:';
+        document.getElementById('row-final-transfer').textContent = 'صافي الحوالة البنكية المستحقة للصرف:';
+        
+        document.getElementById('bg-red-title').textContent = 'التخفيض المتاح في خطاب الضمان البنكي:';
+        document.getElementById('bg-red-desc').textContent = 'يحق للمقاول مخاطبة البنك لتخفيض قيمة خطاب الضمان بنسبة المبالغ المستردة.';
+        document.getElementById('tbl-sched-title').textContent = 'جدول محاكاة إطفاء الدفعة لكامل مراحل المشروع';
+        document.getElementById('cta-title').textContent = 'حمّل حقيبة الإكسل الشاملة للمستخلصات والتسويات المالية للمقاولين';
+        document.getElementById('cta-sub').textContent = 'تتضمن نموذج مستخلصات فواتير زاتكا، وجداول تخفيض خطابات الضمان، وحساب غرامات التأخير ومستحقات مقاولي الباطن بروابط جاهزة وغير مقفلة.';
+        document.getElementById('cta-btn').textContent = 'تحميل النموذج الكامل الآن ($29)';
+      } else {
+        htmlTag.setAttribute('dir', 'ltr');
+        htmlTag.setAttribute('lang', 'en');
+        btn.textContent = 'العربية';
+        
+        document.getElementById('banner-text-en').classList.remove('hidden');
+        document.getElementById('banner-text-ar').classList.add('hidden');
+        
+        document.getElementById('main-title').textContent = 'Saudi Project Advance Payment & IPC Amortization Calculator';
+        document.getElementById('main-subtitle').textContent = 'Calculate advance bank guarantee (APG) amounts, monthly interim payment certificate (IPC) recovery deductions, retention reserve, and VAT cashflow for construction and procurement contracts in Saudi Arabia.';
+        
+        document.getElementById('sec-contract-params').textContent = '1. Contract & Advance Terms';
+        document.getElementById('lbl-contract-value').textContent = 'Contract Value (Excl. VAT) - SAR';
+        document.getElementById('lbl-adv-pct').textContent = 'Advance % (Max 10-20%)';
+        document.getElementById('lbl-retention-pct').textContent = 'Retention Holdback %';
+        document.getElementById('lbl-recovery-mode').textContent = 'Amortization / Recovery Formula Mode';
+        document.getElementById('lbl-vat-rate').textContent = 'VAT Applicable Rate';
+        
+        document.getElementById('sec-ipc-eval').textContent = '2. Single IPC Reconciliation Test';
+        document.getElementById('lbl-prev-work').textContent = 'Cumulative Work Certified to Date (SAR Excl. VAT)';
+        document.getElementById('lbl-current-work').textContent = 'Current Month Work Claimed (SAR Excl. VAT)';
+        
+        document.getElementById('stat-adv-amount').textContent = 'Gross Advance Payment';
+        document.getElementById('stat-apg-req').textContent = 'Required APG Guarantee';
+        document.getElementById('stat-rem-adv').textContent = 'Remaining Advance Bal.';
+        
+        document.getElementById('card-current-ipc-title').textContent = 'Current IPC Payment Certificate Breakdown';
+        document.getElementById('card-current-ipc-sub').textContent = 'Net contractor disbursement for this evaluation period';
+        
+        document.getElementById('row-gross-ipc').textContent = 'Gross Certified Work (Current Month):';
+        document.getElementById('row-adv-rec').textContent = 'Less: Advance Payment Amortization Deduction:';
+        document.getElementById('row-ret-rec').innerHTML = 'Less: Retention Holdback (<span id="det-ret-pct-val">10</span>%):';
+        document.getElementById('row-net-ex-vat').textContent = 'Net Amount Payable (Excl. VAT):';
+        document.getElementById('row-vat-amount').textContent = 'Plus: 15% VAT on Net Billable Base:';
+        document.getElementById('row-final-transfer').textContent = 'Final Approved Wire Transfer Amount:';
+        
+        document.getElementById('bg-red-title').textContent = 'Eligible Advance Bank Guarantee Reduction:';
+        document.getElementById('bg-red-desc').textContent = 'Under standard Saudi contracting, the APG can be reduced progressively as advance is recovered.';
+        document.getElementById('tbl-sched-title').textContent = 'Full Project 10-Milestone Amortization Schedule';
+        document.getElementById('cta-title').textContent = 'Download the Full Saudi Project Commercial & IPC Excel Master Pack';
+        document.getElementById('cta-sub').textContent = 'Includes automated ZATCA-compliant IPC Billing generator, progressive APG reduction certificates, liquidated damages tracker, and subcontractor back-to-back retention recovery formulas in ready-to-use unlocked Excel (.xlsx & .xlsm).';
+        document.getElementById('cta-btn').textContent = 'Get Instant Access ($29)';
+      }
+      calculateAll();
+    }
+
+    function resetDefaults() {
+      document.getElementById('contractValue').value = 5000000;
+      document.getElementById('advPct').value = 10;
+      document.getElementById('retentionPct').value = 10;
+      document.getElementById('recoveryMode').value = 'pro_rata';
+      document.getElementById('vatRate').value = '0.15';
+      document.getElementById('prevCertified').value = 1200000;
+      document.getElementById('currWork').value = 600000;
+      document.getElementById('customRecPct').value = 20;
+      calculateAll();
+    }
+
+    function calculateAll() {
+      const contractVal = parseFloat(document.getElementById('contractValue').value) || 0;
+      const advPct = (parseFloat(document.getElementById('advPct').value) || 0) / 100;
+      const retPct = (parseFloat(document.getElementById('retentionPct').value) || 0) / 100;
+      const vatRate = parseFloat(document.getElementById('vatRate').value) || 0;
+      const recMode = document.getElementById('recoveryMode').value;
+      const customRecPct = (parseFloat(document.getElementById('customRecPct').value) || 0) / 100;
+      
+      const prevWork = parseFloat(document.getElementById('prevCertified').value) || 0;
+      const currWork = parseFloat(document.getElementById('currWork').value) || 0;
+
+      // Show or hide accelerated custom input
+      const accelDiv = document.getElementById('acceleratedRateDiv');
+      if (recMode === 'accelerated') {
+        accelDiv.classList.remove('hidden');
+      } else {
+        accelDiv.classList.add('hidden');
+      }
+
+      // 1. Advance Totals
+      const totalAdvGross = contractVal * advPct;
+      const totalAdvVat = totalAdvGross * vatRate;
+
+      document.getElementById('res-adv-gross').textContent = formatSAR(totalAdvGross);
+      document.getElementById('res-adv-vat').textContent = `+ ${formatSAR(totalAdvVat)} VAT`;
+      document.getElementById('res-apg-val').textContent = formatSAR(totalAdvGross);
+
+      // Helper function to calculate recovery for any slice of gross work
+      function computeAmortization(fromGross, sliceGross) {
+        if (totalAdvGross <= 0) return 0;
+        const toGross = fromGross + sliceGross;
+        
+        if (recMode === 'pro_rata') {
+          // Deduced pro rata = sliceGross * advPct
+          return Math.min(sliceGross * advPct, totalAdvGross);
+        } else if (recMode === 'accelerated') {
+          return Math.min(sliceGross * customRecPct, totalAdvGross);
+        } else if (recMode === 'threshold') {
+          // FIDIC 14.2: starts when cumulative work reaches 10% contract value, finishes at 80%
+          const startThresh = contractVal * 0.10;
+          const endThresh = contractVal * 0.80;
+          const recoverySpan = endThresh - startThresh;
+
+          if (recoverySpan <= 0) return sliceGross * advPct;
+
+          // Overlap of [fromGross, toGross] with [startThresh, endThresh]
+          const effStart = Math.max(fromGross, startThresh);
+          const effEnd = Math.min(toGross, endThresh);
+          const overlap = Math.max(0, effEnd - effStart);
+          
+          const fidicRate = totalAdvGross / recoverySpan;
+          return Math.min(overlap * fidicRate, totalAdvGross);
+        }
+        return sliceGross * advPct;
+      }
+
+      // Prior cumulative amortized
+      let cumPrevRec = 0;
+      if (recMode === 'pro_rata') {
+        cumPrevRec = Math.min(prevWork * advPct, totalAdvGross);
+      } else if (recMode === 'accelerated') {
+        cumPrevRec = Math.min(prevWork * customRecPct, totalAdvGross);
+      } else if (recMode === 'threshold') {
+        const startThresh = contractVal * 0.10;
+        const endThresh = contractVal * 0.80;
+        const recoverySpan = endThresh - startThresh;
+        if (recoverySpan > 0 && prevWork > startThresh) {
+          const overlap = Math.min(prevWork, endThresh) - startThresh;
+          const fidicRate = totalAdvGross / recoverySpan;
+          cumPrevRec = Math.min(overlap * fidicRate, totalAdvGross);
+        }
+      }
+
+      // Current period recovery calculation capped by remaining balance
+      const remainingAdvBeforeCurrent = Math.max(0, totalAdvGross - cumPrevRec);
+      let currentRecRaw = computeAmortization(prevWork, currWork);
+      const currentAdvRec = Math.min(currentRecRaw, remainingAdvBeforeCurrent);
+
+      const totalAmortizedSoFar = cumPrevRec + currentAdvRec;
+      const remainingAdvance = Math.max(0, totalAdvGross - totalAmortizedSoFar);
+      const percentAmortized = totalAdvGross > 0 ? ((totalAmortizedSoFar / totalAdvGross) * 100).toFixed(1) : '100.0';
+
+      // Retention for current IPC
+      const currentRetention = currWork * retPct;
+
+      // Net before VAT: In Saudi practice, VAT is computed on billable services = (currWork - currentAdvRec)
+      // While Retention is withheld from cash disbursement
+      const billableBase = Math.max(0, currWork - currentAdvRec);
+      const currentVat = billableBase * vatRate;
+      const netPayableExVat = Math.max(0, currWork - currentAdvRec - currentRetention);
+      const finalBankTransfer = netPayableExVat + currentVat;
+
+      // Update DOM Elements
+      document.getElementById('res-adv-balance').textContent = formatSAR(remainingAdvance);
+      document.getElementById('res-adv-rec-pct').textContent = `${percentAmortized}% Amortized`;
+      
+      document.getElementById('res-ipc-net-vat').textContent = formatSAR(finalBankTransfer);
+      document.getElementById('det-gross-ipc').textContent = formatSAR(currWork);
+      document.getElementById('det-adv-rec').textContent = `- ${formatSAR(currentAdvRec)}`;
+      document.getElementById('det-ret-pct-val').textContent = (retPct * 100).toFixed(0);
+      document.getElementById('det-ret-val').textContent = `- ${formatSAR(currentRetention)}`;
+      document.getElementById('det-net-ex-vat').textContent = formatSAR(netPayableExVat);
+      document.getElementById('det-vat-amount').textContent = `+ ${formatSAR(currentVat)}`;
+      document.getElementById('det-final-transfer').textContent = formatSAR(finalBankTransfer);
+      document.getElementById('det-reduced-apg').textContent = formatSAR(remainingAdvance);
+
+      // Render Full 10-Step Simulation Table
+      renderSimulationTable(contractVal, totalAdvGross, advPct, retPct, vatRate, recMode, customRecPct);
+    }
+
+    function renderSimulationTable(contractVal, totalAdvGross, advPct, retPct, vatRate, recMode, customRecPct) {
+      const tbody = document.getElementById('simulationTableBody');
+      tbody.innerHTML = '';
+
+      let cumWork = 0;
+      let totalAmortized = 0;
+      const stepValue = contractVal / 10;
+
+      for (let i = 1; i <= 10; i++) {
+        const sliceStart = cumWork;
+        const sliceGross = stepValue;
+        cumWork += sliceGross;
+        const cumPct = (i * 10) + '%';
+
+        // calculate amortization for this slice
+        const remBefore = Math.max(0, totalAdvGross - totalAmortized);
+        let sliceRec = 0;
+
+        if (recMode === 'pro_rata') {
+          sliceRec = Math.min(sliceGross * advPct, remBefore);
+        } else if (recMode === 'accelerated') {
+          sliceRec = Math.min(sliceGross * customRecPct, remBefore);
+        } else if (recMode === 'threshold') {
+          const startThresh = contractVal * 0.10;
+          const endThresh = contractVal * 0.80;
+          const recoverySpan = endThresh - startThresh;
+          const effStart = Math.max(sliceStart, startThresh);
+          const effEnd = Math.min(cumWork, endThresh);
+          const overlap = Math.max(0, effEnd - effStart);
+          const fidicRate = recoverySpan > 0 ? (totalAdvGross / recoverySpan) : advPct;
+          sliceRec = Math.min(overlap * fidicRate, remBefore);
+        }
+
+        totalAmortized += sliceRec;
+        const remainingApg = Math.max(0, totalAdvGross - totalAmortized);
+        const retention = sliceGross * retPct;
+        const billable = Math.max(0, sliceGross - sliceRec);
+        const vat = billable * vatRate;
+        const netPayable = (sliceGross - sliceRec - retention) + vat;
+
+        const tr = document.createElement('tr');
+        tr.className = i % 2 === 0 ? 'bg-slate-50/70' : 'bg-white';
+        tr.innerHTML = `
+          <td class="py-2 px-2 font-medium text-slate-900">IPC #${i}</td>
+          <td class="py-2 px-2 text-right">${formatSAR(sliceGross).replace('SAR ', '')}</td>
+          <td class="py-2 px-2 text-right text-slate-500 font-semibold">${cumPct}</td>
+          <td class="py-2 px-2 text-right text-amber-700">-${formatSAR(sliceRec).replace('SAR ', '')}</td>
+          <td class="py-2 px-2 text-right text-red-700">-${formatSAR(retention).replace('SAR ', '')}</td>
+          <td class="py-2 px-2 text-right text-emerald-700 font-bold">${formatSAR(netPayable).replace('SAR ', '')}</td>
+          <td class="py-2 px-2 text-right font-bold text-slate-800">${formatSAR(remainingApg).replace('SAR ', '')}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function exportCSV() {
+      const contractVal = document.getElementById('contractValue').value;
+      const advPct = document.getElementById('advPct').value;
+      const retPct = document.getElementById('retentionPct').value;
+      const grossIpc = document.getElementById('currWork').value;
+      const advRec = document.getElementById('det-adv-rec').textContent.replace('- SAR ', '').trim();
+      const retentionVal = document.getElementById('det-ret-val').textContent.replace('- SAR ', '').trim();
+      const netDisbursement = document.getElementById('det-final-transfer').textContent.replace('SAR ', '').trim();
+      const remainingApg = document.getElementById('res-adv-balance').textContent.replace('SAR ', '').trim();
+
+      let csv = 'Saudi Contractor Payment Certificate & Amortization Summary\n';
+      csv += 'Contract Value (SAR),' + contractVal + '\n';
+      csv += 'Advance Payment %,' + advPct + '%\n';
+      csv += 'Retention %,' + retPct + '%\n';
+      csv += 'Current Gross Work Verified (SAR),' + grossIpc + '\n';
+      csv += 'Advance Amortization Deduction (SAR),' + advRec + '\n';
+      csv += 'Retention Holdback (SAR),' + retentionVal + '\n';
+      csv += 'Approved Net Bank Transfer With VAT (SAR),' + netDisbursement + '\n';
+      csv += 'Remaining Advance Bank Guarantee Balance (SAR),' + remainingApg + '\n';
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'IPC_Amortization_Statement_KSA.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initial run
+    calculateAll();
+  </script>
+</body>
+</html>

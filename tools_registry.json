@@ -159,5 +159,12 @@
     "title_ar": "حاسبة دعم التوظيف لصندوق الموارد البشرية (هدف) وصافي تكلفة الموظف",
     "description_en": "Calculate Saudi HRDF (Hadaf) wage subsidies, GOSI contributions, female/disabled bonuses, and net 24-month SME hiring savings under Qiwa rules.",
     "date": "2026-11-09"
+  },
+  {
+    "slug": "saudi-advance-payment-amortization-calculator",
+    "title_en": "Saudi Contractor Advance Payment & IPC Amortization Calculator",
+    "title_ar": "حاسبة استرداد الدفعة المقدمة للمشاريع وشهادات الإنجاز في السعودية",
+    "description_en": "Calculate advance payment guarantee (APG), progressive IPC amortization deductions, retention holdback, and net interim billings under Saudi procurement rules.",
+    "date": "2026-11-10"
   }
 ]
