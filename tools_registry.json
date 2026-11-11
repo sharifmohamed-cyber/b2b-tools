@@ -173,5 +173,12 @@
     "title_ar": "حاسبة الراتب النسبي واستقطاعات أيام العمل غير المكتملة",
     "description_en": "Calculate exact pro-rata salaries, unpaid leave deductions, and mid-month joiner/leaver payroll according to Saudi Labor Law and 30-day salary standards.",
     "date": "2026-11-10"
+  },
+  {
+    "slug": "saudi-bank-guarantee-lg-cost-calculator",
+    "title_en": "Saudi Bank Guarantee (LG) & Tender Bond Cost Calculator",
+    "title_ar": "حاسبة تكاليف وعمولات الضمانات البنكية ومنافسات اعتماد",
+    "description_en": "Calculate Saudi bank guarantee commissions, cash margin lockups, VAT, and financing costs for Etimad bid bonds, performance bonds, and advance payment LGs.",
+    "date": "2026-11-11"
   }
 ]
