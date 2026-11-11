@@ -180,5 +180,12 @@
     "title_ar": "حاسبة تكاليف وعمولات الضمانات البنكية ومنافسات اعتماد",
     "description_en": "Calculate Saudi bank guarantee commissions, cash margin lockups, VAT, and financing costs for Etimad bid bonds, performance bonds, and advance payment LGs.",
     "date": "2026-11-11"
+  },
+  {
+    "slug": "saudi-annual-leave-encashment-calculator",
+    "title_en": "Saudi Annual Leave Encashment & Final Pay Calculator",
+    "title_ar": "حاسبة تصفية رصيد الإجازات السنوية ومستحقات نهاية الخدمة",
+    "description_en": "Accurately compute unused annual leave encashment under Saudi Labor Law Article 111. Instant calculations for HR, payroll, and final exit settlement.",
+    "date": "2026-11-11"
   }
 ]

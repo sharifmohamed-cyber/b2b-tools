@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi Annual Leave Encashment & Final Pay Calculator | حاسبة تصفية الإجازات السنوية</title>
+  <meta name="description" content="Calculate Saudi Labor Law Article 111 annual leave balance encashment for final settlements, exits, or mid-tenure liquidations." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            arabic: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            emerald: {
+              50: '#ecfdf5',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .font-ar { font-family: 'Cairo', sans-serif; }
+    .font-en { font-family: 'Inter', sans-serif; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-shadow-none { box-shadow: none !important; border: 1px solid #e5e7eb !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased font-en transition-colors duration-200">
+
+  <!-- Top Banner for Template upsell -->
+  <aside class="bg-gradient-to-r from-emerald-900 via-slate-900 to-emerald-950 text-white text-xs sm:text-sm py-2.5 px-4 sticky top-0 z-50 shadow-md no-print">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+      <div class="flex items-center gap-2">
+        <span class="bg-amber-400 text-amber-950 font-bold px-2 py-0.5 rounded text-[11px] uppercase tracking-wide">HR PRO</span>
+        <span id="banner-text">Get the Automated Saudi Payroll & Leave Settlement Master Excel Workbook (Labor Law 2024 compliant).</span>
+      </div>
+      <a href="https://gumroad.com" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-semibold px-3 py-1 rounded text-xs transition duration-150 whitespace-nowrap shadow">
+        <span id="banner-btn">Download Master Excel ($29)</span>
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Header -->
+  <header class="border-b border-slate-200 bg-white/95 backdrop-blur-sm sticky top-[42px] sm:top-[37px] z-40 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">
+          KSA
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight" id="header-title">Saudi Annual Leave Encashment Calculator</h1>
+          <p class="text-xs text-slate-500" id="header-subtitle">Calculated strictly in accordance with Saudi Labor Law (Articles 109 & 111)</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="lang-toggle-btn" onclick="toggleLanguage()" class="px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+          <span id="lang-label">العربية (RTL)</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main App Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Form Panel -->
+      <div class="lg:col-span-7 space-y-6">
+        <div class="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-7 shadow-sm">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+            <div class="flex items-center gap-2">
+              <span class="p-2 bg-emerald-50 rounded-lg text-emerald-700">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+              </span>
+              <h2 class="text-base font-bold text-slate-800" id="lbl-section-calc">Employee & Wage Parameters</h2>
+            </div>
+            <span class="text-xs font-medium text-slate-400 uppercase tracking-wider">KSA Article 109 & 111</span>
+          </div>
+
+          <form id="calc-form" class="space-y-5" onsubmit="return false;">
+            <!-- Basic Salary -->
+            <div>
+              <div class="flex justify-between items-center mb-1.5">
+                <label class="text-xs font-semibold text-slate-700" id="lbl-basic-wage">Basic Monthly Salary (SAR)</label>
+                <span class="text-[11px] text-slate-400" id="hint-basic">الراتب الأساسي الشهري</span>
+              </div>
+              <div class="relative rounded-lg shadow-sm">
+                <div class="pointer-events-none absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 text-sm font-medium">SAR</div>
+                <input type="number" id="basic-wage" value="8000" min="0" step="any" class="block w-full rounded-lg border border-slate-300 pl-14 pr-4 py-2.5 text-sm font-semibold focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none transition" oninput="calculateAll()" />
+              </div>
+            </div>
+
+            <!-- Allowances Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <label class="text-xs font-semibold text-slate-700" id="lbl-housing-wage">Housing Allowance (SAR/mo)</label>
+                  <span class="text-[11px] text-slate-400" id="hint-housing">بدل السكن</span>
+                </div>
+                <div class="relative rounded-lg shadow-sm">
+                  <div class="pointer-events-none absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 text-sm font-medium">SAR</div>
+                  <input type="number" id="housing-wage" value="2000" min="0" step="any" class="block w-full rounded-lg border border-slate-300 pl-14 pr-4 py-2.5 text-sm font-semibold focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none transition" oninput="calculateAll()" />
+                </div>
+              </div>
+
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <label class="text-xs font-semibold text-slate-700" id="lbl-transport-wage">Transport Allowance (SAR/mo)</label>
+                  <span class="text-[11px] text-slate-400" id="hint-trans">بدل المواصلات</span>
+                </div>
+                <div class="relative rounded-lg shadow-sm">
+                  <div class="pointer-events-none absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 text-sm font-medium">SAR</div>
+                  <input type="number" id="transport-wage" value="800" min="0" step="any" class="block w-full rounded-lg border border-slate-300 pl-14 pr-4 py-2.5 text-sm font-semibold focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none transition" oninput="calculateAll()" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Other regular allowances -->
+            <div>
+              <div class="flex justify-between items-center mb-1.5">
+                <label class="text-xs font-semibold text-slate-700" id="lbl-other-wage">Other Fixed Regular Allowances (SAR/mo)</label>
+                <span class="text-[11px] text-slate-400" id="hint-other">بدلات ثابتة أخرى (هاتف، طبيعة عمل، إلخ)</span>
+              </div>
+              <div class="relative rounded-lg shadow-sm">
+                <div class="pointer-events-none absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400 text-sm font-medium">SAR</div>
+                <input type="number" id="other-wage" value="0" min="0" step="any" class="block w-full rounded-lg border border-slate-300 pl-14 pr-4 py-2.5 text-sm font-semibold focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none transition" oninput="calculateAll()" />
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1" id="wage-rule-note">Under Labor Law Article 2, annual leave wage encashment is calculated on the 'actual wage' (Basic + regular fixed allowances).</p>
+            </div>
+
+            <!-- Calculation Mode Toggle -->
+            <div class="pt-2 border-t border-slate-100">
+              <label class="text-xs font-bold text-slate-800 block mb-2" id="lbl-mode-title">Input Mode for Unused Days</label>
+              <div class="grid grid-cols-2 gap-3">
+                <button type="button" id="btn-mode-direct" onclick="switchMode('direct')" class="py-2 px-3 text-xs font-semibold rounded-lg border border-emerald-600 bg-emerald-50 text-emerald-800 transition flex items-center justify-center gap-1.5">
+                  <span id="txt-mode-direct">Direct Leave Balance (Days)</span>
+                </button>
+                <button type="button" id="btn-mode-service" onclick="switchMode('service')" class="py-2 px-3 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-600 transition flex items-center justify-center gap-1.5">
+                  <span id="txt-mode-service">Auto-Calculate from Dates</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Direct Input Fields -->
+            <div id="section-direct" class="space-y-4">
+              <div>
+                <div class="flex justify-between items-center mb-1.5">
+                  <label class="text-xs font-semibold text-slate-700" id="lbl-direct-days">Total Accrued &amp; Unused Leave (Days)</label>
+                  <span class="text-[11px] text-slate-400" id="hint-direct-days">رصيد الأيام المتبقي</span>
+                </div>
+                <input type="number" id="direct-days" value="18.5" min="0" step="0.25" class="block w-full rounded-lg border border-slate-300 px-3.5 py-2.5 text-sm font-semibold focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none transition" oninput="calculateAll()" />
+              </div>
+            </div>
+
+            <!-- Date-based Accrual Calculation Mode (Initially Hidden) -->
+            <div id="section-service" class="hidden space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs font-semibold text-slate-700 block mb-1" id="lbl-start-date">Cycle / Employment Start Date</label>
+                  <input type="date" id="start-date" value="2023-01-01" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium focus:border-emerald-600 focus:outline-none" oninput="calculateAll()" />
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-slate-700 block mb-1" id="lbl-end-date">Cut-off / Exit Date</label>
+                  <input type="date" id="end-date" value="2024-03-31" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium focus:border-emerald-600 focus:outline-none" oninput="calculateAll()" />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label class="text-xs font-semibold text-slate-700 block mb-1" id="lbl-entitlement-policy">Annual Entitlement Scheme (Art. 109)</label>
+                  <select id="annual-scheme" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium focus:border-emerald-600 focus:outline-none" onchange="calculateAll()">
+                    <option value="auto">Smart Auto (21 days <5 yrs, 30 days ≥5 yrs)</option>
+                    <option value="21">Fixed 21 Calendar Days (Default standard)</option>
+                    <option value="30">Fixed 30 Calendar Days (Executive / Senior)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="text-xs font-semibold text-slate-700 block mb-1" id="lbl-days-taken">Leave Days Already Consumed</label>
+                  <input type="number" id="days-taken" value="10" min="0" step="0.5" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs font-medium focus:border-emerald-600 focus:outline-none" oninput="calculateAll()" />
+                </div>
+              </div>
+              <p class="text-[11px] text-slate-500" id="formula-accrual-hint">Accrual Rate: (Days per Year / 365) &times; Total Days of Service in cycle minus consumed days.</p>
+            </div>
+
+            <!-- Daily Wage Divisor selector -->
+            <div class="pt-2 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+              <span class="font-medium text-slate-700" id="lbl-divisor-title">Daily Wage Basis (Saudi Standard):</span>
+              <div class="flex items-center gap-4">
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                  <input type="radio" name="divisor" value="30" checked onchange="calculateAll()" class="text-emerald-600 focus:ring-emerald-500">
+                  <span class="font-medium text-slate-800" id="lbl-div-30">Standard 30 Days (Art. 111 default)</span>
+                </label>
+                <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                  <input type="radio" name="divisor" value="30.416" onchange="calculateAll()" class="text-emerald-600 focus:ring-emerald-500">
+                  <span class="font-medium text-slate-600" id="lbl-div-actual">365/12 (~30.42)</span>
+                </label>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+      <!-- Summary & Output Panel -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-slate-900 text-white rounded-2xl p-6 sm:p-7 shadow-xl border border-slate-800 relative overflow-hidden">
+          <!-- Accent glow -->
+          <div class="absolute -right-8 -top-8 w-36 h-36 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
+            <div>
+              <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-400" id="summary-tag">Official Settlement</span>
+              <h3 class="text-base font-bold text-slate-100" id="summary-title">Leave Encashment Result</h3>
+            </div>
+            <span class="text-xs bg-slate-800 text-slate-300 font-semibold px-2.5 py-1 rounded-md border border-slate-700">Article 111</span>
+          </div>
+
+          <!-- Main KPI -->
+          <div class="bg-slate-800/80 rounded-xl p-5 border border-slate-700/80 mb-5 text-center">
+            <p class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1" id="lbl-kpi-title">Total Gross Encashment Due</p>
+            <div class="text-3xl sm:text-4xl font-extrabold text-emerald-400 tracking-tight">
+              <span id="res-total-sar">6,660.00</span> <span class="text-lg font-bold text-slate-300">SAR</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mt-2" id="res-formula-line">Based on 18.50 unused days @ 360.00 SAR/day</p>
+          </div>
+
+          <!-- Line items -->
+          <div class="space-y-3 text-xs border-b border-slate-800 pb-5 mb-5">
+            <div class="flex justify-between items-center text-slate-300">
+              <span id="res-lbl-gross-wage">Total Monthly Wage (Basic + All.):</span>
+              <span class="font-semibold text-white" id="res-gross-monthly">SAR 10,800.00</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-300">
+              <span id="res-lbl-daily-rate">Computed Daily Rate:</span>
+              <span class="font-semibold text-white" id="res-daily-wage">SAR 360.00</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-300">
+              <span id="res-lbl-net-balance">Final Unused Leave Balance:</span>
+              <span class="font-semibold text-emerald-400" id="res-days-count">18.50 Days</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-300">
+              <span id="res-lbl-hourly-rate">Derived Hourly Rate (8 hrs/day):</span>
+              <span class="font-semibold text-slate-300" id="res-hourly-wage">SAR 45.00</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="grid grid-cols-2 gap-3 no-print">
+            <button onclick="window.print()" class="py-2 px-3 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition">
+              <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <span id="btn-print">Print / PDF</span>
+            </button>
+            <button onclick="exportCSV()" class="py-2 px-3 rounded-lg border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-white flex items-center justify-center gap-1.5 transition">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span id="btn-csv">Export CSV</span>
+            </button>
+          </div>
+
+          <!-- Gumroad Direct Upsell Box -->
+          <div class="mt-5 pt-5 border-t border-slate-800/80 bg-slate-800/40 -mx-6 -mb-6 p-6 rounded-b-2xl no-print">
+            <div class="flex items-start gap-3">
+              <span class="p-2 bg-amber-400/10 text-amber-400 rounded-lg text-lg">⚡</span>
+              <div>
+                <h4 class="text-xs font-bold text-white uppercase tracking-wide" id="upsell-box-title">Automate Complete Final Settlement & Payroll</h4>
+                <p class="text-[11px] text-slate-400 mt-1 leading-relaxed" id="upsell-box-desc">Includes End-of-Service Gratuity (EOSB), GOSI withholdings, leave reconciliations, and Wage Protection System (WPS) batch export.</p>
+                <a href="https://gumroad.com" target="_blank" rel="noopener" class="mt-3 inline-flex items-center justify-center gap-1.5 w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2 px-3 rounded-lg text-xs shadow transition">
+                  <span id="upsell-btn-text">Get KSA HR Master Excel Template ($29)</span>
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bilingual Mandatory Legal Disclaimer Box -->
+        <div class="bg-amber-50 border border-amber-200/80 rounded-xl p-4 text-amber-900 text-xs leading-relaxed space-y-2">
+          <div class="flex items-center gap-2 font-bold text-amber-950">
+            <svg class="w-4 h-4 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+            <span id="disclaimer-title">Legal Notice &amp; Compliance Disclaimer / إخلاء مسؤولية نظامي</span>
+          </div>
+          <p id="disclaimer-en" class="text-slate-700 text-[11px]">
+            This computation is an estimate based on standard interpretations of Saudi Labor Law (Articles 2, 109, and 111). Final exit compensation must conform to official employment contracts signed via Qiwa, internal company bylaws approved by the Ministry of Human Resources and Social Development (MHRSD), and official circulars.
+          </p>
+          <p id="disclaimer-ar" class="text-slate-600 text-[11px] font-ar dir-rtl text-right pt-1 border-t border-amber-200/50">
+            هذه الحسبة استرشادية مبنية على المواد (2 و109 و111) من نظام العمل السعودي. تخضع التسوية النهائية الدقيقة لبنود عقد العمل الموثق عبر منصة "قوى" واللائحة الداخلية المعتمدة للمنشأة لدى وزارة الموارد البشرية والتنمية الاجتماعية.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comprehensive 800+ Words SEO Authority Guide & FAQ Section -->
+    <section class="mt-16 pt-10 border-t border-slate-200 space-y-12 no-print">
+      <div class="max-w-4xl">
+        <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight" id="guide-heading">Complete Guide to Saudi Annual Leave Encashment &amp; Wage Calculations</h2>
+        <p class="mt-2 text-slate-600 text-sm" id="guide-subheading">An in-depth regulatory breakdown for Saudi HR Directors, Finance Controllers, and Foreign Enterprise Operations.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm leading-relaxed text-slate-700">
+        
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 space-y-3">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+            Saudi Labor Law: Article 109 &amp; 111 Mandates
+          </h3>
+          <p>
+            Under <strong>Article 109</strong> of the Kingdom of Saudi Arabia Labor Law (Royal Decree No. M/51), every worker is entitled to a prepaid annual leave of no less than <strong>21 calendar days</strong> per annum. This mandatory entitlement rises to a minimum of <strong>30 calendar days</strong> once the employee completes five consecutive years of service with the same employer.
+          </p>
+          <p>
+            Furthermore, <strong>Article 111</strong> governs leave encashment upon end of service: <em>"A worker shall be entitled to cash pay for accrued leave days that have not been availed of for the period of his work, computed on the basis of the last wage received by the worker."</em> This applies whether the contract ends due to resignation, non-renewal, redundancy, or mutual termination.
+          </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-2xl border border-slate-200/80 space-y-3">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-600"></span>
+            The "Actual Wage" vs. "Basic Wage" Distinction
+          </h3>
+          <p>
+            A frequent source of labor disputes before Saudi Labor Courts (Mahakim Al-Omaliah) is the daily wage divisor basis. According to <strong>Article 2</strong> of the Saudi Labor Law, "Wage" refers to the <strong>Actual Wage (الأجر الفعلي)</strong>, which encompasses the basic salary in addition to all recurrent, contractual allowances such as housing (بدل سكن), transport (بدل مواصلات), and guaranteed bonuses.
+          </p>
+          <p>
+            Unless explicitly restricted to basic salary by unambiguous contractual clauses sanctioned by MHRSD bylaws, leave encashment must be settled using the full gross monthly salary divided by thirty (30) days.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Mathematical Formulas -->
+      <div class="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 space-y-5">
+        <h3 class="text-lg font-bold text-slate-900">Official Calculation Formulas &amp; Methodology</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-mono">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <span class="font-bold text-emerald-700 block mb-1 text-sm font-sans">1. Actual Daily Wage</span>
+            <code>Daily Rate = (Basic + Housing + Transport + Fixed Allowances) / 30</code>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <span class="font-bold text-emerald-700 block mb-1 text-sm font-sans">2. Pro-Rata Accrual</span>
+            <code>Accrued Days = (Annual Entitlement / 365) &times; Days Worked in Cycle</code>
+          </div>
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <span class="font-bold text-emerald-700 block mb-1 text-sm font-sans">3. Encashment Due</span>
+            <code>Settlement (SAR) = Daily Wage &times; (Accrued Days - Taken Days)</code>
+          </div>
+        </div>
+
+        <p class="text-xs text-slate-600 leading-relaxed">
+          Note on the 30-day divisor: While Gregorian calendar months vary between 28 and 31 days, standard Saudi payroll convention and court precedent define the standard daily divisor as 30 days unless the employment contract specifies exact days in the month (calendar divisor). This tool allows selection of both standard 30-day and 365/12 actuarial models.
+        </p>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="space-y-4 max-w-4xl">
+        <h3 class="text-xl font-bold text-slate-900" id="faq-title">Frequently Asked Questions (FAQ)</h3>
+        
+        <div class="space-y-3">
+          <details class="bg-white rounded-xl border border-slate-200 p-4 text-sm">
+            <summary class="font-bold text-slate-900 cursor-pointer select-none">Can an employer force an employee to forfeit unused leave in Saudi Arabia?</summary>
+            <p class="mt-2 text-slate-600 text-xs sm:text-sm leading-relaxed">
+              No. Under Article 109 and Article 111, leave is a statutory right. While an employer may schedule the timing of the annual leave according to work requirements or postpone it to the following year with written employee consent (Article 110), the worker cannot be forced to forfeit compensation for unavailed leave upon separation.
+            </p>
+          </details>
+
+          <details class="bg-white rounded-xl border border-slate-200 p-4 text-sm">
+            <summary class="font-bold text-slate-900 cursor-pointer select-none">Does leave encashment attract GOSI deductions?</summary>
+            <p class="mt-2 text-slate-600 text-xs sm:text-sm leading-relaxed">
+              No. General Organization for Social Insurance (GOSI) social insurance contributions apply to monthly contributory wages (Basic salary + Housing allowance). Terminal leave encashment paid upon exit is categorized as an accrued settlement indemnity, not an active contributory wage, and is therefore exempt from GOSI deductions.
+            </p>
+          </details>
+
+          <details class="bg-white rounded-xl border border-slate-200 p-4 text-sm">
+            <summary class="font-bold text-slate-900 cursor-pointer select-none">Can an employee encash leave days while still working (without leaving)?</summary>
+            <p class="mt-2 text-slate-600 text-xs sm:text-sm leading-relaxed">
+              Yes, if both employer and employee mutually agree in writing and the internal company policies approve mid-service encashment. However, the Saudi Labor Law emphasizes the physical rest requirement, specifying that employees must take at least 15 consecutive days in the due year and cannot postpone the entirety of their leave indefinitely.
+            </p>
+          </details>
+
+          <details class="bg-white rounded-xl border border-slate-200 p-4 text-sm">
+            <summary class="font-bold text-slate-900 cursor-pointer select-none">What happens if the employee resigns before completing their first year?</summary>
+            <p class="mt-2 text-slate-600 text-xs sm:text-sm leading-relaxed">
+              Under Article 111, the employee is entitled to pro-rata compensation for the fraction of the year worked. For example, if an employee worked 6 months under a 21-day entitlement contract and took 0 leave, they are entitled to 10.5 days of leave pay at their final wage rate upon exit.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-16 border-t border-slate-200 bg-white py-8 text-xs text-slate-500 text-center no-print">
+    <div class="max-w-7xl mx-auto px-4">
+      <p class="font-medium text-slate-700">Saudi B2B Micro-SaaS Financial &amp; HR Operational Suite</p>
+      <p class="mt-1">Compliant with Ministry of Human Resources &amp; Social Development (MHRSD) regulations.</p>
+      <div class="mt-4 flex justify-center gap-4 text-slate-400">
+        <span>Labor Law Articles 109 &amp; 111</span>
+        <span>•</span>
+        <span>Qiwa Compatible</span>
+        <span>•</span>
+        <span>WPS Standard Divisor</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript Engine -->
+  <script>
+    let currentLang = 'en';
+    let currentMode = 'direct';
+
+    const translations = {
+      en: {
+        bannerText: "Get the Automated Saudi Payroll & Leave Settlement Master Excel Workbook (Labor Law 2024 compliant).",
+        bannerBtn: "Download Master Excel ($29)",
+        headerTitle: "Saudi Annual Leave Encashment Calculator",
+        headerSubtitle: "Calculated strictly in accordance with Saudi Labor Law (Articles 109 & 111)",
+        langBtn: "العربية (RTL)",
+        sectionCalc: "Employee & Wage Parameters",
+        lblBasicWage: "Basic Monthly Salary (SAR)",
+        lblHousingWage: "Housing Allowance (SAR/mo)",
+        lblTransportWage: "Transport Allowance (SAR/mo)",
+        lblOtherWage: "Other Fixed Regular Allowances (SAR/mo)",
+        modeTitle: "Input Mode for Unused Days",
+        modeDirect: "Direct Leave Balance (Days)",
+        modeService: "Auto-Calculate from Dates",
+        lblDirectDays: "Total Accrued & Unused Leave (Days)",
+        lblStartDate: "Cycle / Employment Start Date",
+        lblEndDate: "Cut-off / Exit Date",
+        lblEntitlementPolicy: "Annual Entitlement Scheme (Art. 109)",
+        lblDaysTaken: "Leave Days Already Consumed",
+        lblDivisorTitle: "Daily Wage Basis (Saudi Standard):",
+        lblDiv30: "Standard 30 Days (Art. 111 default)",
+        summaryTag: "Official Settlement",
+        summaryTitle: "Leave Encashment Result",
+        lblKpiTitle: "Total Gross Encashment Due",
+        resLblGrossWage: "Total Monthly Wage (Basic + All.):",
+        resLblDailyRate: "Computed Daily Rate:",
+        resLblNetBalance: "Final Unused Leave Balance:",
+        resLblHourlyRate: "Derived Hourly Rate (8 hrs/day):",
+        btnPrint: "Print / PDF",
+        btnCsv: "Export CSV",
+        upsellTitle: "Automate Complete Final Settlement & Payroll",
+        upsellDesc: "Includes End-of-Service Gratuity (EOSB), GOSI withholdings, leave reconciliations, and Wage Protection System (WPS) batch export.",
+        upsellBtn: "Get KSA HR Master Excel Template ($29)",
+        guideHeading: "Complete Guide to Saudi Annual Leave Encashment & Wage Calculations",
+        guideSubheading: "An in-depth regulatory breakdown for Saudi HR Directors, Finance Controllers, and Foreign Enterprise Operations.",
+        faqTitle: "Frequently Asked Questions (FAQ)"
+      },
+      ar: {
+        bannerText: "احصل على مصنّف إكسل الشامل لاحتساب مسيرات الرواتب وتصفية الإجازات ومكافأة نهاية الخدمة (وفق نظام العمل السعودي).",
+        bannerBtn: "تحميل نموذج الإكسل الشامل ($29)",
+        headerTitle: "حاسبة تصفية رصيد الإجازات السنوية في السعودية",
+        headerSubtitle: "حسابات دقيقة مطابقة لنظام العمل السعودي (المادتين 109 و111)",
+        langBtn: "English (LTR)",
+        sectionCalc: "بيانات الموظف والراتب الفعلي",
+        lblBasicWage: "الراتب الأساسي الشهري (ريال)",
+        lblHousingWage: "بدل السكن الشهري (ريال)",
+        lblTransportWage: "بدل النقل / المواصلات (ريال)",
+        lblOtherWage: "بدلات ثابتة أخرى خاضعة للراتب الفعلي",
+        modeTitle: "طريقة تحديد رصيد الأيام المستحقة",
+        modeDirect: "إدخال مباشر لرصيد الأيام المتبقي",
+        modeService: "احتساب تلقائي بناءً على تواريخ الخدمة",
+        lblDirectDays: "إجمالي الأيام المستحقة غير المستهلكة (يوم)",
+        lblStartDate: "تاريخ بداية دورة العمل / العقد",
+        lblEndDate: "تاريخ التصفية / إنهاء الخدمة",
+        lblEntitlementPolicy: "سياسة استحقاق الإجازة السنوية (المادة 109)",
+        lblDaysTaken: "أيام الإجازة المستهلكة بالفعل",
+        lblDivisorTitle: "أساس قسمة الأجر اليومي (المعيار النظامي):",
+        lblDiv30: "المعيار النظامي 30 يوماً (المادة 111)",
+        summaryTag: "التسوية النظامية النهائية",
+        summaryTitle: "نتيجة تصفية رصيد الإجازة",
+        lblKpiTitle: "إجمالي مستحقات بدل الإجازة المستحق",
+        resLblGrossWage: "الأجر الفعلي الشهري (الأساسي + البدلات):",
+        resLblDailyRate: "الأجر اليومي المعتمد:",
+        resLblNetBalance: "صافي رصيد أيام الإجازة:",
+        resLblHourlyRate: "أجر ساعة العمل (8 ساعات عمل/يوم):",
+        btnPrint: "طباعة / حفظ PDF",
+        btnCsv: "تصدير ملف CSV",
+        upsellTitle: "أتمتة مخالصات نهاية الخدمة والمسيرات بالكامل",
+        upsellDesc: "يشمل حاسبة مكافأة نهاية الخدمة، اشتراكات التأمينات الاجتماعية (GOSI)، وملفات نظام حماية الأجور.",
+        upsellBtn: "تحميل مصنف الإكسل الاحترافي ($29)",
+        guideHeading: "الدليل الشامل لاحتساب وتصفية بدل الإجازات السنوية وفق نظام العمل السعودي",
+        guideSubheading: "مرجع نظامي وتنفيذي لمديري الموارد البشرية، المحاسبين الماليين، وإدارات الرواتب بالمملكة.",
+        faqTitle: "الأسئلة الشائعة حول بدل الإجازة السنوية"
+      }
+    };
+
+    function switchMode(mode) {
+      currentMode = mode;
+      const secDirect = document.getElementById('section-direct');
+      const secService = document.getElementById('section-service');
+      const btnDirect = document.getElementById('btn-mode-direct');
+      const btnService = document.getElementById('btn-mode-service');
+
+      if (mode === 'direct') {
+        secDirect.classList.remove('hidden');
+        secService.classList.add('hidden');
+        btnDirect.className = "py-2 px-3 text-xs font-semibold rounded-lg border border-emerald-600 bg-emerald-50 text-emerald-800 transition flex items-center justify-center gap-1.5";
+        btnService.className = "py-2 px-3 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-600 transition flex items-center justify-center gap-1.5";
+      } else {
+        secDirect.classList.add('hidden');
+        secService.classList.remove('hidden');
+        btnService.className = "py-2 px-3 text-xs font-semibold rounded-lg border border-emerald-600 bg-emerald-50 text-emerald-800 transition flex items-center justify-center gap-1.5";
+        btnDirect.className = "py-2 px-3 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-600 transition flex items-center justify-center gap-1.5";
+      }
+      calculateAll();
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      const htmlEl = document.documentElement;
+      const t = translations[currentLang];
+
+      if (currentLang === 'ar') {
+        htmlEl.setAttribute('dir', 'rtl');
+        htmlEl.setAttribute('lang', 'ar');
+        document.body.classList.remove('font-en');
+        document.body.classList.add('font-ar');
+      } else {
+        htmlEl.setAttribute('dir', 'ltr');
+        htmlEl.setAttribute('lang', 'en');
+        document.body.classList.remove('font-ar');
+        document.body.classList.add('font-en');
+      }
+
+      document.getElementById('banner-text').textContent = t.bannerText;
+      document.getElementById('banner-btn').textContent = t.bannerBtn;
+      document.getElementById('header-title').textContent = t.headerTitle;
+      document.getElementById('header-subtitle').textContent = t.headerSubtitle;
+      document.getElementById('lang-label').textContent = t.langBtn;
+      document.getElementById('lbl-section-calc').textContent = t.sectionCalc;
+      document.getElementById('lbl-basic-wage').textContent = t.lblBasicWage;
+      document.getElementById('lbl-housing-wage').textContent = t.lblHousingWage;
+      document.getElementById('lbl-transport-wage').textContent = t.lblTransportWage;
+      document.getElementById('lbl-other-wage').textContent = t.lblOtherWage;
+      document.getElementById('lbl-mode-title').textContent = t.modeTitle;
+      document.getElementById('txt-mode-direct').textContent = t.modeDirect;
+      document.getElementById('txt-mode-service').textContent = t.modeService;
+      document.getElementById('lbl-direct-days').textContent = t.lblDirectDays;
+      document.getElementById('lbl-start-date').textContent = t.lblStartDate;
+      document.getElementById('lbl-end-date').textContent = t.lblEndDate;
+      document.getElementById('lbl-entitlement-policy').textContent = t.lblEntitlementPolicy;
+      document.getElementById('lbl-days-taken').textContent = t.lblDaysTaken;
+      document.getElementById('lbl-divisor-title').textContent = t.lblDivisorTitle;
+      document.getElementById('lbl-div-30').textContent = t.lblDiv30;
+      document.getElementById('summary-tag').textContent = t.summaryTag;
+      document.getElementById('summary-title').textContent = t.summaryTitle;
+      document.getElementById('lbl-kpi-title').textContent = t.lblKpiTitle;
+      document.getElementById('res-lbl-gross-wage').textContent = t.resLblGrossWage;
+      document.getElementById('res-lbl-daily-rate').textContent = t.resLblDailyRate;
+      document.getElementById('res-lbl-net-balance').textContent = t.resLblNetBalance;
+      document.getElementById('res-lbl-hourly-rate').textContent = t.resLblHourlyRate;
+      document.getElementById('btn-print').textContent = t.btnPrint;
+      document.getElementById('btn-csv').textContent = t.btnCsv;
+      document.getElementById('upsell-box-title').textContent = t.upsellTitle;
+      document.getElementById('upsell-box-desc').textContent = t.upsellDesc;
+      document.getElementById('upsell-btn-text').textContent = t.upsellBtn;
+      document.getElementById('guide-heading').textContent = t.guideHeading;
+      document.getElementById('guide-subheading').textContent = t.guideSubheading;
+      document.getElementById('faq-title').textContent = t.faqTitle;
+
+      calculateAll();
+    }
+
+    function calculateAll() {
+      const basic = parseFloat(document.getElementById('basic-wage').value) || 0;
+      const housing = parseFloat(document.getElementById('housing-wage').value) || 0;
+      const transport = parseFloat(document.getElementById('transport-wage').value) || 0;
+      const other = parseFloat(document.getElementById('other-wage').value) || 0;
+
+      const grossWage = basic + housing + transport + other;
+      const divisorRadio = document.querySelector('input[name="divisor"]:checked');
+      const divisor = divisorRadio ? parseFloat(divisorRadio.value) : 30;
+      const dailyWage = divisor > 0 ? (grossWage / divisor) : 0;
+      const hourlyWage = dailyWage / 8;
+
+      let unusedDays = 0;
+
+      if (currentMode === 'direct') {
+        unusedDays = parseFloat(document.getElementById('direct-days').value) || 0;
+      } else {
+        const startVal = document.getElementById('start-date').value;
+        const endVal = document.getElementById('end-date').value;
+        const scheme = document.getElementById('annual-scheme').value;
+        const taken = parseFloat(document.getElementById('days-taken').value) || 0;
+
+        if (startVal && endVal) {
+          const start = new Date(startVal);
+          const end = new Date(endVal);
+          const diffTime = end.getTime() - start.getTime();
+          const diffDays = Math.max(0, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+          const totalYears = diffDays / 365.25;
+
+          let annualRate = 21;
+          if (scheme === 'auto') {
+            annualRate = (totalYears >= 5) ? 30 : 21;
+          } else if (scheme === '30') {
+            annualRate = 30;
+          } else {
+            annualRate = 21;
+          }
+
+          const accrued = (annualRate / 365) * diffDays;
+          unusedDays = Math.max(0, accrued - taken);
+        }
+      }
+
+      const totalEncashment = dailyWage * unusedDays;
+
+      // Format numbers
+      const fmtSAR = (val) => val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const fmtDays = (val) => val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      document.getElementById('res-total-sar').textContent = fmtSAR(totalEncashment);
+      document.getElementById('res-gross-monthly').textContent = 'SAR ' + fmtSAR(grossWage);
+      document.getElementById('res-daily-wage').textContent = 'SAR ' + fmtSAR(dailyWage);
+      document.getElementById('res-days-count').textContent = fmtDays(unusedDays) + (currentLang === 'ar' ? ' يوم' : ' Days');
+      document.getElementById('res-hourly-wage').textContent = 'SAR ' + fmtSAR(hourlyWage);
+
+      const formulaLine = currentLang === 'ar'
+        ? `بناءً على ${fmtDays(unusedDays)} يوم متبقي بواقع ${fmtSAR(dailyWage)} ريال/يوم`
+        : `Based on ${fmtDays(unusedDays)} unused days @ ${fmtSAR(dailyWage)} SAR/day`;
+      document.getElementById('res-formula-line').textContent = formulaLine;
+    }
+
+    function exportCSV() {
+      const basic = document.getElementById('basic-wage').value;
+      const housing = document.getElementById('housing-wage').value;
+      const transport = document.getElementById('transport-wage').value;
+      const other = document.getElementById('other-wage').value;
+      const totalMonthly = document.getElementById('res-gross-monthly').textContent;
+      const dailyWage = document.getElementById('res-daily-wage').textContent;
+      const leaveBalance = document.getElementById('res-days-count').textContent;
+      const totalEncashment = document.getElementById('res-total-sar').textContent;
+
+      const csvContent = "data:text/csv;charset=utf-8,"
+        + "Item,Value\n"
+        + `Basic Salary (SAR),${basic}\n`
+        + `Housing Allowance (SAR),${housing}\n`
+        + `Transport Allowance (SAR),${transport}\n`
+        + `Other Allowances (SAR),${other}\n`
+        + `Total Actual Monthly Wage,${totalMonthly.replace('SAR ', '')}\n`
+        + `Calculated Daily Rate,${dailyWage.replace('SAR ', '')}\n`
+        + `Unused Leave Days,${leaveBalance}\n`
+        + `Total Encashment Payable (SAR),${totalEncashment}\n`
+        + `Statutory Reference,Saudi Labor Law Royal Decree M51 Articles 109 & 111\n`;
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "saudi_annual_leave_settlement.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initial run
+    window.addEventListener('DOMContentLoaded', () => {
+      calculateAll();
+    });
+  </script>
+</body>
+</html>
