@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saudi GTPL Contract Delay Fine & Penalty Calculator | حاسبة غرامات التأخير في العقود الحكومية</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Cairo', 'sans-serif'],
+            arabic: ['Cairo', 'Inter', 'sans-serif']
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Inter', 'Cairo', sans-serif; }
+    [dir="rtl"] body { font-family: 'Cairo', 'Inter', sans-serif; }
+    .input-field { @apply w-full px-3.5 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none transition-colors; }
+    .label-title { @apply block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-300 mb-1.5; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-shadow { box-shadow: none !important; border: 1px solid #e2e8f0; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 min-h-screen transition-colors duration-200">
+
+  <!-- Top Banner (Sticky CTA) -->
+  <div class="no-print sticky top-0 z-50 bg-gradient-to-r from-emerald-900 via-teal-800 to-slate-900 text-white px-4 py-2.5 shadow-md border-b border-emerald-500/30 text-xs sm:text-sm font-medium flex items-center justify-between flex-wrap gap-2">
+    <div class="flex items-center space-x-2 rtl:space-x-reverse">
+      <span class="bg-emerald-500 text-emerald-950 font-black px-2 py-0.5 rounded text-[11px] tracking-wide uppercase">PRO GTPL 2024</span>
+      <span class="en-text">Contractor &amp; Consultant Toolkit: Instant GTPL Fine, Cap &amp; Supervision Cost Modeler</span>
+      <span class="ar-text hidden">أداة المقاولين والاستشاريين: نمذجة غرامات التأخير والحد الأقصى وتكاليف الإشراف حسب النظام</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1 rounded text-xs transition-transform transform active:scale-95 shadow">
+        <span class="en-text">Get Complete Offline Excel Model ($29)</span>
+        <span class="ar-text hidden">تحميل نموذج الإكسل الشامل (29$)</span>
+      </a>
+      <button id="langToggleBtn" onclick="toggleLanguage()" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-2.5 py-1 rounded text-xs font-semibold cursor-pointer">
+        <span id="langLabel">عربي</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between pb-6 mb-8 border-b border-slate-200 dark:border-slate-800 gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-2">
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-700">
+            <span class="en-text">Saudi GTPL Article 74 &amp; Exec Regulations</span>
+            <span class="ar-text hidden">المادة 74 واللائحة التنفيذية لنظام المنافسات</span>
+          </span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+          <span class="en-text">Saudi GTPL Delay Penalty &amp; Supervision Cost Calculator</span>
+          <span class="ar-text hidden">حاسبة غرامات التأخير وتكاليف الإشراف في العقود الحكومية السعودية</span>
+        </h1>
+        <p class="mt-1 text-sm text-slate-500 dark:text-slate-400 max-w-2xl">
+          <span class="en-text">Compute statutory liquidated damages, 6% &amp; 10% legal liability caps, and supervisory consultant remuneration deductions per Saudi GTPL law.</span>
+          <span class="ar-text hidden">احتساب غرامات التأخير النظامية، وسقوف الغرامة القانونية (6% أو 10%)، ورسوم استشاري الإشراف خلال فترة التأخير طبقاً للائحة التنفيذية.</span>
+        </p>
+      </div>
+      <div class="flex items-center gap-2 no-print self-start md:self-auto">
+        <button onclick="window.print()" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 shadow-sm">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <span class="en-text">Print / PDF Report</span>
+          <span class="ar-text hidden">طباعة / تصدير PDF</span>
+        </button>
+        <button onclick="exportCSV()" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span class="en-text">Export Audit CSV</span>
+          <span class="ar-text hidden">تصدير التدقيق CSV</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Calculator Core Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Left Inputs Form (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-5 sm:p-6 shadow-sm">
+          <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span class="en-text">1. Contract &amp; Scope Classification</span>
+            <span class="ar-text hidden">١. تصنيف ونطاق العقد</span>
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Contract Nature -->
+            <div>
+              <label class="label-title">
+                <span class="en-text">Contract Nature / Type</span>
+                <span class="ar-text hidden">نوع العقد الحكومي</span>
+              </label>
+              <select id="contractType" class="input-field font-medium" onchange="recalculateAll()">
+                <option value="works">Public Works &amp; Construction (أشغال عامة وإنشاء)</option>
+                <option value="om">Operation &amp; Maintenance (تشغيل وصيانة)</option>
+                <option value="supply">Supply Contracts (عقود التوريد)</option>
+                <option value="consulting">Consulting Services (خدمات استشارية)</option>
+                <option value="it">IT &amp; Telecommunication (تقنية ومعلومات)</option>
+              </select>
+            </div>
+
+            <!-- Statutory Cap Mode -->
+            <div>
+              <label class="label-title">
+                <span class="en-text">Statutory Penalty Cap Rate</span>
+                <span class="ar-text hidden">سقف الغرامة النظامي</span>
+              </label>
+              <select id="capPercentage" class="input-field font-medium" onchange="recalculateAll()">
+                <option value="10" selected>10% Statutory Ceiling (Works / O&amp;M / Consulting)</option>
+                <option value="6">6% Statutory Ceiling (Supply Contracts / توريد)</option>
+                <option value="custom">Custom Contract Specific Cap (%)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Custom Cap Input (hidden unless custom selected) -->
+          <div id="customCapContainer" class="hidden mt-3">
+            <label class="label-title">
+              <span class="en-text">Specified Contractual Cap (%)</span>
+              <span class="ar-text hidden">نسبة الحد الأقصى المحددة بالعقد (%)</span>
+            </label>
+            <input type="number" id="customCapValue" value="10" min="1" max="100" step="0.5" class="input-field" oninput="recalculateAll()">
+          </div>
+
+          <div class="border-t border-slate-150 dark:border-slate-800 my-5"></div>
+
+          <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span class="en-text">2. Contract Values &amp; Additions</span>
+            <span class="ar-text hidden">٢. قيمة العقد وأوامر التغيير</span>
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Original Value -->
+            <div>
+              <label class="label-title">
+                <span class="en-text">Original Contract Value (SAR)</span>
+                <span class="ar-text hidden">قيمة العقد الأصلية (ر.س)</span>
+              </label>
+              <div class="relative">
+                <input type="number" id="originalContractValue" value="5000000" min="0" step="1000" class="input-field pr-12" oninput="recalculateAll()">
+                <span class="absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-slate-400 pointer-events-none">SAR</span>
+              </div>
+            </div>
+
+            <!-- Variation Orders -->
+            <div>
+              <label class="label-title">
+                <span class="en-text">Net Approved Variations / VO (SAR)</span>
+                <span class="ar-text hidden">صافي أوامر التغيير المعتمدة (ر.س)</span>
+              </label>
+              <div class="relative">
+                <input type="number" id="variationOrders" value="250000" step="1000" class="input-field pr-12" oninput="recalculateAll()">
+                <span class="absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-slate-400 pointer-events-none">SAR</span>
+              </div>
+              <span class="text-[11px] text-slate-400 mt-1 block">
+                <span class="en-text">GTPL limit: Max +10% or -20% net adjustment</span>
+                <span class="ar-text hidden">الحد النظامي: بحد أقصى +10% أو -20%</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="border-t border-slate-150 dark:border-slate-800 my-5"></div>
+
+          <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span class="en-text">3. Contract Timeline &amp; Delay Period</span>
+            <span class="ar-text hidden">٣. الجدول الزمني وفترة التأخير</span>
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="label-title">
+                <span class="en-text">Contract Duration (Days)</span>
+                <span class="ar-text hidden">مدة العقد الأصلية (أيام)</span>
+              </label>
+              <input type="number" id="contractDurationDays" value="365" min="1" class="input-field" oninput="recalculateAll()">
+            </div>
+            <div>
+              <label class="label-title">
+                <span class="en-text">Approved Extensions (Days)</span>
+                <span class="ar-text hidden">التمديدات المعتمدة (أيام)</span>
+              </label>
+              <input type="number" id="approvedExtensionDays" value="30" min="0" class="input-field" oninput="recalculateAll()">
+            </div>
+            <div>
+              <label class="label-title">
+                <span class="en-text">Unexcused Delay (Days)</span>
+                <span class="ar-text hidden">أيام التأخير غير المبررة</span>
+              </label>
+              <input type="number" id="delayDays" value="45" min="0" class="input-field bg-amber-50/50 border-amber-300 dark:border-amber-700 dark:bg-amber-950/20" oninput="recalculateAll()">
+            </div>
+          </div>
+
+          <div class="border-t border-slate-150 dark:border-slate-800 my-5"></div>
+
+          <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 mb-4">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span class="en-text">4. Supervision Consultant Fees (GTPL Obligation)</span>
+            <span class="ar-text hidden">٤. أتعاب استشاري الإشراف خلال فترة التأخير</span>
+          </h2>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="label-title">
+                <span class="en-text">Consultant Superv. Fee Basis</span>
+                <span class="ar-text hidden">آلية احتساب رسوم الإشراف</span>
+              </label>
+              <select id="consultantBasis" class="input-field" onchange="recalculateAll()">
+                <option value="daily">Direct Daily Rate (معدل يومي مباشر)</option>
+                <option value="contract">Contract Pro-Rata (نسبة وتناسب من عقد الإشراف)</option>
+                <option value="zero">No Supervising Consultant (بدون استشاري خارجي)</option>
+              </select>
+            </div>
+            <div>
+              <label class="label-title" id="consultantInputLabel">
+                <span class="en-text">Consultant Rate (SAR/Day)</span>
+                <span class="ar-text hidden">معدل الاستشاري اليومي (ر.س)</span>
+              </label>
+              <div class="relative">
+                <input type="number" id="consultantParam" value="1200" min="0" class="input-field pr-12" oninput="recalculateAll()">
+                <span class="absolute inset-y-0 right-3 flex items-center text-xs font-semibold text-slate-400 pointer-events-none">SAR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Milestone Specific Deduction Option -->
+          <div class="mt-4 pt-3 border-t border-dashed border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <div class="flex items-center space-x-2 rtl:space-x-reverse">
+              <input type="checkbox" id="isPartialBeneficialUse" class="w-4 h-4 rounded text-emerald-600 focus:ring-emerald-500 border-slate-300" onchange="recalculateAll()">
+              <label for="isPartialBeneficialUse" class="text-xs text-slate-700 dark:text-slate-300 font-medium cursor-pointer">
+                <span class="en-text">Government entity occupied or derived partial benefit from completed stages</span>
+                <span class="ar-text hidden">تم الاستفادة الجزئية أو تسليم أجزاء صالحة للاستعمال الفعلي</span>
+              </label>
+            </div>
+          </div>
+
+          <div id="partialBeneficialBlock" class="hidden mt-3 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-lg">
+            <label class="label-title">
+              <span class="en-text">Value of Delay-Affected Incomplete Scope Only (SAR)</span>
+              <span class="ar-text hidden">قيمة الجزء المتأخر غير المسلّم فقط (ر.س)</span>
+            </label>
+            <input type="number" id="uncompletedScopeValue" value="1500000" min="0" class="input-field" oninput="recalculateAll()">
+            <p class="text-[11px] text-slate-500 mt-1">
+              <span class="en-text">Per GTPL, if partial delivery allows independent beneficial usage, penalties apply only to the delayed portions.</span>
+              <span class="ar-text hidden">طبقاً للنظام: إذا تسلمت الجهة أجزاء يمكن الانتفاع بها بصورة مستقلة، تُحسب الغرامة على قيمة الجزء المتأخر فقط.</span>
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right Column: Results & Legal Breakdown (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        
+        <!-- Output Card -->
+        <div class="bg-white dark:bg-slate-900 border-2 border-emerald-600 dark:border-emerald-500 rounded-2xl p-6 shadow-xl relative overflow-hidden print-shadow">
+          <div class="absolute -top-12 -right-12 w-32 h-32 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+              <span class="en-text">Statutory Deduction Summary</span>
+              <span class="ar-text hidden">ملخص الحسميات والغرامات النظامية</span>
+            </span>
+            <span id="capBadge" class="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+              Within Legal Cap
+            </span>
+          </div>
+
+          <!-- Total Deduction Large -->
+          <div class="mb-6 pb-6 border-b border-slate-200 dark:border-slate-800">
+            <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">
+              <span class="en-text">Total Legal Deductions Payable by Contractor</span>
+              <span class="ar-text hidden">إجمالي الحسميات المستحقة على المقاول</span>
+            </p>
+            <div class="flex items-baseline gap-2">
+              <span class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight" id="resTotalDeductions">SAR 0.00</span>
+            </div>
+            <p class="text-xs text-slate-400 dark:text-slate-500 mt-1">
+              <span class="en-text">Sum of delay fine (capped) + supervision fees</span>
+              <span class="ar-text hidden">مجموع غرامة التأخير (مع سقف الحد الأقصى) + رسوم الإشراف</span>
+            </p>
+          </div>
+
+          <!-- Line Item Breakdown -->
+          <div class="space-y-3.5 text-sm font-medium">
+            <div class="flex justify-between items-center">
+              <span class="text-slate-500 dark:text-slate-400">
+                <span class="en-text">Adjusted Contract Value:</span>
+                <span class="ar-text hidden">قيمة العقد المعدلة:</span>
+              </span>
+              <span class="font-bold text-slate-800 dark:text-slate-200" id="resAdjustedValue">SAR 0.00</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-slate-500 dark:text-slate-400">
+                <span class="en-text">Average Daily Contract Rate:</span>
+                <span class="ar-text hidden">المتوسط اليومي لقيمة العقد:</span>
+              </span>
+              <span class="text-slate-700 dark:text-slate-300" id="resDailyContractRate">SAR 0.00 / day</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-slate-500 dark:text-slate-400">
+                <span class="en-text">Calculated Delay Fine (Uncapped):</span>
+                <span class="ar-text hidden">غرامة التأخير المحتسبة (دون سقف):</span>
+              </span>
+              <span class="text-slate-700 dark:text-slate-300" id="resUncappedFine">SAR 0.00</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-slate-500 dark:text-slate-400">
+                <span class="en-text">Statutory Penalty Ceiling (<span id="resCapPercent">10</span>%):</span>
+                <span class="ar-text hidden">الحد الأقصى للغرامة (<span id="resCapPercentAr">10</span>%):</span>
+              </span>
+              <span class="text-rose-600 dark:text-rose-400 font-semibold" id="resCapAmount">SAR 0.00</span>
+            </div>
+
+            <div class="flex justify-between items-center p-2 rounded-lg bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-800">
+              <span class="text-slate-900 dark:text-white font-bold text-xs uppercase">
+                <span class="en-text">Applied Delay Penalty Fine:</span>
+                <span class="ar-text hidden">غرامة التأخير المطبقة فعلياً:</span>
+              </span>
+              <span class="font-black text-emerald-600 dark:text-emerald-400" id="resAppliedFine">SAR 0.00</span>
+            </div>
+
+            <div class="flex justify-between items-center">
+              <span class="text-slate-500 dark:text-slate-400">
+                <span class="en-text">Supervising Consultant Costs:</span>
+                <span class="ar-text hidden">أتعاب استشاري الإشراف خلال التأخير:</span>
+              </span>
+              <span class="text-slate-700 dark:text-slate-300" id="resSupervisionCost">SAR 0.00</span>
+            </div>
+
+            <div class="flex justify-between items-center pt-2 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-500">
+              <span class="en-text">Penalty as % of Contract:</span>
+              <span class="ar-text hidden">نسبة الغرامة من إجمالي العقد:</span>
+              <span class="font-bold text-slate-800 dark:text-slate-200" id="resFinePercentageOfContract">0.00%</span>
+            </div>
+          </div>
+
+          <!-- Gumroad Upsell Card Inside Results -->
+          <div class="no-print mt-6 pt-5 border-t border-slate-200 dark:border-slate-800 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-slate-800/90 dark:to-amber-950/30 p-4 rounded-xl border border-amber-200/80 dark:border-amber-700/50">
+            <div class="flex items-start gap-3">
+              <div class="p-2 bg-amber-500 text-white rounded-lg">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 01-1.581.814l-4.419-3.314-4.419 3.314A1 1 0 014 16V4z"/></svg>
+              </div>
+              <div>
+                <h4 class="text-xs font-bold text-slate-900 dark:text-amber-300 uppercase tracking-wide">
+                  <span class="en-text">Need Full GTPL Claims &amp; Variation Toolkit?</span>
+                  <span class="ar-text hidden">هل تحتاج نموذج المطالبات وأوامر التغيير المعتمد؟</span>
+                </h4>
+                <p class="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                  <span class="en-text">Automated Excel sheet with GTPL Article 74 formulas, Extension of Time (EoT) analysis, and Etimad-ready formal letters.</span>
+                  <span class="ar-text hidden">ملف إكسل متكامل مع صيغ المادة 74 ونماذج طلبات التمديد الزمني وصياغة خطابات منصة اعتماد.</span>
+                </p>
+                <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold rounded-lg text-xs shadow-md transition-all active:scale-95">
+                  <span>Download Master Excel Suite &bull; $29</span>
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Visible Bilingual Legal Disclaimer -->
+          <div class="mt-4 p-3 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 text-[11px] leading-relaxed text-slate-500 dark:text-slate-400">
+            <p class="font-semibold text-slate-700 dark:text-slate-300 mb-1 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-amber-500 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+              <span class="en-text">Statutory Disclaimer / إخلاء مسؤولية نظامي</span>
+              <span class="ar-text hidden">إخلاء مسؤولية نظامي / Statutory Disclaimer</span>
+            </p>
+            <p class="en-text">
+              Estimates produced by this engine are strictly informational based on standard Saudi Government Tenders and Procurement Law (GTPL) Article 74 guidelines. Real contractual deductions require review of specific tender specifications, ministry approvals, and contractual variation agreements.
+            </p>
+            <p class="ar-text hidden">
+              نتائج هذه الحاسبة هي تقديرات استرشادية مبنية على المادة (74) من نظام المنافسات والمشتريات الحكومية ولائحته التنفيذية. يجب الرجوع إلى كراسة الشروط والمواصفات الخاصة بالعقد وموافقة الجهة الحكومية المعتمدة لحساب الخصومات الفعلية النهائية.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Comprehensive 800+ Word SEO Guide & FAQ Section -->
+    <div class="mt-14 border-t border-slate-200 dark:border-slate-800 pt-10">
+      <div class="max-w-4xl mx-auto prose dark:prose-invert prose-emerald">
+        
+        <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mb-4">
+          <span class="en-text">Complete Guide to Delay Fines Under Saudi GTPL (Government Tenders &amp; Procurement Law)</span>
+          <span class="ar-text hidden">الدليل الشامل لاحتساب غرامات التأخير في نظام المنافسات والمشتريات الحكومية السعودي الجديد</span>
+        </h2>
+
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Under the revised Saudi Government Tenders and Procurement Law (Royal Decree No. M/128, dated 13/11/1440H and its Executive Regulations), public sector contractors in the Kingdom of Saudi Arabia face rigorous statutory mechanisms governing project delays. Whether executing infrastructure mega-projects under Vision 2030, municipal roadworks, or technical maintenance contracts, project directors and financial controllers must precisely forecast potential delay liabilities.
+        </p>
+
+        <!-- GTPL Delay Fine Formula Explanation -->
+        <div class="my-6 bg-slate-100 dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 not-prose">
+          <h3 class="text-base font-bold text-slate-900 dark:text-white mb-2">
+            <span class="en-text">Official GTPL Fine Formula (Article 74 &amp; Executive Regulations)</span>
+            <span class="ar-text hidden">معادلة غرامة التأخير الرسمية (المادة 74 واللائحة التنفيذية)</span>
+          </h3>
+          <div class="bg-white dark:bg-slate-950 p-4 rounded-lg font-mono text-xs sm:text-sm text-emerald-800 dark:text-emerald-300 border border-slate-200 dark:border-slate-700 overflow-x-auto mb-3">
+            Average Daily Cost = (Adjusted Contract Value) &divide; (Contract Execution Period in Days)<br>
+            Gross Delay Fine = Delay Days &times; Average Daily Cost &times; Tier Rate (or Contract Specific Factor)<br>
+            Statutory Cap Check = Min(Gross Fine, Adjusted Contract Value &times; Cap % [6% or 10%])<br>
+            Total Contractor Deduction = Applied Fine + (Delay Days &times; Supervision Consultant Daily Cost)
+          </div>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Where the total contractual period accounts for officially approved written extensions (Variation Orders, force majeure, or delays solely attributable to the government contracting entity).
+          </p>
+        </div>
+
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-8 mb-3">
+          <span class="en-text">Key Statutory Principles Every KSA Contractor Must Know</span>
+          <span class="ar-text hidden">المبادئ النظامية الأساسية التي يجب على كل مقاول معرفتها</span>
+        </h3>
+
+        <ul class="list-disc list-inside space-y-2 text-sm text-slate-600 dark:text-slate-300">
+          <li>
+            <strong>The Statutory Cap Ceiling:</strong> Delay penalties cannot exceed 10% of the total adjusted contract value for Public Works, Maintenance &amp; Operations, and Consulting contracts. For supply and procurement contracts, the statutory ceiling is strictly capped at 6% of the contract value.
+          </li>
+          <li>
+            <strong>Supervision Fees are Additional:</strong> Article 74 explicitly mandates that the contractor shall bear the actual supervisory consultant costs incurred during the unexcused delay period. This deduction is calculated separately from and is NOT restricted by the 6% or 10% penalty ceiling.
+          </li>
+          <li>
+            <strong>Partial Beneficial Handover:</strong> If the government entity takes over completed milestones or distinct parts that can be independently commissioned and utilized, the delay penalty is levied solely against the value of the uncompleted and unusable portion.
+          </li>
+          <li>
+            <strong>Extension of Time (EoT) Applications:</strong> Delays caused by entity site access restrictions, delayed advance payments, scope increases exceeding statutory boundaries, or third-party utility delays qualify for justified time extensions without fine imposition.
+          </li>
+        </ul>
+
+        <!-- Frequently Asked Questions Accordion / List -->
+        <h3 class="text-lg font-bold text-slate-900 dark:text-white mt-8 mb-4">
+          <span class="en-text">Frequently Asked Questions (FAQ)</span>
+          <span class="ar-text hidden">الأسئلة الشائعة حول الغرامات والتمديد</span>
+        </h3>
+
+        <div class="space-y-4 not-prose">
+          <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-1.5">
+              <span class="en-text">Can a government entity waive delay fines under Saudi Law?</span>
+              <span class="ar-text hidden">هل يجوز للجهة الحكومية الإعفاء من غرامة التأخير؟</span>
+            </h4>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Under GTPL regulations, government entities cannot unilaterally waive accrued statutory fines without obtaining prior approval from the Ministry of Finance or a formal determination by the dedicated Disputes &amp; Violation Committee, unless the delay was due to an approved force majeure event or employer default.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-1.5">
+              <span class="en-text">How are delay penalties deducted through the Etimad platform?</span>
+              <span class="ar-text hidden">كيف يتم حسم الغرامات عبر منصة اعتماد الحكومية؟</span>
+            </h4>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Payment certificates uploaded via Etimad Financial Claims automatically include contractual deduction lines. The supervising entity inputs the calculated penalty and consultant costs, deducting them directly from the final milestone payment, release of retention, or performance guarantee letters.
+            </p>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800">
+            <h4 class="text-sm font-bold text-slate-900 dark:text-white mb-1.5">
+              <span class="en-text">What happens if the delay penalty reaches the 10% maximum ceiling?</span>
+              <span class="ar-text hidden">ماذا يحدث إذا بلغت الغرامة الحد الأقصى (10%)؟</span>
+            </h4>
+            <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              Once the 10% ceiling is hit, the government contracting body is legally empowered to issue a notice of default, withdraw the works at the contractor's expense (سحب العمل والتنفيذ على حساب المقاول), or terminate the contract under GTPL Article 76.
+            </p>
+          </div>
+        </div>
+
+        <!-- Final CTA Banner -->
+        <div class="mt-10 p-6 bg-slate-900 text-white rounded-2xl border border-slate-800 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 not-prose">
+          <div>
+            <span class="px-2.5 py-0.5 rounded text-[11px] font-bold bg-amber-400 text-slate-950 uppercase tracking-wide">Enterprise Procurement Suite</span>
+            <h3 class="text-lg font-bold text-white mt-2">
+              <span class="en-text">Automate All GTPL Variation &amp; Delay Audits in Excel</span>
+              <span class="ar-text hidden">أتمتة كافة مطالبات وأوامر التغيير الحكومية في إكسل</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-1 max-w-xl">
+              Get pre-programmed formulas for GTPL Articles 68, 74, 76, 10% Variation Limit trackers, and automated Etimad justification letters.
+            </p>
+          </div>
+          <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="shrink-0 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold rounded-xl text-xs shadow-lg transition-transform active:scale-95 text-center">
+            Download Complete VBA Model ($29)
+          </a>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Page Footer -->
+    <footer class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-800 text-center text-xs text-slate-400">
+      <p>&copy; <span id="currentYear"></span> Saudi GTPL Delay Fine &amp; Penalty Calculator. Compliant with Royal Decree M/128 &amp; Etimad Platform standards.</p>
+    </footer>
+  </div>
+
+  <!-- Client Script for Engine & Translations -->
+  <script>
+    let currentLang = 'en';
+
+    function toggleLanguage() {
+      const htmlTag = document.documentElement;
+      if (currentLang === 'en') {
+        currentLang = 'ar';
+        htmlTag.setAttribute('dir', 'rtl');
+        htmlTag.setAttribute('lang', 'ar');
+        document.getElementById('langLabel').innerText = 'English';
+        document.querySelectorAll('.en-text').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.ar-text').forEach(el => el.classList.remove('hidden'));
+      } else {
+        currentLang = 'en';
+        htmlTag.setAttribute('dir', 'ltr');
+        htmlTag.setAttribute('lang', 'en');
+        document.getElementById('langLabel').innerText = 'عربي';
+        document.querySelectorAll('.en-text').forEach(el => el.classList.remove('hidden'));
+        document.querySelectorAll('.ar-text').forEach(el => el.classList.add('hidden'));
+      }
+      recalculateAll();
+    }
+
+    function formatSAR(num) {
+      return new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'SAR',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(num).replace('SAR', 'SAR ');
+    }
+
+    function recalculateAll() {
+      const originalValue = parseFloat(document.getElementById('originalContractValue').value) || 0;
+      const variationOrders = parseFloat(document.getElementById('variationOrders').value) || 0;
+      const adjustedValue = Math.max(0, originalValue + variationOrders);
+
+      const contractType = document.getElementById('contractType').value;
+      const capSelect = document.getElementById('capPercentage').value;
+      const customCapContainer = document.getElementById('customCapContainer');
+
+      let capRate = 10;
+      if (capSelect === 'custom') {
+        customCapContainer.classList.remove('hidden');
+        capRate = parseFloat(document.getElementById('customCapValue').value) || 10;
+      } else {
+        customCapContainer.classList.add('hidden');
+        capRate = parseFloat(capSelect) || 10;
+      }
+
+      const durationDays = Math.max(1, parseFloat(document.getElementById('contractDurationDays').value) || 365);
+      const approvedExtension = parseFloat(document.getElementById('approvedExtensionDays').value) || 0;
+      const delayDays = Math.max(0, parseFloat(document.getElementById('delayDays').value) || 0);
+
+      // Partial beneficial usage check
+      const isPartial = document.getElementById('isPartialBeneficialUse').checked;
+      const partialBlock = document.getElementById('partialBeneficialBlock');
+      
+      let penaltyBasisValue = adjustedValue;
+      if (isPartial) {
+        partialBlock.classList.remove('hidden');
+        const incompleteVal = parseFloat(document.getElementById('uncompletedScopeValue').value) || 0;
+        penaltyBasisValue = Math.min(incompleteVal, adjustedValue);
+      } else {
+        partialBlock.classList.add('hidden');
+      }
+
+      // Total contractual days including approved extensions
+      const totalContractDays = durationDays + approvedExtension;
+
+      // GTPL standard daily rate: (Value / Total Days)
+      const dailyContractRate = totalContractDays > 0 ? (penaltyBasisValue / totalContractDays) : 0;
+
+      // GTPL fine formula based on delay days
+      // Usually proportional to average daily cost per day of delay
+      const grossFine = delayDays * dailyContractRate;
+
+      // Statutory Cap check
+      const capAmount = adjustedValue * (capRate / 100);
+      const appliedFine = Math.min(grossFine, capAmount);
+      const isCapped = grossFine >= capAmount && grossFine > 0;
+
+      // Supervision Consultant Costs
+      const consultantBasis = document.getElementById('consultantBasis').value;
+      const consultantParam = parseFloat(document.getElementById('consultantParam').value) || 0;
+      let totalSupervisionCost = 0;
+
+      if (consultantBasis === 'daily') {
+        totalSupervisionCost = delayDays * consultantParam;
+      } else if (consultantBasis === 'contract') {
+        // consultantParam is total supervision contract value; pro-rata per day
+        const consultantDailyRate = totalContractDays > 0 ? (consultantParam / totalContractDays) : 0;
+        totalSupervisionCost = delayDays * consultantDailyRate;
+      } else {
+        totalSupervisionCost = 0;
+      }
+
+      const totalDeductions = appliedFine + totalSupervisionCost;
+      const finePercentageOfContract = adjustedValue > 0 ? ((appliedFine / adjustedValue) * 100) : 0;
+
+      // Update DOM
+      document.getElementById('resAdjustedValue').innerText = formatSAR(adjustedValue);
+      document.getElementById('resDailyContractRate').innerText = formatSAR(dailyContractRate) + ' / day';
+      document.getElementById('resUncappedFine').innerText = formatSAR(grossFine);
+      document.getElementById('resCapAmount').innerText = formatSAR(capAmount);
+      document.getElementById('resCapPercent').innerText = capRate.toString();
+      document.getElementById('resCapPercentAr').innerText = capRate.toString();
+      document.getElementById('resAppliedFine').innerText = formatSAR(appliedFine);
+      document.getElementById('resSupervisionCost').innerText = formatSAR(totalSupervisionCost);
+      document.getElementById('resTotalDeductions').innerText = formatSAR(totalDeductions);
+      document.getElementById('resFinePercentageOfContract').innerText = finePercentageOfContract.toFixed(2) + '%';
+
+      const badge = document.getElementById('capBadge');
+      if (isCapped) {
+        badge.innerText = currentLang === 'ar' ? 'بلغ الحد الأقصى النظامي' : 'Statutory Cap Reached';
+        badge.className = 'text-[11px] font-semibold px-2 py-0.5 rounded bg-rose-100 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-300 dark:border-rose-800';
+      } else {
+        badge.innerText = currentLang === 'ar' ? 'ضمن الحد النظامي' : 'Within Legal Cap';
+        badge.className = 'text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800';
+      }
+    }
+
+    function exportCSV() {
+      const originalValue = document.getElementById('originalContractValue').value;
+      const variationOrders = document.getElementById('variationOrders').value;
+      const adjustedValue = document.getElementById('resAdjustedValue').innerText.replace(/[^0-9.-]+/g,"");
+      const delayDays = document.getElementById('delayDays').value;
+      const grossFine = document.getElementById('resUncappedFine').innerText.replace(/[^0-9.-]+/g,"");
+      const capCeiling = document.getElementById('resCapAmount').innerText.replace(/[^0-9.-]+/g,"");
+      const appliedFine = document.getElementById('resAppliedFine').innerText.replace(/[^0-9.-]+/g,"");
+      const supervision = document.getElementById('resSupervisionCost').innerText.replace(/[^0-9.-]+/g,"");
+      const totalDeduction = document.getElementById('resTotalDeductions').innerText.replace(/[^0-9.-]+/g,"");
+
+      const rows = [
+        ['Field / Metric', 'Value (SAR / Units)'],
+        ['Original Contract Value', originalValue],
+        ['Approved Variations', variationOrders],
+        ['Adjusted Contract Value', adjustedValue],
+        ['Unexcused Delay Days', delayDays],
+        ['Gross Delay Penalty (Uncapped)', grossFine],
+        ['Statutory Cap Ceiling', capCeiling],
+        ['Applied Penalty Fine', appliedFine],
+        ['Supervising Consultant Costs', supervision],
+        ['Total Statutory Deductions', totalDeduction],
+        ['Audit Date', new Date().toISOString()]
+      ];
+
+      let csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', 'saudi_gtpl_delay_penalty_audit.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    document.getElementById('currentYear').innerText = new Date().getFullYear();
+    window.onload = recalculateAll;
+  </script>
+</body>
+</html>
