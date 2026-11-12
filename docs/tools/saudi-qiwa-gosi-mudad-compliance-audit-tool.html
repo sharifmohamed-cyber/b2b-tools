@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi Qiwa, GOSI & Mudad Compliance Audit Tool | أداة تدقيق الامتثال</title>
+    <meta name="description" content="Perform an instant multi-platform compliance audit for Saudi SMEs across Qiwa, GOSI, and Mudad systems. Identify wage protection gaps and penalties.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Top Sticky Conversion Banner -->
+    <div class="bg-emerald-700 text-white py-2.5 px-4 text-center text-sm font-medium sticky top-0 z-50 shadow-md flex items-center justify-center gap-2 flex-wrap">
+        <span>🚀 Need complete payroll and compliance tracking offline? Get the Full Excel & VBA Master Template Suite.</span>
+        <a href="https://gumroad.com" target="_blank" class="bg-white text-emerald-800 px-3 py-1 rounded text-xs font-bold hover:bg-emerald-50 transition shadow-sm">Download ($29)</a>
+    </div>
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 py-4 px-6">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-slate-900" id="main-title">Saudi Qiwa, GOSI & Mudad Compliance Audit Tool</h1>
+                <p class="text-xs text-slate-500" id="sub-title">Verify WPS wage consistency, contract registration, and social insurance contributions.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleLanguage()" id="lang-btn" class="px-3 py-1.5 border border-slate-300 rounded-lg text-xs font-semibold hover:bg-slate-100 transition">
+                    العربية
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Input Form Section (2 cols) -->
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+            <h2 class="text-lg font-bold text-slate-800 mb-6 pb-2 border-b border-slate-100 flex items-center gap-2">
+                <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <span id="sec-input-title">Company & Payroll Audit Parameters</span>
+            </h2>
+
+            <form id="audit-form" class="space-y-6" onsubmit="event.preventDefault(); calculateAudit();">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2" id="lbl-saudi-emp">Total Saudi Employees</label>
+                        <input type="number" id="saudi_emp" value="15" min="0" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" oninput="calculateAudit()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2" id="lbl-expat-emp">Total Expat Employees</label>
+                        <input type="number" id="expat_emp" value="35" min="0" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" oninput="calculateAudit()">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2" id="lbl-avg-salary">Average Monthly Basic + Housing (SAR)</label>
+                        <input type="number" id="avg_salary" value="6000" min="0" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" oninput="calculateAudit()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2" id="lbl-mudad-delay">Mudad WPS Monthly Transfer Delay (Days)</label>
+                        <input type="number" id="mudad_delay" value="2" min="0" max="30" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" oninput="calculateAudit()">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2" id="lbl-unregistered-qiwa">Contracts Unregistered on Qiwa (%)</label>
+                        <input type="number" id="unregistered_qiwa" value="5" min="0" max="100" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" oninput="calculateAudit()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 mb-2" id="lbl-gosi-mismatch">GOSI Wage vs Actual Payroll Mismatch (%)</label>
+                        <input type="number" id="gosi_mismatch" value="10" min="0" max="100" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm" oninput="calculateAudit()">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Summary Section (1 col) -->
+        <div class="space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                        <span id="sec-result-title">Compliance Risk Assessment</span>
+                    </h3>
+
+                    <div class="space-y-4 mb-6">
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <span class="block text-xs font-semibold text-slate-500" id="lbl-score-title">Overall Compliance Score</span>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span id="res-score" class="text-3xl font-extrabold text-emerald-600">88%</span>
+                                <span id="res-status" class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">Low Risk</span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 bg-slate-50 rounded-xl border border-slate-100">
+                            <span class="block text-xs font-semibold text-slate-500" id="lbl-penalty-title">Estimated Potential Fines / Penalties</span>
+                            <span id="res-penalty" class="text-2xl font-bold text-red-600 mt-1 block">SAR 3,500</span>
+                        </div>
+
+                        <div class="space-y-2 text-xs text-slate-600">
+                            <div class="flex justify-between">
+                                <span id="lbl-gosi-est">Est. Monthly GOSI Obligation:</span>
+                                <span id="res-gosi" class="font-semibold text-slate-800">SAR 52,500</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span id="lbl-mudad-status">Mudad WPS Status:</span>
+                                <span id="res-mudad" class="font-semibold text-emerald-600">Compliant (&lt;5 days)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span id="lbl-qiwa-status">Qiwa Contract Risk:</span>
+                                <span id="res-qiwa" class="font-semibold text-amber-600">Moderate Gap</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Results CTA Card -->
+                <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-5 rounded-xl text-center space-y-3">
+                    <h4 class="font-bold text-sm" id="cta-card-title">Automate Full Audits & WPS SIF Files</h4>
+                    <p class="text-xs text-slate-300" id="cta-card-desc">Get our complete Excel & VBA audit workbook with automated multi-platform error checking.</p>
+                    <a href="https://gumroad.com" target="_blank" class="block w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-4 rounded-lg text-xs transition shadow">
+                        Get Excel Master Template ($29)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Disclaimer -->
+            <div class="text-xs text-slate-400 p-4 bg-slate-100 rounded-xl leading-relaxed">
+                <span id="disclaimer-text">Disclaimer: This tool provides preliminary estimates based on Saudi Labor Law, GOSI, Qiwa, and Mudad guidelines. Official fines and platform statuses must be verified directly through official portal dashboards.</span>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- SEO Content Guide -->
+    <section class="bg-white border-t border-slate-200 py-12 px-6 mt-12">
+        <div class="max-w-4xl mx-auto space-y-8 text-slate-700">
+            <div class="border-b border-slate-200 pb-6">
+                <h2 class="text-2xl font-bold text-slate-900 mb-3" id="seo-h1">Complete Guide to Saudi Qiwa, GOSI & Mudad Compliance in 2025</h2>
+                <p class="text-sm text-slate-600" id="seo-lead">Operating a business in Saudi Arabia requires seamless alignment across three major governmental and semi-governmental platforms: Qiwa (Ministry of Human Resources and Social Development), GOSI (General Organization for Social Insurance), and Mudad (Wage Protection System). Failure to synchronize data across these portals results in heavy administrative fines, suspension of government services, and Nitaqat rating degradation.</p>
+            </div>
+
+            <div class="space-y-6">
+                <h3 class="text-xl font-bold text-slate-900" id="seo-h2-1">1. Qiwa Platform: Contract Digitization & Saudization</h3>
+                <p class="text-sm leading-relaxed" id="seo-p-1">Under MHRSD regulations, all employment contracts for both Saudi nationals and expatriates must be documented and digitally authenticated through the Qiwa platform. Unauthenticated contracts or discrepancies between registered salaries and actual payouts lead to immediate penalties and compromise the company's Saudization (Nitaqat) score.</p>
+
+                <h3 class="text-xl font-bold text-slate-900" id="seo-h2-2">2. GOSI Contribution & Wage Alignment</h3>
+                <p class="text-sm leading-relaxed" id="seo-p-2">GOSI contributions are calculated based on the employee's basic wage plus housing allowance. Employers must ensure that the wage reported on GOSI perfectly matches the salary transferred through Mudad SIF files. Any significant mismatch triggers automated audit flags.</p>
+
+                <h3 class="text-xl font-bold text-slate-900" id="seo-h2-3">3. Mudad Wage Protection System (WPS) Deadlines</h3>
+                <p class="text-sm leading-relaxed" id="seo-p-3">Mudad monitors timely wage payments. Salaries must be disbursed through certified WPS channels within agreed timelines. Delays exceeding statutory grace periods incur tiered fines starting from SAR 3,000 up to company-wide service suspensions.</p>
+            </div>
+
+            <div class="border-t border-slate-200 pt-8">
+                <h3 class="text-xl font-bold text-slate-900 mb-4" id="faq-title">Frequently Asked Questions</h3>
+                <div class="space-y-4">
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1" id="faq-q1">What happens if GOSI wages differ from Mudad WPS transfers?</h4>
+                        <p class="text-xs text-slate-600" id="faq-a1">Discrepancies invite labor inspectors to request payroll justification. It can lead to retroactive social insurance assessments and penalties.</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-sm text-slate-800 mb-1" id="faq-q2">How does Qiwa affect work visa quotas?</h4>
+                        <p class="text-xs text-slate-600" id="faq-a2">Qiwa directly links your active verified contracts and Nitaqat tier to your ability to issue new visas, renew Iqamas, or modify professional titles.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 px-6 text-center text-xs">
+        <p>&copy; 2025 Saudi Compliance & Payroll Micro-SaaS. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                mainTitle: "Saudi Qiwa, GOSI & Mudad Compliance Audit Tool",
+                subTitle: "Verify WPS wage consistency, contract registration, and social insurance contributions.",
+                langBtn: "العربية",
+                secInputTitle: "Company & Payroll Audit Parameters",
+                lblSaudiEmp: "Total Saudi Employees",
+                lblExpatEmp: "Total Expat Employees",
+                lblAvgSalary: "Average Monthly Basic + Housing (SAR)",
+                lblMudadDelay: "Mudad WPS Monthly Transfer Delay (Days)",
+                lblUnregisteredQiwa: "Contracts Unregistered on Qiwa (%)",
+                lblGosiMismatch: "GOSI Wage vs Actual Payroll Mismatch (%)",
+                secResultTitle: "Compliance Risk Assessment",
+                lblScoreTitle: "Overall Compliance Score",
+                lblPenaltyTitle: "Estimated Potential Fines / Penalties",
+                lblGosiEst: "Est. Monthly GOSI Obligation:",
+                lblMudadStatus: "Mudad WPS Status:",
+                lblQiwaStatus: "Qiwa Contract Risk:",
+                ctaCardTitle: "Automate Full Audits & WPS SIF Files",
+                ctaCardDesc: "Get our complete Excel & VBA audit workbook with automated multi-platform error checking.",
+                ctaBtn: "Get Excel Master Template ($29)",
+                disclaimerText: "Disclaimer: This tool provides preliminary estimates based on Saudi Labor Law, GOSI, Qiwa, and Mudad guidelines. Official fines and platform statuses must be verified directly through official portal dashboards.",
+                seoH1: "Complete Guide to Saudi Qiwa, GOSI & Mudad Compliance in 2025",
+                seoLead: "Operating a business in Saudi Arabia requires seamless alignment across three major governmental and semi-governmental platforms: Qiwa (Ministry of Human Resources and Social Development), GOSI (General Organization for Social Insurance), and Mudad (Wage Protection System). Failure to synchronize data across these portals results in heavy administrative fines, suspension of government services, and Nitaqat rating degradation.",
+                seoH21: "1. Qiwa Platform: Contract Digitization & Saudization",
+                seoP1: "Under MHRSD regulations, all employment contracts for both Saudi nationals and expatriates must be documented and digitally authenticated through the Qiwa platform. Unauthenticated contracts or discrepancies between registered salaries and actual payouts lead to immediate penalties and compromise the company's Saudization (Nitaqat) score.",
+                seoH22: "2. GOSI Contribution & Wage Alignment",
+                seoP2: "GOSI contributions are calculated based on the employee's basic wage plus housing allowance. Employers must ensure that the wage reported on GOSI perfectly matches the salary transferred through Mudad SIF files. Any significant mismatch triggers automated audit flags.",
+                seoH23: "3. Mudad Wage Protection System (WPS) Deadlines",
+                seoP3: "Mudad monitors timely wage payments. Salaries must be disbursed through certified WPS channels within agreed timelines. Delays exceeding statutory grace periods incur tiered fines starting from SAR 3,000 up to company-wide service suspensions.",
+                faqTitle: "Frequently Asked Questions",
+                faqQ1: "What happens if GOSI wages differ from Mudad WPS transfers?",
+                faqA1: "Discrepancies invite labor inspectors to request payroll justification. It can lead to retroactive social insurance assessments and penalties.",
+                faqQ2: "How does Qiwa affect work visa quotas?",
+                faqA2: "Qiwa directly links your active verified contracts and Nitaqat tier to your ability to issue new visas, renew Iqamas, or modify professional titles."
+            },
+            ar: {
+                mainTitle: "أداة تدقيق الامتثال لمنصات قوى، التأمينات الاجتماعية، ومدد",
+                subTitle: "التحقق من تناسق أجور حماية الأجور، توثيق العقود، واشتراكات التأمينات الاجتماعية.",
+                langBtn: "English",
+                secInputTitle: "معايير تدقيق الشركة والرواتب",
+                lblSaudiEmp: "إجمالي الموظفين السعوديين",
+                lblExpatEmp: "إجمالي الموظفين الوافدين",
+                lblAvgSalary: "متوسط الراتب الأساسي + السكن الشهري (ريال)",
+                lblMudadDelay: "تأخير التحويل الشهري لنظام مدد (أيام)",
+                lblUnregisteredQiwa: "العقود غير المسجلة على منصة قوى (٪)",
+                lblGosiMismatch: "اختلاف أجور التأمينات عن الرواتب الفعلية (٪)",
+                secResultTitle: "تقييم مخاطر الامتثال",
+                lblScoreTitle: "درجة الامتثال الإجمالية",
+                lblPenaltyTitle: "تقدير الغرامات / الجزاءات المحتملة",
+                lblGosiEst: "التزام التأمينات الاجتماعية الشهري المقدر:",
+                lblMudadStatus: "حالة نظام مدد لحماية الأجور:",
+                lblQiwaStatus: "مخاطر عقود منصة قوى:",
+                ctaCardTitle: "أتمتة عمليات التدقيق وملفات حماية الأجور WPS",
+                ctaCardDesc: "احصل على مصنف إكسيل الكامل للتدقيق مع فحص الأخطاء التلقائي المتعدد المنصات.",
+                ctaBtn: "احصل على نموذج إكسيل المعتمد ($29)",
+                disclaimerText: "تنويه: توفر هذه الأداة تقديرات أولية بناءً على نظام العمل السعودي، التأمينات الاجتماعية، وقواعد قوى ومدد. يجب التحقق من الغرامات الرسمية وحالات المنصات مباشرة عبر لوحات التحكم الرسمية.",
+                seoH1: "الدليل الشامل لامتثال قوى، التأمينات الاجتماعية، ومدد في السعودية 2025",
+                seoLead: "تتطلب إدارة الأعمال في المملكة العربية السعودية توافقاً سلساً عبر ثلاث منصات رئيسية: قوى (وزارة الموارد البشرية والتنمية الاجتماعية), التأمينات الاجتماعية (GOSI), ومدد (نظام حماية الأجور). يؤدي عدم مزامنة البيانات إلى غرامات إدارية وخفض تقييم نطاقات.",
+                seoH21: "1. منصة قوى: رقمية العقود والتوطين",
+                seoP1: "بموجب لوائح الوزارة، يجب توثيق جميع عقود العمل رقمياً عبر منصة قوى. تؤدي العقود غير الموثقة أو التناقضات بين الأجور المسجلة والمدفوعة إلى عقوبات فورية.",
+                seoH22: "2. توافق اشتراكات التأمينات والأجور",
+                seoP2: "تحتسب اشتراكات التأمينات بناءً على الراتب الأساسي مضافاً إليه بدل السكن. يجب أن يتطابق الأجر المبلغ مع الرواتب المحولة عبر نظام مدد.",
+                seoH23: "3. مواعيد نظام حماية الأجور (مدد)",
+                seoP3: "يراقب نظام مدد صرف الرواتب في مواعيدها. تجاوز المواعيد المقررة يترتب عليه غرامات تبدأ من 3,000 ريال وصولاً لتوقف الخدمات.",
+                faqTitle: "الأسئلة الشائعة",
+                faqQ1: "ما ماذا يحدث إذا اختلف أجر التأمينات عن تحويلات مدد؟",
+                faqA1: "تستدعي التناقضات طلباً لتبرير كشوف الرواتب من قبل المفتشين، مما قد يؤدي لفرض فروق اشتراكات وغرامات رجعية.",
+                faqQ2: "كيف تؤثر منصة قوى على حصص تأشيرات العمل؟",
+                faqA2: "تربط منصة قوى العقود الموثقة ونطاق منشأتك مباشرة بقدرتك على إصدار تأشيرات جديدة وتجديد الإقامات."
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+            const t = translations[currentLang];
+            document.getElementById('main-title').innerText = t.mainTitle;
+            document.getElementById('sub-title').innerText = t.subTitle;
+            document.getElementById('lang-btn').innerText = t.langBtn;
+            document.getElementById('sec-input-title').innerText = t.secInputTitle;
+            document.getElementById('lbl-saudi-emp').innerText = t.lblSaudiEmp;
+            document.getElementById('lbl-expat-emp').innerText = t.lblExpatEmp;
+            document.getElementById('lbl-avg-salary').innerText = t.lblAvgSalary;
+            document.getElementById('lbl-mudad-delay').innerText = t.lblMudadDelay;
+            document.getElementById('lbl-unregistered-qiwa').innerText = t.lblUnregisteredQiwa;
+            document.getElementById('lbl-gosi-mismatch').innerText = t.lblGosiMismatch;
+            document.getElementById('sec-result-title').innerText = t.secResultTitle;
+            document.getElementById('lbl-score-title').innerText = t.lblScoreTitle;
+            document.getElementById('lbl-penalty-title').innerText = t.lblPenaltyTitle;
+            document.getElementById('lbl-gosi-est').innerText = t.lblGosiEst;
+            document.getElementById('lbl-mudad-status').innerText = t.lblMudadStatus;
+            document.getElementById('lbl-qiwa-status').innerText = t.lblQiwaStatus;
+            document.getElementById('cta-card-title').innerText = t.ctaCardTitle;
+            document.getElementById('cta-card-desc').innerText = t.ctaCardDesc;
+            document.getElementById('disclaimer-text').innerText = t.disclaimerText;
+            document.getElementById('seo-h1').innerText = t.seoH1;
+            document.getElementById('seo-lead').innerText = t.seoLead;
+            document.getElementById('seo-h2-1').innerText = t.seoH21;
+            document.getElementById('seo-p-1').innerText = t.seoP1;
+            document.getElementById('seo-h2-2').innerText = t.seoH22;
+            document.getElementById('seo-p-2').innerText = t.seoP2;
+            document.getElementById('seo-h2-3').innerText = t.seoH23;
+            document.getElementById('seo-p-3').innerText = t.seoP3;
+            document.getElementById('faq-title').innerText = t.faqTitle;
+            document.getElementById('faq-q1').innerText = t.faqQ1;
+            document.getElementById('faq-a1').innerText = t.faqA1;
+            document.getElementById('faq-q2').innerText = t.faqQ2;
+            document.getElementById('faq-a2').innerText = t.faqA2;
+
+            calculateAudit();
+        }
+
+        function calculateAudit() {
+            const saudiEmp = parseFloat(document.getElementById('saudi_emp').value) || 0;
+            const expatEmp = parseFloat(document.getElementById('expat_emp').value) || 0;
+            const avgSalary = parseFloat(document.getElementById('avg_salary').value) || 0;
+            const mudadDelay = parseFloat(document.getElementById('mudad_delay').value) || 0;
+            const unregisteredQiwa = parseFloat(document.getElementById('unregistered_qiwa').value) || 0;
+            const gosiMismatch = parseFloat(document.getElementById('gosi_mismatch').value) || 0;
+
+            const totalEmp = saudiEmp + expatEmp;
+
+            // GOSI rough estimation (approx 21.5% total contribution for Saudis: 11% employee + 10.5% employer; expats 2% occupational)
+            const estGosi = (saudiEmp * avgSalary * 0.215) + (expatEmp * avgSalary * 0.02);
+
+            // Penalty calculation logic
+            let penalty = 0;
+            if (mudadDelay > 5) penalty += 3000;
+            if (unregisteredQiwa > 10) penalty += 5000;
+            if (gosiMismatch > 15) penalty += 4000;
+            penalty += Math.round((unregisteredQiwa * totalEmp * 50) + (mudadDelay * 200));
+
+            // Score calculation
+            let score = 100;
+            score -= (mudadDelay * 3);
+            score -= (unregisteredQiwa * 0.5);
+            score -= (gosiMismatch * 0.4);
+            if (score < 20) score = 20;
+            score = Math.round(score);
+
+            // Status updates
+            const statusEl = document.getElementById('res-status');
+            const scoreEl = document.getElementById('res-score');
+            scoreEl.innerText = score + '%';
+
+            if (score >= 85) {
+                statusEl.innerText = currentLang === 'ar' ? 'منخفض المخاطر' : 'Low Risk';
+                statusEl.className = 'text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded';
+            } else if (score >= 60) {
+                statusEl.innerText = currentLang === 'ar' ? 'مخاطر متوسطة' : 'Moderate Risk';
+                statusEl.className = 'text-xs font-bold text-amber-700 bg-amber-100 px-2 py-0.5 rounded';
+            } else {
+                statusEl.innerText = currentLang === 'ar' ? 'مخاطر عالية' : 'High Risk';
+                statusEl.className = 'text-xs font-bold text-red-700 bg-red-100 px-2 py-0.5 rounded';
+            }
+
+            document.getElementById('res-penalty').innerText = 'SAR ' + penalty.toLocaleString();
+            document.getElementById('res-gosi').innerText = 'SAR ' + Math.round(estGosi).toLocaleString();
+
+            const mudadEl = document.getElementById('res-mudad');
+            if (mudadDelay <= 5) {
+                mudadEl.innerText = currentLang === 'ar' ? 'ملتزم (<5 أيام)' : 'Compliant (<5 days)';
+                mudadEl.className = 'font-semibold text-emerald-600';
+            } else {
+                mudadEl.innerText = currentLang === 'ar' ? 'متأخر (مخالفة)' : 'Delayed (Violation)';
+                mudadEl.className = 'font-semibold text-red-600';
+            }
+
+            const qiwaEl = document.getElementById('res-qiwa');
+            if (unregisteredQiwa <= 5) {
+                qiwaEl.innerText = currentLang === 'ar' ? 'فجوة منخفضة' : 'Low Gap';
+                qiwaEl.className = 'font-semibold text-emerald-600';
+            } else if (unregisteredQiwa <= 20) {
+                qiwaEl.innerText = currentLang === 'ar' ? 'فجوة متوسطة' : 'Moderate Gap';
+                qiwaEl.className = 'font-semibold text-amber-600';
+            } else {
+                qiwaEl.innerText = currentLang === 'ar' ? 'فجوة حرجة' : 'Critical Gap';
+                qiwaEl.className = 'font-semibold text-red-600';
+            }
+        }
+
+        // Initial run
+        calculateAudit();
+    </script>
+</body>
+</html>

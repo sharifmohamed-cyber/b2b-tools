@@ -194,5 +194,12 @@
     "title_ar": "حاسبة غرامات التأخير وتكاليف الإشراف في نظام المنافسات والمشتريات الحكومية السعودي",
     "description_en": "Calculate statutory delay penalties, consultant supervision costs, and statutory caps under Saudi Government Tenders and Procurement Law (GTPL).",
     "date": "2026-11-12"
+  },
+  {
+    "slug": "saudi-qiwa-gosi-mudad-compliance-audit-tool",
+    "title_en": "Saudi Qiwa, GOSI & Mudad Compliance Audit Tool",
+    "title_ar": "أداة تدقيق الامتثال لمنصات قوى، التأمينات الاجتماعية، ومدد",
+    "description_en": "Perform an instant multi-platform compliance audit for Saudi SMEs across Qiwa, GOSI, and Mudad systems. Identify wage protection gaps and penalties.",
+    "date": "2026-11-12"
   }
 ]
