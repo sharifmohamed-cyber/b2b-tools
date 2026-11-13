@@ -208,5 +208,12 @@
     "title_ar": "حاسبة إجازات الأمومة والإجازات الخاصة وفق نظام العمل السعودي",
     "description_en": "Calculate statutory paid leave salary, employer costs, and entitlements for maternity, paternity, marriage, bereavement, Hajj, and Iddah in KSA.",
     "date": "2026-11-13"
+  },
+  {
+    "slug": "saudi-subcontract-interim-payment-certificate-ipc-calculator",
+    "title_en": "Saudi Subcontract Interim Payment Certificate (IPC) & Retention Calculator",
+    "title_ar": "حاسبة مستخلصات المقاولين من الباطن والاستقطاعات والضريبة في السعودية",
+    "description_en": "Calculate interim payment certificates (IPC), retention deductions, advance payment recovery, and 15% VAT for Saudi construction subcontractors.",
+    "date": "2026-11-13"
   }
 ]

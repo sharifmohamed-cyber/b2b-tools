@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi Subcontract Interim Payment Certificate (IPC) Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        cairo: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        saudi: {
+                            green: '#006C35',
+                            dark: '#004D25',
+                            gold: '#C5A059',
+                            light: '#F2F7F4',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .font-ar { font-family: 'Cairo', sans-serif; }
+        .font-en { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-en antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Sticky Promobanner -->
+    <div class="bg-gradient-to-r from-saudi-dark to-saudi-green text-white py-2 px-4 shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm gap-2">
+            <div class="flex items-center gap-2 text-center sm:text-left">
+                <span class="bg-saudi-gold text-slate-900 font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">Pro Excel Template</span>
+                <span class="lang-en">Need a fully automated multi-subcontractor IPC dashboard with VBA & PDF printing?</span>
+                <span class="lang-ar hidden font-ar">هل تحتاج إلى نموذج إكسل متكامل لإدارة مستخلصات المقاولين مع طباعة PDF تلقائية؟</span>
+            </div>
+            <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-saudi-gold hover:bg-yellow-500 text-slate-950 font-bold py-1 px-3 rounded transition shadow text-xs whitespace-nowrap flex items-center gap-1">
+                <span class="lang-en">Get Excel Master Template ($29) &rarr;</span>
+                <span class="lang-ar hidden font-ar">احصل على قالب الإكسل الاحترافي ($29) &larr;</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Wrapper -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full flex-grow">
+        
+        <!-- Header & Language Toggle -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-200 pb-6 mb-8 gap-4">
+            <div>
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-saudi-green bg-emerald-100 px-2.5 py-0.5 rounded-full">Saudi Arabia EPC & Construction</span>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-500 bg-slate-200 px-2.5 py-0.5 rounded-full">KSA ZATCA & Labor Law Compliant</span>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight lang-en">Subcontract Interim Payment Certificate (IPC) Calculator</h1>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight lang-ar hidden font-ar">حاسبة مستخلصات المقاولين من الباطن والخصومات الضريبية (IPC)</h1>
+                <p class="mt-1 text-sm text-slate-600 max-w-3xl lang-en">Calculate work completion, retention money deductions, advance payment recovery, backcharges, and ZATCA 15% VAT for subcontract IPC certificates.</p>
+                <p class="mt-1 text-sm text-slate-600 max-w-3xl lang-ar hidden font-ar">حساب قيمة الأعمال المنجزة، استقطاع الضمان النهائي، استرداد الدفعة المقدمة، الخصومات المباشرة، وحساب ضريبة القيمة المضافة 15% وفق هيئة الزكاة والضريبة والجمارك.</p>
+            </div>
+            <div class="flex items-center gap-3 self-start md:self-center">
+                <button id="langToggle" onclick="toggleLanguage()" class="inline-flex items-center gap-2 border border-slate-300 rounded-lg px-4 py-2 bg-white text-sm font-semibold text-slate-700 hover:bg-slate-50 shadow-sm transition">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+                    <span id="langText">العربية (RTL)</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Calculator Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+            
+            <!-- Inputs Form (7 cols) -->
+            <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6">
+                <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
+                    <span class="lang-en">1. Contract & IPC Input Data</span>
+                    <span class="lang-ar hidden font-ar">1. بيانات العقد والمستخلص الحالي</span>
+                    <span class="text-xs font-normal text-slate-500">All figures in SAR</span>
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Total Contract Value -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-en">Original Subcontract Value (SAR)</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-ar hidden font-ar">إجمالي قيمة عقد المقاولة (ريال)</label>
+                        <input type="number" id="contractValue" value="1000000" step="1000" oninput="calculateIPC()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-saudi-green focus:border-saudi-green outline-none">
+                    </div>
+
+                    <!-- Cumulative Gross Work to Date -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-en">Cumulative Gross Work to Date (SAR)</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-ar hidden font-ar">إجمالي الأعمال التراكمية الإجمالية (ريال)</label>
+                        <input type="number" id="cumGrossWork" value="350000" step="1000" oninput="calculateIPC()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-saudi-green focus:border-saudi-green outline-none">
+                    </div>
+
+                    <!-- Previous Certified Gross Work -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-en">Previous Certified Gross Work (SAR)</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-ar hidden font-ar">الأعمال السابقة المعتمدة حتى آخر مستخلص (ريال)</label>
+                        <input type="number" id="prevGrossWork" value="200000" step="1000" oninput="calculateIPC()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-saudi-green focus:border-saudi-green outline-none">
+                    </div>
+
+                    <!-- Advance Payment Given -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-en">Total Advance Payment Paid (SAR)</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-ar hidden font-ar">إجمالي الدفعة المقدمة المدفوعة (ريال)</label>
+                        <input type="number" id="advancePaid" value="100000" step="1000" oninput="calculateIPC()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-saudi-green focus:border-saudi-green outline-none">
+                    </div>
+                </div>
+
+                <h2 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 pt-2 flex items-center justify-between">
+                    <span class="lang-en">2. Deductions & Amortization Terms</span>
+                    <span class="lang-ar hidden font-ar">2. شروط الخصم واسترداد الدفعات</span>
+                </h2>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Retention % -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-en">Retention Deduction Rate (%)</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-ar hidden font-ar">نسبة استقطاع الضمان (%)</label>
+                        <input type="number" id="retentionRate" value="10" min="0" max="20" step="0.5" oninput="calculateIPC()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-saudi-green focus:border-saudi-green outline-none">
+                    </div>
+
+                    <!-- Max Retention Cap % -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-en">Max Retention Limit (% Contract)</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-ar hidden font-ar">الحد الأقصى للضمان النهائي (%)</label>
+                        <input type="number" id="retentionCap" value="10" min="0" max="20" step="0.5" oninput="calculateIPC()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-saudi-green focus:border-saudi-green outline-none">
+                    </div>
+
+                    <!-- Advance Amortization Rate % -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-en">Advance Recovery Rate (%)</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-ar hidden font-ar">نسبة استرداد الدفعة المقدمة (%)</label>
+                        <input type="number" id="advanceRate" value="10" min="0" max="50" step="0.5" oninput="calculateIPC()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-saudi-green focus:border-saudi-green outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Cumulative Retention Deducted Previously -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-en">Previous Retention Deducted (SAR)</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-ar hidden font-ar">مجموع الضمان المستقطع سابقاً (ريال)</label>
+                        <input type="number" id="prevRetention" value="20000" step="1000" oninput="calculateIPC()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-saudi-green focus:border-saudi-green outline-none">
+                    </div>
+
+                    <!-- Cumulative Advance Recovered Previously -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-en">Previous Advance Recovered (SAR)</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-ar hidden font-ar">مجموع الدفعة المقدمة المستردة سابقاً (ريال)</label>
+                        <input type="number" id="prevAdvanceRec" value="20000" step="1000" oninput="calculateIPC()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-saudi-green focus:border-saudi-green outline-none">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- Backcharges / Penalties / Materials Supplied -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-en">Other Deductions / Backcharges (SAR)</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-ar hidden font-ar">خصومات أخرى / غرامات / مواد (ريال)</label>
+                        <input type="number" id="otherDeductions" value="5000" step="100" oninput="calculateIPC()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-saudi-green focus:border-saudi-green outline-none">
+                    </div>
+
+                    <!-- VAT Rate -->
+                    <div>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-en">Saudi VAT Rate (%)</label>
+                        <label class="block text-xs font-medium text-slate-700 mb-1 lang-ar hidden font-ar">نسبة ضريبة القيمة المضافة (%)</label>
+                        <select id="vatRate" onchange="calculateIPC()" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-saudi-green focus:border-saudi-green outline-none bg-white">
+                            <option value="15">15% (Standard Saudi VAT)</option>
+                            <option value="0">0% (Zero Rated / Exempt)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Display Card (5 cols) -->
+            <div class="lg:col-span-5 flex flex-col justify-between space-y-6">
+                <div class="bg-slate-900 text-white rounded-2xl p-6 sm:p-8 shadow-xl relative overflow-hidden flex-grow flex flex-col justify-between">
+                    <!-- Decorative backdrop -->
+                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-saudi-green rounded-full opacity-20 blur-2xl pointer-events-none"></div>
+                    
+                    <div>
+                        <div class="flex justify-between items-center border-b border-slate-800 pb-4 mb-6">
+                            <h3 class="text-lg font-bold text-white lang-en">IPC Financial Summary</h3>
+                            <h3 class="text-lg font-bold text-white lang-ar hidden font-ar">ملخص شهادة الدفع (المستخلص)</h3>
+                            <span class="text-xs bg-saudi-green/40 text-emerald-300 px-2.5 py-1 rounded-full font-mono border border-saudi-green/50">IPC CERT-01</span>
+                        </div>
+
+                        <!-- Primary Payable Amount -->
+                        <div class="mb-6 bg-slate-800/80 p-4 rounded-xl border border-slate-700/80">
+                            <span class="text-xs text-slate-400 block font-medium lang-en">Net Payable Amount to Subcontractor</span>
+                            <span class="text-xs text-slate-400 block font-medium lang-ar hidden font-ar">صافي المبلغ المستحق للمقاول (شامل الضريبة)</span>
+                            <div class="text-3xl sm:text-4xl font-extrabold text-emerald-400 font-mono mt-1" id="resNetPayable">SAR 0.00</div>
+                            <div class="text-xs text-slate-400 mt-1 flex justify-between">
+                                <span>Completion: <strong id="resCompletionPercent" class="text-white">0%</strong></span>
+                                <span>VAT Component: <strong id="resVatAmount" class="text-emerald-300">SAR 0.00</strong></span>
+                            </div>
+                        </div>
+
+                        <!-- Breakdown List -->
+                        <div class="space-y-3 text-xs sm:text-sm border-b border-slate-800 pb-4 mb-4">
+                            <div class="flex justify-between text-slate-300">
+                                <span class="lang-en">Gross Certified Work (Current Period):</span>
+                                <span class="lang-ar hidden font-ar">إجمالي الأعمال المنجزة (الفترة الحالية):</span>
+                                <span class="font-semibold font-mono text-white" id="resCurrentGross">SAR 0.00</span>
+                            </div>
+                            <div class="flex justify-between text-slate-300">
+                                <span class="lang-en">Retention Deducted (Current Period):</span>
+                                <span class="lang-ar hidden font-ar">الضمان النهائي المستقطع (الفترة الحالية):</span>
+                                <span class="font-semibold font-mono text-rose-400" id="resCurrentRetention">- SAR 0.00</span>
+                            </div>
+                            <div class="flex justify-between text-slate-300">
+                                <span class="lang-en">Advance Payment Recovered:</span>
+                                <span class="lang-ar hidden font-ar">الدفعة المقدمة المستردة (الفترة الحالية):</span>
+                                <span class="font-semibold font-mono text-rose-400" id="resCurrentAdvance">- SAR 0.00</span>
+                            </div>
+                            <div class="flex justify-between text-slate-300">
+                                <span class="lang-en">Other Deductions / Backcharges:</span>
+                                <span class="lang-ar hidden font-ar">خصومات أخرى / غرامات:</span>
+                                <span class="font-semibold font-mono text-rose-400" id="resOtherDeductions">- SAR 0.00</span>
+                            </div>
+                            <div class="flex justify-between text-slate-200 font-medium pt-2 border-t border-slate-800">
+                                <span class="lang-en">Net Certified Value Before VAT:</span>
+                                <span class="lang-ar hidden font-ar">صافي المبلغ المستحق قبل الضريبة:</span>
+                                <span class="font-semibold font-mono text-amber-300" id="resNetBeforeVat">SAR 0.00</span>
+                            </div>
+                        </div>
+
+                        <!-- Cumulative Ledger State -->
+                        <div class="space-y-1 text-[11px] text-slate-400 bg-slate-950/50 p-3 rounded-lg border border-slate-800">
+                            <div class="flex justify-between">
+                                <span class="lang-en">Cumulative Work Done to Date:</span>
+                                <span class="lang-ar hidden font-ar">إجمالي الأعمال التراكمية:</span>
+                                <span class="font-mono text-slate-300" id="resCumWork">SAR 0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="lang-en">Cumulative Retention Withheld:</span>
+                                <span class="lang-ar hidden font-ar">إجمالي الضمان المستقطع التراكمي:</span>
+                                <span class="font-mono text-slate-300" id="resCumRetention">SAR 0.00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="lang-en">Unrecovered Advance Balance:</span>
+                                <span class="lang-ar hidden font-ar">متبقي الدفعة المقدمة غير المستردة:</span>
+                                <span class="font-mono text-slate-300" id="resUnrecoveredAdvance">SAR 0.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-6 space-y-2.5">
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="window.print()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-3 rounded-lg text-xs transition flex items-center justify-center gap-1.5 border border-slate-700">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                <span class="lang-en">Print Certificate</span>
+                                <span class="lang-ar hidden font-ar">طباعة الشهادة</span>
+                            </button>
+                            <button onclick="exportCSV()" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2 px-3 rounded-lg text-xs transition flex items-center justify-center gap-1.5 border border-slate-700">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                <span class="lang-en">Export CSV</span>
+                                <span class="lang-ar hidden font-ar">تصدير CSV</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Card CTA -->
+                <div class="bg-gradient-to-r from-amber-500/10 to-emerald-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-center justify-between gap-3">
+                    <div class="text-xs text-slate-700">
+                        <span class="font-bold block text-slate-900 lang-en">Upgrade to Automated Excel Suite</span>
+                        <span class="font-bold block text-slate-900 lang-ar hidden font-ar">احصل على ملف الإكسل الشامل للمستخلصات</span>
+                        <span class="text-[11px] text-slate-600 lang-en">Multi-project management, cumulative history, ZATCA QR codes & printable templates.</span>
+                        <span class="text-[11px] text-slate-600 lang-ar hidden font-ar">إدارة مشاريع متعددة، سجل تراكمي كامل، ورسم البياني واستخراج المستخلصات تلقائياً.</span>
+                    </div>
+                    <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-2 px-3 rounded-lg transition whitespace-nowrap shrink-0 shadow-sm">
+                        Buy $29
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Disclaimer Box -->
+        <div class="mb-12 p-4 bg-amber-50 rounded-xl border border-amber-200 text-xs text-amber-900 flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <div class="space-y-1">
+                <p class="font-semibold lang-en">Regulatory Disclaimer & Usage Note:</p>
+                <p class="font-semibold lang-ar hidden font-ar">تنبيه وإخلاء مسؤولية قانونية:</p>
+                <p class="lang-en">This tool calculates Interim Payment Certificates (IPC) based on standard Saudi FIDIC and EPC contracting practices, including ZATCA 15% VAT and statutory retention limits. Outputs are for estimation and guidance only. Always confirm certified figures with your Commercial Management, Quantity Surveying (QS) team, and official tax advisors before issuing legal payment vouchers.</p>
+                <p class="lang-ar hidden font-ar">تقدم هذه الحاسبة تقديرات لشهادات الدفع الانتقالية (المستخلصات) وفق عقود الفيديك والممارسات الهندسية في المملكة العربية السعودية، شاملة ضريبة القيمة المضافة 15% وحسومات الضمان النهائي. هذه النتائج استرشادية فقط ويجب مراجعتها وتدقيقها مع مهندس المشروع وإدارة التكاليف قبل إصدار الفواتير الرسمية.</p>
+            </div>
+        </div>
+
+        <!-- Detailed Guide & SEO Article Section (800+ Words) -->
+        <section class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 space-y-8 text-slate-700 leading-relaxed">
+            
+            <!-- English SEO Article -->
+            <div class="lang-en space-y-6">
+                <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3">Complete Guide to Subcontract Interim Payment Certificates (IPC) in Saudi Arabia</h2>
+                
+                <p>In the Saudi construction, infrastructure, and engineering sectors, managing subcontractor cash flows, progress billings, and contractual retentions accurately is paramount to maintaining financial health and operational momentum. An <strong>Interim Payment Certificate (IPC)</strong> serves as the official operational instrument certifying the value of work completed by a subcontractor during a specific billing period.</p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-6 mb-3">Key Components of a Saudi Subcontract IPC</h3>
+                <p>Standard Saudi subcontracts—whether modeled after FIDIC conditions, Aramco contract guidelines, or Saudi Public Procurement Law—incorporate five core financial elements in every interim valuation:</p>
+                <ul class="list-disc pl-6 space-y-2">
+                    <li><strong>Gross Certified Work (Current Period):</strong> Calculated as the total cumulative value of billable work executed to date minus the cumulative gross work certified in all previous IPCs.</li>
+                    <li><strong>Retention Money Withholding:</strong> Typically set between 5% and 10% of gross work done. This amount is withheld by the Main Contractor to safeguard against latent defects during the Defects Liability Period (DLP). Most Saudi contracts enforce a capped ceiling (e.g., maximum 10% of total original subcontract value).</li>
+                    <li><strong>Advance Payment Recovery (Amortization):</strong> When main contractors issue an upfront mobilisation advance (usually 10% to 20%), it is recovered incrementally from each IPC at an agreed amortization rate (e.g., 10% or 15% of gross certified work) until fully recouped.</li>
+                    <li><strong>Backcharges and Direct Deductions:</strong> Penalties for delay (Liquidated Damages), safety violations, site utilities consumed, or materials/equipment supplied by the main contractor on behalf of the subcontractor.</li>
+                    <li><strong>Saudi ZATCA 15% Value Added Tax (VAT):</strong> VAT is applied to the <em>net certified amount after deductions</em> (or gross depending on contract invoicing structure), strictly adhering to ZATCA rules. Tax invoices must match the certified IPC net value.</li>
+                </ul>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-6 mb-3">Mathematical IPC Calculation Formula</h3>
+                <div class="bg-slate-50 border-l-4 border-saudi-green p-4 font-mono text-xs sm:text-sm space-y-1 text-slate-800 rounded-r-lg">
+                    <p>1. Current Period Gross Work = Cumulative Gross Work - Previous Certified Gross Work</p>
+                    <p>2. Current Retention = MIN(Current Period Gross Work * Retention Rate %, Max Retention Ceiling - Previous Cumulative Retention)</p>
+                    <p>3. Current Advance Recovery = MIN(Current Period Gross Work * Advance Recovery Rate %, Unrecovered Advance Balance)</p>
+                    <p>4. Net Certified Value (Pre-VAT) = Current Period Gross Work - Retention - Advance Recovery - Other Deductions</p>
+                    <p>5. ZATCA VAT (15%) = Net Certified Value (Pre-VAT) * 0.15</p>
+                    <p>6. Total Net Payable = Net Certified Value (Pre-VAT) + ZATCA VAT</p>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-6 mb-3">Frequently Asked Questions (FAQs)</h3>
+                <div class="space-y-4">
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-900 mb-1">When should retention money be released under Saudi law?</h4>
+                        <p class="text-sm text-slate-600">Standard practice releases 50% of retention upon issuing the Taking-Over Certificate (Initial Acceptance) and the remaining 50% upon issuance of the Final Acceptance Certificate after the Defects Liability Period (typically 12 to 24 months).</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-900 mb-1">How is ZATCA VAT handled when retention is withheld?</h4>
+                        <p class="text-sm text-slate-600">Under ZATCA regulations, tax timing depends on whether the tax invoice is issued upon certified work or payment milestone. Most Saudi commercial contracts apply 15% VAT on the net certified value payable for the current invoice period, with VAT on retention payable when retention is released.</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-900 mb-1">What is the standard advance payment recovery rate in KSA?</h4>
+                        <p class="text-sm text-slate-600">Advance payments are typically recouped proportionally based on the percentage of work executed. If an advance of 10% was granted, a 10% recovery rate is applied to all subsequent interim payment valuations until fully amortized.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Arabic SEO Article -->
+            <div class="lang-ar hidden font-ar space-y-6">
+                <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-100 pb-3">الدليل الشامل لإعداد حساب مستخلصات المقاولين من الباطن (IPC) في السعودية</h2>
+                
+                <p>تعتبر إدارة مستخلصات المقاولين من الباطن (Interim Payment Certificates - IPC) من أهم العمليات المالية والهندسية في قطاع الإنشاءات والمقاولات في المملكة العربية السعودية. يهدف المستخلص الانتقالي إلى تقييم وتسوية الأعمال المنجزة دورياً لضمان التدفقات النقدية والالتزام بالعقود المبرمة.</p>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-6 mb-3">العناصر الأساسية لحساب المستخلص الإنتقالي</h3>
+                <p>وفقاً لنماذج عقود المقاولات السعودية المعتمدة (مثل عقود الفيديك FIDIC وعقود أرامكو ونظام المنافسات والمشتريات الحكومية)، يتكون المستخلص من العناصر التالية:</p>
+                <ul class="list-disc pr-6 space-y-2">
+                    <li><strong>إجمالي قيمة الأعمال الحالية:</strong> وهي الفارق بين إجمالي الأعمال المنجزة تراكمياً حتى تاريخ المستخلص الحالي مطروحاً منها الأعمال المعتمدة في المستخلص السابق.</li>
+                    <li><strong>استقطاع ضمان حُسن التنفيذ (الدفعة الاحتجازية):</strong> يتم خصم نسبة تراوح بين 5% إلى 10% لحين انتهاء فترة الصيانة وضمان العيوب الخفية. ويُحدد العقد حداً أقصى للاقتطاع (مثلاً 10% من إجمالي قيمة العقد الأساسي).</li>
+                    <li><strong>استرداد الدفعة المقدمة:</strong> عند تسليم المقاول دفعة مقدمة للمشروع، يتم خصم نسبة مئوية محددة من كل مستخلص (مثلاً 10% أو 15%) حتى يتم استرداد كامل الدفعة المقدمة.</li>
+                    <li><strong>الخصومات المباشرة والغرامات:</strong> شائبة الخصومات المالية مثل غرامات التأخير، مخالفت السلامة والصحة المهنية، أو تكلفة المواد والمعدات الموردة من قبل المقاول الرئيسي.</li>
+                    <li><strong>ضريبة القيمة المضافة (15%):</strong> تُحسب الضريبة المستحقة لهيئة الزكاة والضريبة والجمارك (ZATCA) على صافي المبلغ المستحق بعد استبعاد الخصومات المقررة.</li>
+                </ul>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-6 mb-3">معادلة حساب المستخلص</h3>
+                <div class="bg-slate-50 border-r-4 border-saudi-green p-4 font-mono text-xs sm:text-sm space-y-1 text-slate-800 rounded-l-lg">
+                    <p>1. الأعمال المنجزة للفترة الحالية = إجمالي الأعمال التراكمية - الأعمال التراكمية للمستخلص السابق</p>
+                    <p>2. استقطاع الضمان الحالي = الحد الأدنى من (أعمال الفترة الحالية × نسبة الضمان ، سقف الضمان المتبقي)</p>
+                    <p>3. استرداد الدفعة المقدمة = الحد الأدنى من (أعمال الفترة الحالية × نسبة الاسترداد ، المتبقي من الدفعة المقدمة)</p>
+                    <p>4. صافي المستخلص قبل الضريبة = أعمال الفترة الحالية - الضمان - استرداد الدفعة - الخصومات الأخرى</p>
+                    <p>5. ضريبة القيمة المضافة (15%) = صافي المستخلص قبل الضريبة × 0.15</p>
+                    <p>6. إجمالي الصافي المستحق = صافي المستخلص قبل الضريبة + ضريبة القيمة المضافة</p>
+                </div>
+
+                <h3 class="text-xl font-bold text-slate-800 mt-6 mb-3">الأسئلة الشائعة (FAQs)</h3>
+                <div class="space-y-4">
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-900 mb-1">متى يتم رد مبالغ الضمان النهائي للمقاول في السعودية؟</h4>
+                        <p class="text-sm text-slate-600">عادة ما يتم الإفراج عن 50% من الضمان عند صدور شهادة الإنجاز الابتدائي (التسليم الابتدائي)، و50% المتبقية عند صدور شهادة الاستلام النهائي وبعد انتهاء فترة الضمان (12 إلى 24 شهراً).</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50/50">
+                        <h4 class="font-bold text-slate-900 mb-1">كيف تعالج ضريبة القيمة المضافة على مبالغ الضمان المستقطعة؟</h4>
+                        <p class="text-sm text-slate-600">وفق قواعد هيئة الزكاة والضريبة والجمارك، تُفرض ضريبة القيمة المضافة 15% على المبالغ المفلترة والمعتمدة للدفع الفعلي في الفاتورة الضريبية، بينما تفرض الضريبة على الضمان المستقطع عند الإفراج عنه وإصدار فاتورته المستقلة.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 text-xs border-t border-slate-800 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center space-y-2">
+            <p class="lang-en">&copy; 2025 Saudi Subcontract Interim Payment Certificate (IPC) Engine. Built for Saudi SMEs, Contractors & Engineers.</p>
+            <p class="lang-ar hidden font-ar">&copy; 2025 حاسبة مستخلصات المقاولين من الباطن والخصومات الضريبية. صُممت للمؤسسات والشركات السعودية.</p>
+        </div>
+    </footer>
+
+    <!-- Logic Script -->
+    <script>
+        let currentLang = 'en';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const html = document.documentElement;
+            
+            if (currentLang === 'ar') {
+                html.setAttribute('dir', 'rtl');
+                html.classList.remove('font-en');
+                html.classList.add('font-ar');
+                document.querySelectorAll('.lang-en').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.lang-ar').forEach(el => el.classList.remove('hidden'));
+                document.getElementById('langText').innerText = 'English (LTR)';
+            } else {
+                html.setAttribute('dir', 'ltr');
+                html.classList.remove('font-ar');
+                html.classList.add('font-en');
+                document.querySelectorAll('.lang-ar').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.lang-en').forEach(el => el.classList.remove('hidden'));
+                document.getElementById('langText').innerText = 'العربية (RTL)';
+            }
+            calculateIPC();
+        }
+
+        function formatSAR(num) {
+            return 'SAR ' + Number(num || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function calculateIPC() {
+            // Read inputs
+            const contractVal = parseFloat(document.getElementById('contractValue').value) || 0;
+            const cumGrossWork = parseFloat(document.getElementById('cumGrossWork').value) || 0;
+            const prevGrossWork = parseFloat(document.getElementById('prevGrossWork').value) || 0;
+            const advancePaid = parseFloat(document.getElementById('advancePaid').value) || 0;
+            
+            const retentionRate = (parseFloat(document.getElementById('retentionRate').value) || 0) / 100;
+            const retentionCap = (parseFloat(document.getElementById('retentionCap').value) || 0) / 100;
+            const advanceRate = (parseFloat(document.getElementById('advanceRate').value) || 0) / 100;
+            
+            const prevRetention = parseFloat(document.getElementById('prevRetention').value) || 0;
+            const prevAdvanceRec = parseFloat(document.getElementById('prevAdvanceRec').value) || 0;
+            const otherDeductions = parseFloat(document.getElementById('otherDeductions').value) || 0;
+            const vatRate = (parseFloat(document.getElementById('vatRate').value) || 0) / 100;
+
+            // 1. Current Gross Work
+            const currentGrossWork = Math.max(0, cumGrossWork - prevGrossWork);
+
+            // 2. Retention Calculation with Cap
+            const maxRetentionAllowed = contractVal * retentionCap;
+            let calculatedRetention = currentGrossWork * retentionRate;
+            const potentialTotalRetention = prevRetention + calculatedRetention;
+            
+            if (potentialTotalRetention > maxRetentionAllowed) {
+                calculatedRetention = Math.max(0, maxRetentionAllowed - prevRetention);
+            }
+            const cumulativeRetention = prevRetention + calculatedRetention;
+
+            // 3. Advance Payment Recovery
+            let calculatedAdvanceRec = currentGrossWork * advanceRate;
+            const unrecoveredAdvanceBefore = Math.max(0, advancePaid - prevAdvanceRec);
+            if (calculatedAdvanceRec > unrecoveredAdvanceBefore) {
+                calculatedAdvanceRec = unrecoveredAdvanceBefore;
+            }
+            const cumulativeAdvanceRec = prevAdvanceRec + calculatedAdvanceRec;
+            const remainingAdvanceBalance = Math.max(0, advancePaid - cumulativeAdvanceRec);
+
+            // 4. Net Value Before VAT
+            const totalPeriodDeductions = calculatedRetention + calculatedAdvanceRec + otherDeductions;
+            const netBeforeVat = currentGrossWork - totalPeriodDeductions;
+
+            // 5. VAT & Final Net Payable
+            const vatAmount = netBeforeVat * vatRate;
+            const netPayable = netBeforeVat + vatAmount;
+
+            // 6. Completion %
+            const completionPercent = contractVal > 0 ? ((cumGrossWork / contractVal) * 100).toFixed(1) : 0;
+
+            // Update UI
+            document.getElementById('resNetPayable').innerText = formatSAR(netPayable);
+            document.getElementById('resCompletionPercent').innerText = completionPercent + '%';
+            document.getElementById('resVatAmount').innerText = formatSAR(vatAmount);
+            
+            document.getElementById('resCurrentGross').innerText = formatSAR(currentGrossWork);
+            document.getElementById('resCurrentRetention').innerText = '- ' + formatSAR(calculatedRetention);
+            document.getElementById('resCurrentAdvance').innerText = '- ' + formatSAR(calculatedAdvanceRec);
+            document.getElementById('resOtherDeductions').innerText = '- ' + formatSAR(otherDeductions);
+            document.getElementById('resNetBeforeVat').innerText = formatSAR(netBeforeVat);
+            
+            document.getElementById('resCumWork').innerText = formatSAR(cumGrossWork);
+            document.getElementById('resCumRetention').innerText = formatSAR(cumulativeRetention);
+            document.getElementById('resUnrecoveredAdvance').innerText = formatSAR(remainingAdvanceBalance);
+        }
+
+        function exportCSV() {
+            const contractVal = document.getElementById('contractValue').value;
+            const cumGross = document.getElementById('cumGrossWork').value;
+            const prevGross = document.getElementById('prevGrossWork').value;
+            const netPayable = document.getElementById('resNetPayable').innerText;
+            const vat = document.getElementById('resVatAmount').innerText;
+            
+            const csvContent = "data:text/csv;charset=utf-8,"
+                + "Parameter,Value (SAR)\n"
+                + `"Total Contract Value","${contractVal}"\n`
+                + `"Cumulative Gross Work","${cumGross}"\n`
+                + `"Previous Gross Certified","${prevGross}"\n`
+                + `"ZATCA VAT Amount","${vat}"\n`
+                + `"Net Payable Subcontractor","${netPayable}"\n`;
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "subcontract_ipc_summary.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initial Run
+        window.onload = calculateIPC;
+    </script>
+</body>
+</html>
