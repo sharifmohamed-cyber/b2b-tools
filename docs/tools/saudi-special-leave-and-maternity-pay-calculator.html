@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi Labor Law Special Leave & Maternity Pay Calculator | حاسبة الإجازات الخاصة ونظام العمل</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    [dir="rtl"] body, [dir="rtl"] * { font-family: 'Cairo', sans-serif; }
+    .tab-active { border-color: #059669; color: #059669; background-color: #ecfdf5; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Top Notification / Announcement Sticky Bar -->
+  <div class="sticky top-0 z-50 bg-emerald-900 text-emerald-100 text-xs sm:text-sm py-2.5 px-4 shadow-md flex items-center justify-between border-b border-emerald-700">
+    <div class="flex items-center gap-2 max-w-4xl mx-auto w-full justify-between">
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-emerald-500 text-white">
+          <span class="lang-en">NEW 2024 AMENDMENTS</span>
+          <span class="lang-ar hidden">تحديثات 2024 الأخيرة</span>
+        </span>
+        <span class="hidden sm:inline text-emerald-200">
+          <span class="lang-en">Saudi Labor Law Articles 113, 114, 115, 151 & 160 Compliance Engine</span>
+          <span class="lang-ar hidden">متوافق بالكامل مع المواد 113 و 114 و 115 و 151 و 160 من نظام العمل السعودي</span>
+        </span>
+      </div>
+      <a href="https://gumroad.com" target="_blank" class="bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-3 py-1 rounded text-xs transition duration-150 shadow-sm shrink-0 flex items-center gap-1">
+        <span class="lang-en">Get Excel Master Suite ($29) &rarr;</span>
+        <span class="lang-ar hidden">تحميل نموذج إكسيل المتقدم ($29) &larr;</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-xl shadow-inner">
+          HR
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
+            <span class="lang-en">Saudi Special Leave & Maternity Calculator</span>
+            <span class="lang-ar hidden">حاسبة إجازات الأمومة والإجازات الخاصة النظامية</span>
+          </h1>
+          <p class="text-xs text-slate-500">
+            <span class="lang-en">Statutory Days, Payroll Benefits & Employer Liabilities</span>
+            <span class="lang-ar hidden">حساب المستحقات النظامية وأيام الإجازات وتكلفة الرواتب الشهرية</span>
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="langToggleBtn" onclick="toggleLanguage()" class="border border-slate-300 hover:border-emerald-500 bg-white px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-emerald-700 shadow-sm transition flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
+          </svg>
+          <span id="langLabel">العربية</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content App -->
+  <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full space-y-8">
+
+    <!-- Calculator Card Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Form Section (7 cols) -->
+      <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+            <span class="lang-en">Leave Event & Payroll Details</span>
+            <span class="lang-ar hidden">تفاصيل نوع الإجازة وبيانات الراتب</span>
+          </h2>
+          <span class="text-xs text-slate-400 font-medium">
+            <span class="lang-en">Unified Labor Law Form</span>
+            <span class="lang-ar hidden">نموذج معايير مكتب العمل</span>
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <!-- Leave Type Select -->
+          <div class="md:col-span-2">
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+              <span class="lang-en">Statutory Leave Type (Saudi Labor Law)</span>
+              <span class="lang-ar hidden">نوع الإجازة النظامية (نظام العمل السعودي)</span>
+            </label>
+            <select id="leaveType" onchange="handleLeaveTypeChange()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 transition">
+              <option value="maternity_new" selected>Maternity Leave / إجازة وضع الأمومة (12 Weeks - Full Pay)</option>
+              <option value="maternity_old">Maternity Leave / إجازة وضع تقليدية (10 Weeks - Pre-2024 Rule)</option>
+              <option value="paternity">Paternity Leave / إجازة مولود للأب - المادة 113 (3 Days - Full Pay)</option>
+              <option value="marriage">Marriage Leave / إجازة زواج - المادة 113 (5 Days - Full Pay)</option>
+              <option value="bereavement_direct">Bereavement / وفاة الزوج أو أحد الأصول أو الفروع (5 Days - Full Pay)</option>
+              <option value="bereavement_iddah_muslim">Iddah (Death of Husband - Muslim Female) / عدة المتوفى عنها زوجها (4 Mo 10 Days - Full Pay)</option>
+              <option value="bereavement_iddah_non_muslim">Iddah (Non-Muslim Female Husband Death) / وفاة زوج العاملة غير المسلمة (15 Days - Full Pay)</option>
+              <option value="hajj">Hajj Pilgrimage Leave / إجازة الحج - المادة 114 (10 to 15 Days Paid)</option>
+              <option value="examination">Examination Leave / إجازة أداء الامتحانات - المادة 115 (Actual Exam Days)</option>
+            </select>
+          </div>
+
+          <!-- Basic Salary -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+              <span class="lang-en">Monthly Basic Salary (SAR)</span>
+              <span class="lang-ar hidden">الراتب الأساسي الشهري (ريال)</span>
+            </label>
+            <div class="relative rounded-xl shadow-sm">
+              <input type="number" id="basicSalary" min="0" value="8000" step="100" oninput="calculateLeave()" class="w-full rounded-xl border border-slate-300 pl-3.5 pr-12 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400 text-xs font-bold">SAR</div>
+            </div>
+          </div>
+
+          <!-- Housing & Other Fixed Allowances -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+              <span class="lang-en">Housing & Transport Allowance (SAR)</span>
+              <span class="lang-ar hidden">بدل السكن وبدل النقل الثابت (ريال)</span>
+            </label>
+            <div class="relative rounded-xl shadow-sm">
+              <input type="number" id="allowances" min="0" value="2500" step="50" oninput="calculateLeave()" class="w-full rounded-xl border border-slate-300 pl-3.5 pr-12 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400 text-xs font-bold">SAR</div>
+            </div>
+          </div>
+
+          <!-- Service Duration (Crucial for Hajj Eligibility Article 114) -->
+          <div id="serviceDurationWrapper">
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+              <span class="lang-en">Continuous Service Duration with Employer</span>
+              <span class="lang-ar hidden">مدة الخدمة المستمرة لدى صاحب العمل</span>
+            </label>
+            <select id="serviceDuration" onchange="calculateLeave()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="less_2">Less than 2 consecutive years / أقل من سنتين متصلتين</option>
+              <option value="2_or_more" selected>2 consecutive years or more / سنتان فأكثر (مستحق لإجازة الحج)</option>
+            </select>
+          </div>
+
+          <!-- Custom Leave Duration (for Examination / Hajj custom) -->
+          <div id="customDaysWrapper">
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+              <span class="lang-en">Requested / Approved Duration (Days)</span>
+              <span class="lang-ar hidden">عدد أيام الإجازة المطلوبة / المعتمدة</span>
+            </label>
+            <input type="number" id="customDays" min="1" max="130" value="84" oninput="calculateLeave()" class="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            <p class="text-[11px] text-slate-500 mt-1" id="daysHelpText">12 weeks = 84 calendar days</p>
+          </div>
+
+          <!-- Daily Divisor Standard -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+              <span class="lang-en">Daily Wage Calculation Standard</span>
+              <span class="lang-ar hidden">معيار احتساب أجر اليوم اليومي</span>
+            </label>
+            <select id="dailyDivisor" onchange="calculateLeave()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="30" selected>30-Day Calendar Month Standard (Article 8)</option>
+              <option value="30.416">365 / 12 Average (30.42 Days)</option>
+              <option value="26">26 Working Days Standard</option>
+            </select>
+          </div>
+
+          <!-- GOSI Annuity Deduction Handling -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1.5">
+              <span class="lang-en">GOSI Employee Share Deduction</span>
+              <span class="lang-ar hidden">خصم حصة التأمينات الاجتماعية (GOSI)</span>
+            </label>
+            <select id="gosiApplicable" onchange="calculateLeave()" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-medium text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+              <option value="saudi">Saudi National (9.75% GOSI/SANED)</option>
+              <option value="non_saudi">Non-Saudi Expat (0% GOSI Annuity deduction)</option>
+              <option value="gross_only">Ignore Deductions (Display Full Gross Pay)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quick Rule Badge Notification -->
+        <div id="lawArticleBadge" class="rounded-xl bg-blue-50 border border-blue-200 p-3.5 flex gap-3 text-xs text-blue-900 leading-relaxed">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-blue-600 shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div id="articleText">
+            <strong>Saudi Labor Law Article 151:</strong> Female workers are entitled to 12 weeks (84 days) of fully paid maternity leave, beginning up to 4 weeks prior to the expected delivery date.
+          </div>
+        </div>
+      </div>
+
+      <!-- Output / Results Section (5 cols) -->
+      <div class="lg:col-span-5 space-y-5">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-6">
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h3 class="text-base font-bold text-slate-900">
+              <span class="lang-en">Payroll & Leave Summary</span>
+              <span class="lang-ar hidden">ملخص استحقاقات الرواتب والإجازة</span>
+            </h3>
+            <span class="px-2 py-1 rounded bg-emerald-100 text-emerald-800 text-[11px] font-bold tracking-wide uppercase">
+              <span id="statusTag">Statutory Paid</span>
+            </span>
+          </div>
+
+          <!-- Primary metric: Total Paid Leave Salary -->
+          <div class="bg-gradient-to-br from-emerald-900 to-slate-900 text-white rounded-xl p-5 shadow-inner">
+            <p class="text-xs font-medium text-emerald-300 uppercase tracking-wider mb-1">
+              <span class="lang-en">Total Gross Leave Salary Payable</span>
+              <span class="lang-ar hidden">إجمالي أجر الإجازة المستحق للدفعة</span>
+            </p>
+            <div class="flex items-baseline gap-2">
+              <span class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white" id="totalGrossLeaveSalary">SAR 29,400.00</span>
+            </div>
+            <p class="text-xs text-slate-300 mt-2" id="leaveDurationSummary">
+              For 84 calendar days (12.0 weeks)
+            </p>
+          </div>
+
+          <!-- Detailed breakdown lines -->
+          <div class="space-y-3 text-xs">
+            <div class="flex justify-between py-1.5 border-b border-slate-100">
+              <span class="text-slate-500 font-medium">
+                <span class="lang-en">Total Monthly Actual Wage</span>
+                <span class="lang-ar hidden">الأجر الشهري الفعلي (الأساسي + البدلات)</span>
+              </span>
+              <span class="font-bold text-slate-800" id="monthlyActualWage">SAR 10,500.00</span>
+            </div>
+
+            <div class="flex justify-between py-1.5 border-b border-slate-100">
+              <span class="text-slate-500 font-medium">
+                <span class="lang-en">Daily Wage Equivalent</span>
+                <span class="lang-ar hidden">معدل الأجر اليومي المقابل</span>
+              </span>
+              <span class="font-bold text-slate-800" id="dailyWage">SAR 350.00</span>
+            </div>
+
+            <div class="flex justify-between py-1.5 border-b border-slate-100">
+              <span class="text-slate-500 font-medium">
+                <span class="lang-en">Statutory Entitlement Duration</span>
+                <span class="lang-ar hidden">المدة المستحقة نظاماً</span>
+              </span>
+              <span class="font-bold text-slate-800" id="statutoryDurationDays">84 Days</span>
+            </div>
+
+            <div class="flex justify-between py-1.5 border-b border-slate-100">
+              <span class="text-slate-500 font-medium">
+                <span class="lang-en">Estimated Employee GOSI Deduction</span>
+                <span class="lang-ar hidden">تقدير خصم حصة التأمينات (GOSI)</span>
+              </span>
+              <span class="font-bold text-rose-600" id="gosiDeduction">SAR 2,866.50</span>
+            </div>
+
+            <div class="flex justify-between py-2 bg-slate-50 px-3 rounded-lg border border-slate-200">
+              <span class="text-slate-700 font-semibold">
+                <span class="lang-en">Estimated Net Payable to Employee</span>
+                <span class="lang-ar hidden">صافي الأجر التقديري المستحق للموظف</span>
+              </span>
+              <span class="font-extrabold text-emerald-700" id="netLeaveSalary">SAR 26,533.50</span>
+            </div>
+
+            <div class="flex justify-between py-1.5">
+              <span class="text-slate-500 font-medium">
+                <span class="lang-en">Employer GOSI & Hazard Cost (11.75%)</span>
+                <span class="lang-ar hidden">تكلفة حصة صاحب العمل بالتأمينات (11.75%)</span>
+              </span>
+              <span class="font-semibold text-slate-600" id="employerGosiCost">SAR 3,454.50</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="pt-2 flex flex-col sm:flex-row gap-2.5">
+            <button onclick="exportCsvSummary()" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1.5 shadow-sm">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span class="lang-en">Export CSV Statement</span>
+              <span class="lang-ar hidden">تصدير كشف إكسل (CSV)</span>
+            </button>
+
+            <button onclick="window.print()" class="border border-slate-300 hover:bg-slate-100 text-slate-700 font-semibold text-xs py-2.5 px-3 rounded-xl transition flex items-center justify-center gap-1">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+              </svg>
+              <span class="lang-en">Print</span>
+              <span class="lang-ar hidden">طباعة</span>
+            </button>
+          </div>
+
+          <!-- Statutory & Regulatory Disclaimer -->
+          <div class="bg-amber-50 rounded-xl border border-amber-200 p-3 text-[11px] text-amber-900 leading-relaxed">
+            <div class="flex items-start gap-1.5">
+              <span class="font-bold shrink-0">⚠️ Disclaimer / إخلاء مسؤولية:</span>
+              <div>
+                <span class="lang-en">This calculation is provided as an estimate for operational planning under current Saudi Labor Law provisions. Final payroll deductions and social security liabilities must be reconciled against the official Qiwa contract clauses and GOSI Portal statements.</span>
+                <span class="lang-ar hidden">هذه الحسابات تقدم كأداة استرشادية لغايات التخطيط التشغيلي والمحاسبي وفق نظام العمل السعودي. تخضع المستحقات النهائية لبنود عقد العمل الموثق عبر منصة قوى وحسابات التأمينات الاجتماعية المعتمدة.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- High Converting CTA Card -->
+        <div class="bg-gradient-to-r from-amber-500 via-amber-600 to-orange-600 rounded-2xl p-5 text-white shadow-md relative overflow-hidden">
+          <div class="relative z-10 space-y-3">
+            <div class="inline-block px-2.5 py-0.5 rounded-full bg-black/20 text-xs font-semibold uppercase tracking-wider">
+              HR & Payroll Toolkit 2024
+            </div>
+            <h4 class="text-lg font-extrabold leading-snug">
+              <span class="lang-en">Complete Offline Automated Excel & VBA Master Template</span>
+              <span class="lang-ar hidden">حزمة قوالب الإكسيل والأتمتة الشاملة للرواتب والموارد البشرية</span>
+            </h4>
+            <p class="text-xs text-amber-100 leading-relaxed">
+              <span class="lang-en">Includes 32 automated KSA HR templates: WPS SIF generator, Special leaves tracker, EOSB matrix, Qiwa sync sheets, and overtime calculators.</span>
+              <span class="lang-ar hidden">تتضمن 32 قالباً متطوراً مع ماكرو VBA: ملفات WPS لحماية الأجور، وتتبع الإجازات ومكافأة نهاية الخدمة متوافقة كلياً.</span>
+            </p>
+            <a href="https://gumroad.com" target="_blank" class="inline-block w-full text-center bg-slate-900 hover:bg-black text-white font-bold py-3 px-4 rounded-xl text-xs sm:text-sm shadow-lg transition duration-200">
+              <span class="lang-en">Instant Download for $29 &rarr;</span>
+              <span class="lang-ar hidden">تحميل القالب الفوري مقابل 29 دولار فقط &larr;</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO Comprehensive Guide, Law Breakdown & FAQ (800+ Words) -->
+    <section class="bg-white rounded-2xl border border-slate-200 p-8 space-y-8 text-slate-700 leading-relaxed shadow-sm mt-8">
+      
+      <!-- Article Title -->
+      <div class="border-b border-slate-200 pb-5">
+        <h2 class="text-2xl font-extrabold text-slate-900 mb-2">
+          <span class="lang-en">Comprehensive Guide to Special Leaves & Maternity Entitlements in Saudi Labor Law</span>
+          <span class="lang-ar hidden">الدليل الشامل للإجازات الخاصة وإجازة الوضع وفق نظام العمل واللوائح التنفيذية السعودية</span>
+        </h2>
+        <p class="text-sm text-slate-500">
+          <span class="lang-en">Essential statutory rules, legal articles, employer salary commitments, and payroll accounting standards in the Kingdom of Saudi Arabia.</span>
+          <span class="lang-ar hidden">المرجع القانوني والمالي للمنشآت ومدراء الموارد البشرية والمحاسبين لحساب إجازات الموظفين الرسمية والخاصة.</span>
+        </p>
+      </div>
+
+      <!-- Content Section 1 -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-bold text-slate-900">
+          <span class="lang-en">1. Overview of Statutory Special Leaves (Articles 113, 114, 115, 151 & 160)</span>
+          <span class="lang-ar hidden">1. نظرة عامة على الإجازات ذات الأجر الكامل في نظام العمل السعودي</span>
+        </h3>
+        <p class="text-sm">
+          <span class="lang-en">
+            The Saudi Labor Law enacted by Royal Decree No. M/51 and its subsequent ministerial updates rigorously protect employees' rights during life milestones and personal circumstances. Unlike regular annual leave under Article 109, special leaves cannot be forfeited, swapped without employee consent, or deducted from the annual leave balance, provided the employee furnishes valid documentary proof.
+          </span>
+          <span class="lang-ar hidden">
+            أفرد نظام العمل السعودي الصادر بالمرسوم الملكي رقم (م/51) وتعديلاته ولوائحه التنفيذية حماية تشريعية صارمة لأيام الإجازات الخاصة والمناسبات الشخصية للعاملين في القطاع الخاص. وبخلاف الإجازة السنوية العادية المقررة بالمادة 109، فإن هذه الإجازات الخاصة تُمنح بأجر كامل ولا يجوز للمنشأة خصمها من رصيد الإجازات السنوية المستحقة طالما قدم العامل الإثباتات والوثائق الرسمية الدالة على سبب الإجازة.
+          </span>
+        </p>
+      </div>
+
+      <!-- Comparison Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-xs text-left rtl:text-right border-collapse border border-slate-200 rounded-lg">
+          <thead class="bg-slate-100 text-slate-800 font-bold uppercase">
+            <tr>
+              <th class="p-3 border border-slate-200">Labor Law Article / المادة</th>
+              <th class="p-3 border border-slate-200">Event / نوع الإجازة</th>
+              <th class="p-3 border border-slate-200">Duration / المدة النظامية</th>
+              <th class="p-3 border border-slate-200">Wage Level / استحقاق الأجر</th>
+              <th class="p-3 border border-slate-200">Mandatory Conditions / الشروط والضوابط</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-200 text-slate-700">
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-semibold text-emerald-800 border border-slate-200">Article 151 (New)</td>
+              <td class="p-3 font-medium border border-slate-200">Maternity Leave / إجازة الوضع للأم</td>
+              <td class="p-3 border border-slate-200 font-bold">12 Weeks (84 Days)</td>
+              <td class="p-3 border border-slate-200">100% Full Actual Wage</td>
+              <td class="p-3 border border-slate-200">Starts up to 4 weeks prior to expected delivery; 6 weeks mandatory postpartum rest.</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-semibold text-emerald-800 border border-slate-200">Article 113 (Paternity)</td>
+              <td class="p-3 font-medium border border-slate-200">Paternity Leave / إجازة مولود للأب</td>
+              <td class="p-3 border border-slate-200 font-bold">3 Days</td>
+              <td class="p-3 border border-slate-200">100% Full Actual Wage</td>
+              <td class="p-3 border border-slate-200">Taken within 7 days of child's birth date upon presenting birth certificate.</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-semibold text-emerald-800 border border-slate-200">Article 113 (Marriage)</td>
+              <td class="p-3 font-medium border border-slate-200">Marriage Leave / إجازة الزواج</td>
+              <td class="p-3 border border-slate-200 font-bold">5 Days</td>
+              <td class="p-3 border border-slate-200">100% Full Actual Wage</td>
+              <td class="p-3 border border-slate-200">Granted upon official marriage contract verification.</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-semibold text-emerald-800 border border-slate-200">Article 113 (Bereavement)</td>
+              <td class="p-3 font-medium border border-slate-200">Death of Spouse / Ascendants / Descendants</td>
+              <td class="p-3 border border-slate-200 font-bold">5 Days</td>
+              <td class="p-3 border border-slate-200">100% Full Actual Wage</td>
+              <td class="p-3 border border-slate-200">Includes death of spouse, parents, grandparents, children, and grandchildren.</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-semibold text-emerald-800 border border-slate-200">Article 160 (Iddah Muslim)</td>
+              <td class="p-3 font-medium border border-slate-200">Iddah Leave / عدة المتوفى عنها زوجها</td>
+              <td class="p-3 border border-slate-200 font-bold">4 Months & 10 Days</td>
+              <td class="p-3 border border-slate-200">100% Full Actual Wage</td>
+              <td class="p-3 border border-slate-200">For Muslim female workers; extends until delivery if pregnant.</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-semibold text-emerald-800 border border-slate-200">Article 160 (Iddah Non-Muslim)</td>
+              <td class="p-3 font-medium border border-slate-200">Husband Death (Non-Muslim)</td>
+              <td class="p-3 border border-slate-200 font-bold">15 Days</td>
+              <td class="p-3 border border-slate-200">100% Full Actual Wage</td>
+              <td class="p-3 border border-slate-200">Supported by official foreign or local death documentation.</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-semibold text-emerald-800 border border-slate-200">Article 114 (Hajj)</td>
+              <td class="p-3 font-medium border border-slate-200">Hajj Pilgrimage / إجازة أداء فريضة الحج</td>
+              <td class="p-3 border border-slate-200 font-bold">10 to 15 Days</td>
+              <td class="p-3 border border-slate-200">100% Full Actual Wage</td>
+              <td class="p-3 border border-slate-200">Once during career; requires minimum 2 continuous years of service with employer.</td>
+            </tr>
+            <tr class="hover:bg-slate-50">
+              <td class="p-3 font-semibold text-emerald-800 border border-slate-200">Article 115 (Exams)</td>
+              <td class="p-3 font-medium border border-slate-200">Academic Examinations / إجازة الامتحانات</td>
+              <td class="p-3 border border-slate-200 font-bold">Actual Exam Days</td>
+              <td class="p-3 border border-slate-200">100% Full Actual Wage</td>
+              <td class="p-3 border border-slate-200">For unrepeated exams; employee must give 15 days advance notice and official school proof.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Detailed Mathematical Breakdown -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold text-slate-900">
+          <span class="lang-en">2. Mathematical Calculation Formulas for Payroll & HR</span>
+          <span class="lang-ar hidden">2. المعادلات الرياضية الدقيقة لحساب استحقاقات الرواتب والخصومات</span>
+        </h3>
+        <p class="text-sm">
+          <span class="lang-en">
+            To maintain strict compliance with the Saudi Wage Protection System (WPS) and Mudad banking portal, payroll teams must calculate daily wage equivalents and aggregate leave compensation using standard formulas:
+          </span>
+          <span class="lang-ar hidden">
+            لضمان التوافق مع نظام حماية الأجور (WPS) ومنصة مدد والبنك المركزي السعودي، تتبع إدارات الموارد البشرية المعايير المحاسبية المعتمدة لاحتساب أجر اليوم وإجمالي استحقاق الإجازة:
+          </span>
+        </p>
+        <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 font-mono text-xs text-slate-800 space-y-2">
+          <p><strong>Monthly Actual Wage:</strong> Basic Salary + Fixed Allowances (Housing + Transportation + Fixed Regular Allowances)</p>
+          <p><strong>Daily Wage Rate:</strong> Monthly Actual Wage ÷ 30 (Calendar Divisor under Labor Law Article 8)</p>
+          <p><strong>Total Gross Leave Benefit:</strong> Daily Wage Rate × Approved Statutory Days</p>
+          <p><strong>Employee GOSI Deduction (Saudis):</strong> (Basic Salary + Housing Allowance) × 9.75% × (Leave Days ÷ 30)</p>
+          <p><strong>Employer GOSI & SANED Cost:</strong> (Basic Salary + Housing Allowance) × 11.75% (or 2% for Non-Saudis Occupational Hazards)</p>
+        </div>
+      </div>
+
+      <!-- Maternity Leave Specifics (Article 151 & Nursing Hours Article 152) -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-bold text-slate-900">
+          <span class="lang-en">3. Key Provisions of Saudi Maternity Leave & Postpartum Rights</span>
+          <span class="lang-ar hidden">3. أحكام إجازة الوضع وساعة الرضاعة وحماية العاملة الحامل</span>
+        </h3>
+        <p class="text-sm">
+          <span class="lang-en">
+            The recent labor law modernization expanded maternity leave to 12 paid weeks (84 calendar days). Crucially, Article 152 provides that returning mothers are legally entitled to one or more daily rest periods totaling not less than one full hour for nursing/breastfeeding, beyond standard rest breaks, with no wage reduction for up to 24 months post-birth.
+            Furthermore, employers are strictly prohibited under Article 156 from terminating or issuing a notice of termination to a female employee during her pregnancy or maternity leave.
+          </span>
+          <span class="lang-ar hidden">
+            أقرت التعديلات النظامية الحديثة تمديد إجازة الوضع لتصبح 12 أسبوعاً مدفوعة الأجر بالكامل (84 يوماً تقويمياً). وتضمن المادة 152 من نظام العمل حق الموظفة العائدة بعد الوضع في فترة أو فترات استراحة لإرضاع مولودها لا تقل في مجموعها عن ساعة واحدة يومياً تُحسب من ساعات العمل الفعلية ولا يترتب عليها أي تخفيض في الأجر وذلك لمدة سنتين كاملتين من تاريخ الوضع. كما تحظر المادة 156 حظراً قاطعاً فصل الموظفة أو إنذارها بالفصل أثناء فترة الحمل أو التمتع بإجازة الوضع.
+          </span>
+        </p>
+      </div>
+
+      <!-- FAQ Accordion -->
+      <div class="space-y-4 pt-4 border-t border-slate-200">
+        <h3 class="text-lg font-bold text-slate-900">
+          <span class="lang-en">Frequently Asked Questions (FAQ)</span>
+          <span class="lang-ar hidden">الأسئلة الشائعة حول الإجازات الخاصة ونظام العمل السعودي</span>
+        </h3>
+
+        <div class="space-y-3 text-xs sm:text-sm">
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="font-bold text-slate-900 mb-1">
+              <span class="lang-en">Can an employer deduct maternity leave days from the female worker's annual vacation?</span>
+              <span class="lang-ar hidden">هل يحق للمنشأة حسم أيام إجازة الوضع من رصيد الإجازة السنوية للموظفة؟</span>
+            </h4>
+            <p class="text-slate-600">
+              <span class="lang-en">No. Under the Saudi Labor Law, maternity leave (Article 151) is an independent statutory right and cannot be offset against, replaced by, or deducted from the employee's accrued annual leave balance under Article 109.</span>
+              <span class="lang-ar hidden">كلا، لا يحق لصاحب العمل نهائياً حسم إجازة الوضع من رصيد الإجازة السنوية، حيث تعتبر إجازة الوضع استحقاقاً مستقلاً منصوصاً عليه في المادة 151 لحماية الأم والمولود، وتظل الإجازة السنوية حقاً مكتسباً لا ينتقص.</span>
+            </p>      
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="font-bold text-slate-900 mb-1">
+              <span class="lang-en">Is paternity leave paid if the employee is absent 2 weeks after child delivery?</span>
+              <span class="lang-ar hidden">متى يبدأ سريان إجازة المولود للأب (إجازة الأبوة)؟</span>
+            </h4>
+            <p class="text-slate-600">
+              <span class="lang-en">Paternity leave (3 paid days) must generally be taken concurrently with or immediately following the birth event (within 7 days). Employers have the discretion to request the birth notification certificate issued by the Ministry of Health or Absher.</span>
+              <span class="lang-ar hidden">تُمنح إجازة المولود للموظف الأب ومدتها 3 أيام بأجر كامل خلال الأيام الأولى من تاريخ الولادة (عادة خلال 7 أيام من الحدث) مع إرفاق بلاغ الولادة أو شهادة الميلاد الصادرة من منصة أبشر/وزارة الصحة.</span>
+            </p>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="font-bold text-slate-900 mb-1">
+              <span class="lang-en">What happens if the female employee gives birth to a sick or disabled child?</span>
+              <span class="lang-ar hidden">ما هو الحكم النظامي في حال ولادة طفل مريض أو من ذوي الإعاقة؟</span>
+            </h4>
+            <p class="text-slate-600">
+              <span class="lang-en">Article 151 stipulates that if the child is sick or has a medical disability requiring a continuous companion, the female worker is entitled to an additional 1 month of paid leave following the maternity leave, plus the option of requesting an extra month of unpaid leave.</span>
+              <span class="lang-ar hidden">تنص المادة 151 على أنه في حال ولادة طفل مريض أو من ذوي الإعاقة وتتطلب حالته الصحية مرافقاً مستمراً، يحق للعاملة الحصول على إجازة مدتها شهر بأجر كامل تبدأ بعد انتهاء إجازة الوضع، ولها الحق في تمديد الإجازة لشهر إضافي بدون أجر.</span>
+            </p>
+          </div>
+
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <h4 class="font-bold text-slate-900 mb-1">
+              <span class="lang-en">Can an employee claim Hajj leave more than once with the same company?</span>
+              <span class="lang-ar hidden">هل يجوز للموظف تكرار إجازة الحج مدفوعة الأجر لدى نفس المنشأة؟</span>
+            </h4>
+            <p class="text-slate-600">
+              <span class="lang-en">No. Under Article 114, Hajj leave (10 to 15 days with full pay) is granted only once during the employee's entire duration of service with the employer, provided the employee has completed at least 2 consecutive years of service.</span>
+              <span class="lang-ar hidden">كلا، تحدد المادة 114 من نظام العمل أن إجازة الحج مدفوعة الأجر (بين 10 إلى 15 يوماً شاملة عطلة عيد الأضحى) تُمنح للعامل لمرة واحدة فقط طوال مدة خدمته لدى صاحب العمل، شريطة أن يكون قد أمضى في العمل سنتين متصلتين على الأقل.</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 mt-12">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p>&copy; <span id="yearSpan"></span> Saudi B2B Operations Suite. Designed for KSA Labor Law Compliance.</p>
+      <div class="flex items-center gap-6">
+        <a href="https://gumroad.com" target="_blank" class="hover:text-emerald-400 transition font-medium">Excel VBA Bundle ($29)</a>
+        <a href="#" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;" class="hover:text-slate-200">Back to Top &uarr;</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Client Calculation Logic -->
+  <script>
+    let currentLang = 'en';
+
+    const leaveConfigs = {
+      maternity_new: {
+        days: 84,
+        lawBadgeEn: '<strong>Saudi Labor Law Article 151 (2024 Amendment):</strong> Female employees are entitled to 12 weeks (84 days) of maternity leave with 100% full pay.',
+        lawBadgeAr: '<strong>المادة 151 من نظام العمل (التعديلات الحديثة):</strong> للمرأة العاملة الحق في إجازة وضع بأجر كامل لمدة 12 أسبوعاً (84 يوماً) تبدأ قبل التاريخ المرجح للوضع بأربعة أسابيع كحد أقصى.',
+        daysHelpEn: '12 Weeks = 84 calendar days with full actual wage.',
+        daysHelpAr: '12 أسبوعاً = 84 يوماً تقويمياً بأجر كامل.',
+        customizable: false,
+        requiresServiceYears: false
+      },
+      maternity_old: {
+        days: 70,
+        lawBadgeEn: '<strong>Saudi Labor Law Article 151 (Legacy Standard):</strong> 10 weeks (70 days) maternity leave distributed as 4 weeks pre-natal and 6 weeks postpartum.',
+        lawBadgeAr: '<strong>المادة 151 (النظام السابق قبل التعديل الأخير):</strong> إجازة وضع لمدة 10 أسابيع (70 يوماً) توزع على 4 أسابيع قبل الوضع و6 أسابيع بعده.',
+        daysHelpEn: '10 Weeks = 70 calendar days.',
+        daysHelpAr: '10 أسابيع = 70 يوماً تقويمياً.',
+        customizable: false,
+        requiresServiceYears: false
+      },
+      paternity: {
+        days: 3,
+        lawBadgeEn: '<strong>Saudi Labor Law Article 113:</strong> Male employees are entitled to 3 days of fully paid paternity leave upon child delivery.',
+        lawBadgeAr: '<strong>المادة 113 من نظام العمل:</strong> يستحق العامل إجازة بأجر كامل لمدة 3 أيام في حالة ولادة مولود له.',
+        daysHelpEn: '3 calendar days with full actual pay.',
+        daysHelpAr: '3 أيام تقويمية بأجر كامل.',
+        customizable: false,
+        requiresServiceYears: false
+      },
+      marriage: {
+        days: 5,
+        lawBadgeEn: '<strong>Saudi Labor Law Article 113:</strong> Employees are entitled to 5 days of fully paid leave on the occasion of their marriage.',
+        lawBadgeAr: '<strong>المادة 113 من نظام العمل:</strong> يستحق العامل إجازة بأجر كامل لمدة 5 أيام بمناسبة زواجه.',
+        daysHelpEn: '5 calendar days with full pay upon official marriage documentation.',
+        daysHelpAr: '5 أيام تقويمية بأجر كامل من تاريخ عقد القران.',
+        customizable: false,
+        requiresServiceYears: false
+      },
+      bereavement_direct: {
+        days: 5,
+        lawBadgeEn: '<strong>Saudi Labor Law Article 113:</strong> 5 days fully paid leave upon the death of an employee’s spouse, ascendants (parents/grandparents), or descendants (children/grandchildren).',
+        lawBadgeAr: '<strong>المادة 113 من نظام العمل:</strong> إجازة بأجر كامل لمدة 5 أيام في حال وفاة زوج العامل أو أحد أصوله أو فروعه.',
+        daysHelpEn: '5 calendar days with full pay.',
+        daysHelpAr: '5 أيام تقويمية بأجر كامل.',
+        customizable: false,
+        requiresServiceYears: false
+      },
+      bereavement_iddah_muslim: {
+        days: 130,
+        lawBadgeEn: '<strong>Saudi Labor Law Article 160:</strong> Muslim female employee whose husband passes away has the right to Iddah leave with full pay for 4 months and 10 days (130 days).',
+        lawBadgeAr: '<strong>المادة 160 من نظام العمل:</strong> للمرأة العاملة المسلمة المتوفى عنها زوجها الحق في إجازة عدة بأجر كامل لمدة لا تقل عن أربعة أشهر وعشرة أيام (130 يوماً).',
+        daysHelpEn: '4 Months and 10 Days = 130 calendar days.',
+        daysHelpAr: '4 أشهر و10 أيام = 130 يوماً تقويمياً بأجر كامل.',
+        customizable: false,
+        requiresServiceYears: false
+      },
+      bereavement_iddah_non_muslim: {
+        days: 15,
+        lawBadgeEn: '<strong>Saudi Labor Law Article 160:</strong> Non-Muslim female employee whose husband passes away is entitled to 15 days of fully paid bereavement leave.',
+        lawBadgeAr: '<strong>المادة 160 من نظام العمل:</strong> يحق للعاملة غير المسلمة المتوفى عنها زوجها إجازة بأجر كامل لمدة 15 يوماً.',
+        daysHelpEn: '15 calendar days with full pay.',
+        daysHelpAr: '15 يوماً تقويمياً بأجر كامل.',
+        customizable: false,
+        requiresServiceYears: false
+      },
+      hajj: {
+        days: 10,
+        lawBadgeEn: '<strong>Saudi Labor Law Article 114:</strong> 10 to 15 days paid leave for performing Hajj pilgrimage once during service, requiring at least 2 consecutive years of employment.',
+        lawBadgeAr: '<strong>المادة 114 من نظام العمل:</strong> إجازة بأجر كامل لمدة لا تقل عن 10 أيام ولا تزيد على 15 يوماً لأداء فريضة الحج (لمرة واحدة وتتطلب سنتين خدمة متصلة).',
+        daysHelpEn: 'Between 10 and 15 days (including Eid holidays) as approved by employer.',
+        daysHelpAr: 'من 10 إلى 15 يوماً تشمل أيام عيد الأضحى حسب اعتماد المنشأة.',
+        customizable: true,
+        requiresServiceYears: true
+      },
+      examination: {
+        days: 7,
+        lawBadgeEn: '<strong>Saudi Labor Law Article 115:</strong> Fully paid leave for the actual examination days for unrepeated examinations in accredited institutions.',
+        lawBadgeAr: '<strong>المادة 115 من نظام العمل:</strong> إجازة بأجر كامل عن الأيام الفعلية لأداء الامتحانات لسنة غير معادة بموافقة المنشأة.',
+        daysHelpEn: 'Enter actual scheduled examination days.',
+        daysHelpAr: 'أدخل عدد أيام الامتحانات الفعلية المجدولة.',
+        customizable: true,
+        requiresServiceYears: false
+      }
+    };
+
+    function handleLeaveTypeChange() {
+      const type = document.getElementById('leaveType').value;
+      const config = leaveConfigs[type];
+      const customWrapper = document.getElementById('customDaysWrapper');
+      const customDaysInput = document.getElementById('customDays');
+      const serviceWrapper = document.getElementById('serviceDurationWrapper');
+      const daysHelp = document.getElementById('daysHelpText');
+      const articleText = document.getElementById('articleText');
+
+      if (config.customizable) {
+        customWrapper.style.display = 'block';
+        customDaysInput.value = config.days;
+      } else {
+        customWrapper.style.display = 'none';
+        customDaysInput.value = config.days;
+      }
+
+      if (config.requiresServiceYears) {
+        serviceWrapper.style.display = 'block';
+      } else {
+        serviceWrapper.style.display = 'none';
+      }
+
+      daysHelp.textContent = (currentLang === 'en') ? config.daysHelpEn : config.daysHelpAr;
+      articleText.innerHTML = (currentLang === 'en') ? config.lawBadgeEn : config.lawBadgeAr;
+
+      calculateLeave();
+    }
+
+    function calculateLeave() {
+      const type = document.getElementById('leaveType').value;
+      const config = leaveConfigs[type];
+      const basic = parseFloat(document.getElementById('basicSalary').value) || 0;
+      const allowances = parseFloat(document.getElementById('allowances').value) || 0;
+      const divisor = parseFloat(document.getElementById('dailyDivisor').value) || 30;
+      const gosiType = document.getElementById('gosiApplicable').value;
+      const serviceYears = document.getElementById('serviceDuration').value;
+      const statusTag = document.getElementById('statusTag');
+
+      let days = config.customizable 
+        ? (parseFloat(document.getElementById('customDays').value) || config.days)
+        : config.days;
+
+      // Check Hajj eligibility
+      let isEligible = true;
+      if (type === 'hajj' && serviceYears === 'less_2') {
+        isEligible = false;
+        statusTag.textContent = (currentLang === 'en') ? 'Ineligible (<2 Yrs)' : 'غير مستحق (أقل من سنتين)';
+        statusTag.className = 'px-2 py-1 rounded bg-rose-100 text-rose-800 text-[11px] font-bold tracking-wide uppercase';
+      } else {
+        statusTag.textContent = (currentLang === 'en') ? 'Statutory Paid' : 'مدفوعة نظاماً';
+        statusTag.className = 'px-2 py-1 rounded bg-emerald-100 text-emerald-800 text-[11px] font-bold tracking-wide uppercase';
+      }
+
+      const monthlyActualWage = basic + allowances;
+      const dailyWage = monthlyActualWage / divisor;
+      let totalGross = isEligible ? (dailyWage * days) : 0;
+
+      // GOSI Calculation on leave salary (applicable on Basic + Housing portion - approx 9.75% for Saudis)
+      let gosiRateEmployee = 0;
+      let gosiRateEmployer = 0;
+
+      if (gosiType === 'saudi') {
+        gosiRateEmployee = 0.0975; // 9% Pension + 0.75% SANED
+        gosiRateEmployer = 0.1175; // 9% Pension + 0.75% SANED + 2% Hazards
+      } else if (gosiType === 'non_saudi') {
+        gosiRateEmployee = 0.00;
+        gosiRateEmployer = 0.02; // 2% Occupational Hazards
+      } else {
+        gosiRateEmployee = 0.00;
+        gosiRateEmployer = 0.00;
+      }
+
+      // Employee base for GOSI calculation is basic + housing
+      // For calculation, we prorate according to leave duration over month
+      const gosiBaseMonthly = basic + (allowances * 0.7); // estimated housing share in allowances
+      const gosiDeduction = isEligible ? (gosiBaseMonthly * (days / divisor) * gosiRateEmployee) : 0;
+      const employerGosiCost = isEligible ? (gosiBaseMonthly * (days / divisor) * gosiRateEmployer) : 0;
+      const netPayable = Math.max(0, totalGross - gosiDeduction);
+
+      // Format currency
+      const fmt = (num) => 'SAR ' + num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      document.getElementById('totalGrossLeaveSalary').textContent = fmt(totalGross);
+      document.getElementById('monthlyActualWage').textContent = fmt(monthlyActualWage);
+      document.getElementById('dailyWage').textContent = fmt(dailyWage);
+      document.getElementById('statutoryDurationDays').textContent = days + (currentLang === 'en' ? ' Days' : ' يوماً');
+      document.getElementById('gosiDeduction').textContent = fmt(gosiDeduction);
+      document.getElementById('netLeaveSalary').textContent = fmt(netPayable);
+      document.getElementById('employerGosiCost').textContent = fmt(employerGosiCost);
+
+      const weeks = (days / 7).toFixed(1);
+      document.getElementById('leaveDurationSummary').textContent = (currentLang === 'en')
+        ? `For ${days} calendar days (${weeks} weeks)`
+        : `عن مدة ${days} يوماً تقويمياً (${weeks} أسبوع) بأجر نظامي كامل`;
+    }
+
+    function toggleLanguage() {
+      if (currentLang === 'en') {
+        currentLang = 'ar';
+        document.documentElement.setAttribute('dir', 'rtl');
+        document.documentElement.setAttribute('lang', 'ar');
+        document.getElementById('langLabel').textContent = 'English';
+        document.querySelectorAll('.lang-en').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.lang-ar').forEach(el => el.classList.remove('hidden'));
+      } else {
+        currentLang = 'en';
+        document.documentElement.setAttribute('dir', 'ltr');
+        document.documentElement.setAttribute('lang', 'en');
+        document.getElementById('langLabel').textContent = 'العربية';
+        document.querySelectorAll('.lang-en').forEach(el => el.classList.remove('hidden'));
+        document.querySelectorAll('.lang-ar').forEach(el => el.classList.add('hidden'));
+      }
+      handleLeaveTypeChange();
+    }
+
+    function exportCsvSummary() {
+      const leaveType = document.getElementById('leaveType').options[document.getElementById('leaveType').selectedIndex].text;
+      const basic = document.getElementById('basicSalary').value;
+      const allowances = document.getElementById('allowances').value;
+      const grossLeave = document.getElementById('totalGrossLeaveSalary').textContent.replace('SAR ', '').replace(/,/g, '');
+      const daily = document.getElementById('dailyWage').textContent.replace('SAR ', '').replace(/,/g, '');
+      const days = document.getElementById('statutoryDurationDays').textContent;
+      const gosiDeduct = document.getElementById('gosiDeduction').textContent.replace('SAR ', '').replace(/,/g, '');
+      const netPay = document.getElementById('netLeaveSalary').textContent.replace('SAR ', '').replace(/,/g, '');
+      const employerGosi = document.getElementById('employerGosiCost').textContent.replace('SAR ', '').replace(/,/g, '');
+
+      const rows = [
+        ['KSA Labor Law Special Leave Calculation Summary'],
+        ['Generated Date', new Date().toISOString().split('T')[0]],
+        ['Statutory Leave Type', `"${leaveType}"`],
+        ['Monthly Basic Salary (SAR)', basic],
+        ['Monthly Allowances (SAR)', allowances],
+        ['Calculated Daily Wage Rate (SAR)', daily],
+        ['Statutory Days Count', days],
+        ['Total Gross Leave Salary (SAR)', grossLeave],
+        ['Employee GOSI Deduction (SAR)', gosiDeduct],
+        ['Estimated Net Leave Salary (SAR)', netPay],
+        ['Employer GOSI Contribution Cost (SAR)', employerGosi],
+        ['Regulatory Compliance Notice', 'Subject to Article 8, 113, 114, 115, 151 and 160 of Saudi Labor Law']
+      ];
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `Saudi_Special_Leave_Summary_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('yearSpan').textContent = new Date().getFullYear();
+      handleLeaveTypeChange();
+    });
+  </script>
+</body>
+</html>

@@ -201,5 +201,12 @@
     "title_ar": "أداة تدقيق الامتثال لمنصات قوى، التأمينات الاجتماعية، ومدد",
     "description_en": "Perform an instant multi-platform compliance audit for Saudi SMEs across Qiwa, GOSI, and Mudad systems. Identify wage protection gaps and penalties.",
     "date": "2026-11-12"
+  },
+  {
+    "slug": "saudi-special-leave-and-maternity-pay-calculator",
+    "title_en": "Saudi Labor Law Special Leave & Maternity Pay Calculator",
+    "title_ar": "حاسبة إجازات الأمومة والإجازات الخاصة وفق نظام العمل السعودي",
+    "description_en": "Calculate statutory paid leave salary, employer costs, and entitlements for maternity, paternity, marriage, bereavement, Hajj, and Iddah in KSA.",
+    "date": "2026-11-13"
   }
 ]
