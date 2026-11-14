@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi IFRS 16 Lease & Ejar Accounting Schedule Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'Cairo', 'sans-serif'],
+                        arabic: ['Cairo', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .font-ar { font-family: 'Cairo', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; color: black; font-size: 11pt; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+    <!-- Top Sticky Promotional Banner -->
+    <div class="sticky top-0 z-50 bg-gradient-to-r from-brand-900 via-slate-900 to-brand-800 text-white shadow-md border-b border-brand-500/30 no-print">
+        <div class="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-3 text-sm">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-brand-500 text-white">
+                    IFRS 16 / SOCPA
+                </span>
+                <span class="font-medium" id="bannerTextEn">
+                    Need full multi-asset portfolio lease accounting in Excel? Download the <strong>KSA IFRS 16 & Ejar Master Model</strong>.
+                </span>
+                <span class="font-ar hidden text-xs sm:text-sm" id="bannerTextAr">
+                    هل تحتاج لإدارة محفظة عقود الإيجار المتقدمة؟ حمّل <strong>نموذج إكسل وماكرو الاحترافي لمعيار IFRS 16 وإيجار ($29)</strong>.
+                </span>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="https://gumroad.com" target="_blank" rel="noopener" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1 rounded text-xs transition-colors shadow flex items-center gap-1.5">
+                    <span>Get Excel Tool ($29)</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+                <button id="langToggleBtn" class="border border-slate-600 hover:border-slate-400 px-2.5 py-1 rounded text-xs text-slate-200 transition-colors font-medium flex items-center gap-1">
+                    <span id="langLabel">العربية</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="bg-white border-b border-slate-200 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                    16
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 leading-tight" id="headerTitle">
+                        Saudi IFRS 16 Lease & Ejar Accounting Tool
+                    </h1>
+                    <p class="text-xs text-slate-500" id="headerSubTitle">
+                        Automated Right-of-Use (ROU) Asset, Lease Liability, Interest Expense & Amortization Schedule
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button onclick="window.print()" class="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 transition shadow-sm">
+                    <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                    <span id="btnPrint">Print Schedule</span>
+                </button>
+                <button onclick="exportToCsv()" class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 transition shadow-sm">
+                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span id="btnCsv">Export CSV</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Application Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow">
+        
+        <!-- Hero / Context Banner -->
+        <div class="mb-6 bg-gradient-to-r from-slate-900 to-slate-800 text-white rounded-2xl p-5 sm:p-6 shadow-md">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-brand-500/20 text-brand-300 border border-brand-500/40 mb-2" id="badgeCompliance">
+                        Saudi SOCPA & International IFRS 16 Certified Standard
+                    </span>
+                    <h2 class="text-xl sm:text-2xl font-bold tracking-tight" id="heroHead">
+                        Commercial Lease & Ejar Capitalization Schedule
+                    </h2>
+                    <p class="mt-1 text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed" id="heroDesc">
+                        Quickly generate the official opening Present Value of Lease Liabilities, Right-of-Use Asset (ROU), straight-line depreciation, IBR interest expense, and split liabilities into current vs. non-current portions in compliance with Saudi accounting practices.
+                    </p>
+                </div>
+                <div class="text-right flex-shrink-0">
+                    <div class="inline-flex flex-col items-end bg-slate-800/80 border border-slate-700/80 px-4 py-2.5 rounded-xl text-xs">
+                        <span class="text-slate-400" id="stdTitle">Standard Framework:</span>
+                        <span class="font-bold text-brand-400 text-sm">IFRS 16 / SOCPA / ZATCA</span>
+                        <span class="text-[11px] text-slate-400 mt-0.5" id="stdSub">Standard VAT: 15% Commercial</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calculator Workspace (Grid) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Inputs Form (5 cols) -->
+            <div class="lg:col-span-5 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm">
+                <h3 class="text-base font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100 flex items-center justify-between" id="inputsTitle">
+                    <span>1. Lease Contract Parameters</span>
+                    <span class="text-xs font-normal text-slate-400">عقد الإيجار</span>
+                </h3>
+
+                <div class="space-y-4">
+                    <!-- Lease Commencement & Duration -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblStartDate">
+                                Commencement Date
+                            </label>
+                            <input type="date" id="leaseStart" class="w-full text-xs sm:text-sm p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none" value="2025-01-01">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblDuration">
+                                Lease Term (Months)
+                            </label>
+                            <input type="number" id="leaseTermMonths" min="1" max="600" value="36" class="w-full text-xs sm:text-sm p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <!-- Payment Frequency & Timing -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblFreq">
+                                Payment Frequency
+                            </label>
+                            <select id="paymentFreq" class="w-full text-xs sm:text-sm p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white">
+                                <option value="12" id="optMonthly">Monthly (12/yr)</option>
+                                <option value="4" id="optQuarterly">Quarterly (4/yr)</option>
+                                <option value="2" selected id="optSemiAnnual">Semi-Annual (2/yr)</option>
+                                <option value="1" id="optAnnual">Annual (1/yr)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblTiming">
+                                Payment Timing
+                            </label>
+                            <select id="paymentTiming" class="w-full text-xs sm:text-sm p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white">
+                                <option value="advance" selected id="optAdvance">In Advance (Beginning)</option>
+                                <option value="arrears" id="optArrears">In Arrears (End)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Periodic Payment Amount -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblPaymentAmt">
+                            Periodic Payment (SAR, excl. VAT)
+                        </label>
+                        <div class="relative rounded-lg">
+                            <input type="number" id="periodicPayment" min="0" step="100" value="50000" class="w-full text-xs sm:text-sm p-2 pl-3 pr-14 border border-slate-300 rounded-lg font-semibold text-slate-900 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs font-medium text-slate-400 pointer-events-none">SAR</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1" id="lblPaymentHint">Standard commercial Ejar payment installment.</p>
+                    </div>
+
+                    <!-- Discount Rate (Incremental Borrowing Rate) -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblIbr">
+                            Incremental Borrowing Rate (IBR % Annual)
+                        </label>
+                        <div class="relative rounded-lg">
+                            <input type="number" id="ibrRate" min="0.1" max="30" step="0.05" value="6.50" class="w-full text-xs sm:text-sm p-2 pl-3 pr-10 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none font-semibold">
+                            <span class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs font-medium text-slate-400 pointer-events-none">%</span>
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1" id="lblIbrHint">Company discount rate, SIBOR + lending spread, or implicit interest rate.</p>
+                    </div>
+
+                    <!-- Initial Direct Costs & Dismantling / Restoration -->
+                    <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblDirectCosts">
+                                Initial Direct Costs (SAR)
+                            </label>
+                            <input type="number" id="directCosts" min="0" value="5000" class="w-full text-xs sm:text-sm p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            <span class="text-[10px] text-slate-400" id="lblDirectCostsHint">Legal fees, broker, registration</span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblRestoration">
+                                Restoration Estimate (SAR)
+                            </label>
+                            <input type="number" id="restorationCosts" min="0" value="0" class="w-full text-xs sm:text-sm p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            <span class="text-[10px] text-slate-400" id="lblRestorationHint">PV of dismantling asset at exit</span>
+                        </div>
+                    </div>
+
+                    <!-- Lease Incentives Received & VAT -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblIncentives">
+                                Lease Incentives Rec'd (SAR)
+                            </label>
+                            <input type="number" id="leaseIncentives" min="0" value="0" class="w-full text-xs sm:text-sm p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                            <span class="text-[10px] text-slate-400" id="lblIncentivesHint">Lessor contribution/fit-out rebate</span>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblVatRate">
+                                Commercial VAT (%)
+                            </label>
+                            <select id="vatRate" class="w-full text-xs sm:text-sm p-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-brand-500 focus:outline-none bg-white">
+                                <option value="0.15" selected>15% (Saudi Standard)</option>
+                                <option value="0">0% / Exempt / Residential</option>
+                            </select>
+                            <span class="text-[10px] text-slate-400" id="lblVatHint">Billed on tax invoice per Ejar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action recalculate button -->
+                <button onclick="calculateIFRS16()" class="w-full mt-6 bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 px-4 rounded-xl shadow transition duration-150 flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    <span id="btnCalc">Update Schedule & Balance Sheet</span>
+                </button>
+            </div>
+
+            <!-- Results & Key Accounting Metrics (7 cols) -->
+            <div class="lg:col-span-7 space-y-5">
+                
+                <!-- Summary Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <!-- Initial Lease Liability -->
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider block mb-1" id="cardLabel1">Lease Liability (PV)</span>
+                        <div class="text-lg sm:text-xl font-bold text-slate-900" id="resLiabilityPV">SAR 0.00</div>
+                        <span class="text-[10px] text-slate-500" id="cardSub1">Opening PV of undiscounted rent</span>
+                    </div>
+
+                    <!-- Opening ROU Asset -->
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider block mb-1" id="cardLabel2">ROU Asset Value</span>
+                        <div class="text-lg sm:text-xl font-bold text-brand-600" id="resRouAsset">SAR 0.00</div>
+                        <span class="text-[10px] text-slate-500" id="cardSub2">PV + Direct Costs - Incentives</span>
+                    </div>
+
+                    <!-- Total Interest Expense -->
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm col-span-2 sm:col-span-1">
+                        <span class="text-[11px] font-medium text-slate-400 uppercase tracking-wider block mb-1" id="cardLabel3">Total Financing Cost</span>
+                        <div class="text-lg sm:text-xl font-bold text-amber-600" id="resTotalInterest">SAR 0.00</div>
+                        <span class="text-[10px] text-slate-500" id="cardSub3">Cumulative interest over term</span>
+                    </div>
+                </div>
+
+                <!-- Accounting Journal & Balance Sheet Split Card -->
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider mb-3 flex items-center justify-between" id="cardAuditTitle">
+                        <span>Year 1 Financial Statement Impact</span>
+                        <span class="text-emerald-700 bg-emerald-50 text-[10px] px-2 py-0.5 rounded font-mono font-medium">IFRS 16 Balance Sheet</span>
+                    </h4>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                            <div class="font-semibold text-slate-800 mb-2 pb-1 border-b border-slate-200 flex justify-between">
+                                <span id="subHeadBalance">Balance Sheet Split (Yr 1)</span>
+                                <span class="text-slate-400">الميزانية العمومية</span>
+                            </div>
+                            <div class="space-y-1.5 text-slate-600">
+                                <div class="flex justify-between">
+                                    <span id="txtCurrentLiab">Current Lease Liability (&lt;12m):</span>
+                                    <span class="font-bold text-slate-800" id="resCurrentLiability">SAR 0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span id="txtNonCurrentLiab">Non-Current Liability (&gt;12m):</span>
+                                    <span class="font-bold text-slate-800" id="resNonCurrentLiability">SAR 0.00</span>
+                                </div>
+                                <div class="flex justify-between pt-1 border-t border-slate-200">
+                                    <span id="txtYearEndRou">ROU Carrying Value (End Yr 1):</span>
+                                    <span class="font-bold text-brand-700" id="resYearEndRou">SAR 0.00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200">
+                            <div class="font-semibold text-slate-800 mb-2 pb-1 border-b border-slate-200 flex justify-between">
+                                <span id="subHeadPL">P&amp;L Expense Impact (Yr 1)</span>
+                                <span class="text-slate-400">قائمة الدخل</span>
+                            </div>
+                            <div class="space-y-1.5 text-slate-600">
+                                <div class="flex justify-between">
+                                    <span id="txtAnnualDeprec">ROU Depreciation Expense:</span>
+                                    <span class="font-bold text-slate-800" id="resYearDeprec">SAR 0.00</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span id="txtAnnualFin">Lease Interest Expense:</span>
+                                    <span class="font-bold text-amber-700" id="resYearInterest">SAR 0.00</span>
+                                </div>
+                                <div class="flex justify-between pt-1 border-t border-slate-200">
+                                    <span class="font-semibold text-slate-800" id="txtTotalPL">Total Year 1 P&amp;L Charge:</span>
+                                    <span class="font-extrabold text-slate-900" id="resYearTotalPL">SAR 0.00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comparative Note -->
+                    <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                        <span id="txtComparison">Old IAS 17 Straight-Line Operating Rent: <strong id="resOldRent" class="text-slate-700">SAR 0.00/yr</strong></span>
+                        <span id="txtTotalVAT">Estimated VAT over Contract: <strong id="resTotalVAT" class="text-emerald-700">SAR 0.00</strong></span>
+                    </div>
+                </div>
+
+                <!-- Gumroad Excel Promotion Card -->
+                <div class="bg-gradient-to-br from-emerald-900 via-slate-900 to-slate-900 text-white p-5 rounded-xl border border-emerald-600/40 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="bg-emerald-500 text-slate-950 font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">Excel / VBA</span>
+                            <h5 class="text-sm font-bold text-white" id="ctaCardTitle">Saudi IFRS 16 Automated Master Portfolio Model ($29)</h5>
+                        </div>
+                        <p class="text-xs text-slate-300 max-w-xl" id="ctaCardDesc">
+                            Includes multi-lease consolidation, automated journal entry generators, CPI indexation adjustments, early termination modifications, and auditor-ready disclosure schedules.
+                        </p>
+                    </div>
+                    <a href="https://gumroad.com" target="_blank" rel="noopener" class="whitespace-nowrap px-4 py-2.5 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs shadow-md transition flex items-center gap-2 flex-shrink-0">
+                        <span id="ctaCardBtn">Buy Excel Template</span>
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </a>
+                </div>
+
+                <!-- Mandatory Bilingual Disclaimer -->
+                <div class="p-3.5 bg-amber-50/70 border border-amber-200/80 rounded-xl text-[11px] text-amber-900 leading-relaxed">
+                    <div class="font-bold flex items-center gap-1.5 mb-1">
+                        <svg class="w-4 h-4 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <span id="disclaimerTitle">Bilingual Compliance Disclaimer / إخلاء المسؤولية النظامية</span>
+                    </div>
+                    <p id="disclaimerEn">
+                        Outputs are estimates generated for financial analysis and budgeting under standard IFRS 16 / SOCPA principles. Calculations must be verified with certified public accountants, lease agreements on Ejar, and ZATCA VAT guidelines before reporting in statutory financial statements.
+                    </p>
+                    <p class="mt-1 font-ar text-[11px] text-amber-800" id="disclaimerAr">
+                        هذه النتائج هي لأغراض التقدير المحاسبي والتخطيط المالي وفق معايير الهيئة السعودية للمراجعين والمحاسبين (SOCPA) والمعيار الدولي IFRS 16. يجب التحقق من كافة الأرقام عبر محاسب قانوني معتمد ومطابقتها مع عقود منصة "إيجار" ولوائح هيئة الزكاة والضريبة والجمارك قبل الاعتماد.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Full Amortization Table Section -->
+        <div class="mt-8 bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="p-4 sm:p-5 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                    <h3 class="text-sm sm:text-base font-bold text-slate-900" id="tblSectionTitle">Full Lease Liability & ROU Asset Amortization Schedule</h3>
+                    <p class="text-xs text-slate-500" id="tblSectionSub">Complete period-by-period progression of payments, interest expense, principal amortization, and ROU book value.</p>
+                </div>
+                <span class="text-xs font-mono font-medium text-slate-600 bg-slate-100 px-3 py-1 rounded-full" id="totalPeriodsCount">0 Periods</span>
+            </div>
+
+            <div class="overflow-x-auto max-h-[460px] relative">
+                <table class="w-full text-left text-xs" id="amortizationTable">
+                    <thead class="text-[11px] text-slate-700 uppercase bg-slate-100/80 sticky top-0 backdrop-blur-sm z-10 border-b border-slate-200">
+                        <tr>
+                            <th scope="col" class="px-3 py-3 font-semibold" id="thPeriod">#</th>
+                            <th scope="col" class="px-3 py-3 font-semibold" id="thDate">Due Date</th>
+                            <th scope="col" class="px-3 py-3 font-semibold" id="thOpenLiab">Opening Liab (SAR)</th>
+                            <th scope="col" class="px-3 py-3 font-semibold text-emerald-800" id="thPayment">Lease Pmt (SAR)</th>
+                            <th scope="col" class="px-3 py-3 font-semibold text-amber-700" id="thInterest">Interest (SAR)</th>
+                            <th scope="col" class="px-3 py-3 font-semibold" id="thPrincipal">Principal (SAR)</th>
+                            <th scope="col" class="px-3 py-3 font-semibold" id="thCloseLiab">Closing Liab (SAR)</th>
+                            <th scope="col" class="px-3 py-3 font-semibold text-blue-800" id="thDeprec">ROU Deprec (SAR)</th>
+                            <th scope="col" class="px-3 py-3 font-semibold text-slate-800" id="thCarrying">ROU Carrying (SAR)</th>
+                            <th scope="col" class="px-3 py-3 font-semibold text-purple-700" id="thVat">VAT 15% (SAR)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-100 text-slate-600">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Comprehensive SEO Technical Guide & Documentation (800+ words) -->
+        <article class="mt-12 bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 shadow-sm text-slate-700 leading-relaxed text-sm no-print space-y-8">
+            
+            <div>
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mb-3" id="docMainTitle">
+                    Comprehensive Guide to Saudi IFRS 16 Commercial Lease Accounting & Ejar Compliance
+                </h2>
+                <p class="text-slate-600 leading-relaxed">
+                    Under Saudi Organization for Chartered and Professional Accountants (SOCPA) guidelines, all non-listed entities and public listed companies operating within the Kingdom of Saudi Arabia must account for commercial lease contracts under <strong>IFRS 16 (Leases)</strong>. This standard eliminates the historical off-balance-sheet treatment of operating leases, requiring lessees to recognize almost all commercial leases on their balance sheet through a <strong>Right-of-Use (ROU) Asset</strong> and a corresponding <strong>Lease Liability</strong>.
+                </p>
+            </div>
+
+            <!-- Core Formulas Breakdown -->
+            <div class="border-t border-slate-200 pt-6">
+                <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-md bg-brand-100 text-brand-700 inline-flex items-center justify-center text-xs font-bold">1</span>
+                    <span id="docFormulasTitle">Fundamental Accounting Formulas under IFRS 16 / SOCPA</span>
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-1.5">1. Initial Lease Liability (Present Value)</h4>
+                        <p class="text-slate-600 mb-2">The initial lease liability is measured as the present value of future lease payments discounted using the company’s Incremental Borrowing Rate (IBR) or the implicit rate in the lease:</p>
+                        <div class="bg-white p-2.5 rounded border border-slate-200 font-mono text-emerald-700">
+                            Lease Liability = ∑ [ Payment_t / (1 + r)^t ]
+                        </div>
+                        <p class="mt-2 text-[11px] text-slate-500">Where <em>r</em> is the periodic discount rate (IBR / Payment Frequency) and <em>t</em> is the specific installment timeline (taking into account payment in advance vs arrears).</p>
+                    </div>
+
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-1.5">2. Right-of-Use (ROU) Initial Cost</h4>
+                        <p class="text-slate-600 mb-2">The ROU asset starts from the lease liability but factors in all upfront cash transactions:</p>
+                        <div class="bg-white p-2.5 rounded border border-slate-200 font-mono text-blue-700">
+                            ROU Asset = Initial Lease Liability + Direct Costs + Restoration PV - Incentives
+                        </div>
+                        <p class="mt-2 text-[11px] text-slate-500">Includes legal drafting fees, Ejar contract registration fees, agent commissions, and fit-out dismantling provisions.</p>
+                    </div>
+
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-1.5">3. Straight-Line ROU Depreciation</h4>
+                        <p class="text-slate-600 mb-2">Unless ownership transfers at the end of the term, ROU is depreciated on a straight-line basis over the shorter of lease duration or useful life:</p>
+                        <div class="bg-white p-2.5 rounded border border-slate-200 font-mono text-slate-700">
+                            Periodic Depreciation = Total ROU Asset Value / Total Contract Periods
+                        </div>
+                    </div>
+
+                    <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        <h4 class="font-bold text-slate-900 mb-1.5">4. Periodic Finance (Interest) Expense</h4>
+                        <p class="text-slate-600 mb-2">Computed using the effective interest method on the remaining lease liability balance:</p>
+                        <div class="bg-white p-2.5 rounded border border-slate-200 font-mono text-amber-700">
+                            Interest Expense_t = Opening Balance_t × (Annual IBR / Frequency)
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Saudi Commercial Real Estate & Ejar System -->
+            <div class="border-t border-slate-200 pt-6">
+                <h3 class="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-md bg-brand-100 text-brand-700 inline-flex items-center justify-center text-xs font-bold">2</span>
+                    <span id="docEjarTitle">Interaction with the Saudi Ejar Network & ZATCA VAT</span>
+                </h3>
+                <p class="text-slate-600 mb-3">
+                    In Saudi Arabia, all commercial leases (warehouses, office buildings, retail showrooms, worker camps) must be registered via the Ministry of Municipal and Rural Affairs & Housing through the <strong>Ejar Commercial Electronic Network</strong>. For financial controllers and enterprise auditors, the integration creates specific compliance nuances:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-slate-600 pl-2">
+                    <li><strong>Tax Invoicing (ZATCA e-Invoicing Phase 2):</strong> Commercial real estate rent is generally subject to 15% standard Value Added Tax (VAT). VAT is recognized upon payment or tax invoice issuance, and does not form part of the capitalized IFRS 16 lease liability unless it is non-recoverable input VAT.</li>
+                    <li><strong>Electronic Payment Matching:</strong> Under the unified Ejar system, installments paid through SADAD or Mada can be automatically cross-referenced against the amortization schedule generated here.</li>
+                    <li><strong>Exemptions for Short-Term & Low-Value Leases:</strong> Lessees may elect not to apply IFRS 16 recognition to short-term leases (terms of 12 months or less with no purchase option) and leases of low-value assets (e.g., small office IT devices). For those, rent continues to be expensed on a straight-line basis.</li>
+                </ul>
+            </div>
+
+            <!-- Balance Sheet Presentation: Current vs Non-Current -->
+            <div class="border-t border-slate-200 pt-6">
+                <h3 class="text-lg font-bold text-slate-900 mb-3 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-md bg-brand-100 text-brand-700 inline-flex items-center justify-center text-xs font-bold">3</span>
+                    <span id="docCurrentTitle">Current vs. Non-Current Lease Liability Splitting</span>
+                </h3>
+                <p class="text-slate-600">
+                    A frequent audit finding in SOCPA compliance reviews is failing to separate the closing lease liability between <strong>Current Liabilities</strong> (principal payable within 12 months of the balance sheet date) and <strong>Non-Current Liabilities</strong> (the remaining principal due after 12 months). This calculator automatically performs this split for your annual financial statement footnote disclosures.
+                </p>
+            </div>
+
+            <!-- Frequently Asked Questions (FAQ) Section -->
+            <div class="border-t border-slate-200 pt-6">
+                <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-md bg-brand-100 text-brand-700 inline-flex items-center justify-center text-xs font-bold">4</span>
+                    <span id="docFaqTitle">Frequently Asked Questions (FAQ)</span>
+                </h3>
+                
+                <div class="space-y-4 text-xs sm:text-sm">
+                    <div class="border border-slate-200 rounded-xl p-4">
+                        <h4 class="font-bold text-slate-900 mb-1" id="faq1Q">What Incremental Borrowing Rate (IBR) should a Saudi SME use?</h4>
+                        <p class="text-slate-600" id="faq1A">Under IFRS 16, the lessee uses the rate implicit in the lease if readily determinable. If not, the entity must use its incremental borrowing rate—the interest rate it would have to pay to borrow over a similar term, and with a similar security, the funds necessary to obtain an asset of similar value. In KSA, finance directors frequently use prevailing SIBOR (Saudi Interbank Offered Rate) + the commercial banking spread quoted on corporate credit lines.</p>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl p-4">
+                        <h4 class="font-bold text-slate-900 mb-1" id="faq2Q">How does IFRS 16 impact corporate EBITDA in Saudi Arabia?</h4>
+                        <p class="text-slate-600" id="faq2A">IFRS 16 significantly increases reported EBITDA. Previously, operating lease rent was included in Operating Expenses (OpEx), reducing EBITDA. Under IFRS 16, that rental expense is replaced by Depreciation (ROU asset) and Interest Expense (Lease Liability)—both of which are excluded from EBITDA calculations. However, overall net profit is front-loaded with higher expenses in early contract years.</p>
+                    </div>
+
+                    <div class="border border-slate-200 rounded-xl p-4">
+                        <h4 class="font-bold text-slate-900 mb-1" id="faq3Q">Are Ejar brokerage and registration fees capitalized into the ROU asset?</h4>
+                        <p class="text-slate-600" id="faq3A">Yes. Any direct incremental costs incurred solely to negotiate, execute, or register the lease (such as broker commissions and commercial Ejar notary/documentation fees) must be capitalized directly into the opening Right-of-Use Asset.</p>
+                    </div>
+                </div>
+            </div>
+
+        </article>
+    </main>
+
+    <!-- Page Footer -->
+    <footer class="mt-12 bg-white border-t border-slate-200 py-6 text-xs text-slate-500 no-print">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p id="footerCopy">&copy; 2025 Saudi B2B Financial Architecture Tools. SOCPA &amp; IFRS 16 compliant.</p>
+            <div class="flex items-center gap-4">
+                <a href="https://gumroad.com" target="_blank" rel="noopener" class="text-brand-600 hover:underline font-semibold">Get Complete Excel Master Model ($29)</a>
+                <span>&bull;</span>
+                <span class="text-slate-400">ZATCA / SOCPA / Ejar Ready</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Engine -->
+    <script>
+        // State
+        let currentLang = 'en';
+        let scheduleData = [];
+
+        // Translations dictionary
+        const i18n = {
+            en: {
+                bannerText: 'Need full multi-asset portfolio lease accounting in Excel? Download the <strong>KSA IFRS 16 & Ejar Master Model</strong>.',
+                headerTitle: 'Saudi IFRS 16 Lease & Ejar Accounting Tool',
+                headerSubTitle: 'Automated Right-of-Use (ROU) Asset, Lease Liability, Interest Expense & Amortization Schedule',
+                btnPrint: 'Print Schedule',
+                btnCsv: 'Export CSV',
+                badgeCompliance: 'Saudi SOCPA & International IFRS 16 Certified Standard',
+                heroHead: 'Commercial Lease & Ejar Capitalization Schedule',
+                heroDesc: 'Quickly generate the official opening Present Value of Lease Liabilities, Right-of-Use Asset (ROU), straight-line depreciation, IBR interest expense, and split liabilities into current vs. non-current portions in compliance with Saudi accounting practices.',
+                stdTitle: 'Standard Framework:',
+                stdSub: 'Standard VAT: 15% Commercial',
+                inputsTitle: '1. Lease Contract Parameters',
+                lblStartDate: 'Commencement Date',
+                lblDuration: 'Lease Term (Months)',
+                lblFreq: 'Payment Frequency',
+                lblTiming: 'Payment Timing',
+                lblPaymentAmt: 'Periodic Payment (SAR, excl. VAT)',
+                lblPaymentHint: 'Standard commercial Ejar payment installment.',
+                lblIbr: 'Incremental Borrowing Rate (IBR % Annual)',
+                lblIbrHint: 'Company discount rate, SIBOR + lending spread, or implicit interest rate.',
+                lblDirectCosts: 'Initial Direct Costs (SAR)',
+                lblDirectCostsHint: 'Legal fees, broker, registration',
+                lblRestoration: 'Restoration Estimate (SAR)',
+                lblRestorationHint: 'PV of dismantling asset at exit',
+                lblIncentives: "Lease Incentives Rec'd (SAR)",
+                lblIncentivesHint: 'Lessor contribution/fit-out rebate',
+                lblVatRate: 'Commercial VAT (%)',
+                lblVatHint: 'Billed on tax invoice per Ejar',
+                optMonthly: 'Monthly (12/yr)',
+                optQuarterly: 'Quarterly (4/yr)',
+                optSemiAnnual: 'Semi-Annual (2/yr)',
+                optAnnual: 'Annual (1/yr)',
+                optAdvance: 'In Advance (Beginning)',
+                optArrears: 'In Arrears (End)',
+                btnCalc: 'Update Schedule & Balance Sheet',
+                cardLabel1: 'Lease Liability (PV)',
+                cardSub1: 'Opening PV of undiscounted rent',
+                cardLabel2: 'ROU Asset Value',
+                cardSub2: 'PV + Direct Costs - Incentives',
+                cardLabel3: 'Total Financing Cost',
+                cardSub3: 'Cumulative interest over term',
+                cardAuditTitle: 'Year 1 Financial Statement Impact',
+                subHeadBalance: 'Balance Sheet Split (Yr 1)',
+                txtCurrentLiab: 'Current Lease Liability (<12m):',
+                txtNonCurrentLiab: 'Non-Current Liability (>12m):',
+                txtYearEndRou: 'ROU Carrying Value (End Yr 1):',
+                subHeadPL: 'P&L Expense Impact (Yr 1)',
+                txtAnnualDeprec: 'ROU Depreciation Expense:',
+                txtAnnualFin: 'Lease Interest Expense:',
+                txtTotalPL: 'Total Year 1 P&L Charge:',
+                txtComparison: 'Old IAS 17 Straight-Line Operating Rent:',
+                txtTotalVAT: 'Estimated VAT over Contract:',
+                ctaCardTitle: 'Saudi IFRS 16 Automated Master Portfolio Model ($29)',
+                ctaCardDesc: 'Includes multi-lease consolidation, automated journal entry generators, CPI indexation adjustments, early termination modifications, and auditor-ready disclosure schedules.',
+                ctaCardBtn: 'Buy Excel Template',
+                disclaimerTitle: 'Bilingual Compliance Disclaimer / إخلاء المسؤولية النظامية',
+                disclaimerEn: 'Outputs are estimates generated for financial analysis and budgeting under standard IFRS 16 / SOCPA principles. Calculations must be verified with certified public accountants, lease agreements on Ejar, and ZATCA VAT guidelines before reporting in statutory financial statements.',
+                tblSectionTitle: 'Full Lease Liability & ROU Asset Amortization Schedule',
+                tblSectionSub: 'Complete period-by-period progression of payments, interest expense, principal amortization, and ROU book value.',
+                thPeriod: '#',
+                thDate: 'Due Date',
+                thOpenLiab: 'Opening Liab (SAR)',
+                thPayment: 'Lease Pmt (SAR)',
+                thInterest: 'Interest (SAR)',
+                thPrincipal: 'Principal (SAR)',
+                thCloseLiab: 'Closing Liab (SAR)',
+                thDeprec: 'ROU Deprec (SAR)',
+                thCarrying: 'ROU Carrying (SAR)',
+                thVat: 'VAT 15% (SAR)',
+                langLabel: 'العربية'
+            },
+            ar: {
+                bannerText: 'هل تحتاج لإدارة محفظة عقود الإيجار المتقدمة؟ حمّل <strong>نموذج إكسل وماكرو الاحترافي لمعيار IFRS 16 وإيجار ($29)</strong>.',
+                headerTitle: 'حاسبة عقود الإيجار التجارية إيجار وفق معيار IFRS 16',
+                headerSubTitle: 'حساب أصل حق الاستخدام (ROU)، التزامات عقود الإيجار، مصروف الفائدة، وجدول الإطفاء المحاسبي',
+                btnPrint: 'طباعة الجدول',
+                btnCsv: 'تصدير كملف CSV',
+                badgeCompliance: 'معتمد وفق معايير الهيئة السعودية للمحاسبين (SOCPA) والمعيار الدولي IFRS 16',
+                heroHead: 'جدول رسملة عقود الإيجار التجارية وإيجار',
+                heroDesc: 'احسب القيمة الحالية لالتزامات عقود الإيجار، وقيمة أصل حق الاستخدام، والإهلاك القسط الثابت، ومصروف فائدة التمويل، وتوزيع الالتزامات بين المتداولة وغير المتداولة.',
+                stdTitle: 'الإطار المحاسبي:',
+                stdSub: 'ضريبة القيمة المضافة: 15% التجاري',
+                inputsTitle: '1. محددات عقد الإيجار التجاري',
+                lblStartDate: 'تاريخ بداية العقد',
+                lblDuration: 'مدة العقد (بالأشهر)',
+                lblFreq: 'دورية سداد الدفعات',
+                lblTiming: 'توقيت السداد',
+                lblPaymentAmt: 'قيمة الدفعة الدورية (ر.س بدون ضريبة)',
+                lblPaymentHint: 'دفعة عقد إيجار التجاري المعتمدة.',
+                lblIbr: 'معدل الاقتراض الإضافي للمنشأة (% سنوي IBR)',
+                lblIbrHint: 'تكلفة الاقتراض أو السايبور + هامش الإقراض البنكي.',
+                lblDirectCosts: 'التكاليف المباشرة الأولية (ر.س)',
+                lblDirectCostsHint: 'رسوم توثيق إيجار، سعي، وأتعاب قانونية',
+                lblRestoration: 'تكلفة تفكيك وإعادة الموقع (ر.س)',
+                lblRestorationHint: 'القيمة الحالية لتكلفة إزالة التحسينات عند الإخلاء',
+                lblIncentives: 'حوافز الإيجار المستلمة (ر.س)',
+                lblIncentivesHint: 'مساهمة المؤجر في التشطيب أو فترة سماح نقدية',
+                lblVatRate: 'ضريبة القيمة المضافة (%)',
+                lblVatHint: 'تحسب على الفاتورة الضريبية في إيجار',
+                optMonthly: 'شهري (12 دفعة/سنة)',
+                optQuarterly: 'ربع سنوي (4 دفعات/سنة)',
+                optSemiAnnual: 'نصف سنوي (دفعتان/سنة)',
+                optAnnual: 'سنوي (دفعة واحدة/سنة)',
+                optAdvance: 'في بداية المدة (مقدماً)',
+                optArrears: 'في نهاية المدة (مؤخراً)',
+                btnCalc: 'تحديث الجدول وقائمة المركز المالي',
+                cardLabel1: 'التزام الإيجار الابتدائي (PV)',
+                cardSub1: 'القيمة الحالية للدفعات غير المخصومة',
+                cardLabel2: 'قيمة أصل حق الاستخدام (ROU)',
+                cardSub2: 'الالتزام + التكاليف المباشرة - الحوافز',
+                cardLabel3: 'إجمالي تكلفة التمويل',
+                cardSub3: 'مجموع الفوائد على مدار مدة العقد',
+                cardAuditTitle: 'أثر السنة الأولى على القوائم المالية',
+                subHeadBalance: 'تصنيف الالتزام في المركز المالي (سنة 1)',
+                txtCurrentLiab: 'التزام إيجار متداول (أقل من 12 شهر):',
+                txtNonCurrentLiab: 'التزام إيجار غير متداول (أكثر من 12 شهر):',
+                txtYearEndRou: 'القيمة الدفترية للأصل في نهاية سنة 1:',
+                subHeadPL: 'أثر الأرباح والخسائر (قائمة الدخل سنة 1)',
+                txtAnnualDeprec: 'مصروف إهلاك أصل حق الاستخدام:',
+                txtAnnualFin: 'مصروف فائدة التمويل (IFRS 16):',
+                txtTotalPL: 'إجمالي العبء السنوي على الدخل (سنة 1):',
+                txtComparison: 'إيجار التشغيلي القديم (قسط ثابت معيار 17):',
+                txtTotalVAT: 'إجمالي الضريبة التقديرية للعقد:',
+                ctaCardTitle: 'نموذج إكسل وماكرو لمحفظة عقود معيار IFRS 16 ($29)',
+                ctaCardDesc: 'يشمل دمج العقود المتعددة، قيود اليومية الآلية، تعديلات مؤشر الأسعار، الإنهاء المبكر، والجداول الجاهزة للمراجع الخارجي.',
+                ctaCardBtn: 'شراء قالب الإكسل الاحترافي',
+                disclaimerTitle: 'Bilingual Compliance Disclaimer / إخلاء المسؤولية النظامية',
+                disclaimerEn: 'Outputs are estimates generated for financial analysis and budgeting under standard IFRS 16 / SOCPA principles. Calculations must be verified with certified public accountants, lease agreements on Ejar, and ZATCA VAT guidelines before reporting in statutory financial statements.',
+                tblSectionTitle: 'جدول إطفاء التزامات الإيجار وإهلاك أصل حق الاستخدام',
+                tblSectionSub: 'تتبع شامل لكل فترة للدفعات النقدية، مصروف الفائدة، سداد أصل الدين، والرصيد الدفتري للأصل.',
+                thPeriod: 'الفترة',
+                thDate: 'تاريخ الاستحقاق',
+                thOpenLiab: 'رصيد الالتزام الافتتاحي',
+                thPayment: 'الدفعة المسددة',
+                thInterest: 'الفائدة التمويلية',
+                thPrincipal: 'المسدد من الأصل',
+                thCloseLiab: 'رصيد الالتزام الختامي',
+                thDeprec: 'إهلاك الأصل (ROU)',
+                thCarrying: 'القيمة الدفترية للأصل',
+                thVat: 'الضريبة 15%',
+                langLabel: 'English'
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            document.documentElement.setAttribute('lang', currentLang);
+            document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+            
+            const dict = i18n[currentLang];
+            
+            // Update banner
+            const bannerEn = document.getElementById('bannerTextEn');
+            const bannerAr = document.getElementById('bannerTextAr');
+            if (currentLang === 'ar') {
+                bannerEn.classList.add('hidden');
+                bannerAr.classList.remove('hidden');
+            } else {
+                bannerEn.classList.remove('hidden');
+                bannerAr.classList.add('hidden');
+            }
+
+            // Update IDs
+            const keys = [
+                'headerTitle', 'headerSubTitle', 'btnPrint', 'btnCsv', 'badgeCompliance',
+                'heroHead', 'heroDesc', 'stdTitle', 'stdSub', 'inputsTitle', 'lblStartDate',
+                'lblDuration', 'lblFreq', 'lblTiming', 'lblPaymentAmt', 'lblPaymentHint',
+                'lblIbr', 'lblIbrHint', 'lblDirectCosts', 'lblDirectCostsHint', 'lblRestoration',
+                'lblRestorationHint', 'lblIncentives', 'lblIncentivesHint', 'lblVatRate',
+                'lblVatHint', 'optMonthly', 'optQuarterly', 'optSemiAnnual', 'optAnnual',
+                'optAdvance', 'optArrears', 'btnCalc', 'cardLabel1', 'cardSub1', 'cardLabel2',
+                'cardSub2', 'cardLabel3', 'cardSub3', 'cardAuditTitle', 'subHeadBalance',
+                'txtCurrentLiab', 'txtNonCurrentLiab', 'txtYearEndRou', 'subHeadPL',
+                'txtAnnualDeprec', 'txtAnnualFin', 'txtTotalPL', 'ctaCardTitle', 'ctaCardDesc',
+                'ctaCardBtn', 'tblSectionTitle', 'tblSectionSub', 'thPeriod', 'thDate',
+                'thOpenLiab', 'thPayment', 'thInterest', 'thPrincipal', 'thCloseLiab',
+                'thDeprec', 'thCarrying', 'thVat', 'langLabel'
+            ];
+
+            keys.forEach(k => {
+                const el = document.getElementById(k);
+                if (el && dict[k]) {
+                    el.innerHTML = dict[k];
+                }
+            });
+
+            calculateIFRS16();
+        }
+
+        document.getElementById('langToggleBtn').addEventListener('click', toggleLanguage);
+
+        // Format Currency Helper
+        function formatSAR(val) {
+            return 'SAR ' + (val || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Calculation Engine
+        function calculateIFRS16() {
+            const startDateStr = document.getElementById('leaseStart').value || '2025-01-01';
+            const totalMonths = Math.max(1, parseInt(document.getElementById('leaseTermMonths').value) || 12);
+            const freq = parseInt(document.getElementById('paymentFreq').value) || 2; // e.g., 2 = semi-annual
+            const isAdvance = document.getElementById('paymentTiming').value === 'advance';
+            const pmtAmount = Math.max(0, parseFloat(document.getElementById('periodicPayment').value) || 0);
+            const annualIbr = Math.max(0.0001, (parseFloat(document.getElementById('ibrRate').value) || 0) / 100);
+            const directCosts = Math.max(0, parseFloat(document.getElementById('directCosts').value) || 0);
+            const restoration = Math.max(0, parseFloat(document.getElementById('restorationCosts').value) || 0);
+            const incentives = Math.max(0, parseFloat(document.getElementById('leaseIncentives').value) || 0);
+            const vatRate = parseFloat(document.getElementById('vatRate').value) || 0;
+
+            // Determine intervals
+            const monthsPerPeriod = 12 / freq;
+            const totalPeriods = Math.ceil(totalMonths / monthsPerPeriod);
+            const periodicRate = annualIbr / freq;
+
+            // Calculate Present Value of Lease Payments
+            let pvLiab = 0;
+            for (let t = 0; t < totalPeriods; t++) {
+                const discountPower = isAdvance ? t : (t + 1);
+                pvLiab += pmtAmount / Math.pow(1 + periodicRate, discountPower);
+            }
+
+            // Initial ROU Asset
+            const initialRou = pvLiab + directCosts + restoration - incentives;
+            const periodicDepreciation = totalPeriods > 0 ? (initialRou / totalPeriods) : 0;
+
+            // Build Amortization Schedule
+            scheduleData = [];
+            let runningLiability = pvLiab;
+            let runningRou = initialRou;
+            let totalInterest = 0;
+            let totalVat = 0;
+
+            const startDate = new Date(startDateStr);
+
+            for (let i = 1; i <= totalPeriods; i++) {
+                // Determine payment date
+                const periodDate = new Date(startDate);
+                const addMonths = (i - 1) * monthsPerPeriod;
+                periodDate.setMonth(periodDate.getMonth() + addMonths);
+                const dateLabel = periodDate.toISOString().split('T')[0];
+
+                const openLiab = runningLiability;
+                let interest = 0;
+                let payment = pmtAmount;
+                let principal = 0;
+                let closeLiab = 0;
+
+                if (isAdvance) {
+                    // In Advance: First payment (period 1) happens immediately, so zero interest before first payment
+                    if (i === 1) {
+                        interest = 0;
+                        principal = payment;
+                        closeLiab = Math.max(0, openLiab - principal);
+                    } else {
+                        // Interest accrues on prior closing liability
+                        interest = openLiab * periodicRate;
+                        principal = payment - interest;
+                        closeLiab = Math.max(0, openLiab - principal);
+                    }
+                } else {
+                    // In Arrears: Interest accrues on opening liability
+                    interest = openLiab * periodicRate;
+                    principal = payment - interest;
+                    closeLiab = Math.max(0, openLiab - principal);
+                }
+
+                // Prevent small floating rounding
+                if (i === totalPeriods || closeLiab < 0.05) {
+                    closeLiab = 0;
+                }
+
+                totalInterest += interest;
+                const periodVat = payment * vatRate;
+                totalVat += periodVat;
+
+                // ROU Asset book value
+                runningRou = Math.max(0, runningRou - periodicDepreciation);
+                runningLiability = closeLiab;
+
+                scheduleData.push({
+                    period: i,
+                    date: dateLabel,
+                    openLiab: openLiab,
+                    payment: payment,
+                    interest: interest,
+                    principal: principal,
+                    closeLiab: closeLiab,
+                    deprec: periodicDepreciation,
+                    carryingRou: runningRou,
+                    vat: periodVat
+                });
+            }
+
+            // Compute Year 1 Splits (for disclosures)
+            // Year 1 covers up to `freq` periods
+            const periodsInYr1 = Math.min(freq, totalPeriods);
+            let yr1PrincipalPaid = 0;
+            let yr1Interest = 0;
+            let yr1Deprec = 0;
+            let closeLiabYr1 = 0;
+            let closeRouYr1 = 0;
+
+            for (let p = 0; p < periodsInYr1; p++) {
+                yr1PrincipalPaid += scheduleData[p].principal;
+                yr1Interest += scheduleData[p].interest;
+                yr1Deprec += scheduleData[p].deprec;
+                closeLiabYr1 = scheduleData[p].closeLiab;
+                closeRouYr1 = scheduleData[p].carryingRou;
+            }
+
+            // For the balance sheet at end of Year 1:
+            // Current liability is principal payable in Year 2 (periods freq+1 to 2*freq)
+            let nextYearPrincipal = 0;
+            const yr2End = Math.min(periodsInYr1 + freq, totalPeriods);
+            for (let q = periodsInYr1; q < yr2End; q++) {
+                nextYearPrincipal += scheduleData[q].principal;
+            }
+            const nonCurrentLiabYr1 = Math.max(0, closeLiabYr1 - nextYearPrincipal);
+
+            // Render Summary Cards
+            document.getElementById('resLiabilityPV').innerText = formatSAR(pvLiab);
+            document.getElementById('resRouAsset').innerText = formatSAR(initialRou);
+            document.getElementById('resTotalInterest').innerText = formatSAR(totalInterest);
+
+            // Render Year 1 Details
+            document.getElementById('resCurrentLiability').innerText = formatSAR(nextYearPrincipal);
+            document.getElementById('resNonCurrentLiability').innerText = formatSAR(nonCurrentLiabYr1);
+            document.getElementById('resYearEndRou').innerText = formatSAR(closeRouYr1);
+            document.getElementById('resYearDeprec').innerText = formatSAR(yr1Deprec);
+            document.getElementById('resYearInterest').innerText = formatSAR(yr1Interest);
+            document.getElementById('resYearTotalPL').innerText = formatSAR(yr1Deprec + yr1Interest);
+
+            // Old IAS 17 Straight-Line comparison
+            const totalUndiscountedRent = pmtAmount * totalPeriods;
+            const oldAnnualRent = totalMonths > 0 ? (totalUndiscountedRent / (totalMonths / 12)) : 0;
+            document.getElementById('resOldRent').innerText = formatSAR(oldAnnualRent) + '/yr';
+            document.getElementById('resTotalVAT').innerText = formatSAR(totalVat);
+
+            // Render Schedule Table
+            document.getElementById('totalPeriodsCount').innerText = totalPeriods + (currentLang === 'ar' ? ' فترة' : ' Periods');
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            scheduleData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition border-b border-slate-100 font-mono text-[11px]';
+                tr.innerHTML = `
+                    <td class="px-3 py-2.5 font-bold text-slate-800">${row.period}</td>
+                    <td class="px-3 py-2.5 text-slate-600">${row.date}</td>
+                    <td class="px-3 py-2.5 text-slate-700">${row.openLiab.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="px-3 py-2.5 font-semibold text-emerald-800 bg-emerald-50/40">${row.payment.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="px-3 py-2.5 text-amber-700">${row.interest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="px-3 py-2.5 text-slate-800">${row.principal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="px-3 py-2.5 font-semibold text-slate-900">${row.closeLiab.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="px-3 py-2.5 text-blue-700">${row.deprec.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="px-3 py-2.5 font-semibold text-slate-800">${row.carryingRou.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td class="px-3 py-2.5 text-purple-700">${row.vat.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function exportToCsv() {
+            if (!scheduleData || scheduleData.length === 0) {
+                alert('Please calculate the schedule first.');
+                return;
+            }
+            let csv = 'Period,Due Date,Opening Liability (SAR),Periodic Payment (SAR),Interest Expense (SAR),Principal Reduction (SAR),Closing Liability (SAR),ROU Depreciation (SAR),ROU Carrying Value (SAR),VAT 15% (SAR)\r\n';
+            scheduleData.forEach(r => {
+                csv += `${r.period},${r.date},${r.openLiab.toFixed(2)},${r.payment.toFixed(2)},${r.interest.toFixed(2)},${r.principal.toFixed(2)},${r.closeLiab.toFixed(2)},${r.deprec.toFixed(2)},${r.carryingRou.toFixed(2)},${r.vat.toFixed(2)}\r\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', `IFRS16_Ejar_Schedule_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // Auto-run on load
+        window.addEventListener('DOMContentLoaded', () => {
+            calculateIFRS16();
+        });
+    </script>
+</body>
+</html>
