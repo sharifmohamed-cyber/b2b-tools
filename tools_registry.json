@@ -222,5 +222,12 @@
     "title_ar": "حاسبة عقود الإيجار التجارية إيجار والالتزامات وفق معيار IFRS 16",
     "description_en": "Calculate Saudi commercial lease liability, ROU asset depreciation, interest expense, and Ejar VAT schedules under IFRS 16 and SOCPA standards.",
     "date": "2026-11-14"
+  },
+  {
+    "slug": "saudi-final-settlement-and-clearance-calculator",
+    "title_en": "Saudi Final Settlement & Employee Clearance (Mukhalasa) Calculator",
+    "title_ar": "حاسبة المخالصة النهائية وتصفية مستحقات نهاية الخدمة في السعودية",
+    "description_en": "Calculate complete Saudi end-of-service final settlement (Mukhalasa) including unpaid salary, EOSB, leave encashment, deductions, and print discharge forms.",
+    "date": "2026-11-15"
   }
 ]

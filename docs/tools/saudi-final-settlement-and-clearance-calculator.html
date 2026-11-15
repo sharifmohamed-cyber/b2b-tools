@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi Final Settlement & Clearance Calculator | حاسبة المخالصة النهائية</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    [lang="ar"] body, .font-arabic { font-family: 'Cairo', sans-serif; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      body { background: white !important; color: black !important; }
+      .printable-card { box-shadow: none !important; border: 1px solid #ddd !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Top Banner / Gumroad Master Template -->
+  <div class="no-print bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 text-white py-2.5 px-4 sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-sm">
+      <div class="flex items-center gap-2">
+        <span class="bg-emerald-500/20 text-emerald-300 font-bold px-2.5 py-0.5 rounded text-xs uppercase tracking-wider border border-emerald-500/30">HR & Payroll PRO</span>
+        <span class="font-medium">
+          <span class="en-text">Automate Qiwa, Mudad & Final Settlement payroll files in 1 click.</span>
+          <span class="ar-text hidden">أتمتة ملفات المخالصة النهائية ومسيرات الرواتب المتوافقة مع منصتي قوى ومدد بنقرة واحدة.</span>
+        </span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://gumroad.com" target="_blank" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3.5 py-1 rounded text-xs transition duration-150 shadow-sm">
+          <span class="en-text">Get Excel & VBA Template ($29)</span>
+          <span class="ar-text hidden">تحميل نموذج إكسيل وVBA المعتمد ($29)</span>
+        </a>
+        <button id="langToggle" class="bg-white/10 hover:bg-white/20 text-white text-xs px-2.5 py-1 rounded transition border border-white/20">
+          العربية
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="no-print bg-white border-b border-slate-200 py-6 px-4">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-3">
+          <div class="h-10 w-10 rounded-lg bg-emerald-600 flex items-center justify-center text-white font-black text-xl shadow-sm">
+            SA
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900 leading-tight">
+              <span class="en-text">Saudi Final Settlement & Mukhalasa Generator</span>
+              <span class="ar-text hidden">حاسبة المخالصة النهائية وتصفية مستحقات العامل في السعودية</span>
+            </h1>
+            <p class="text-xs text-slate-500">
+              <span class="en-text">Compliant with Saudi Labor Law (Articles 84, 85, 87, 88 & 111)</span>
+              <span class="ar-text hidden">متوافق تماماً مع نظام العمل السعودي واللوائح التنفيذية لوزارة الموارد البشرية</span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="window.print()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-300 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          <span class="en-text">Print Settlement Sheet</span>
+          <span class="ar-text hidden">طباعة مسير المخالصة</span>
+        </button>
+        <button onclick="exportToCSV()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-2 rounded-lg border border-slate-300 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+          <span class="en-text">Export CSV</span>
+          <span class="ar-text hidden">تصدير CSV</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- Input Controls Card -->
+    <div class="no-print lg:col-span-5 bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-slate-200 space-y-5">
+      <div class="border-b border-slate-100 pb-3 flex justify-between items-center">
+        <h2 class="font-bold text-slate-800 text-base">
+          <span class="en-text">Employee & Separation Details</span>
+          <span class="ar-text hidden">بيانات الموظف وإنهاء العلاقة العقدية</span>
+        </h2>
+        <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+          SAR (ر.س)
+        </span>
+      </div>
+
+      <!-- Employee Metadata -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">
+            <span class="en-text">Employee Name</span>
+            <span class="ar-text hidden">اسم الموظف</span>
+          </label>
+          <input id="empName" type="text" value="Tariq Al-Harbi" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">
+            <span class="en-text">Iqama / National ID</span>
+            <span class="ar-text hidden">رقم الهوية / الإقامة</span>
+          </label>
+          <input id="empId" type="text" value="2489012345" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none" />
+        </div>
+      </div>
+
+      <!-- Salary Structure -->
+      <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-3">
+        <div class="font-semibold text-xs text-slate-700 uppercase tracking-wider">
+          <span class="en-text">Monthly Wage Breakdown</span>
+          <span class="ar-text hidden">تفاصيل الراتب الشهري الأخير</span>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">
+              <span class="en-text">Basic Salary</span>
+              <span class="ar-text hidden">الراتب الأساسي</span>
+            </label>
+            <input id="basicSalary" type="number" value="9000" min="0" step="100" class="w-full text-sm font-semibold px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500" oninput="calculateSettlement()" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">
+              <span class="en-text">Housing Allowance</span>
+              <span class="ar-text hidden">بدل السكن</span>
+            </label>
+            <input id="housingAllowance" type="number" value="2250" min="0" step="50" class="w-full text-sm font-semibold px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500" oninput="calculateSettlement()" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">
+              <span class="en-text">Transport Allowance</span>
+              <span class="ar-text hidden">بدل النقل</span>
+            </label>
+            <input id="transportAllowance" type="number" value="800" min="0" step="50" class="w-full text-sm font-semibold px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500" oninput="calculateSettlement()" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">
+              <span class="en-text">Other Fixed Allowances</span>
+              <span class="ar-text hidden">بدلات ثابتة أخرى</span>
+            </label>
+            <input id="otherAllowance" type="number" value="450" min="0" step="50" class="w-full text-sm font-semibold px-3 py-1.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500" oninput="calculateSettlement()" />
+          </div>
+        </div>
+        <div class="flex justify-between items-center pt-1 border-t border-slate-200 text-xs font-bold text-slate-700">
+          <span><span class="en-text">Total Monthly Gross:</span><span class="ar-text hidden">إجمالي الأجر الشهري:</span></span>
+          <span id="totalGrossDisplay" class="text-emerald-700 font-mono">12,500.00 SAR</span>
+        </div>
+      </div>
+
+      <!-- Service Tenure & Dates -->
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-medium text-slate-700 mb-1">
+            <span class="en-text">Start of Service</span>
+            <span class="ar-text hidden">تاريخ بداية الخدمة</span>
+          </label>
+          <input id="joinDate" type="date" value="2019-01-01" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" onchange="calculateTenureFromDates()" />
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-slate-700 mb-1">
+            <span class="en-text">Last Working Day</span>
+            <span class="ar-text hidden">آخر يوم عمل</span>
+          </label>
+          <input id="lastDate" type="date" value="2024-06-30" class="w-full text-xs px-2.5 py-1.5 border border-slate-300 rounded-lg" onchange="calculateTenureFromDates()" />
+        </div>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2 bg-emerald-50/60 p-2.5 rounded-lg border border-emerald-100 text-xs text-center">
+        <div>
+          <span class="block text-slate-500 text-[11px]"><span class="en-text">Years</span><span class="ar-text hidden">السنوات</span></span>
+          <span id="tenureYears" class="font-bold text-emerald-800 text-sm">5</span>
+        </div>
+        <div>
+          <span class="block text-slate-500 text-[11px]"><span class="en-text">Months</span><span class="ar-text hidden">الأشهر</span></span>
+          <span id="tenureMonths" class="font-bold text-emerald-800 text-sm">6</span>
+        </div>
+        <div>
+          <span class="block text-slate-500 text-[11px]"><span class="en-text">Days</span><span class="ar-text hidden">الأيام</span></span>
+          <span id="tenureDays" class="font-bold text-emerald-800 text-sm">0</span>
+        </div>
+      </div>
+
+      <!-- Reason for Separation (Article 84/85/87) -->
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">
+          <span class="en-text">Reason for Separation (Article 84/85/87)</span>
+          <span class="ar-text hidden">سبب إنهاء العلاقة العمالية (مادة 84، 85، 87)</span>
+        </label>
+        <select id="separationReason" class="w-full text-xs font-medium p-2 border border-slate-300 rounded-lg bg-white focus:ring-2 focus:ring-emerald-500" onchange="calculateSettlement()">
+          <option value="termination_employer">Employer Termination / Non-Renewal by Employer (Full EOSB - Art. 84)</option>
+          <option value="contract_expired">Fixed-Term Contract Completion (Full EOSB - Art. 84)</option>
+          <option value="mutual_consent">Mutual Written Agreement / الإقالة الاتفاقية (Full EOSB - Art. 84)</option>
+          <option value="resignation">Employee Resignation / استقالة العامل (Article 85 Sliding Scale)</option>
+          <option value="force_majeure">Force Majeure / القوة القاهرة (Full EOSB - Art. 87)</option>
+          <option value="female_marriage_birth">Female Employee Marriage or Childbirth within 3/6 mo (Full EOSB - Art. 87)</option>
+          <option value="article_80">Dismissal Under Article 80 (No EOSB / شطب المكافأة)</option>
+        </select>
+      </div>
+
+      <!-- Pro-Rata Final Salary & Leave Accruals -->
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">
+            <span class="en-text">Unpaid Working Days in Final Month</span>
+            <span class="ar-text hidden">أيام العمل المستحقة بالشهر الأخير</span>
+          </label>
+          <input id="unpaidDays" type="number" value="30" min="0" max="31" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg" oninput="calculateSettlement()" />
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">
+            <span class="en-text">Accrued Leave Balance (Days)</span>
+            <span class="ar-text hidden">رصيد الإجازة السنوية المتبقي (أيام)</span>
+          </label>
+          <input id="leaveDays" type="number" value="14" min="0" step="0.5" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg" oninput="calculateSettlement()" />
+        </div>
+      </div>
+
+      <!-- Other Entitlements & Deductions -->
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">
+            <span class="en-text">Other Entitlements (Ticket, Bonus, etc.)</span>
+            <span class="ar-text hidden">مستحقات إضافية (تذكرة، بدلات، مكافأة)</span>
+          </label>
+          <input id="additionalAdditions" type="number" value="1800" min="0" step="100" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-emerald-700 font-semibold" oninput="calculateSettlement()" />
+        </div>
+        <div>
+          <label class="block font-medium text-slate-700 mb-1">
+            <span class="en-text">Deductions (Loans, Assets, Shortage)</span>
+            <span class="ar-text hidden">استقطاعات (سلف، عهدة مفقودة، غرامات)</span>
+          </label>
+          <input id="totalDeductions" type="number" value="1500" min="0" step="100" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg text-rose-600 font-semibold" oninput="calculateSettlement()" />
+        </div>
+      </div>
+
+      <!-- GOSI Employee Deduction for Final Month (Saudi vs Non-Saudi) -->
+      <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-100">
+        <label class="font-medium text-slate-700 flex items-center gap-2 cursor-pointer">
+          <input id="isSaudi" type="checkbox" checked class="w-4 h-4 text-emerald-600 rounded" onchange="calculateSettlement()" />
+          <span><span class="en-text">Saudi Citizen (Deduct 9.75% GOSI from final month)</span><span class="ar-text hidden">موظف سعودي (خصم 9.75% تأمينات من شهر المخالصة)</span></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Settlement Voucher / Printable Certificate Card -->
+    <div class="lg:col-span-7 space-y-5">
+
+      <div class="printable-card bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative">
+        
+        <!-- Voucher Header (Official Look) -->
+        <div class="border-b-2 border-slate-800 pb-4 mb-5 flex justify-between items-start">
+          <div>
+            <span class="text-[10px] uppercase tracking-widest text-slate-400 font-bold block">Kingdom of Saudi Arabia</span>
+            <h3 class="text-xl font-extrabold text-slate-900">
+              <span class="en-text">FINAL SETTLEMENT & CLEARANCE VOUCHER</span>
+              <span class="ar-text hidden">مسير التصفية وسند المخالصة النهائية وإبراء الذمة</span>
+            </h3>
+            <p class="text-xs text-slate-500 mt-0.5">
+              <span class="en-text">Ref No: <span id="voucherRef" class="font-mono font-medium">FS-2024-8841</span> | Date: <span id="voucherDate" class="font-medium">2024-06-30</span></span>
+              <span class="ar-text hidden">رقم السند: <span id="voucherRefAr" class="font-mono font-medium">FS-2024-8841</span> | التاريخ: <span id="voucherDateAr" class="font-medium">2024-06-30</span></span>
+            </p>
+          </div>
+          <div class="text-right">
+            <span class="inline-block bg-slate-900 text-white font-mono text-xs font-bold px-3 py-1 rounded">
+              FINAL CLEARED
+            </span>
+          </div>
+        </div>
+
+        <!-- Employee Snapshot in Document -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs mb-5">
+          <div>
+            <span class="text-slate-400 block text-[11px]"><span class="en-text">Employee Name:</span><span class="ar-text hidden">اسم الموظف:</span></span>
+            <span id="docEmpName" class="font-bold text-slate-800">Tariq Al-Harbi</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[11px]"><span class="en-text">National/Iqama ID:</span><span class="ar-text hidden">رقم الهوية / الإقامة:</span></span>
+            <span id="docEmpId" class="font-bold font-mono text-slate-800">2489012345</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[11px]"><span class="en-text">Total Tenure:</span><span class="ar-text hidden">مدة الخدمة:</span></span>
+            <span id="docTenureText" class="font-bold text-slate-800">5y 6m 0d</span>
+          </div>
+          <div>
+            <span class="text-slate-400 block text-[11px]"><span class="en-text">Calculation Wage:</span><span class="ar-text hidden">أجر الاحتساب:</span></span>
+            <span id="docWageText" class="font-bold font-mono text-emerald-800">12,500 SAR</span>
+          </div>
+        </div>
+
+        <!-- Itemized Table of Settlement -->
+        <div class="space-y-3 mb-6">
+          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider border-b border-slate-200 pb-1.5">
+            <span class="en-text">Itemized Financial Settlement (SAR)</span>
+            <span class="ar-text hidden">البيان المالي المفصل للاستحقاقات والاستقطاعات (بالريال)</span>
+          </h4>
+
+          <!-- Section A: Additions / Entitlements -->
+          <div class="space-y-1.5 text-xs">
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span class="text-slate-700 font-medium"><span class="en-text">1. Unpaid Salary (Pro-rata days)</span><span class="ar-text hidden">1. أجر العمل المستحق (أيام متبقية)</span></span>
+                <span id="unpaidDaysTag" class="text-[10px] text-slate-400 font-mono">(30 days)</span>
+              </div>
+              <span id="dispUnpaidSalary" class="font-mono font-semibold text-slate-800">12,500.00</span>
+            </div>
+
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span class="text-slate-700 font-medium"><span class="en-text">2. Statutory EOSB Gratuity (Art. 84/85)</span><span class="ar-text hidden">2. مكافأة نهاية الخدمة النظامية (مادة 84/85)</span></span>
+                <span id="eosbRatioTag" class="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono">100% Full</span>
+              </div>
+              <span id="dispEosbAmount" class="font-mono font-semibold text-emerald-700">43,750.00</span>
+            </div>
+
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span class="text-slate-700 font-medium"><span class="en-text">3. Unused Annual Leave Cash-Out (Art. 111)</span><span class="ar-text hidden">3. بدل رصيد الإجازات السنوية المستحقة (مادة 111)</span></span>
+                <span id="leaveDaysTag" class="text-[10px] text-slate-400 font-mono">(14 days)</span>
+              </div>
+              <span id="dispLeaveEncashment" class="font-mono font-semibold text-slate-800">5,833.33</span>
+            </div>
+
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <div class="flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span class="text-slate-700 font-medium"><span class="en-text">4. Additional Entitlements & Allowances</span><span class="ar-text hidden">4. مستحقات وبدلات أخرى (تذاكر / مكافآت)</span></span>
+              </div>
+              <span id="dispAdditionalAdd" class="font-mono font-semibold text-slate-800">1,800.00</span>
+            </div>
+
+            <div class="flex justify-between items-center pt-2 font-bold text-emerald-800 text-sm">
+              <span><span class="en-text">Subtotal Gross Entitlements (A)</span><span class="ar-text hidden">إجمالي المستحقات المكتسبة (أ)</span></span>
+              <span id="dispTotalAdditions" class="font-mono">63,883.33 SAR</span>
+            </div>
+          </div>
+
+          <!-- Section B: Deductions -->
+          <div class="mt-4 pt-3 border-t border-slate-200 space-y-1.5 text-xs">
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <div class="flex items-center gap-2 text-rose-700 font-medium">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                <span><span class="en-text">5. GOSI Social Insurance Deduction (Current month)</span><span class="ar-text hidden">5. خصم التأمينات الاجتماعية (الشهر الأخير)</span></span>
+              </div>
+              <span id="dispGosiDeduction" class="font-mono font-semibold text-rose-600">(1,097.25)</span>
+            </div>
+
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <div class="flex items-center gap-2 text-rose-700 font-medium">
+                <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                <span><span class="en-text">6. Company Advances / Unreturned Assets / Violations</span><span class="ar-text hidden">6. سلفيات / عهد وممتلكات مستردة / غرامات</span></span>
+              </div>
+              <span id="dispOtherDeduction" class="font-mono font-semibold text-rose-600">(1,500.00)</span>
+            </div>
+
+            <div class="flex justify-between items-center pt-2 font-bold text-rose-700 text-sm">
+              <span><span class="en-text">Subtotal Deductions (B)</span><span class="ar-text hidden">إجمالي الاستقطاعات والخصومات (ب)</span></span>
+              <span id="dispTotalDeductions" class="font-mono">(2,597.25) SAR</span>
+            </div>
+          </div>
+
+          <!-- Section C: Net Payable Callout -->
+          <div class="mt-6 bg-slate-900 text-white p-4 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-md">
+            <div>
+              <span class="text-[11px] uppercase tracking-wider text-emerald-400 font-bold block">
+                <span class="en-text">Net Settlement Payable to Employee (A - B)</span>
+                <span class="ar-text hidden">صافي المبلغ المستحق صرفه للعامل (أ - ب)</span>
+              </span>
+              <span class="text-xs text-slate-300">
+                <span class="en-text">Article 88: Payable within 1 week of exit</span>
+                <span class="ar-text hidden">المادة 88: يجب صرفه خلال أسبوع كحد أقصى</span>
+              </span>
+            </div>
+            <div class="text-right">
+              <span id="dispNetPayable" class="text-2xl sm:text-3xl font-black font-mono text-emerald-400">61,286.08</span>
+              <span class="text-xs font-bold text-slate-300 ml-1">SAR</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bilingual Legal Discharge Declaration (Mukhalasa Text) -->
+        <div class="mt-6 p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-[11px] text-slate-600 leading-relaxed">
+          <p class="font-semibold text-slate-800 mb-1">
+            <span class="en-text">Employee Final Clearance & Discharge Acknowledgement:</span>
+            <span class="ar-text hidden">إقرار وتنازل وإبراء ذمة نهائي من الموظف:</span>
+          </p>
+          <p>
+            <span class="en-text">I, the undersigned, acknowledge receiving the entire final settlement sum indicated above in full clearance of all my financial rights, salaries, leave compensation, and statutory end-of-service gratuity arising from my employment contract under Saudi Labor Law. I hereby release the employer from any past, present, or future labor claims or liabilities.</span>
+            <span class="ar-text hidden">أقر أنا الموقع أدناه باستلامي كامل مستحقاتي المالية النظامية والتعاقدية الموضحة أعلاه بما يشمل كافة الرواتب وبدل الإجازات ومكافأة نهاية الخدمة، وأبرئ ذمة صاحب العمل إبراءً شاملاً وكاملاً ونهائياً لا رجعة فيه من أي دعوى أو مطالبة حالية أو مستقبلية تتعلق بخدمتي.</span>
+          </p>
+        </div>
+
+        <!-- Signature Block -->
+        <div class="mt-8 pt-4 border-t border-slate-300 grid grid-cols-2 sm:grid-cols-3 gap-6 text-xs text-slate-700 text-center">
+          <div>
+            <span class="block font-semibold text-slate-800 mb-8"><span class="en-text">Prepared By (HR)</span><span class="ar-text hidden">إعداد مسؤول الموارد البشرية</span></span>
+            <div class="border-b border-dashed border-slate-400 mx-4"></div>
+            <span class="text-[10px] text-slate-400 mt-1 block"><span class="en-text">Signature & Date</span><span class="ar-text hidden">التوقيع والتاريخ</span></span>
+          </div>
+          <div>
+            <span class="block font-semibold text-slate-800 mb-8"><span class="en-text">Approved By (Finance / MD)</span><span class="ar-text hidden">اعتماد الإدارة المالية / المدير العام</span></span>
+            <div class="border-b border-dashed border-slate-400 mx-4"></div>
+            <span class="text-[10px] text-slate-400 mt-1 block"><span class="en-text">Stamp & Signature</span><span class="ar-text hidden">الختم والتوقيع</span></span>
+          </div>
+          <div class="col-span-2 sm:col-span-1">
+            <span class="block font-semibold text-slate-800 mb-8"><span class="en-text">Employee Acknowledgment</span><span class="ar-text hidden">توقيع الموظف المقر بالاستلام</span></span>
+            <div class="border-b border-dashed border-slate-400 mx-4"></div>
+            <span class="text-[10px] text-slate-400 mt-1 block"><span class="en-text">Full Signature & Fingerprint</span><span class="ar-text hidden">الاسم والتوقيع والبصمة</span></span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Gumroad Direct Upsell Box -->
+      <div class="no-print bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="space-y-1">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold bg-amber-500 text-slate-950 px-2 py-0.5 rounded">Excel + VBA Edition</span>
+            <h4 class="font-bold text-slate-900 text-sm">
+              <span class="en-text">Need Bulk Final Settlements for Batch Redundancies?</span>
+              <span class="ar-text hidden">هل تحتاج لتصفية مستحقات جماعية لعدة موظفين دفعة واحدة؟</span>
+            </h4>
+          </div>
+          <p class="text-xs text-slate-600">
+            <span class="en-text">Get our Complete Offline Automated Excel & VBA Master Template with 1-click PDF certificate batch generation, WPS/SIF exporter, and Qiwa separation tracker.</span>
+            <span class="ar-text hidden">احصل على قالب الإكسيل الاحترافي المؤتمت بالكامل مع ماكرو توليد السندات تلقائياً وتصدير مسيرات مدد وقوى بضغطة زر واحدة.</span>
+          </p>
+        </div>
+        <a href="https://gumroad.com" target="_blank" class="shrink-0 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition duration-150 shadow-sm border border-slate-700">
+          <span class="en-text">Buy Template ($29)</span>
+          <span class="ar-text hidden">شراء القالب الكامل ($29)</span>
+        </a>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Legal Compliance Disclaimer (Mandatory) -->
+  <div class="max-w-7xl mx-auto px-4 md:px-6 my-4 w-full">
+    <div class="bg-amber-50/80 border-l-4 border-amber-500 p-3.5 rounded-r-xl text-xs text-amber-900 leading-relaxed">
+      <div class="font-bold mb-0.5 flex items-center gap-1.5">
+        <svg class="w-4 h-4 text-amber-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+        <span>
+          <span class="en-text">Official Regulatory Disclaimer</span>
+          <span class="ar-text hidden">إخلاء مسؤولية نظامي وقانوني</span>
+        </span>
+      </div>
+      <p>
+        <span class="en-text"><strong>Estimates Only:</strong> All calculations provided by this tool are automated estimates based on standard interpretations of the Saudi Labor Law (Articles 84, 85, 87, 88, and 111) and GOSI contribution rules. Actual final exit figures, notice period settlements, judicial compensation under Article 77, and final clearance must be independently reviewed and reconciled by licensed Saudi legal or human resource advisors against company bylaws and registered Qiwa employment contracts.</span>
+        <span class="ar-text hidden"><strong>تقديرات استرشادية فقط:</strong> جميع المخرجات والحسابات التي توفرها هذه الأداة هي نتائج رقمية تقديرية مبنية على مواد نظام العمل السعودي (المواد 84، 85، 87، 88، 111) وأنظمة التأمينات الاجتماعية. يجب تدقيق ومطابقة هذه المبالغ رسمياً مع بنود عقد العمل الموثق عبر منصة «قوى» واللوائح الداخلية للمنشأة واستشارة مستشار عمالي أو محاسب قانوني مرخص قبل توقيع المخالصة النهائية أو الصرف البنكي.</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- 800-Word SEO Comprehensive Guide, Formulas & FAQ -->
+  <section class="no-print max-w-7xl mx-auto p-4 md:p-6 w-full space-y-8 text-slate-700 text-sm leading-relaxed border-t border-slate-200 mt-6">
+
+    <!-- Section: The Comprehensive Guide to Saudi Final Settlement -->
+    <div>
+      <h2 class="text-xl font-bold text-slate-900 mb-3">
+        <span class="en-text">Mastering Saudi Final Settlement (Mukhalasa) Under the Labor Law</span>
+        <span class="ar-text hidden">الدليل الشامل لإعداد المخالصة وتصفية مستحقات نهاية الخدمة وفقاً لنظام العمل السعودي</span>
+      </h2>
+      <p class="mb-3">
+        <span class="en-text">
+          In the Kingdom of Saudi Arabia, the termination or expiration of an employment relationship triggers a mandatory statutory procedure known as the <strong>Final Settlement (المخالصة النهائية / سند تصفية الحقوق)</strong>. Regulated under Royal Decree No. M/51 and managed digitally through the Ministry of Human Resources and Social Development (MHRSD) and the <em>Qiwa</em> platform, failure to compute or disburse employee final settlements correctly exposes employers to Wage Protection System (WPS) sanctions, recruitment blocks, and hefty financial penalties.
+        </span>
+        <span class="ar-text hidden">
+          في المملكة العربية السعودية، يُعد إنهاء عقد العمل أو انتهائه إجراءً نظامياً بالغ الأهمية يتطلب إصدار <strong>سند المخالصة النهائية وتصفية كافة مستحقات العامل</strong>. يُلزم نظام العمل الصادر بالمرسوم الملكي رقم م/51 وتعديلاته وأوامر وزارة الموارد البشرية والتنمية الاجتماعية والربط الرقمي عبر منصة «قوى» وبرنامج «حماية الأجور» المنشآت بتسوية كافة مستحقات الموظف المالية بدقة تفادياً لإيقاف الخدمات أو فرض الغرامات المالية.
+        </span>
+      </p>
+      <p>
+        <span class="en-text">
+          A legally robust final settlement sheet consists of four interconnected calculations: (1) pro-rated final month salary, (2) the statutory End of Service Benefit (EOSB) determined under Article 84 or Article 85 sliding resignation scales, (3) earned, untaken annual leave balance liquidation pursuant to Article 111, and (4) lawful reconciliations such as outstanding employee salary advances, unreturned corporate property, and applicable General Organization for Social Insurance (GOSI) employee deductions.
+        </span>
+        <span class="ar-text hidden">
+          تتكون وثيقة المخالصة القانونية المكتملة من أربعة محاور محاسبية رئيسية: (1) أجر أيام العمل الفعلية للشهر الأخير، (2) مكافأة نهاية الخدمة النظامية المقررة وفقاً للمادتين 84 أو 85 بحسب سبب الانفصال، (3) التعويض النقدي عن رصيد الإجازات السنوية المستحقة التي لم يستنفدها العامل طبقاً للمادة 111، و (4) الاستقطاعات المشروعة كالسلف المتبقية والعهد غير المسلمة ونسبة اشتراك التأمينات الاجتماعية (GOSI) لشهر التصفية.
+        </span>
+      </p>
+    </div>
+
+    <!-- Section: Formulas Breakdown -->
+    <div class="bg-slate-100 p-5 rounded-2xl border border-slate-200">
+      <h3 class="text-base font-bold text-slate-900 mb-3">
+        <span class="en-text">Key Saudi Labor Law Formulas Applied in this Generator</span>
+        <span class="ar-text hidden">المعادلات النظامية الرياضية المعتمدة في احتساب المخالصة</span>
+      </h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
+        <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+          <span class="font-bold text-slate-800 block text-xs font-sans mb-1">1. End of Service Benefit (Article 84)</span>
+          <p class="text-slate-600 font-sans text-[11px] mb-2">For full termination, contract expiry, or female employee marriage:</p>
+          <div class="p-2 bg-slate-50 rounded border border-slate-200 text-emerald-800">
+            Years 1 to 5 = (Last Gross Wage / 2) × First 5 Years<br>
+            Years 6+ = (Last Gross Wage) × Remaining Years<br>
+            Total EOSB = EOSB(First 5) + EOSB(Excess)
+          </div>
+        </div>
+        <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+          <span class="font-bold text-slate-800 block text-xs font-sans mb-1">2. Resignation Sliding Scale (Article 85)</span>
+          <p class="text-slate-600 font-sans text-[11px] mb-2">If employee resigns in an indefinite-term contract:</p>
+          <div class="p-2 bg-slate-50 rounded border border-slate-200 text-amber-800">
+            Tenure &lt; 2 yrs = 0% (Zero EOSB)<br>
+            Tenure 2 to &lt;5 yrs = 1/3 (33.33%) of EOSB<br>
+            Tenure 5 to &lt;10 yrs = 2/3 (66.67%) of EOSB<br>
+            Tenure 10+ yrs = 100% (Full EOSB)
+          </div>
+        </div>
+        <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+          <span class="font-bold text-slate-800 block text-xs font-sans mb-1">3. Annual Leave Encashment (Article 111)</span>
+          <p class="text-slate-600 font-sans text-[11px] mb-2">Based on the employee's last drawn actual wage (Gross):</p>
+          <div class="p-2 bg-slate-50 rounded border border-slate-200 text-slate-800">
+            Daily Wage = Last Gross Wage / 30<br>
+            Leave Encashment = Daily Wage × Accrued Unused Days
+          </div>
+        </div>
+        <div class="bg-white p-3.5 rounded-xl border border-slate-200">
+          <span class="font-bold text-slate-800 block text-xs font-sans mb-1">4. Final Month Pro-Rata Salary</span>
+          <p class="text-slate-600 font-sans text-[11px] mb-2">Daily rate multiplied by active calendar days:</p>
+          <div class="p-2 bg-slate-50 rounded border border-slate-200 text-slate-800">
+            Pro-Rata Pay = (Gross Wage / 30) × Working Days<br>
+            Saudi GOSI Deduction = (Basic + Housing) × 9.75%
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section: Step-by-Step Practical HR SOP -->
+    <div>
+      <h3 class="text-base font-bold text-slate-900 mb-2">
+        <span class="en-text">Standard Operating Procedure (SOP) for Employee Separation in KSA</span>
+        <span class="ar-text hidden">إجراءات العمل القياسية (SOP) لإنهاء خدمات الموظف وصرف المخالصة</span>
+      </h3>
+      <ol class="list-decimal list-inside space-y-2 text-xs md:text-sm text-slate-600">
+        <li>
+          <strong><span class="en-text">Contract Status Update on Qiwa:</span><span class="ar-text hidden">تحديث حالة العقد على منصة قوى:</span></strong>
+          <span class="en-text"> Initiate the contract termination workflow on the Qiwa platform, specifying the precise reason matching the legal ground (e.g., expiry of contract period, Article 77, or resignation). Ensure notice period requirements are formally documented.</span>
+          <span class="ar-text hidden"> تسجيل سبب الإنهاء المطابق للواقع على منصة قوى (انتهاء العقد، استقالة العامل، إنهاء بموجب المادة 77)، مع توثيق مدة الإشعار النظامية.</span>
+        </li>
+        <li>
+          <strong><span class="en-text">Asset & Custody Clearance:</span><span class="ar-text hidden">تسليم العهد والأجهزة والممتلكات:</span></strong>
+          <span class="en-text"> Issue internal departmental clearance forms (IT laptop, access cards, company car, petty cash receipts). Any unaccounted damages or shortages can only be deducted subject to statutory caps under Article 91.</span>
+          <span class="ar-text hidden"> استيفاء نموذج إخلاء الطرف الداخلي (أجهزة الحاسب، بطاقات العمل، سيارة المنشأة، تصفية العهد النقدية) وفق الضوابط والحدود المقررة نظاماً.</span>
+        </li>
+        <li>
+          <strong><span class="en-text">Disbursement Timing (Article 88):</span><span class="ar-text hidden">مهلة الصرف القانونية (المادة 88):</span></strong>
+          <span class="en-text"> If the employer initiates termination, all final entitlements must be paid within <strong>one week</strong>. If the employee resigns, the employer is granted up to <strong>two weeks</strong> to settle the account.</span>
+          <span class="ar-text hidden"> إذا كان إنهاء الخدمة من طرف صاحب العمل، يجب صرف كامل المستحقات خلال <strong>أسبوع واحد</strong> كحد أقصى، أما إذا كانت استقالة من العامل فيجب الصرف خلال <strong>أسبوعين</strong>.</span>
+        </li>
+        <li>
+          <strong><span class="en-text">Signature on Discharge Voucher & Final Exit:</span><span class="ar-text hidden">توقيع سند إبراء الذمة وتأشيرة الخروج النهائي:</span></strong>
+          <span class="en-text"> For expatriate workers, obtaining a physical signed Mukhalasa and uploading proof to the Ministry ensures no subsequent absconding (Huroob) or unpaid wage disputes are lodged before issuing the Final Exit Visa through Absher Business or Muqeem.</span>
+          <span class="ar-text hidden"> توقيع سند المخالصة الورقي أو الإلكتروني واستلام العامل لمستحقاته عبر حسابه البنكي شرط أساسي لحماية المنشأة قبل إصدار تأشيرة الخروج النهائي عبر منصة مقيم.</span>
+        </li>
+      </ol>
+    </div>
+
+    <!-- Section: FAQs -->
+    <div>
+      <h3 class="text-base font-bold text-slate-900 mb-3">
+        <span class="en-text">Frequently Asked Questions (FAQ)</span>
+        <span class="ar-text hidden">الأسئلة الشائعة حول تصفية المستحقات والمخالصة</span>
+      </h3>
+      <div class="space-y-3">
+        <details class="bg-white p-3.5 rounded-xl border border-slate-200">
+          <summary class="font-semibold text-xs md:text-sm text-slate-900 cursor-pointer">
+            <span class="en-text">Is End of Service Benefit calculated on Basic salary or Gross salary?</span>
+            <span class="ar-text hidden">هل تُحسب مكافأة نهاية الخدمة على الراتب الأساسي أم الإجمالي؟</span>
+          </summary>
+          <p class="mt-2 text-xs text-slate-600 leading-relaxed">
+            <span class="en-text">Pursuant to Article 84 and ministerial guidelines, EOSB must be calculated on the employee's <strong>last actual wage (Gross Wage)</strong>, which includes the Basic Salary plus all regular, contractually agreed fixed monthly allowances such as Housing Allowance, Transportation Allowance, and permanent food or phone allowances.</span>
+            <span class="ar-text hidden">طبقاً للمادة 84 وتفسيرات الهيئات العمالية، تُحسب مكافأة نهاية الخدمة على <strong>الأجر الفعلي الأخير (الراتب الإجمالي)</strong>، وهو الراتب الأساسي مضافاً إليه جميع البدلات الثابتة الشهرية المستمرة مثل بدل السكن، بدل النقل، وبدل المعيشة الثابت.</span>
+          </p>
+        </details>
+
+        <details class="bg-white p-3.5 rounded-xl border border-slate-200">
+          <summary class="font-semibold text-xs md:text-sm text-slate-900 cursor-pointer">
+            <span class="en-text">Can the employer deduct loans from the final settlement without limits?</span>
+            <span class="ar-text hidden">هل يحق لصاحب العمل خصم القروض والسلف من المخالصة بدون حدود؟</span>
+          </summary>
+          <p class="mt-2 text-xs text-slate-600 leading-relaxed">
+            <span class="en-text">While monthly wages are capped by Article 92 (no more than 50% deduction without labor court permission), upon final separation the entire legitimate balance of company advances, loans, and property recovery may be reconciled from the final settlement voucher provided clear signed documentation exists.</span>
+            <span class="ar-text hidden">بينما تضع المادة 92 حداً أقصى للاستقطاع الشهري العادي بنسبة 50%، فإنه عند تصفية الحقوق النهائية يحق تسوية كامل الرصيد المتبقي للسلف والقروض المثبتة كتابياً وتصفية العهد المستحقة على العامل شريطة وجود إثباتات استلام رسمية.</span>
+          </p>
+        </details>
+
+        <details class="bg-white p-3.5 rounded-xl border border-slate-200">
+          <summary class="font-semibold text-xs md:text-sm text-slate-900 cursor-pointer">
+            <span class="en-text">Does signing the Mukhalasa prevent the worker from suing the company later?</span>
+            <span class="ar-text hidden">هل يمنع توقيع سند المخالصة العامل من رفع دعوى عمالية لاحقاً؟</span>
+          </summary>
+          <p class="mt-2 text-xs text-slate-600 leading-relaxed">
+            <span class="en-text">Under Saudi Labor Law Article 8, any waiver of statutory employee rights that occurred during or at the end of the contract is void if it contradicts mandatory legal entitlements. However, if the settlement explicitly details every financial item paid via documented bank transfer matching labor law requirements, Saudi Labor Courts uphold the clearance as full discharge of liabilities.</span>
+            <span class="ar-text hidden">تنص المادة الثامنة من نظام العمل على بطلان أي إبراء أو تنازل يخالف الحقوق الآمرة المقررة نظاماً إذا كان دون سند حق؛ غير أن المخالصة المفصلة رقمياً والمقترنة بالتحويل البنكي الفعلي لكامل البنود النظامية تُعتبر حجة قاطعة ومبرئة للذمة أمام المحاكم العمالية.</span>
+          </p>
+        </details>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer class="no-print bg-white border-t border-slate-200 py-6 px-4 mt-auto text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p>© 2025 Saudi B2B Operational Toolkits. All rights reserved.</p>
+      <p class="flex items-center gap-3">
+        <a href="#" class="hover:underline">Labor Law Reference Guide</a>
+        <span>•</span>
+        <a href="#" class="hover:underline">Terms of Use</a>
+        <span>•</span>
+        <a href="#" class="hover:underline">Privacy Policy</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- JavaScript Calculation Engine -->
+  <script>
+    // Bilingual Toggle Logic
+    let currentLang = 'en';
+    const langToggleBtn = document.getElementById('langToggle');
+
+    langToggleBtn.addEventListener('click', () => {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+      const enEls = document.querySelectorAll('.en-text');
+      const arEls = document.querySelectorAll('.ar-text');
+
+      if (currentLang === 'ar') {
+        enEls.forEach(el => el.classList.add('hidden'));
+        arEls.forEach(el => el.classList.remove('hidden'));
+        langToggleBtn.textContent = 'English';
+        document.body.classList.add('font-arabic');
+      } else {
+        enEls.forEach(el => el.classList.remove('hidden'));
+        arEls.forEach(el => el.classList.add('hidden'));
+        langToggleBtn.textContent = 'العربية';
+        document.body.classList.remove('font-arabic');
+      }
+    });
+
+    // Helper formatting
+    function formatSAR(num) {
+      return (num || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Date tenure calculation
+    function calculateTenureFromDates() {
+      const joinInput = document.getElementById('joinDate').value;
+      const lastInput = document.getElementById('lastDate').value;
+      if (!joinInput || !lastInput) return;
+
+      const startDate = new Date(joinInput);
+      const endDate = new Date(lastInput);
+
+      if (endDate < startDate) {
+        alert(currentLang === 'ar' ? 'تاريخ نهاية الخدمة يجب أن يكون بعد تاريخ البداية!' : 'Last working date must be after join date!');
+        return;
+      }
+
+      let years = endDate.getFullYear() - startDate.getFullYear();
+      let months = endDate.getMonth() - startDate.getMonth();
+      let days = endDate.getDate() - startDate.getDate();
+
+      if (days < 0) {
+        months--;
+        const prevMonth = new Date(endDate.getFullYear(), endDate.getMonth(), 0);
+        days += prevMonth.getDate();
+      }
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      document.getElementById('tenureYears').textContent = Math.max(0, years);
+      document.getElementById('tenureMonths').textContent = Math.max(0, months);
+      document.getElementById('tenureDays').textContent = Math.max(0, days);
+
+      calculateSettlement();
+    }
+
+    // Primary Settlement Calculation Logic
+    function calculateSettlement() {
+      // 1. Gather inputs
+      const empName = document.getElementById('empName').value || 'Employee';
+      const empId = document.getElementById('empId').value || '---';
+      const basic = parseFloat(document.getElementById('basicSalary').value) || 0;
+      const housing = parseFloat(document.getElementById('housingAllowance').value) || 0;
+      const transport = parseFloat(document.getElementById('transportAllowance').value) || 0;
+      const other = parseFloat(document.getElementById('otherAllowance').value) || 0;
+
+      const grossWage = basic + housing + transport + other;
+      document.getElementById('totalGrossDisplay').textContent = formatSAR(grossWage) + ' SAR';
+
+      // Sync doc headers
+      document.getElementById('docEmpName').textContent = empName;
+      document.getElementById('docEmpId').textContent = empId;
+      document.getElementById('docWageText').textContent = formatSAR(grossWage) + ' SAR';
+
+      // Tenure in fractional years
+      const y = parseInt(document.getElementById('tenureYears').textContent) || 0;
+      const m = parseInt(document.getElementById('tenureMonths').textContent) || 0;
+      const d = parseInt(document.getElementById('tenureDays').textContent) || 0;
+      const totalExactYears = y + (m / 12) + (d / 365.25);
+      document.getElementById('docTenureText').textContent = `${y}y ${m}m ${d}d`;
+
+      // 2. Reason & Article 84 / 85 EOSB multiplier
+      const reason = document.getElementById('separationReason').value;
+      let statutoryFullEosb = 0;
+      if (totalExactYears <= 5) {
+        statutoryFullEosb = (grossWage / 2) * totalExactYears;
+      } else {
+        const first5 = (grossWage / 2) * 5;
+        const excess = grossWage * (totalExactYears - 5);
+        statutoryFullEosb = first5 + excess;
+      }
+
+      let payableEosb = 0;
+      const eosbTag = document.getElementById('eosbRatioTag');
+
+      if (reason === 'article_80') {
+        payableEosb = 0;
+        eosbTag.textContent = '0% (Art. 80)';
+        eosbTag.className = 'text-[10px] bg-rose-100 text-rose-800 px-1.5 py-0.2 rounded font-mono';
+      } else if (reason === 'resignation') {
+        if (totalExactYears < 2) {
+          payableEosb = 0;
+          eosbTag.textContent = '0% (< 2y Resign)';
+          eosbTag.className = 'text-[10px] bg-rose-100 text-rose-800 px-1.5 py-0.2 rounded font-mono';
+        } else if (totalExactYears < 5) {
+          payableEosb = statutoryFullEosb * (1 / 3);
+          eosbTag.textContent = '33.3% (2-5y Resign)';
+          eosbTag.className = 'text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-mono';
+        } else if (totalExactYears < 10) {
+          payableEosb = statutoryFullEosb * (2 / 3);
+          eosbTag.textContent = '66.7% (5-10y Resign)';
+          eosbTag.className = 'text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded font-mono';
+        } else {
+          payableEosb = statutoryFullEosb;
+          eosbTag.textContent = '100% (>10y Resign)';
+          eosbTag.className = 'text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono';
+        }
+      } else {
+        // All full EOSB categories (Employer termination, expiry, female marriage, force majeure)
+        payableEosb = statutoryFullEosb;
+        eosbTag.textContent = '100% Full (Art. 84/87)';
+        eosbTag.className = 'text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded font-mono';
+      }
+
+      // 3. Pro-rata salary
+      const unpaidDays = parseFloat(document.getElementById('unpaidDays').value) || 0;
+      const unpaidSalary = (grossWage / 30) * unpaidDays;
+      document.getElementById('unpaidDaysTag').textContent = `(${unpaidDays} days)`;
+
+      // 4. Leave encashment (Article 111)
+      const leaveDays = parseFloat(document.getElementById('leaveDays').value) || 0;
+      const leaveEncashment = (grossWage / 30) * leaveDays;
+      document.getElementById('leaveDaysTag').textContent = `(${leaveDays} days)`;
+
+      // 5. Additions
+      const otherAdditions = parseFloat(document.getElementById('additionalAdditions').value) || 0;
+      const totalGrossEntitlements = unpaidSalary + payableEosb + leaveEncashment + otherAdditions;
+
+      // 6. Deductions
+      const isSaudi = document.getElementById('isSaudi').checked;
+      let gosiDeduction = 0;
+      if (isSaudi && unpaidDays > 0) {
+        // 9.75% of basic + housing pro-rated
+        const gosiBase = (basic + housing) * (unpaidDays / 30);
+        gosiDeduction = gosiBase * 0.0975;
+      }
+      const otherDeductions = parseFloat(document.getElementById('totalDeductions').value) || 0;
+      const totalDeductions = gosiDeduction + otherDeductions;
+
+      // 7. Net Payable
+      const netPayable = Math.max(0, totalGrossEntitlements - totalDeductions);
+
+      // 8. Render in document
+      document.getElementById('dispUnpaidSalary').textContent = formatSAR(unpaidSalary);
+      document.getElementById('dispEosbAmount').textContent = formatSAR(payableEosb);
+      document.getElementById('dispLeaveEncashment').textContent = formatSAR(leaveEncashment);
+      document.getElementById('dispAdditionalAdd').textContent = formatSAR(otherAdditions);
+      document.getElementById('dispTotalAdditions').textContent = formatSAR(totalGrossEntitlements) + ' SAR';
+
+      document.getElementById('dispGosiDeduction').textContent = `(${formatSAR(gosiDeduction)})`;
+      document.getElementById('dispOtherDeduction').textContent = `(${formatSAR(otherDeductions)})`;
+      document.getElementById('dispTotalDeductions').textContent = `(${formatSAR(totalDeductions)}) SAR`;
+
+      document.getElementById('dispNetPayable').textContent = formatSAR(netPayable);
+
+      // Update date stamps
+      const todayStr = document.getElementById('lastDate').value || new Date().toISOString().split('T')[0];
+      document.getElementById('voucherDate').textContent = todayStr;
+      document.getElementById('voucherDateAr').textContent = todayStr;
+    }
+
+    // CSV Export functionality
+    function exportToCSV() {
+      const name = document.getElementById('empName').value;
+      const id = document.getElementById('empId').value;
+      const tenure = document.getElementById('docTenureText').textContent;
+      const gross = document.getElementById('totalGrossDisplay').textContent;
+      const unpaid = document.getElementById('dispUnpaidSalary').textContent;
+      const eosb = document.getElementById('dispEosbAmount').textContent;
+      const leave = document.getElementById('dispLeaveEncashment').textContent;
+      const additions = document.getElementById('dispAdditionalAdd').textContent;
+      const grossTotal = document.getElementById('dispTotalAdditions').textContent;
+      const gosi = document.getElementById('dispGosiDeduction').textContent;
+      const otherDed = document.getElementById('dispOtherDeduction').textContent;
+      const deductionsTotal = document.getElementById('dispTotalDeductions').textContent;
+      const net = document.getElementById('dispNetPayable').textContent;
+
+      const csvContent = "data:text/csv;charset=utf-8,"
+        + "Item,Value,Currency\n"
+        + `"Employee Name","${name}",""\n`
+        + `"Iqama / National ID","${id}",""\n`
+        + `"Service Duration","${tenure}",""\n`
+        + `"Monthly Gross Wage","${gross}","SAR"\n`
+        + `"1. Unpaid Days Salary","${unpaid}","SAR"\n`
+        + `"2. End of Service Gratuity","${eosb}","SAR"\n`
+        + `"3. Annual Leave Encashment","${leave}","SAR"\n`
+        + `"4. Other Entitlements","${additions}","SAR"\n`
+        + `"Total Gross Entitlements","${grossTotal}","SAR"\n`
+        + `"5. GOSI Deduction","${gosi}","SAR"\n`
+        + `"6. Loans and Custody Deductions","${otherDed}","SAR"\n`
+        + `"Total Deductions","${deductionsTotal}","SAR"\n`
+        + `"NET PAYABLE SETTLEMENT","${net}","SAR"\n`;
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Saudi_Settlement_${id || 'Employee'}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Run on initial load
+    window.addEventListener('DOMContentLoaded', () => {
+      calculateTenureFromDates();
+      calculateSettlement();
+    });
+  </script>
+</body>
+</html>
