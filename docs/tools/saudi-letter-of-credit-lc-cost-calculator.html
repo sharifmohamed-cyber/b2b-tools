@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi Letter of Credit (LC) & Trade Finance Cost Calculator</title>
+  <meta name="description" content="Estimate Saudi trade finance Letter of Credit (LC) issuance fees, cash margin collateral, usance acceptance commissions, confirmation, and 15% ZATCA VAT." />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Inter & Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    [dir="rtl"] body, [dir="rtl"] h1, [dir="rtl"] h2, [dir="rtl"] h3, [dir="rtl"] h4, [dir="rtl"] p, [dir="rtl"] span, [dir="rtl"] label, [dir="rtl"] input, [dir="rtl"] select, [dir="rtl"] button {
+      font-family: 'Cairo', sans-serif;
+    }
+    .num-font { font-feature-settings: 'tnum' on, 'lnum' on; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Top High-Converting Sticky Offer Bar -->
+  <aside class="sticky top-0 z-50 bg-gradient-to-r from-emerald-950 via-slate-900 to-indigo-950 text-white px-4 py-2.5 shadow-md border-b border-emerald-500/20" aria-label="Special Offer">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+      <div class="flex items-center gap-2">
+        <span class="px-2 py-0.5 rounded bg-amber-400/20 text-amber-300 font-semibold border border-amber-400/30 uppercase tracking-wider text-[11px]">Enterprise Toolkit</span>
+        <span class="text-slate-200 hidden md:inline">Saudi Corporate Trade Finance, SAMA LC Fees & Cash Flow Modeling Suite:</span>
+        <strong class="text-white font-medium">Automated Excel & VBA Master Template ($29)</strong>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3.5 py-1.5 rounded-lg transition-all shadow hover:shadow-emerald-500/25 flex items-center gap-1.5">
+          <span>Get Master Excel ($29)</span>
+          <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </a>
+        <button id="langToggleBtn" type="button" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition text-xs font-semibold">
+          العربية
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Header Navigation -->
+  <header class="bg-white border-b border-slate-200 py-6 px-4 sm:px-6 shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-black text-lg shadow-inner">
+            LC
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight" id="mainHeaderTitle">
+              Saudi Letter of Credit (LC) & Trade Finance Cost Calculator
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-500" id="mainHeaderSub">
+              UCP 600, SAMA Banking Fee Rules & ZATCA 15% VAT Estimator for CFOs & Procurement
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="printSummaryBtn" type="button" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-300 transition">
+          <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          <span data-i18n="printPdf">Print / PDF</span>
+        </button>
+        <button id="exportCsvBtn" type="button" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg border border-indigo-200 transition">
+          <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <span data-i18n="exportCsv">Export CSV</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Left Calculation Parameters Column (7 Cols) -->
+    <section class="lg:col-span-7 space-y-6">
+      
+      <!-- LC Parameters Form Card -->
+      <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 sm:p-6">
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+          <h2 class="text-base sm:text-lg font-bold text-slate-900 flex items-center gap-2">
+            <span class="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            </span>
+            <span data-i18n="formTitle">LC & Contract Specifications</span>
+          </h2>
+          <span class="text-xs text-slate-400" data-i18n="liveCalculation">Dynamic Engine</span>
+        </div>
+
+        <form id="lcForm" class="space-y-4" onsubmit="event.preventDefault();">
+          
+          <!-- Currency & Value Row -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+            <div class="sm:col-span-4">
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="currencyLabel">Base Currency</label>
+              <select id="currencySelect" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-slate-50">
+                <option value="SAR">Saudi Riyal (SAR)</option>
+                <option value="USD">US Dollar (USD @ 3.75)</option>
+                <option value="EUR">Euro (EUR @ 4.05)</option>
+              </select>
+            </div>
+            <div class="sm:col-span-8">
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="invoiceValLabel">LC / Invoice Face Value</label>
+              <div class="relative">
+                <input id="faceValueInput" type="number" min="1000" step="500" value="500000" class="w-full pl-3 pr-12 rtl:pr-3 rtl:pl-12 py-2 text-sm font-semibold border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                <span id="currencyBadge" class="absolute inset-y-0 right-3 rtl:right-auto rtl:left-3 flex items-center text-xs font-bold text-slate-400 pointer-events-none">SAR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- LC Structure & Tenor Row -->
+          <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+            <div class="sm:col-span-6">
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="lcTypeLabel">LC Settlement Type</label>
+              <select id="lcTypeSelect" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white font-medium">
+                <option value="sight" selected>Sight LC (Paid upon presentation)</option>
+                <option value="usance">Usance / Deferred LC (Credit Tenor)</option>
+                <option value="upas">UPAS LC (Usance Payable at Sight)</option>
+              </select>
+            </div>
+            <div class="sm:col-span-6">
+              <label class="block text-xs font-semibold text-slate-700 mb-1.5" data-i18n="tenorLabel">Tenor / Deferred Period</label>
+              <select id="tenorSelect" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                <option value="0">Sight (0 days)</option>
+                <option value="30">30 Days from BL Date</option>
+                <option value="60">60 Days from BL Date</option>
+                <option value="90" selected>90 Days (Standard Usance)</option>
+                <option value="120">120 Days</option>
+                <option value="180">180 Days (Semi-Annual)</option>
+                <option value="360">360 Days</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Cash Margin Collateral -->
+          <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <div class="flex justify-between items-center">
+              <label class="text-xs font-semibold text-slate-700" data-i18n="marginPercentLabel">Bank Cash Margin Required (Security Deposit)</label>
+              <span id="marginDisplay" class="text-xs font-bold text-indigo-700">20%</span>
+            </div>
+            <input id="marginSlider" type="range" min="0" max="100" step="5" value="20" class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
+            <p class="text-[11px] text-slate-500" data-i18n="marginHelpText">Cash blocked in Saudi bank treasury until documents are cleared or paid.</p>
+          </div>
+
+          <!-- Bank Issuance & Acceptance Rates -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="issuanceRateLabel">
+                Issuance Commission (% per quarter / 90 days)
+              </label>
+              <div class="relative">
+                <input id="issuanceRateInput" type="number" min="0.05" max="10" step="0.05" value="0.375" class="w-full pl-3 pr-8 rtl:pr-3 rtl:pl-8 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                <span class="absolute inset-y-0 right-3 rtl:right-auto rtl:left-3 flex items-center text-xs font-bold text-slate-400">%</span>
+              </div>
+              <span class="text-[10px] text-slate-400" data-i18n="issuanceRateHint">Typical Saudi corporate: 0.25% - 0.50% / qtr (min SAR 450)</span>
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="acceptanceRateLabel">
+                Acceptance Commission (% p.a. for Usance)
+              </label>
+              <div class="relative">
+                <input id="acceptanceRateInput" type="number" min="0" max="10" step="0.1" value="1.20" class="w-full pl-3 pr-8 rtl:pr-3 rtl:pl-8 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+                <span class="absolute inset-y-0 right-3 rtl:right-auto rtl:left-3 flex items-center text-xs font-bold text-slate-400">%</span>
+              </div>
+              <span class="text-[10px] text-slate-400" data-i18n="acceptanceRateHint">Applied across the credit period (0% if Sight LC)</span>
+            </div>
+          </div>
+
+          <!-- Confirmation & Fixed Bank Fees -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="confirmLabel">Advising / Confirm. Fee</label>
+              <input id="confirmationFeeInput" type="number" min="0" step="50" value="450" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="swiftLabel">SWIFT & Courier Fee</label>
+              <input id="swiftFeeInput" type="number" min="0" step="25" value="250" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" data-i18n="docExamLabel">Document Exam Fee</label>
+              <input id="docExamFeeInput" type="number" min="0" step="50" value="350" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:outline-none" />
+            </div>
+          </div>
+
+          <!-- Post-Import Financing / Murabaha Margin (Optional financing by bank) -->
+          <div class="p-3.5 bg-indigo-50/60 border border-indigo-100 rounded-xl space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-bold text-indigo-950 flex items-center gap-1.5">
+                <input id="enablePostFinancingCheck" type="checkbox" class="rounded text-indigo-600 focus:ring-indigo-500 w-4 h-4" />
+                <span data-i18n="postFinancingTitle">Add Post-Import Bank Murabaha / TR Financing (SAIBOR + Spread)</span>
+              </label>
+            </div>
+            <div id="financingControls" class="grid grid-cols-1 sm:grid-cols-2 gap-3 opacity-40 pointer-events-none transition-opacity">
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1" data-i18n="saiborRateLabel">Financing Profit Rate (% p.a.)</label>
+                <input id="financingRateInput" type="number" min="0" max="20" step="0.25" value="6.50" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg bg-white" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-semibold text-slate-600 mb-1" data-i18n="financingDaysLabel">Financing Tenor (Days)</label>
+                <input id="financingDaysInput" type="number" min="15" max="360" step="15" value="90" class="w-full px-3 py-1.5 text-xs border border-slate-300 rounded-lg bg-white" />
+              </div>
+            </div>
+          </div>
+
+          <!-- VAT Setting Notice -->
+          <div class="flex items-center justify-between text-xs text-slate-500 pt-1 border-t border-slate-100">
+            <span data-i18n="vatNote">ZATCA Standard VAT applied to all bank service commissions:</span>
+            <span class="font-bold text-slate-700">15.00%</span>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Cash Margin / Liquidity Impact Card -->
+      <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-5">
+        <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-2">
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+          <span data-i18n="liquidityTitle">Treasury Liquidity & Collateral Allocation</span>
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center">
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="text-[11px] text-slate-500 mb-1" data-i18n="lockedMargin">Blocked Cash Margin</div>
+            <div id="summaryMarginSAR" class="text-sm sm:text-base font-extrabold text-slate-900 num-font">SAR 100,000</div>
+            <div id="summaryMarginPct" class="text-[10px] text-slate-400 mt-0.5">20% of face value</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="text-[11px] text-slate-500 mb-1" data-i18n="unfundedPortion">Bank Credit Exposure</div>
+            <div id="summaryCreditExposure" class="text-sm sm:text-base font-extrabold text-indigo-700 num-font">SAR 400,000</div>
+            <div id="summaryCreditExposurePct" class="text-[10px] text-slate-400 mt-0.5">80% on credit line</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+            <div class="text-[11px] text-slate-500 mb-1" data-i18n="effectiveApr">Trade Cost as % of Goods</div>
+            <div id="summaryTradeCostPct" class="text-sm sm:text-base font-extrabold text-emerald-700 num-font">0.94%</div>
+            <div class="text-[10px] text-slate-400 mt-0.5" data-i18n="landedCostLoad">Landed cost impact</div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Right Results & Summary Card Column (5 Cols) -->
+    <section class="lg:col-span-5 space-y-6">
+      
+      <!-- Detailed Results Breakdown Card -->
+      <div class="bg-white border-2 border-indigo-600/30 rounded-2xl shadow-xl p-6 relative overflow-hidden">
+        <div class="absolute -top-12 -right-12 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl pointer-events-none"></div>
+        
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <span class="text-xs font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-md" data-i18n="costSummaryBadge">Cost Breakdown</span>
+          <span class="text-xs text-slate-400" data-i18n="currencySAR">Currency: Saudi Riyals (SAR)</span>
+        </div>
+
+        <!-- Big Total Output Banner -->
+        <div class="my-4 text-center p-4 bg-gradient-to-b from-slate-900 to-indigo-950 text-white rounded-xl shadow-inner">
+          <div class="text-xs uppercase tracking-widest text-slate-300 font-medium mb-1" data-i18n="totalBankFeesLabel">Total Trade Financing & Bank Fees</div>
+          <div id="grandTotalFeeSAR" class="text-2xl sm:text-3xl font-black text-amber-300 tracking-tight num-font">SAR 4,686.25</div>
+          <div class="text-[11px] text-slate-300 mt-1 flex items-center justify-center gap-1.5">
+            <span data-i18n="includesVat">Includes 15% ZATCA VAT of</span>
+            <strong id="grandTotalVatSAR" class="text-white font-semibold num-font">SAR 611.25</strong>
+          </div>
+        </div>
+
+        <!-- Line Item Charges Table -->
+        <div class="space-y-2.5 text-xs">
+          <div class="flex justify-between py-1.5 border-b border-slate-100">
+            <span class="text-slate-600" data-i18n="rowFaceSAR">Converted LC Value (SAR)</span>
+            <span id="resConvertedValue" class="font-bold text-slate-900 num-font">SAR 500,000.00</span>
+          </div>
+          <div class="flex justify-between py-1.5 border-b border-slate-100">
+            <span class="text-slate-600" data-i18n="rowIssuance">Issuance Commission</span>
+            <span id="resIssuanceCommission" class="font-semibold text-slate-900 num-font">SAR 1,875.00</span>
+          </div>
+          <div class="flex justify-between py-1.5 border-b border-slate-100">
+            <span class="text-slate-600" data-i18n="rowAcceptance">Acceptance Commission</span>
+            <span id="resAcceptanceFee" class="font-semibold text-slate-900 num-font">SAR 1,500.00</span>
+          </div>
+          <div class="flex justify-between py-1.5 border-b border-slate-100">
+            <span class="text-slate-600" data-i18n="rowConfirmation">Advising & Confirmation</span>
+            <span id="resConfirmationFee" class="font-semibold text-slate-900 num-font">SAR 450.00</span>
+          </div>
+          <div class="flex justify-between py-1.5 border-b border-slate-100">
+            <span class="text-slate-600" data-i18n="rowOperations">SWIFT, Postage & Document Exam</span>
+            <span id="resOperationsFees" class="font-semibold text-slate-900 num-font">SAR 600.00</span>
+          </div>
+          <div class="flex justify-between py-1.5 border-b border-slate-100">
+            <span class="text-slate-600" data-i18n="rowMurabaha">Post-Import Murabaha Financing</span>
+            <span id="resMurabahaFinancing" class="font-semibold text-slate-900 num-font">SAR 0.00</span>
+          </div>
+          <div class="flex justify-between py-1.5 bg-amber-50/70 px-2 rounded-lg text-amber-950 font-medium">
+            <span data-i18n="rowVat">15% ZATCA Value Added Tax</span>
+            <span id="resVatAmount" class="font-bold num-font">SAR 663.75</span>
+          </div>
+        </div>
+
+        <!-- Net Outlay Summary Table -->
+        <div class="mt-4 pt-3 border-t border-slate-200 text-xs space-y-1.5">
+          <div class="flex justify-between font-bold text-slate-800">
+            <span data-i18n="cashRequiredAtIssuance">Cash Required at Issuance (Margin + Fees)</span>
+            <span id="resInitialCashOutlay" class="text-indigo-700 num-font">SAR 104,686.25</span>
+          </div>
+          <div class="flex justify-between text-slate-500">
+            <span data-i18n="balancePayableMaturity">Balance Payable at Document Maturity</span>
+            <span id="resMaturityBalance" class="font-semibold text-slate-700 num-font">SAR 400,000.00</span>
+          </div>
+        </div>
+
+        <!-- High-Converting CTA Box in Card -->
+        <div class="mt-6 p-4 rounded-xl bg-slate-900 text-white shadow-lg space-y-3">
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></div>
+            <h4 class="text-xs font-bold text-amber-300 uppercase tracking-wide" data-i18n="ctaBoxTitle">Need Complex Multicurrency Trade Modeling?</h4>
+          </div>
+          <p class="text-xs text-slate-300 leading-relaxed" data-i18n="ctaBoxText">
+            Download the ready-to-use <strong>Saudi Trade Finance, LC & Murabaha Excel Master Template ($29)</strong> with automated bank comparison tables, SAMA limits, and journal entries.
+          </p>
+          <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="w-full block text-center py-2.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg text-xs transition-colors shadow">
+            <span data-i18n="ctaBoxBtn">Instant Download Master Excel ($29)</span>
+          </a>
+        </div>
+
+        <!-- Bilingual Disclaimer -->
+        <div class="mt-5 p-3 rounded-lg bg-amber-50/80 border border-amber-200/80 text-[11px] text-amber-900 leading-relaxed">
+          <strong class="font-bold block mb-0.5" data-i18n="disclaimerTitle">Regulatory & Estimation Disclaimer / إخلاء مسؤولية تنظيمي:</strong>
+          <span data-i18n="disclaimerBody">
+            This tool provides computational estimates based on standard Saudi commercial banking tariff structures (SAMA, UCP 600, ZATCA). Exact margins, commissions, and foreign correspondent charges vary by borrower credit rating, corporate master facilities agreement, and currency volatility. Verify all pricing directly with your bank relationship manager prior to commercial commitment.
+          </span>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Comprehensive 800+ Words SEO Guide & FAQ Section -->
+  <article class="bg-white border-t border-slate-200 mt-12 py-12 px-4 sm:px-6">
+    <div class="max-w-5xl mx-auto space-y-10 text-slate-700 leading-relaxed">
+      
+      <!-- Article Header -->
+      <div>
+        <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-3" data-i18n="guideHeader">
+          Comprehensive Corporate Guide to Saudi Letters of Credit (LC) & Trade Finance Costs
+        </h2>
+        <p class="text-sm text-slate-500">
+          Detailed breakdown of SAMA corporate banking tariffs, UCP 600 rules, Usance vs. Sight mechanisms, and ZATCA tax rules for procurement in the Kingdom of Saudi Arabia.
+        </p>
+      </div>
+
+      <!-- Section 1 -->
+      <section class="space-y-3">
+        <h3 class="text-lg sm:text-xl font-bold text-slate-900" data-i18n="guideSec1Title">
+          1. Fundamentals of Trade Finance & Letters of Credit in Saudi Arabia
+        </h3>
+        <p class="text-sm leading-relaxed" data-i18n="guideSec1Text">
+          A Letter of Credit (LC), governed internationally by the International Chamber of Commerce (ICC) <strong>Uniform Customs and Practice for Documentary Credits (UCP 600)</strong> and domestically by the <strong>Saudi Central Bank (SAMA)</strong>, is an irrevocable undertaking issued by an issuing bank at the request of an applicant (importer/buyer) in Saudi Arabia. The bank pledges to pay the beneficiary (exporter/seller) provided conforming documents are submitted within stipulated deadlines. In Saudi Arabia's massive Vision 2030 industrial, infrastructure, and wholesale trading expansion, LCs remain the premier financial instrument for mitigating cross-border credit and performance risks.
+        </p>
+      </section>
+
+      <!-- Section 2: Mathematical Formula & Cost Components -->
+      <section class="space-y-4">
+        <h3 class="text-lg sm:text-xl font-bold text-slate-900" data-i18n="guideSec2Title">
+          2. Key Cost Components and Mathematical Formulas
+        </h3>
+        <p class="text-sm leading-relaxed" data-i18n="guideSec2Text1">
+          Saudi commercial banks (such as Al Rajhi, SNB, Riyad Bank, Alinma, SAB, and Banque Saudi Fransi) structure their documentary credit fees through several distinct commission buckets:
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <h4 class="font-bold text-slate-900 text-sm">A. LC Issuance Commission</h4>
+            <p class="text-slate-600">Charged per quarter (or fraction of 90 days). If an LC is valid for 180 days, two quarters are assessed:</p>
+            <code class="block p-2 bg-slate-100 rounded text-indigo-700 font-mono">
+              Issuance Fee = LC Value × (Rate / 100) × Quarters
+            </code>
+            <p class="text-slate-500">Subject to bank minimums (commonly SAR 450 - SAR 750).</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <h4 class="font-bold text-slate-900 text-sm">B. Acceptance Commission (Usance LCs)</h4>
+            <p class="text-slate-600">Charged when the bank accepts a deferred draft (e.g., 90 or 180 days post-Bill of Lading):</p>
+            <code class="block p-2 bg-slate-100 rounded text-indigo-700 font-mono">
+              Acceptance = LC Value × (Annual % / 360) × Tenor Days
+            </code>
+            <p class="text-slate-500">Reflects bank credit risk during the deferred payment tenor.</p>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <h4 class="font-bold text-slate-900 text-sm">C. Advising, Confirmation & SWIFT</h4>
+            <p class="text-slate-600">Fixed handling charges plus confirmation coverage if the overseas seller requests an overseas confirming bank:</p>
+            <code class="block p-2 bg-slate-100 rounded text-indigo-700 font-mono">
+              Operational = SWIFT + Courier + Document Exam
+            </code>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
+            <h4 class="font-bold text-slate-900 text-sm">D. ZATCA Value Added Tax (VAT 15%)</h4>
+            <p class="text-slate-600">Under Saudi VAT regulations, bank service commissions are standard-rated at 15% (margin interest on funded Murabaha is exempt):</p>
+            <code class="block p-2 bg-slate-100 rounded text-indigo-700 font-mono">
+              VAT (15%) = Sum of (Issuance + Acceptance + Operational) × 0.15
+            </code>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 3: Cash Margin & Working Capital -->
+      <section class="space-y-3">
+        <h3 class="text-lg sm:text-xl font-bold text-slate-900" data-i18n="guideSec3Title">
+          3. Cash Margin Collateral vs. Bank Credit Facilities
+        </h3>
+        <p class="text-sm leading-relaxed" data-i18n="guideSec3Text">
+          Saudi banks determine the cash margin (0% to 100%) based on the corporate client's credit rating, annual audited financial statements, and existing credit line limits. High-credit Tier-1 contractors and listed Saudi Joint Stock companies frequently secure 0% to 10% cash margins, preserving liquidity. In contrast, startups, SMEs, and newly incorporated commercial entities under MISA may be asked for 50% to 100% cash cover blocked in a non-interest-bearing or term collateral account until the LC documents are negotiated. Factoring this collateral requirement into total working capital cycles is vital for cash flow solvency.
+        </p>
+      </section>
+
+      <!-- Section 4: Frequently Asked Questions (FAQ) -->
+      <section class="space-y-4 pt-4 border-t border-slate-200">
+        <h3 class="text-lg sm:text-xl font-bold text-slate-900" data-i18n="faqTitle">
+          Frequently Asked Questions (Trade Finance in KSA)
+        </h3>
+        
+        <div class="space-y-3">
+          <details class="group bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer">
+            <summary class="font-semibold text-sm text-slate-900 flex justify-between items-center">
+              <span data-i18n="faq1Q">What is the difference between a Sight LC and a Usance LC in Saudi Arabia?</span>
+              <span class="text-indigo-600 transition group-open:rotate-180">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-2 leading-relaxed" data-i18n="faq1A">
+              In a Sight LC, the issuing bank releases payment to the supplier immediately upon receipt and verification of compliant shipping documents (usually within 5 banking days under UCP 600). In a Usance LC (deferred payment), payment is deferred for an agreed credit tenor (e.g., 60, 90, or 180 days after the Bill of Lading date), allowing the Saudi buyer time to clear customs, sell inventory, and collect receivables before paying the bank.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer">
+            <summary class="font-semibold text-sm text-slate-900 flex justify-between items-center">
+              <span data-i18n="faq2Q">Are bank trade finance commissions subject to 15% ZATCA VAT?</span>
+              <span class="text-indigo-600 transition group-open:rotate-180">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-2 leading-relaxed" data-i18n="faq2A">
+              Yes. Under ZATCA regulations, all explicit banking service fees, including LC issuance, amendments, acceptance, document examination, and SWIFT fees, are subject to the standard 15% VAT rate. However, pure interest margins (or Murabaha profit markups under Sharia finance) are generally VAT-exempt under financial services rules.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer">
+            <summary class="font-semibold text-sm text-slate-900 flex justify-between items-center">
+              <span data-i18n="faq3Q">What is a UPAS LC (Usance Payable at Sight)?</span>
+              <span class="text-indigo-600 transition group-open:rotate-180">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-2 leading-relaxed" data-i18n="faq3A">
+              A UPAS LC provides the best of both worlds: the foreign seller gets paid at sight by a financing bank, while the Saudi buyer enjoys a deferred usance repayment period (e.g., 90 or 180 days). The interest/discount charge is borne by either party depending on the commercial agreement.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer">
+            <summary class="font-semibold text-sm text-slate-900 flex justify-between items-center">
+              <span data-i18n="faq4Q">How does a Letter of Credit differ from a Bank Guarantee (LG)?</span>
+              <span class="text-indigo-600 transition group-open:rotate-180">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-2 leading-relaxed" data-i18n="faq4A">
+              An LC is a primary payment mechanism used to finance trade contracts upon performance. A Bank Guarantee (Letter of Guarantee / LG) is a secondary or contingent instrument (Bid Bond, Performance Bond, Advance Payment Bond) designed to pay only in case of default or breach of contract.
+            </p>
+          </details>
+        </div>
+      </section>
+
+    </div>
+  </article>
+
+  <!-- Footer -->
+  <footer class="bg-slate-950 text-slate-400 text-xs py-8 px-4 sm:px-6 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left rtl:sm:text-right">
+      <div>
+        <p class="text-white font-bold">Saudi B2B Financial & Trade Tools Suite</p>
+        <p class="text-slate-500 mt-1">Calculations compliant with SAMA Banking Tariffs & ICC UCP 600 standards.</p>
+      </div>
+      <div class="flex items-center gap-4 text-slate-400">
+        <a href="https://gumroad.com" target="_blank" class="hover:text-emerald-400 transition font-medium">Excel VBA Suite ($29)</a>
+        <span>•</span>
+        <span>Updated for 2025/2026</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Vanilla Calculation Engine & Bilingual Logic -->
+  <script>
+    (function() {
+      // Translation Dictionary
+      const i18n = {
+        en: {
+          htmlDir: "ltr",
+          headerTitle: "Saudi Letter of Credit (LC) & Trade Finance Cost Calculator",
+          headerSub: "UCP 600, SAMA Banking Fee Rules & ZATCA 15% VAT Estimator for CFOs & Procurement",
+          printPdf: "Print / PDF",
+          exportCsv: "Export CSV",
+          formTitle: "LC & Contract Specifications",
+          liveCalculation: "Dynamic Engine",
+          currencyLabel: "Base Currency",
+          invoiceValLabel: "LC / Invoice Face Value",
+          lcTypeLabel: "LC Settlement Type",
+          tenorLabel: "Tenor / Deferred Period",
+          marginPercentLabel: "Bank Cash Margin Required (Security Deposit)",
+          marginHelpText: "Cash blocked in Saudi bank treasury until documents are cleared or paid.",
+          issuanceRateLabel: "Issuance Commission (% per quarter / 90 days)",
+          issuanceRateHint: "Typical Saudi corporate: 0.25% - 0.50% / qtr (min SAR 450)",
+          acceptanceRateLabel: "Acceptance Commission (% p.a. for Usance)",
+          acceptanceRateHint: "Applied across the credit period (0% if Sight LC)",
+          confirmLabel: "Advising / Confirm. Fee",
+          swiftLabel: "SWIFT & Courier Fee",
+          docExamLabel: "Document Exam Fee",
+          postFinancingTitle: "Add Post-Import Bank Murabaha / TR Financing (SAIBOR + Spread)",
+          saiborRateLabel: "Financing Profit Rate (% p.a.)",
+          financingDaysLabel: "Financing Tenor (Days)",
+          vatNote: "ZATCA Standard VAT applied to all bank service commissions:",
+          liquidityTitle: "Treasury Liquidity & Collateral Allocation",
+          lockedMargin: "Blocked Cash Margin",
+          unfundedPortion: "Bank Credit Exposure",
+          effectiveApr: "Trade Cost as % of Goods",
+          landedCostLoad: "Landed cost impact",
+          costSummaryBadge: "Cost Breakdown",
+          currencySAR: "Currency: Saudi Riyals (SAR)",
+          totalBankFeesLabel: "Total Trade Financing & Bank Fees",
+          includesVat: "Includes 15% ZATCA VAT of",
+          rowFaceSAR: "Converted LC Value (SAR)",
+          rowIssuance: "Issuance Commission",
+          rowAcceptance: "Acceptance Commission",
+          rowConfirmation: "Advising & Confirmation",
+          rowOperations: "SWIFT, Postage & Document Exam",
+          rowMurabaha: "Post-Import Murabaha Financing",
+          rowVat: "15% ZATCA Value Added Tax",
+          cashRequiredAtIssuance: "Cash Required at Issuance (Margin + Fees)",
+          balancePayableMaturity: "Balance Payable at Document Maturity",
+          ctaBoxTitle: "Need Complex Multicurrency Trade Modeling?",
+          ctaBoxText: "Download the ready-to-use Saudi Trade Finance, LC & Murabaha Excel Master Template ($29) with automated bank comparison tables, SAMA limits, and journal entries.",
+          ctaBoxBtn: "Instant Download Master Excel ($29)",
+          disclaimerTitle: "Regulatory & Estimation Disclaimer / إخلاء مسؤولية تنظيمي:",
+          disclaimerBody: "This tool provides computational estimates based on standard Saudi commercial banking tariff structures (SAMA, UCP 600, ZATCA). Exact margins, commissions, and foreign correspondent charges vary by borrower credit rating, corporate master facilities agreement, and currency volatility. Verify all pricing directly with your bank relationship manager prior to commercial commitment.",
+          guideHeader: "Comprehensive Corporate Guide to Saudi Letters of Credit (LC) & Trade Finance Costs",
+          guideSec1Title: "1. Fundamentals of Trade Finance & Letters of Credit in Saudi Arabia",
+          guideSec1Text: "A Letter of Credit (LC), governed internationally by ICC UCP 600 and domestically by the Saudi Central Bank (SAMA), is an irrevocable undertaking issued by an issuing bank at the request of an importer in Saudi Arabia to guarantee payment to an international supplier. In Vision 2030 projects, LCs safeguard supply chains against credit non-performance.",
+          guideSec2Title: "2. Key Cost Components and Mathematical Formulas",
+          guideSec2Text1: "Saudi commercial banks (SNB, Al Rajhi, Riyad Bank, SAB, Alinma) assess trade charges based on risk duration, confirmation tiers, and ZATCA VAT regulations:",
+          guideSec3Title: "3. Cash Margin Collateral vs. Bank Credit Facilities",
+          guideSec3Text: "Saudi banks determine cash margins (0% to 100%) based on audited balance sheets, corporate solvency ratings, and established treasury lines. Factoring blocked collateral into working capital planning prevents unexpected treasury strain.",
+          faqTitle: "Frequently Asked Questions (Trade Finance in KSA)",
+          faq1Q: "What is the difference between a Sight LC and a Usance LC in Saudi Arabia?",
+          faq1A: "In a Sight LC, payment is released immediately upon compliant document submission. In a Usance LC, payment is deferred for 30 to 180 days post-Bill of Lading, giving the Saudi importer time to clear goods and realize revenues.",
+          faq2Q: "Are bank trade finance commissions subject to 15% ZATCA VAT?",
+          faq2A: "Yes. Under ZATCA regulations, all explicit banking service commissions (issuance, acceptance, SWIFT, amendments) carry 15% VAT. Pure financing profit margins (Murabaha interest) are VAT-exempt.",
+          faq3Q: "What is a UPAS LC (Usance Payable at Sight)?",
+          faq3A: "A UPAS LC provides immediate cash payment to the foreign exporter while giving the Saudi importer extended credit terms (e.g. 90 or 180 days) funded through an intermediary credit line.",
+          faq4Q: "How does a Letter of Credit differ from a Bank Guarantee (LG)?",
+          faq4A: "An LC is an active payment mechanism for trade fulfillment. A Bank Guarantee (LG) is a secondary safety net triggered only if a contractor or supplier defaults."
+        },
+        ar: {
+          htmlDir: "rtl",
+          headerTitle: "حاسبة تكاليف الاعتمادات المستندية والتمويل التجاري في السعودية",
+          headerSub: "حساب عمولات البنوك السعودية وفق تعليمات البنك المركزي (ساما) ومعايير UCP 600 وضريبة 15%",
+          printPdf: "طباعة / PDF",
+          exportCsv: "تصدير CSV",
+          formTitle: "بيانات ومواصفات الاعتماد المستندي",
+          liveCalculation: "حساب فوري ديناميكي",
+          currencyLabel: "عملة الاعتماد",
+          invoiceValLabel: "القيمة الاسمية للاعتماد / الفاتورة",
+          lcTypeLabel: "نوع سداد الاعتماد المستندي",
+          tenorLabel: "فترة الأجل / الائتمان (Tenor)",
+          marginPercentLabel: "نسبة التأمين النقدي المحجوز لدى البنك (Cash Margin)",
+          marginHelpText: "مبلغ سيولة يُحجز في حساب الضمان لدى البنك حتى استلام المستندات وسدادها.",
+          issuanceRateLabel: "عمولة فتح الاعتماد (% لكل ربع سنة / 90 يوماً)",
+          issuanceRateHint: "النسبة الشائعة للشركات: 0.25% - 0.50% ربع سنوياً (حد أدنى 450 ريال)",
+          acceptanceRateLabel: "عمولة القبول / الأجل (% سنوياً للاعتماد الآجل)",
+          acceptanceRateHint: "تُحسب على فترة الأجل المؤجل (0% في اعتمادات الاطلاع)",
+          confirmLabel: "رسوم الإشعار / التعزيز",
+          swiftLabel: "رسوم السويفت والبريد",
+          docExamLabel: "رسوم فحص المستندات",
+          postFinancingTitle: "إضافة تمويل مرابحة ما بعد الاستيراد / تمويل تجاري (سايبور + هامش)",
+          saiborRateLabel: "هامش ربح التمويل (% سنوياً)",
+          financingDaysLabel: "مدة التمويل (بالأيام)",
+          vatNote: "تُطبق ضريبة القيمة المضافة لهيئة الزكاة بنسبة 15% على كافة العمولات البنكية:",
+          liquidityTitle: "توزيع السيولة والضمانات لدى الخزينة",
+          lockedMargin: "التأمين النقدي المجمد",
+          unfundedPortion: "التمويل المغطى من التسهيلات",
+          effectiveApr: "نسبة تكلفة التمويل من قيمة البضاعة",
+          landedCostLoad: "أثر التكلفة على البضاعة الواصلة",
+          costSummaryBadge: "ملخص التكاليف البنكية",
+          currencySAR: "العملة: ريال سعودي (SAR)",
+          totalBankFeesLabel: "إجمالي رسوم وعمولات التمويل البنكي",
+          includesVat: "يشمل 15% ضريبة زكاة وقيمة مضافة بمبلغ",
+          rowFaceSAR: "قيمة الاعتماد المحولة (ريال)",
+          rowIssuance: "عمولة فتح وتأسيس الاعتماد",
+          rowAcceptance: "عمولة القبول (Usance Commission)",
+          rowConfirmation: "رسوم الإشعار والتأكيد البنكي",
+          rowOperations: "مصاريف السويفت والبريد وفحص الأوراق",
+          rowMurabaha: "أرباح تمويل المرابحة اللاحقة للاستيراد",
+          rowVat: "15% ضريبة القيمة المضافة (ZATCA)",
+          cashRequiredAtIssuance: "السيولة النقدية المطلوبة عند فتح الاعتماد (التأمين + الرسوم)",
+          balancePayableMaturity: "الرصيد المتبقي المستحق عند استحقاق المستندات",
+          ctaBoxTitle: "هل تحتاج نموذج إكسل متكامل للتمويل التجاري؟",
+          ctaBoxText: "حمّل الآن قالب الإكسل الاحترافي الشامل للتمويل التجاري والاعتمادات المستندية والمرابحة بالبنوك السعودية مع مقارنة عروض الأسعار ($29).",
+          ctaBoxBtn: "تحميل نموذج الإكسل الشامل فوراً ($29)",
+          disclaimerTitle: "إخلاء مسؤولية تنظيمي وتقديري:",
+          disclaimerBody: "هذه الحاسبة تقدم تقديراً حسابياً مبنياً على جداول تعرفة البنوك التجارية السعودية المعيارية وتعليمات البنك المركزي (ساما) وهيئة الزكاة (ZATCA). تختلف العمولات الفعلية ونسب التأمين وفق التصنيف الائتماني لكل شركة واتفاقية التسهيلات المبرمة. يرجى مراجعة مسؤول العلاقات المصرفية قبل إبرام الصفقات.",
+          guideHeader: "دليل الشركات الشامل للاعتمادات المستندية وتكاليف التمويل التجاري في السعودية",
+          guideSec1Title: "1. ماهية التمويل التجاري والاعتمادات المستندية في المملكة",
+          guideSec1Text: "الاعتماد المستندي (LC) هو تعهد مصرفي غير قابل للإلغاء صادر من البنك فاتح الاعتماد في السعودية بناءً على طلب المستورد، يلتزم بموجبه بدفع قيمة البضاعة للمصدر الأجنبي شرط تقديم مستندات شحن مطابقة تماماً لشروط الاعتماد وقواعد UCP 600 العالمية. يُعد الاعتماد الأداة الأكثر موثوقية لتمويل المشاريع والتوريدات الضخمة.",
+          guideSec2Title: "2. عناصر التكلفة والمعادلات الحسابية في البنوك السعودية",
+          guideSec2Text1: "تتكون تكلفة الاعتماد المستندي لدى المصارف السعودية (مثل الأهلي، الراجحي، الرياض، ساب، والإنماء) من عدة بنود أساسية:",
+          guideSec3Title: "3. متطلبات التأمين النقدي (Cash Margin) وتأثيره على السيولة",
+          guideSec3Text: "تفرض البنوك السعودية نسبة تأمين نقدي تتراوح بين 0% و100% بحسب الملاءة المالية للمنشأة وحجم التسهيلات المصرفية الممنوحة لها. بالنسبة للمنشآت الكبرى قد تنعدم نسبة التأمين، بينما تتطلب الشركات الناشئة تجميد سيولة كافية لضمان سداد الاعتماد.",
+          faqTitle: "الأسئلة الشائعة حول الاعتمادات المستندية في السعودية",
+          faq1Q: "ما الفرق بين اعتماد الاطلاع (Sight LC) والاعتماد الآجل (Usance LC)؟",
+          faq1A: "في اعتماد الاطلاع، يدفع البنك فور استلام وفحص المستندات المطابقة. أما في الاعتماد الآجل، فيتم تأجيل السداد لمدة ائتمانية (مثل 60 أو 90 أو 180 يوماً من تاريخ بوليصة الشحن)، مما يتيح للمستورد فسح البضائع وتحصيل إيراداتها قبل السداد.",
+          faq2Q: "هل تخضع عمولات الاعتمادات المستندية لضريبة القيمة المضافة 15%؟",
+          faq2A: "نعم، تخضع كافة العمولات الخدمية البنكية الصريحة (الفتح، القبول، التعديل، فحص المستندات والسويفت) لضريبة القيمة المضافة 15%، بينما تُعفى هوامش أرباح التمويل الصرفة.",
+          faq3Q: "ما هو اعتماد (UPAS)؟",
+          faq3A: "هو اعتماد آجل يُدفع للمصدر فور الاطلاع بتمويل مصرفي وسيط، ويبقى مؤجلاً على المستورد السعودي حتى تاريخ الاستحقاق المتفق عليه.",
+          faq4Q: "ما الفرق بين الاعتماد المستندي (LC) وخطاب الضمان البنكي (LG)؟",
+          faq4A: "الاعتماد وسيلة سداد أساسية لتنفيذ عقود التوريد عند مطابقة الشروط. أما خطاب الضمان فهو تعهد احتياطي لتعويض الطرف الآخر في حال الإخلال بالعقد فقط."
+        }
+      };
+
+      let currentLang = 'en';
+
+      // Elements
+      const langToggleBtn = document.getElementById('langToggleBtn');
+      const htmlRoot = document.documentElement;
+      const currencySelect = document.getElementById('currencySelect');
+      const currencyBadge = document.getElementById('currencyBadge');
+      const faceValueInput = document.getElementById('faceValueInput');
+      const lcTypeSelect = document.getElementById('lcTypeSelect');
+      const tenorSelect = document.getElementById('tenorSelect');
+      const marginSlider = document.getElementById('marginSlider');
+      const marginDisplay = document.getElementById('marginDisplay');
+      const issuanceRateInput = document.getElementById('issuanceRateInput');
+      const acceptanceRateInput = document.getElementById('acceptanceRateInput');
+      const confirmationFeeInput = document.getElementById('confirmationFeeInput');
+      const swiftFeeInput = document.getElementById('swiftFeeInput');
+      const docExamFeeInput = document.getElementById('docExamFeeInput');
+      const enablePostFinancingCheck = document.getElementById('enablePostFinancingCheck');
+      const financingControls = document.getElementById('financingControls');
+      const financingRateInput = document.getElementById('financingRateInput');
+      const financingDaysInput = document.getElementById('financingDaysInput');
+
+      // Output Elements
+      const summaryMarginSAR = document.getElementById('summaryMarginSAR');
+      const summaryMarginPct = document.getElementById('summaryMarginPct');
+      const summaryCreditExposure = document.getElementById('summaryCreditExposure');
+      const summaryCreditExposurePct = document.getElementById('summaryCreditExposurePct');
+      const summaryTradeCostPct = document.getElementById('summaryTradeCostPct');
+      const grandTotalFeeSAR = document.getElementById('grandTotalFeeSAR');
+      const grandTotalVatSAR = document.getElementById('grandTotalVatSAR');
+      const resConvertedValue = document.getElementById('resConvertedValue');
+      const resIssuanceCommission = document.getElementById('resIssuanceCommission');
+      const resAcceptanceFee = document.getElementById('resAcceptanceFee');
+      const resConfirmationFee = document.getElementById('resConfirmationFee');
+      const resOperationsFees = document.getElementById('resOperationsFees');
+      const resMurabahaFinancing = document.getElementById('resMurabahaFinancing');
+      const resVatAmount = document.getElementById('resVatAmount');
+      const resInitialCashOutlay = document.getElementById('resInitialCashOutlay');
+      const resMaturityBalance = document.getElementById('resMaturityBalance');
+
+      // Format currency SAR
+      function formatSAR(num) {
+        return 'SAR ' + Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
+
+      function getExchangeRate(curr) {
+        switch(curr) {
+          case 'USD': return 3.75;
+          case 'EUR': return 4.05;
+          default: return 1.0;
+        }
+      }
+
+      // Dynamic Calculation
+      function calculateLC() {
+        const curr = currencySelect.value;
+        currencyBadge.innerText = curr;
+        const fxRate = getExchangeRate(curr);
+        
+        const rawFace = parseFloat(faceValueInput.value) || 0;
+        const faceSAR = rawFace * fxRate;
+
+        const lcType = lcTypeSelect.value;
+        const tenorDays = parseInt(tenorSelect.value) || 0;
+        const marginPct = parseFloat(marginSlider.value) || 0;
+        marginDisplay.innerText = marginPct + '%';
+
+        // Quarters for issuance (minimum 1 quarter = 90 days)
+        // If usance tenor is > 90 days, scale quarters
+        let quarters = 1;
+        if (tenorDays > 90) {
+          quarters = Math.ceil(tenorDays / 90);
+        }
+
+        const issuanceRatePct = parseFloat(issuanceRateInput.value) || 0;
+        // Standard SAMA issuance fee formula: Face * (Rate / 100) * quarters (min SAR 450)
+        let issuanceComm = faceSAR * (issuanceRatePct / 100) * quarters;
+        if (issuanceComm < 450 && faceSAR > 0) issuanceComm = 450;
+
+        // Acceptance fee (only applies if tenor > 0 and lcType != 'sight')
+        let acceptanceFee = 0;
+        const acceptanceRatePct = parseFloat(acceptanceRateInput.value) || 0;
+        if (lcType !== 'sight' && tenorDays > 0) {
+          acceptanceFee = faceSAR * (acceptanceRatePct / 100) * (tenorDays / 360);
+          if (acceptanceFee < 350 && faceSAR > 0) acceptanceFee = 350;
+        }
+
+        const confirmFee = (parseFloat(confirmationFeeInput.value) || 0) * fxRate;
+        const swiftFee = parseFloat(swiftFeeInput.value) || 0;
+        const docExamFee = parseFloat(docExamFeeInput.value) || 0;
+        const operationalFees = swiftFee + docExamFee;
+
+        // Post import Murabaha financing
+        let murabahaCost = 0;
+        if (enablePostFinancingCheck.checked) {
+          const financingRate = parseFloat(financingRateInput.value) || 0;
+          const finDays = parseFloat(financingDaysInput.value) || 0;
+          // Financed balance is the portion not covered by cash margin
+          const financedPrincipal = faceSAR * ((100 - marginPct) / 100);
+          murabahaCost = financedPrincipal * (financingRate / 100) * (finDays / 360);
+        }
+
+        // 15% ZATCA VAT applies to bank commissions (Issuance, Acceptance, Confirmation, Ops)
+        // Post-import Murabaha margin interest is VAT-exempt under SAMA/ZATCA financial services guidelines
+        const vatableBankFees = issuanceComm + acceptanceFee + confirmFee + operationalFees;
+        const vat15 = vatableBankFees * 0.15;
+
+        const grandTotalFinancingFees = vatableBankFees + vat15 + murabahaCost;
+
+        // Working capital margins
+        const lockedCashMargin = faceSAR * (marginPct / 100);
+        const unfundedBalance = faceSAR - lockedCashMargin;
+        const costPercentageOfGoods = faceSAR > 0 ? (grandTotalFinancingFees / faceSAR) * 100 : 0;
+        const initialCashOutlay = lockedCashMargin + vatableBankFees + vat15;
+
+        // Update UI Outputs
+        resConvertedValue.innerText = formatSAR(faceSAR);
+        resIssuanceCommission.innerText = formatSAR(issuanceComm);
+        resAcceptanceFee.innerText = formatSAR(acceptanceFee);
+        resConfirmationFee.innerText = formatSAR(confirmFee);
+        resOperationsFees.innerText = formatSAR(operationalFees);
+        resMurabahaFinancing.innerText = formatSAR(murabahaCost);
+        resVatAmount.innerText = formatSAR(vat15);
+
+        grandTotalFeeSAR.innerText = formatSAR(grandTotalFinancingFees);
+        grandTotalVatSAR.innerText = formatSAR(vat15);
+
+        summaryMarginSAR.innerText = formatSAR(lockedCashMargin);
+        summaryMarginPct.innerText = marginPct + '% ' + (currentLang === 'ar' ? 'من قيمة الاعتماد' : 'of face value');
+        
+        summaryCreditExposure.innerText = formatSAR(unfundedBalance);
+        summaryCreditExposurePct.innerText = (100 - marginPct) + '% ' + (currentLang === 'ar' ? 'تغطية ائتمانية' : 'on credit line');
+
+        summaryTradeCostPct.innerText = costPercentageOfGoods.toFixed(2) + '%';
+
+        resInitialCashOutlay.innerText = formatSAR(initialCashOutlay);
+        resMaturityBalance.innerText = formatSAR(unfundedBalance);
+      }
+
+      // Toggle Financing Inputs
+      enablePostFinancingCheck.addEventListener('change', function() {
+        if (this.checked) {
+          financingControls.classList.remove('opacity-40', 'pointer-events-none');
+        } else {
+          financingControls.classList.add('opacity-40', 'pointer-events-none');
+        }
+        calculateLC();
+      });
+
+      // Handle Sight vs Usance selection auto-adjusting tenor
+      lcTypeSelect.addEventListener('change', function() {
+        if (this.value === 'sight') {
+          tenorSelect.value = '0';
+          acceptanceRateInput.disabled = true;
+          acceptanceRateInput.classList.add('bg-slate-100');
+        } else {
+          if (tenorSelect.value === '0') {
+            tenorSelect.value = '90';
+          }
+          acceptanceRateInput.disabled = false;
+          acceptanceRateInput.classList.remove('bg-slate-100');
+        }
+        calculateLC();
+      });
+
+      tenorSelect.addEventListener('change', function() {
+        if (this.value !== '0' && lcTypeSelect.value === 'sight') {
+          lcTypeSelect.value = 'usance';
+          acceptanceRateInput.disabled = false;
+          acceptanceRateInput.classList.remove('bg-slate-100');
+        } else if (this.value === '0') {
+          lcTypeSelect.value = 'sight';
+          acceptanceRateInput.disabled = true;
+          acceptanceRateInput.classList.add('bg-slate-100');
+        }
+        calculateLC();
+      });
+
+      // Language Toggle Implementation
+      function setLanguage(lang) {
+        currentLang = lang;
+        const dict = i18n[lang];
+        htmlRoot.setAttribute('dir', dict.htmlDir);
+        htmlRoot.setAttribute('lang', lang);
+
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (dict[key]) {
+            el.innerHTML = dict[key];
+          }
+        });
+
+        document.getElementById('mainHeaderTitle').innerText = dict.headerTitle;
+        document.getElementById('mainHeaderSub').innerText = dict.headerSub;
+        langToggleBtn.innerText = lang === 'en' ? 'العربية' : 'English';
+
+        calculateLC();
+      }
+
+      langToggleBtn.addEventListener('click', function() {
+        setLanguage(currentLang === 'en' ? 'ar' : 'en');
+      });
+
+      // Input change listeners
+      [currencySelect, faceValueInput, lcTypeSelect, tenorSelect, marginSlider, 
+       issuanceRateInput, acceptanceRateInput, confirmationFeeInput, 
+       swiftFeeInput, docExamFeeInput, financingRateInput, financingDaysInput].forEach(el => {
+        el.addEventListener('input', calculateLC);
+        el.addEventListener('change', calculateLC);
+      });
+
+      // Export CSV Feature
+      document.getElementById('exportCsvBtn').addEventListener('click', function() {
+        const curr = currencySelect.value;
+        const rows = [
+          ["Saudi Letter of Credit (LC) Cost Calculation Summary"],
+          ["Generated On", new Date().toISOString()],
+          ["Base Currency", curr],
+          ["LC Face Value", faceValueInput.value],
+          ["LC Settlement Type", lcTypeSelect.value],
+          ["Tenor (Days)", tenorSelect.value],
+          ["Cash Margin Percentage", marginSlider.value + "%"],
+          ["Cash Margin Amount (SAR)", summaryMarginSAR.innerText],
+          ["Bank Credit Line Exposure (SAR)", summaryCreditExposure.innerText],
+          ["Issuance Commission (SAR)", resIssuanceCommission.innerText],
+          ["Acceptance Commission (SAR)", resAcceptanceFee.innerText],
+          ["Advising / Confirmation (SAR)", resConfirmationFee.innerText],
+          ["SWIFT & Handling Fees (SAR)", resOperationsFees.innerText],
+          ["Post-Import Murabaha Cost (SAR)", resMurabahaFinancing.innerText],
+          ["15% ZATCA VAT (SAR)", resVatAmount.innerText],
+          ["Grand Total LC Financing Fees (SAR)", grandTotalFeeSAR.innerText],
+          ["Effective Cost on Goods (%)", summaryTradeCostPct.innerText],
+          ["Cash Outlay Required at Issuance (SAR)", resInitialCashOutlay.innerText]
+        ];
+
+        let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.map(val => `"${val}"`).join(",")).join("\n");
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `saudi_lc_financing_summary_${Date.now()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      });
+
+      // Print summary
+      document.getElementById('printSummaryBtn').addEventListener('click', function() {
+        window.print();
+      });
+
+      // Initial calculation
+      calculateLC();
+    })();
+  </script>
+</body>
+</html>

@@ -229,5 +229,12 @@
     "title_ar": "حاسبة المخالصة النهائية وتصفية مستحقات نهاية الخدمة في السعودية",
     "description_en": "Calculate complete Saudi end-of-service final settlement (Mukhalasa) including unpaid salary, EOSB, leave encashment, deductions, and print discharge forms.",
     "date": "2026-11-15"
+  },
+  {
+    "slug": "saudi-letter-of-credit-lc-cost-calculator",
+    "title_en": "Saudi Letter of Credit (LC) & Trade Finance Cost Calculator",
+    "title_ar": "حاسبة تكاليف الاعتمادات المستندية والتمويل التجاري في السعودية",
+    "description_en": "Calculate Saudi bank Letter of Credit (LC) issuance fees, usance acceptance, confirmation, ZATCA VAT, and all-in trade financing cost in SAR.",
+    "date": "2026-11-15"
   }
 ]
