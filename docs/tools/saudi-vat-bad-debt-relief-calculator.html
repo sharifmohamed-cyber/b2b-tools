@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi ZATCA VAT Bad Debt Relief Calculator | حاسبة استرداد ضريبة الديون المعدومة</title>
+    <meta name="description" content="Calculate qualifying VAT bad debt relief under ZATCA Article 40 regulations. Determine recoverable output VAT on unpaid commercial invoices in Saudi Arabia.">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        zatca: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#16a34a',
+                            600: '#15803d',
+                            700: '#166534',
+                            800: '#14532d',
+                            900: '#052e16',
+                        },
+                        saudi: {
+                            gold: '#c59b27',
+                            slate: '#0f172a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .font-ar { font-family: 'Cairo', sans-serif; }
+        .font-en { font-family: 'Inter', sans-serif; }
+        [dir="rtl"] .ltr-only { direction: ltr; text-align: left; }
+        [dir="ltr"] .rtl-only { direction: rtl; text-align: right; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-full { width: 100% !important; max-width: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Top Sticky Conversion Banner -->
+    <div class="no-print bg-gradient-to-r from-zatca-900 via-slate-900 to-zatca-800 text-white py-2.5 px-4 sticky top-0 z-50 shadow-md border-b border-zatca-600/30">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+            <div class="flex items-center gap-2">
+                <span class="bg-amber-400 text-slate-950 font-bold px-2 py-0.5 rounded text-[11px] uppercase tracking-wide">Pro Tool</span>
+                <span id="bannerText" class="font-medium">Looking for batch reconciliation? Download the automated Excel ZATCA Bad Debt Relief Master Engine.</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="https://gumroad.com" target="_blank" rel="noopener" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1 rounded shadow transition duration-150 inline-flex items-center gap-1.5">
+                    <span>Get Excel Sheet ($29)</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+                <button id="langToggleBtn" onclick="toggleLanguage()" class="border border-slate-600 hover:border-slate-400 px-2.5 py-1 rounded text-xs text-slate-200 transition bg-slate-800/80">
+                    عربي / English
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="bg-white border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-zatca-700 text-white rounded-lg flex items-center justify-center font-bold text-xl shadow-inner">
+                    %﷼
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900" id="mainHeaderTitle">Saudi VAT Bad Debt Relief Calculator</h1>
+                    <p class="text-xs text-slate-500" id="mainHeaderSub">ZATCA Article 40 Output Tax Adjustment & Write-Off Compliance</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-slate-600 bg-slate-100 p-1.5 rounded-lg border border-slate-200">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span id="zatcaRuleBadge">KSA VAT Bylaws Art. 40 Compliant</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main App Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 py-6 sm:px-6">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Left Input Column (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-5">
+                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2" id="secTitleInvoiceDetails">
+                            <svg class="w-5 h-5 text-zatca-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <span>1. Invoice & Contract Particulars</span>
+                        </h2>
+                        <button onclick="resetForm()" class="text-xs text-slate-400 hover:text-rose-600 transition font-medium" id="resetBtnText">Reset Form</button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                        <!-- Invoice Reference -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblInvoiceRef">Tax Invoice Number</label>
+                            <input type="text" id="invRef" placeholder="e.g. INV-2023-0891" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-zatca-500 focus:outline-none">
+                        </div>
+
+                        <!-- Customer/Client Name -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblCustomerName">Customer / Client Commercial Entity</label>
+                            <input type="text" id="custName" placeholder="e.g. Al-Mashreq Construction Ltd" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-zatca-500 focus:outline-none">
+                        </div>
+
+                        <!-- Original Invoice Date -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblInvoiceDate">Original Tax Invoice Date</label>
+                            <input type="date" id="invoiceDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-zatca-500 focus:outline-none" onchange="recalc()">
+                        </div>
+
+                        <!-- Original Due Date -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblDueDate">Original Agreed Due Date</label>
+                            <input type="date" id="dueDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-zatca-500 focus:outline-none" onchange="recalc()">
+                        </div>
+
+                        <!-- Total Original Gross Amount Including VAT -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblTotalGross">Total Invoice Amount (Gross, SAR)</label>
+                            <div class="relative">
+                                <input type="number" id="totalGrossAmount" step="0.01" min="0" value="115000" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-zatca-500 focus:outline-none pr-10 font-semibold" oninput="recalc()">
+                                <span class="absolute right-3 top-2 text-xs text-slate-400 font-bold">SAR</span>
+                            </div>
+                        </div>
+
+                        <!-- VAT Rate Applied -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblVatRate">Applicable VAT Rate</label>
+                            <select id="vatRate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-zatca-500 focus:outline-none" onchange="recalc()">
+                                <option value="0.15" selected>15% (Standard Rate since July 2020)</option>
+                                <option value="0.05">5% (Legacy Rate pre-July 2020)</option>
+                            </select>
+                        </div>
+
+                        <!-- Total Partial Amount Received to Date -->
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lblReceivedAmount">Amount Actually Collected / Paid by Customer (SAR)</label>
+                            <div class="relative">
+                                <input type="number" id="amountCollected" step="0.01" min="0" value="15000" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-zatca-500 focus:outline-none pr-10" oninput="recalc()">
+                                <span class="absolute right-3 top-2 text-xs text-slate-400 font-bold">SAR</span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1" id="lblReceivedHelp">Any bank receipts, retention releases, or offset payments received to date.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ZATCA Article 40 Legal Preconditions Checklist -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sm:p-6">
+                    <div class="border-b border-slate-100 pb-3 mb-4">
+                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2" id="secTitleZatcaCriteria">
+                            <svg class="w-5 h-5 text-zatca-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <span>2. ZATCA Article 40 Statutory Prerequisites</span>
+                        </h2>
+                        <p class="text-xs text-slate-500" id="secSubZatcaCriteria">Under Article 40 of Saudi VAT Executive Regulations, ALL criteria must be verified to legally claim an output tax downward adjustment.</p>
+                    </div>
+
+                    <div class="space-y-3.5 text-xs sm:text-sm">
+                        <!-- Condition 1: 12 Months Elapsed -->
+                        <div class="flex items-start gap-3 p-2.5 rounded-lg border bg-slate-50 border-slate-200" id="boxCond1">
+                            <input type="checkbox" id="cond12Months" class="mt-1 h-4 w-4 text-zatca-600 rounded border-slate-300 focus:ring-zatca-500" onchange="recalc()">
+                            <label for="cond12Months" class="text-slate-700 cursor-pointer">
+                                <strong class="text-slate-900 block font-semibold" id="cond1Title">1. Minimum 12 Months Default Period</strong>
+                                <span class="text-slate-500 text-xs" id="cond1Desc">At least 12 months have elapsed from the invoice date / agreed payment due date without receiving settlement.</span>
+                            </label>
+                        </div>
+
+                        <!-- Condition 2: Output Tax Declared & Paid -->
+                        <div class="flex items-start gap-3 p-2.5 rounded-lg border bg-slate-50 border-slate-200">
+                            <input type="checkbox" id="condVatDeclared" checked class="mt-1 h-4 w-4 text-zatca-600 rounded border-slate-300 focus:ring-zatca-500" onchange="recalc()">
+                            <label for="condVatDeclared" class="text-slate-700 cursor-pointer">
+                                <strong class="text-slate-900 block font-semibold" id="cond2Title">2. Output Tax Previously Declared & Remitted</strong>
+                                <span class="text-slate-500 text-xs" id="cond2Desc">The supplier accounted for and remitted original output VAT in the respective ZATCA tax return.</span>
+                            </label>
+                        </div>
+
+                        <!-- Condition 3: Customer Notified -->
+                        <div class="flex items-start gap-3 p-2.5 rounded-lg border bg-slate-50 border-slate-200">
+                            <input type="checkbox" id="condCustomerNotified" checked class="mt-1 h-4 w-4 text-zatca-600 rounded border-slate-300 focus:ring-zatca-500" onchange="recalc()">
+                            <label for="condCustomerNotified" class="text-slate-700 cursor-pointer">
+                                <strong class="text-slate-900 block font-semibold" id="cond3Title">3. Formal Written Notification to Debtor</strong>
+                                <span class="text-slate-500 text-xs" id="cond3Desc">The customer has been formally served written notice specifying the debt write-off and tax write-back amount.</span>
+                            </label>
+                        </div>
+
+                        <!-- Condition 4: Legal / Recovery Steps or Bankruptcy -->
+                        <div class="flex items-start gap-3 p-2.5 rounded-lg border bg-slate-50 border-slate-200">
+                            <input type="checkbox" id="condLegalSteps" checked class="mt-1 h-4 w-4 text-zatca-600 rounded border-slate-300 focus:ring-zatca-500" onchange="recalc()">
+                            <label for="condLegalSteps" class="text-slate-700 cursor-pointer">
+                                <strong class="text-slate-900 block font-semibold" id="cond4Title">4. Exhaustive Collection Measures / Insolvency</strong>
+                                <span class="text-slate-500 text-xs" id="cond4Desc">Supplier has exhausted all legal remedies (e.g. Najiz court enforcement, bankruptcy court order, or proven commercial liquidation).</span>
+                            </label>
+                        </div>
+
+                        <!-- Condition 5: Certified Auditor Written Certificate -->
+                        <div class="flex items-start gap-3 p-2.5 rounded-lg border bg-slate-50 border-slate-200">
+                            <input type="checkbox" id="condAuditorCert" checked class="mt-1 h-4 w-4 text-zatca-600 rounded border-slate-300 focus:ring-zatca-500" onchange="recalc()">
+                            <label for="condAuditorCert" class="text-slate-700 cursor-pointer">
+                                <strong class="text-slate-900 block font-semibold" id="cond5Title">5. Licensed Auditor Certification / Internal Write-Off</strong>
+                                <span class="text-slate-500 text-xs" id="cond5Desc">The debt has been formally written off in financial statements and certified by an SOCPA licensed certified public accountant.</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Results & Action Column (5 cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                <!-- Assessment Badge & Metric Card -->
+                <div class="bg-white rounded-xl shadow-lg border border-slate-200 overflow-hidden print-full">
+                    <div id="eligibilityBanner" class="py-3.5 px-6 bg-emerald-600 text-white font-bold flex items-center justify-between text-sm transition-colors duration-200">
+                        <span id="eligibilityStatusText">ELIGIBLE FOR VAT RELIEF</span>
+                        <span id="eligibilityIcon" class="text-lg">✓</span>
+                    </div>
+
+                    <div class="p-6 space-y-5">
+                        <!-- Big Number Highlight: VAT Refund / Relief SAR -->
+                        <div>
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-500" id="lblRecoverableVat">Recoverable Output Tax Relief (ZATCA Claim)</span>
+                            <div class="flex items-baseline gap-2 mt-1">
+                                <span class="text-3xl sm:text-4xl font-extrabold text-zatca-700" id="valRecoverableVatSAR">13,043.48</span>
+                                <span class="text-base font-bold text-slate-600">SAR</span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-1" id="lblAdjustReturnBox">To report on: <strong>ZATCA Return Box 1 (Adjustments Column)</strong></p>
+                        </div>
+
+                        <div class="border-t border-slate-100 pt-4 space-y-2.5 text-xs sm:text-sm">
+                            <div class="flex justify-between items-center text-slate-600">
+                                <span id="resInvGrossTotal">Original Invoice Total:</span>
+                                <span class="font-semibold text-slate-900" id="valGrossAmount">115,000.00 SAR</span>
+                            </div>
+                            <div class="flex justify-between items-center text-slate-600">
+                                <span id="resOriginalVatCharged">Original Output VAT Paid:</span>
+                                <span class="font-medium text-slate-700" id="valOriginalVat">15,000.00 SAR</span>
+                            </div>
+                            <div class="flex justify-between items-center text-slate-600">
+                                <span id="resPaymentsCollected">Less: Partial Payments Collected:</span>
+                                <span class="font-medium text-rose-600" id="valAmountCollected">- 15,000.00 SAR</span>
+                            </div>
+                            <div class="flex justify-between items-center text-slate-600">
+                                <span id="resVatAttributableToPaid">VAT Portion Already Recovered:</span>
+                                <span class="font-medium text-slate-700" id="valVatPaidPortion">1,956.52 SAR</span>
+                            </div>
+                            <div class="flex justify-between items-center border-t border-dashed border-slate-200 pt-2 text-slate-900 font-semibold">
+                                <span id="resNetBadDebtLoss">Net Uncollectible Bad Debt (Pre-Tax):</span>
+                                <span id="valNetLoss">86,956.52 SAR</span>
+                            </div>
+                            <div class="flex justify-between items-center text-slate-900 font-bold">
+                                <span id="resGrossUnpaidOutstanding">Total Gross Outstanding Write-off:</span>
+                                <span class="text-zatca-800" id="valGrossOutstanding">100,000.00 SAR</span>
+                            </div>
+                        </div>
+
+                        <!-- Time Default Calculation Helper -->
+                        <div class="bg-slate-50 rounded-lg p-3 border border-slate-200 text-xs space-y-1">
+                            <div class="flex justify-between">
+                                <span class="text-slate-500" id="lblElapsedDays">Elapsed Since Due Date:</span>
+                                <span class="font-bold text-slate-800" id="valElapsedDays">0 days (Select dates)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-500" id="lblEligibilityTarget">ZATCA 12-Month Rule:</span>
+                                <span class="font-semibold" id="valRule12Met">Pending date inputs</span>
+                            </div>
+                        </div>
+
+                        <!-- Warning Notice if Not Eligible -->
+                        <div id="complianceWarningBox" class="hidden p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 leading-relaxed">
+                            <strong>Notice:</strong> One or more ZATCA Article 40 criteria have not been checked. The calculated VAT credit cannot be legally deducted on your ZATCA portal until full documentation is secured.
+                        </div>
+
+                        <!-- Actions: Print and CSV Export -->
+                        <div class="grid grid-cols-2 gap-2 pt-2 no-print">
+                            <button onclick="window.print()" class="w-full py-2.5 px-3 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-100 font-semibold text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                                <span id="btnPrintSummary">Print Audit Sheet</span>
+                            </button>
+                            <button onclick="exportCSV()" class="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-semibold text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                <span id="btnExportCsv">Export CSV Log</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gumroad Conversion Card Sticky Widget -->
+                <div class="no-print bg-gradient-to-br from-slate-900 to-zatca-900 text-white rounded-xl p-5 shadow-lg border border-zatca-600/40">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <span class="bg-amber-400 text-slate-950 font-bold px-2 py-0.5 rounded text-[10px] tracking-wide uppercase">Corporate Edition</span>
+                            <h3 class="text-base font-bold mt-2 text-white" id="cardCtaTitle">ZATCA Bad Debt Recovery & Audit Master Template</h3>
+                        </div>
+                        <span class="text-2xl font-black text-amber-400">$29</span>
+                    </div>
+                    <p class="text-xs text-slate-300 mt-2 leading-relaxed" id="cardCtaDesc">
+                        Automate batch adjustments for 500+ past-due invoices. Includes ready-to-file SOCPA auditor pack, debtor notice legal letter in Arabic, and ZATCA tax return Box 1 reconciliation schedule.
+                    </p>
+                    <ul class="text-xs text-slate-200 mt-3 space-y-1.5 border-t border-slate-800 pt-3" id="cardFeaturesList">
+                        <li class="flex items-center gap-2"><span class="text-amber-400">✔</span> Multi-invoice automatic 12-month aging engine</li>
+                        <li class="flex items-center gap-2"><span class="text-amber-400">✔</span> Pre-formatted Arabic Legal Debtor Notification letter</li>
+                        <li class="flex items-center gap-2"><span class="text-amber-400">✔</span> One-click ZATCA VAT Return Schedule generator</li>
+                    </ul>
+                    <a href="https://gumroad.com" target="_blank" rel="noopener" class="mt-4 w-full bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold py-2.5 px-4 rounded-lg text-center block text-sm transition shadow-md" id="cardBtnCta">
+                        Download Excel & VBA Template ($29)
+                    </a>
+                </div>
+
+                <!-- Official Statutory Compliance Disclaimer -->
+                <div class="p-4 rounded-lg border border-amber-200 bg-amber-50 text-amber-900 text-xs leading-relaxed">
+                    <div class="flex items-start gap-2">
+                        <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                        <div>
+                            <p class="font-bold mb-1" id="disclaimerTitleEn">Regulatory Notice & Disclaimer / إخلاء مسؤولية تنظيمي</p>
+                            <p id="disclaimerBodyEn">This calculator provides indicative estimates based on Saudi ZATCA VAT Regulations (Article 40). Outputs do not constitute binding tax or legal advice. Bad debt tax adjustments require certified internal write-off documentation, formal debtor notification, and compliance with ZATCA audit guidelines.</p>
+                            <p class="mt-2 text-[11px] font-ar text-amber-800 rtl-only" id="disclaimerBodyAr">تعد هذه الحاسبة أداة تقديرية وتوجيهية وفق أحكام المادة 40 من اللائحة التنفيذية لنظام ضريبة القيمة المضافة لهيئة الزكاة والضريبة والجمارك. تخضع عمليات استرداد أو تخفيض ضريبة المخرجات لمتطلبات الإخطار الرسمي وشهادة المحاسب القانوني المعتمد، ولا تعتبر بديلاً عن الاستشارة الضريبية المعتمدة.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comprehensive SEO Guide, Formula Breakdown, and FAQ Section (800+ words) -->
+        <section class="mt-12 bg-white rounded-xl shadow-sm border border-slate-200 p-6 sm:p-10">
+            <article class="prose prose-slate max-w-none">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4" id="seoMainHeading">Comprehensive Guide to ZATCA VAT Bad Debt Relief in Saudi Arabia (Article 40)</h2>
+                
+                <p class="text-sm text-slate-600 leading-relaxed mb-4" id="seoIntroPara">
+                    In Saudi Arabia, registered corporate taxpayers frequently confront delinquent commercial accounts receivables. When a buyer defaults on an unpaid tax invoice, the seller who previously remitted the 15% (or 5%) Value Added Tax (VAT) out of pocket to the Zakat, Tax and Customs Authority (ZATCA) effectively bears an unfair cash shortfall. To mitigate this commercial burden, the Saudi VAT Implementing Regulations provide a statutory mechanism under <strong>Article 40 (Bad Debts Relief / الديون المعدومة)</strong> enabling registered taxpayers to reduce output tax previously reported on uncollectible debts. Understanding the stringent prerequisites is vital to avoid harsh tax penalties and disallowed deductions during ZATCA tax inspections. 
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-6">
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <h3 class="text-base font-bold text-slate-900 mb-2" id="secFormulasHeader">Mathematical Formulas for Bad Debt Tax Write-Back</h3>
+                        <p class="text-xs text-slate-600 mb-3">VAT components are isolated using tax-fraction mathematics derived from the gross outstanding balance:</p>
+                        <div class="font-mono text-xs bg-white p-3 rounded border border-slate-300 text-slate-800 space-y-2">
+                            <p><strong>Net Unpaid Outstanding</strong> = Total Gross Invoice - Collections Received</p>
+                            <p><strong>Tax Fraction (15%)</strong> = 15 ÷ 115 ≈ 0.1304348</p>
+                            <p><strong>Recoverable Output Tax Relief</strong> = Net Unpaid Outstanding × [R ÷ (1 + R)]</p>
+                            <p><strong>Net Bad Debt Loss (P&L Write-Off)</strong> = Net Unpaid Outstanding - Recoverable Output Tax</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                        <h3 class="text-base font-bold text-slate-900 mb-2" id="secReturnHeader">ZATCA Return Reporting Mechanism (Box 1)</h3>
+                        <p class="text-xs text-slate-600 leading-relaxed mb-2">
+                            Approved bad debt VAT relief must not be booked arbitrarily as an input tax expense. Instead, under ZATCA guidelines:
+                        </p>
+                        <ul class="text-xs text-slate-600 space-y-1.5 list-disc pl-4">
+                            <li>It is declared in <strong>Box 1 (Standard Rated Sales)</strong> under the <strong>"Adjustments" (التعديلات)</strong> column.</li>
+                            <li>The entry is recorded as a <em>negative adjustment value</em>, directly lowering the overall taxable sales and the net output tax payable.</li>
+                            <li>If the customer later settles all or part of the bad debt, the supplier must reverse the adjustment in Box 1 within the tax period of recovery.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 class="text-lg font-bold text-slate-900 mt-6 mb-3" id="secCritHeader">Five Mandatory Preconditions Under ZATCA Article 40</h3>
+                <p class="text-sm text-slate-600 leading-relaxed mb-3">
+                    ZATCA auditors examine bad debt adjustments meticulously. Taxpayers cannot deduct output VAT unless they verify and archive proofs for five sequential conditions:
+                </p>
+                <ol class="text-sm text-slate-600 space-y-2.5 list-decimal pl-5">
+                    <li><strong>The Default Period of 12 Months:</strong> Exactly 12 months must have elapsed from either the invoice date or the explicit agreed payment due date stated in the commercial contract, whichever occurs later. If standard trade credit was 60 days, the 12-month timeline begins after the 60-day default date.</li>
+                    <li><strong>Prior Tax Declaration & Payment:</strong> The seller must hold proof that output tax on the original supply was declared in a previous ZATCA VAT return and actually remitted through SADAD.</li>
+                    <li><strong>Written Notification to Customer:</strong> The supplier must deliver a formal written notice to the customer stating the exact amount written off and informing the customer that they are legally obliged under Article 40(4) to make an equal downward adjustment to their own input tax previously deducted.</li>
+                    <li><strong>Exhaustion of Commercial Recovery Procedures:</strong> The business must substantiate that customary commercial collection efforts failed. Acceptable proofs include documented legal cases via the Saudi Ministry of Justice (Najiz), commercial court execution orders, proof of debtor's insolvency or bankruptcy under the Saudi Bankruptcy Law (نظام الإفلاس), or evidence from collection agencies.</li>
+                    <li><strong>Accounting Write-Off Certified by an SOCPA Auditor:</strong> The uncollectible sum must be formally charged off to the company's profit and loss account (Allowance for Doubtful Debts or Bad Debt Expense) and certified via an annual statutory audit letter issued by a licensed SOCPA practitioner.</li>
+                </ol>
+
+                <h3 class="text-lg font-bold text-slate-900 mt-8 mb-4" id="secFaqHeader">Frequently Asked Questions (FAQ)</h3>
+                <div class="space-y-4 text-sm">
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                        <h4 class="font-bold text-slate-900 mb-1" id="faq1Q">What happens if the customer pays after the debt was written off and VAT was relieved?</h4>
+                        <p class="text-slate-600" id="faq1A">Under Article 40, Paragraph 5, if the customer subsequently pays the full balance or an installment, the supplier must treat the collected proportion as output tax. The corresponding VAT must be re-added as a positive adjustment in Box 1 of the VAT return during the period the money was deposited.</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                        <h4 class="font-bold text-slate-900 mb-1" id="faq2Q">Can bad debt relief be claimed on invoices issued to government entities in KSA?</h4>
+                        <p class="text-slate-600" id="faq2A">Generally, receivables from Saudi government ministries and public authorities are considered sovereign debts and are not eligible for bad debt relief under standard default provisions, as government payment obligations do not legally lapse into formal bankruptcy.</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                        <h4 class="font-bold text-slate-900 mb-1" id="faq3Q">What is the customer's legal obligation when receiving a bad debt notice?</h4>
+                        <p class="text-slate-600" id="faq3A">When a registered customer receives written notification that their supplier has written off an overdue invoice, the customer is legally required to make a negative adjustment to their Input Tax in Box 7 of their ZATCA VAT return, effectively repaying the input tax credit originally claimed on the unpaid goods or services.</p>
+                    </div>
+                    <div class="border border-slate-200 rounded-lg p-4 bg-slate-50">
+                        <h4 class="font-bold text-slate-900 mb-1" id="faq4Q">Does ZATCA require a specific form or certificate for bad debts?</h4>
+                        <p class="text-slate-600" id="faq4A">ZATCA does not issue a standalone pre-printed clearance certificate. Instead, taxpayers must maintain a dedicated audit trail binder comprising the original tax invoice, proof of tax return submission, bank statements showing non-receipt, copies of registered notification letters sent to the debtor, court enforcement filing logs (Najiz), and the licensed external auditor’s verification memo.</p>
+                    </div>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <!-- Page Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p id="footerCopyright">© 2025 Saudi B2B Tax & Financial Engineering Tools. All rights reserved.</p>
+            <div class="flex items-center gap-4">
+                <span class="text-slate-400">|</span>
+                <span id="footerStandardTag">Standard: KSA VAT Law Art. 40</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let currentLang = 'en';
+
+        // Set initial dates (Invoice 14 months ago, Due 13 months ago to show eligibility by default)
+        window.addEventListener('DOMContentLoaded', () => {
+            const today = new Date();
+            const invDate = new Date(today);
+            invDate.setMonth(today.getMonth() - 14);
+            
+            const dDate = new Date(today);
+            dDate.setMonth(today.getMonth() - 13);
+            
+            document.getElementById('invoiceDate').value = invDate.toISOString().split('T')[0];
+            document.getElementById('dueDate').value = dDate.toISOString().split('T')[0];
+            
+            recalc();
+        });
+
+        function formatSAR(val) {
+            return Number(val).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function recalc() {
+            const grossTotal = parseFloat(document.getElementById('totalGrossAmount').value) || 0;
+            const vatRate = parseFloat(document.getElementById('vatRate').value) || 0.15;
+            const amountPaid = parseFloat(document.getElementById('amountCollected').value) || 0;
+            const invoiceDateVal = document.getElementById('invoiceDate').value;
+            const dueDateVal = document.getElementById('dueDate').value;
+
+            // Date calculation
+            let daysElapsed = 0;
+            let monthsElapsed = 0;
+            if (dueDateVal || invoiceDateVal) {
+                const refDate = new Date(dueDateVal || invoiceDateVal);
+                const today = new Date();
+                const diffTime = today - refDate;
+                daysElapsed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                monthsElapsed = daysElapsed / 30.4375;
+            }
+
+            const elapsedDaysLabel = document.getElementById('valElapsedDays');
+            const rule12MetLabel = document.getElementById('valRule12Met');
+            const cond12Checkbox = document.getElementById('cond12Months');
+
+            if (daysElapsed > 0) {
+                elapsedDaysLabel.innerText = `${daysElapsed} days (~${monthsElapsed.toFixed(1)} months)`;
+                if (daysElapsed >= 365) {
+                    rule12MetLabel.innerText = currentLang === 'en' ? 'Met (≥ 365 days)' : 'متحقق (أكثر من 365 يوم)';
+                    rule12MetLabel.className = 'font-semibold text-emerald-600';
+                    cond12Checkbox.checked = true;
+                } else {
+                    rule12MetLabel.innerText = currentLang === 'en' ? `Not met (${365 - daysElapsed} days remaining)` : `غير متحقق (متبقي ${365 - daysElapsed} يوم)`;
+                    rule12MetLabel.className = 'font-semibold text-amber-600';
+                    cond12Checkbox.checked = false;
+                }
+            } else {
+                elapsedDaysLabel.innerText = currentLang === 'en' ? 'Invalid date' : 'تاريخ غير صالح';
+                rule12MetLabel.innerText = currentLang === 'en' ? 'Pending dates' : 'في انتظار التواريخ';
+                rule12MetLabel.className = 'font-semibold text-slate-500';
+                cond12Checkbox.checked = false;
+            }
+
+            // Core Math
+            const grossOutstanding = Math.max(0, grossTotal - amountPaid);
+            
+            // Original VAT charged
+            const taxFraction = vatRate / (1 + vatRate);
+            const originalVat = grossTotal * taxFraction;
+            const vatPaidPortion = amountPaid * taxFraction;
+            
+            // Recoverable VAT on outstanding
+            const recoverableVat = grossOutstanding * taxFraction;
+            const netLoss = grossOutstanding - recoverableVat;
+
+            // Update displays
+            document.getElementById('valRecoverableVatSAR').innerText = formatSAR(recoverableVat);
+            document.getElementById('valGrossAmount').innerText = formatSAR(grossTotal) + ' SAR';
+            document.getElementById('valOriginalVat').innerText = formatSAR(originalVat) + ' SAR';
+            document.getElementById('valAmountCollected').innerText = '- ' + formatSAR(amountPaid) + ' SAR';
+            document.getElementById('valVatPaidPortion').innerText = formatSAR(vatPaidPortion) + ' SAR';
+            document.getElementById('valNetLoss').innerText = formatSAR(netLoss) + ' SAR';
+            document.getElementById('valGrossOutstanding').innerText = formatSAR(grossOutstanding) + ' SAR';
+
+            // Check Article 40 conditions
+            const c1 = cond12Checkbox.checked;
+            const c2 = document.getElementById('condVatDeclared').checked;
+            const c3 = document.getElementById('condCustomerNotified').checked;
+            const c4 = document.getElementById('condLegalSteps').checked;
+            const c5 = document.getElementById('condAuditorCert').checked;
+            const isFullyEligible = c1 && c2 && c3 && c4 && c5;
+
+            const banner = document.getElementById('eligibilityBanner');
+            const bannerStatus = document.getElementById('eligibilityStatusText');
+            const bannerIcon = document.getElementById('eligibilityIcon');
+            const warningBox = document.getElementById('complianceWarningBox');
+
+            if (isFullyEligible) {
+                banner.className = 'py-3.5 px-6 bg-emerald-600 text-white font-bold flex items-center justify-between text-sm transition-colors duration-200';
+                bannerStatus.innerText = currentLang === 'en' ? 'ARTICLE 40 ELIGIBLE FOR VAT RELIEF' : 'مؤهل نظامياً لتخفيض ضريبة القيمة المضافة';
+                bannerIcon.innerText = '✓';
+                warningBox.classList.add('hidden');
+            } else {
+                banner.className = 'py-3.5 px-6 bg-amber-600 text-white font-bold flex items-center justify-between text-sm transition-colors duration-200';
+                bannerStatus.innerText = currentLang === 'en' ? 'CONDITIONS PENDING / INCOMPLETE' : 'شروط المادة 40 غير مكتملة';
+                bannerIcon.innerText = '⚠';
+                warningBox.classList.remove('hidden');
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('invRef').value = '';
+            document.getElementById('custName').value = '';
+            document.getElementById('totalGrossAmount').value = '115000';
+            document.getElementById('amountCollected').value = '0';
+            document.getElementById('vatRate').value = '0.15';
+            
+            const today = new Date();
+            const invDate = new Date(today);
+            invDate.setMonth(today.getMonth() - 14);
+            const dDate = new Date(today);
+            dDate.setMonth(today.getMonth() - 13);
+            
+            document.getElementById('invoiceDate').value = invDate.toISOString().split('T')[0];
+            document.getElementById('dueDate').value = dDate.toISOString().split('T')[0];
+            
+            document.getElementById('condVatDeclared').checked = true;
+            document.getElementById('condCustomerNotified').checked = true;
+            document.getElementById('condLegalSteps').checked = true;
+            document.getElementById('condAuditorCert').checked = true;
+            
+            recalc();
+        }
+
+        function exportCSV() {
+            const ref = document.getElementById('invRef').value || 'N/A';
+            const cust = document.getElementById('custName').value || 'N/A';
+            const invDate = document.getElementById('invoiceDate').value || 'N/A';
+            const dueDate = document.getElementById('dueDate').value || 'N/A';
+            const gross = document.getElementById('totalGrossAmount').value;
+            const paid = document.getElementById('amountCollected').value;
+            const recoverable = document.getElementById('valRecoverableVatSAR').innerText.replace(/,/g, '');
+            const netLoss = document.getElementById('valNetLoss').innerText.replace(/,/g, '');
+            const status = document.getElementById('eligibilityStatusText').innerText;
+
+            const csvContent = "data:text/csv;charset=utf-8,"
+                + "ZATCA VAT Bad Debt Relief Audit Log\n"
+                + `Invoice Reference,${ref}\n`
+                + `Customer Entity,${cust}\n`
+                + `Invoice Date,${invDate}\n`
+                + `Agreed Due Date,${dueDate}\n`
+                + `Total Invoice Gross (SAR),${gross}\n`
+                + `Amount Collected (SAR),${paid}\n`
+                + `Recoverable Output VAT Claim (Box 1 Adjustment SAR),${recoverable}\n`
+                + `Net Bad Debt Loss Before Tax (SAR),${netLoss}\n`
+                + `ZATCA Article 40 Status,${status}\n`
+                + `Generated On,${new Date().toISOString()}\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `ZATCA_Bad_Debt_${ref || 'Summary'}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Bilingual Translation Dictionary
+        const i18n = {
+            en: {
+                bannerText: "Looking for batch reconciliation? Download the automated Excel ZATCA Bad Debt Relief Master Engine.",
+                mainHeaderTitle: "Saudi VAT Bad Debt Relief Calculator",
+                mainHeaderSub: "ZATCA Article 40 Output Tax Adjustment & Write-Off Compliance",
+                zatcaRuleBadge: "KSA VAT Bylaws Art. 40 Compliant",
+                secTitleInvoiceDetails: "1. Invoice & Contract Particulars",
+                resetBtnText: "Reset Form",
+                lblInvoiceRef: "Tax Invoice Number",
+                lblCustomerName: "Customer / Client Commercial Entity",
+                lblInvoiceDate: "Original Tax Invoice Date",
+                lblDueDate: "Original Agreed Due Date",
+                lblTotalGross: "Total Invoice Amount (Gross, SAR)",
+                lblVatRate: "Applicable VAT Rate",
+                lblReceivedAmount: "Amount Actually Collected / Paid by Customer (SAR)",
+                lblReceivedHelp: "Any bank receipts, retention releases, or offset payments received to date.",
+                secTitleZatcaCriteria: "2. ZATCA Article 40 Statutory Prerequisites",
+                secSubZatcaCriteria: "Under Article 40 of Saudi VAT Executive Regulations, ALL criteria must be verified to legally claim an output tax downward adjustment.",
+                cond1Title: "1. Minimum 12 Months Default Period",
+                cond1Desc: "At least 12 months have elapsed from the invoice date / agreed payment due date without receiving settlement.",
+                cond2Title: "2. Output Tax Previously Declared & Remitted",
+                cond2Desc: "The supplier accounted for and remitted original output VAT in the respective ZATCA tax return.",
+                cond3Title: "3. Formal Written Notification to Debtor",
+                cond3Desc: "The customer has been formally served written notice specifying the debt write-off and tax write-back amount.",
+                cond4Title: "4. Exhaustive Collection Measures / Insolvency",
+                cond4Desc: "Supplier has exhausted all legal remedies (e.g. Najiz court enforcement, bankruptcy court order, or proven commercial liquidation).",
+                cond5Title: "5. Licensed Auditor Certification / Internal Write-Off",
+                cond5Desc: "The debt has been formally written off in financial statements and certified by an SOCPA licensed certified public accountant.",
+                lblRecoverableVat: "Recoverable Output Tax Relief (ZATCA Claim)",
+                lblAdjustReturnBox: "To report on: <strong>ZATCA Return Box 1 (Adjustments Column)</strong>",
+                resInvGrossTotal: "Original Invoice Total:",
+                resOriginalVatCharged: "Original Output VAT Paid:",
+                resPaymentsCollected: "Less: Partial Payments Collected:",
+                resVatAttributableToPaid: "VAT Portion Already Recovered:",
+                resNetBadDebtLoss: "Net Uncollectible Bad Debt (Pre-Tax):",
+                resGrossUnpaidOutstanding: "Total Gross Outstanding Write-off:",
+                lblElapsedDays: "Elapsed Since Due Date:",
+                lblEligibilityTarget: "ZATCA 12-Month Rule:",
+                btnPrintSummary: "Print Audit Sheet",
+                btnExportCsv: "Export CSV Log",
+                cardCtaTitle: "ZATCA Bad Debt Recovery & Audit Master Template",
+                cardCtaDesc: "Automate batch adjustments for 500+ past-due invoices. Includes ready-to-file SOCPA auditor pack, debtor notice legal letter in Arabic, and ZATCA tax return Box 1 reconciliation schedule.",
+                cardBtnCta: "Download Excel & VBA Template ($29)",
+                disclaimerTitleEn: "Regulatory Notice & Disclaimer / إخلاء مسؤولية تنظيمي",
+                disclaimerBodyEn: "This calculator provides indicative estimates based on Saudi ZATCA VAT Regulations (Article 40). Outputs do not constitute binding tax or legal advice. Bad debt tax adjustments require certified internal write-off documentation, formal debtor notification, and compliance with ZATCA audit guidelines.",
+                footerCopyright: "© 2025 Saudi B2B Tax & Financial Engineering Tools. All rights reserved.",
+                footerStandardTag: "Standard: KSA VAT Law Art. 40"
+            },
+            ar: {
+                bannerText: "هل تحتاج لمعالجة دفعات متعددة؟ حمّل نموذج الإكسل الاحترافي لأتمتة استرداد ضريبة الديون المعدومة.",
+                mainHeaderTitle: "حاسبة استرداد ضريبة القيمة المضافة للديون المعدومة",
+                mainHeaderSub: "تعديل ضريبة المخرجات وفق أحكام المادة 40 من اللائحة التنفيذية لهيئة الزكاة والضريبة والجمارك",
+                zatcaRuleBadge: "متوافق مع المادة 40 - لائحة ضريبة القيمة المضافة",
+                secTitleInvoiceDetails: "1. بيانات الفاتورة الضريبية والتعاقد",
+                resetBtnText: "إعادة ضبط الحقول",
+                lblInvoiceRef: "رقم الفاتورة الضريبية",
+                lblCustomerName: "اسم العميل / المنشأة المدينة",
+                lblInvoiceDate: "تاريخ إصدار الفاتورة الأصلية",
+                lblDueDate: "تاريخ الاستحقاق المتفق عليه",
+                lblTotalGross: "إجمالي قيمة الفاتورة شامل الضريبة (ر.س)",
+                lblVatRate: "نسبة ضريبة القيمة المضافة المطبقة",
+                lblReceivedAmount: "المبالغ المحصلة فعلياً من العميل (ر.س)",
+                lblReceivedHelp: "أي سدادات جزئية أو مبالغ محجوزة أو تسويات تم تحصيلها حتى تاريخه.",
+                secTitleZatcaCriteria: "2. الشروط النظامية الإلزامية (المادة 40)",
+                secSubZatcaCriteria: "تنص المادة 40 على وجوب استيفاء كافة الشروط الخمسة أدناه ليحق للمورد تخفيض ضريبة المخرجات نظامياً.",
+                cond1Title: "1. مرور 12 شهراً كاملة على التخلف عن السداد",
+                cond1Desc: "مضي 12 شهراً على الأقل من تاريخ الفاتورة أو تاريخ الاستحقاق المتفق عليه دون سداد الدين.",
+                cond2Title: "2. إقرار الضريبة وسدادها مسبقاً للهيئة",
+                cond2Desc: "تم تضمين ضريبة المخرجات للفاتورة في إقرار سابق وسدادها بالفعل لحساب الهيئة.",
+                cond3Title: "3. إشعار العميل كتابياً بإعدام الدين",
+                cond3Desc: "توجيه إخطار خطي رسمي للعميل موضحاً فيه قيمة الدين المعدوم وقيمة الضريبة الواجب عليه تعديلها.",
+                cond4Title: "4. استنفاد إجراءات التحصيل القانونية / الإفلاس",
+                cond4Desc: "استنفاد الإجراءات النظامية لإثبات تعذر التحصيل (مثل قضاة التنفيذ عبر ناجز، أو قرارات لجنة الإفلاس).",
+                cond5Title: "5. الشطب الدفتري وشهادة محاسب قانوني معتمد",
+                cond5Desc: "شطب الدين دفترياً من القوائم المالية وإرفاق شهادة معتمدة من محاسب قانوني مرخص من الهيئة السعودية (SOCPA).",
+                lblRecoverableVat: "مبلغ ضريبة القيمة المضافة المستردة (خصم ضريبة المخرجات)",
+                lblAdjustReturnBox: "يدرج في الإقرار الضريبي: <strong>الحقل 1 (عمود التعديلات بالسالب)</strong>",
+                resInvGrossTotal: "إجمالي الفاتورة الأصلية:",
+                resOriginalVatCharged: "ضريبة المخرجات الأصلية المسددة:",
+                resPaymentsCollected: "يخصم: المبالغ المحصلة:",
+                resVatAttributableToPaid: "حصة الضريبة في المبالغ المحصلة:",
+                resNetBadDebtLoss: "صافي خسارة الدين المعدوم (قبل الضريبة):",
+                resGrossUnpaidOutstanding: "إجمالي الرصيد المعدوم المتعثر:",
+                lblElapsedDays: "الفترة المنقضية منذ الاستحقاق:",
+                lblEligibilityTarget: "شرط الـ 12 شهراً (المادة 40):",
+                btnPrintSummary: "طباعة ملخص الفحص",
+                btnExportCsv: "تصدير سجل CSV",
+                cardCtaTitle: "حزمة إكسل المتقدمة لاسترداد الديون المعدومة لدى الزكاة",
+                cardCtaDesc: "أتمتة تسوية أكثر من 500 فاتورة متعثرة في ملف واحد، مع نموذج الإشعار القانوني باللغة العربية للعميل وجدول إقرار الحقل رقم 1.",
+                cardBtnCta: "تحميل نموذج الإكسل المتقدم (29$)",
+                disclaimerTitleEn: "Regulatory Notice & Disclaimer / إخلاء مسؤولية تنظيمي",
+                disclaimerBodyEn: "تعد هذه الحاسبة أداة مساعدة لتقدير المبالغ القابلة للاسترداد وفق المادة 40 من اللائحة التنفيذية لنظام ضريبة القيمة المضافة في المملكة العربية السعودية. لا تعتبر النتائج رأياً قانونياً ملزماً للهيئة، ويشترط استيفاء المستندات الإلزامية وإخطار المدين.",
+                footerCopyright: "© 2025 حلول وأدوات الضرائب والمالية للأعمال بالسعودية. جميع الحقوق محفوظة.",
+                footerStandardTag: "المعيار: نظام وضوابط هيئة الزكاة والضريبة والجمارك"
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            document.documentElement.setAttribute('lang', currentLang);
+            document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+            
+            if (currentLang === 'ar') {
+                document.body.classList.add('font-ar');
+                document.body.classList.remove('font-sans');
+            } else {
+                document.body.classList.add('font-sans');
+                document.body.classList.remove('font-ar');
+            }
+
+            const dict = i18n[currentLang];
+            for (const [id, text] of Object.entries(dict)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.innerHTML = text;
+                }
+            }
+            recalc();
+        }
+    </script>
+</body>
+</html>

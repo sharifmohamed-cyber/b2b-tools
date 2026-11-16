@@ -236,5 +236,12 @@
     "title_ar": "حاسبة تكاليف الاعتمادات المستندية والتمويل التجاري في السعودية",
     "description_en": "Calculate Saudi bank Letter of Credit (LC) issuance fees, usance acceptance, confirmation, ZATCA VAT, and all-in trade financing cost in SAR.",
     "date": "2026-11-15"
+  },
+  {
+    "slug": "saudi-vat-bad-debt-relief-calculator",
+    "title_en": "Saudi ZATCA VAT Bad Debt Relief & Output Tax Adjustment Calculator",
+    "title_ar": "حاسبة استرداد ضريبة القيمة المضافة للديون المعدومة وتعديل الضريبة وفق لوائح هيئة الزكاة",
+    "description_en": "Calculate eligible ZATCA VAT bad debt relief and tax write-off adjustments under Article 40 of Saudi VAT regulations. Instant SAR tax recovery audit.",
+    "date": "2026-11-16"
   }
 ]
