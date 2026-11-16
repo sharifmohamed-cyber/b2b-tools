@@ -243,5 +243,12 @@
     "title_ar": "حاسبة استرداد ضريبة القيمة المضافة للديون المعدومة وتعديل الضريبة وفق لوائح هيئة الزكاة",
     "description_en": "Calculate eligible ZATCA VAT bad debt relief and tax write-off adjustments under Article 40 of Saudi VAT regulations. Instant SAR tax recovery audit.",
     "date": "2026-11-16"
+  },
+  {
+    "slug": "saudi-vat-apportionment-input-tax-deduction-calculator",
+    "title_en": "Saudi VAT Apportionment & Partial Exemption Input Tax Calculator",
+    "title_ar": "حاسبة تخصيص ضريبة القيمة المضافة وخصم المدخلات الجزئي في السعودية",
+    "description_en": "Calculate KSA proportional VAT input tax recovery, partial exemption ratio, and ZATCA annual adjustments accurately under VAT Implementing Regulations.",
+    "date": "2026-11-16"
   }
 ]

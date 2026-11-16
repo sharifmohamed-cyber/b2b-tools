@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saudi VAT Apportionment & Partial Exemption Calculator | ZATCA Compliant</title>
+  <meta name="description" content="Calculate proportional input VAT recovery ratio, allowable input tax deductions, and annual year-end adjustments under ZATCA VAT Regulations in Saudi Arabia.">
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            arabic: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              500: '#22c55e',
+              600: '#16a34a',
+              700: '#15803d',
+              800: '#166534',
+              900: '#14532d',
+            },
+            primary: {
+              900: '#0f172a',
+              800: '#1e293b',
+              700: '#334155',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .font-ar { font-family: 'Cairo', sans-serif; }
+    .font-en { font-family: 'Inter', sans-serif; }
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { 
+      -webkit-appearance: none; 
+      margin: 0; 
+    }
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+    @media print {
+      .no-print { display: none !important; }
+      .print-shadow { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-en min-h-screen flex flex-col">
+
+  <!-- Top Banner Sticky CTA -->
+  <div class="no-print bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white text-xs md:text-sm py-2.5 px-4 sticky top-0 z-50 border-b border-emerald-500/30 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse">
+        <span class="bg-emerald-500 text-slate-900 font-bold px-2 py-0.5 rounded text-xs uppercase tracking-wider">ZATCA VAT Tool</span>
+        <span id="topBannerText" class="font-medium">Streamline mixed-supply proportional VAT deductions under Article 51 of KSA VAT Law.</span>
+      </div>
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <a href="https://gumroad.com" target="_blank" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-semibold px-3 py-1 rounded text-xs transition duration-200 shadow">
+          Download ZATCA Excel & VBA Model ($29)
+        </a>
+        <button id="langToggle" onclick="toggleLanguage()" class="border border-slate-400/40 hover:bg-slate-800 text-white px-2.5 py-1 rounded text-xs transition">
+          <span id="langBtnLabel">العربية</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    
+    <!-- Header Title Area -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center space-x-2 bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-semibold mb-3">
+        <svg class="w-4 h-4 text-emerald-700" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+        <span id="tagline">Saudi ZATCA Article 51 Proportional Input Tax</span>
+      </div>
+      <h1 id="mainTitle" class="text-2xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+        Saudi VAT Apportionment & Partial Exemption Calculator
+      </h1>
+      <p id="subTitle" class="mt-2 text-slate-600 max-w-3xl mx-auto text-sm sm:text-base">
+        Calculate proportional recovery ratio, overhead input VAT deductibility, and annual wash-up adjustment for businesses with mixed taxable and exempt supplies in Saudi Arabia.
+      </p>
+    </div>
+
+    <!-- Calculator Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left: Form Inputs -->
+      <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+          <h2 id="inputSectionTitle" class="text-lg font-bold text-slate-800 flex items-center space-x-2 rtl:space-x-reverse">
+            <span>1. Revenue & Turnover Breakdown (SAR)</span>
+          </h2>
+          <button type="button" onclick="resetInputs()" class="text-xs text-slate-500 hover:text-rose-600 transition flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+            <span id="resetBtnText">Reset Defaults</span>
+          </button>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Taxable Standard Rate Supplies -->
+          <div>
+            <label id="lblStandardSupplies" class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1">
+              Standard Rated Taxable Supplies (15% VAT) [A]
+            </label>
+            <div class="relative rounded-lg shadow-sm">
+              <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-sm font-semibold">SAR</div>
+              <input type="number" id="standardSupplies" value="3250000" step="any" min="0" oninput="calculateApportionment()" class="block w-full pl-14 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium text-slate-900 transition">
+            </div>
+            <p id="hintStandard" class="mt-1 text-xs text-slate-500">Local sales subject to standard 15% VAT during the tax period.</p>
+          </div>
+
+          <!-- Zero-Rated Supplies -->
+          <div>
+            <label id="lblZeroSupplies" class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1">
+              Zero-Rated Supplies (0% VAT - Exports, Transport, etc.) [B]
+            </label>
+            <div class="relative rounded-lg shadow-sm">
+              <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-sm font-semibold">SAR</div>
+              <input type="number" id="zeroSupplies" value="750000" step="any" min="0" oninput="calculateApportionment()" class="block w-full pl-14 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium text-slate-900 transition">
+            </div>
+            <p id="hintZero" class="mt-1 text-xs text-slate-500">Supplies taxable at 0% which grant full right of input tax deduction.</p>
+          </div>
+
+          <!-- Exempt Supplies -->
+          <div>
+            <label id="lblExemptSupplies" class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1">
+              Exempt Supplies (Residential rent, margin financial services) [C]
+            </label>
+            <div class="relative rounded-lg shadow-sm">
+              <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-sm font-semibold">SAR</div>
+              <input type="number" id="exemptSupplies" value="1000000" step="any" min="0" oninput="calculateApportionment()" class="block w-full pl-14 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium text-slate-900 transition">
+            </div>
+            <p id="hintExempt" class="mt-1 text-xs text-slate-500">Supplies with no output VAT and strictly no input tax credit entitlement.</p>
+          </div>
+
+          <!-- Out of Scope (Excluded) Notice -->
+          <div class="p-3 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-800">
+            <span class="font-bold" id="noteTitle">ZATCA Note:</span> <span id="noteBody">Capital asset sales, government disbursements, and non-economic transactions are excluded from both numerator and denominator per Article 51.</span>
+          </div>
+
+          <div class="border-t border-slate-200 pt-5 mt-5">
+            <h2 id="inputVatTitle" class="text-lg font-bold text-slate-800 mb-4">
+              2. Input VAT Incurred (Purchases & Overheads)
+            </h2>
+
+            <!-- Directly Attributable to Taxable Supplies -->
+            <div class="mb-4">
+              <label id="lblDirectTaxable" class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1">
+                Input VAT Directly Attributable to Taxable Supplies (100% Recoverable)
+              </label>
+              <div class="relative rounded-lg shadow-sm">
+                <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-sm font-semibold">SAR</div>
+                <input type="number" id="directTaxableVat" value="145000" step="any" min="0" oninput="calculateApportionment()" class="block w-full pl-14 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium text-slate-900 transition">
+              </div>
+            </div>
+
+            <!-- Directly Attributable to Exempt Supplies -->
+            <div class="mb-4">
+              <label id="lblDirectExempt" class="block text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1">
+                Input VAT Directly Attributable to Exempt Supplies (0% Recoverable)
+              </label>
+              <div class="relative rounded-lg shadow-sm">
+                <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-sm font-semibold">SAR</div>
+                <input type="number" id="directExemptVat" value="28000" step="any" min="0" oninput="calculateApportionment()" class="block w-full pl-14 pr-4 py-2.5 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-medium text-slate-900 transition">
+              </div>
+            </div>
+
+            <!-- Residual / Overhead Common Input VAT -->
+            <div class="mb-4">
+              <label id="lblResidualVat" class="block text-xs font-semibold text-emerald-800 uppercase tracking-wide mb-1">
+                Residual / General Overhead Common Input VAT (To be Apportioned) [R]
+              </label>
+              <div class="relative rounded-lg shadow-sm">
+                <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 text-sm font-semibold">SAR</div>
+                <input type="number" id="residualVat" value="60000" step="any" min="0" oninput="calculateApportionment()" class="block w-full pl-14 pr-4 py-2.5 bg-emerald-50/50 border border-emerald-400 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm font-semibold text-slate-900 transition">
+              </div>
+              <p id="hintResidual" class="mt-1 text-xs text-slate-500">e.g., Audit fees, head office rent, ERP licenses, utility bills shared across all divisions.</p>
+            </div>
+
+            <!-- Year-End Adjustment Toggle -->
+            <div class="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span id="lblAnnualToggle" class="text-sm font-bold text-slate-800">Include Annual Wash-Up / Year-End Adjustment?</span>
+                  <p id="hintAnnualToggle" class="text-xs text-slate-500">Compare quarterly claims against official whole-year actual percentage.</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" id="enableAnnual" onchange="toggleAnnualSection()" class="sr-only peer">
+                  <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                </label>
+              </div>
+
+              <div id="annualFields" class="hidden mt-4 pt-4 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label id="lblPriorRatio" class="block text-xs font-medium text-slate-700 mb-1">Provisional Ratio Applied During Year (%)</label>
+                  <input type="number" id="priorRatio" value="75" min="0" max="100" step="0.01" oninput="calculateApportionment()" class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                  <label id="lblTotalYearResidual" class="block text-xs font-medium text-slate-700 mb-1">Full-Year Residual Input VAT (SAR)</label>
+                  <input type="number" id="fullYearResidual" value="240000" min="0" step="any" oninput="calculateApportionment()" class="block w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-emerald-500">
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Results Card & Reporting -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-white rounded-2xl shadow-lg border border-emerald-100 p-6 sm:p-7 relative overflow-hidden print-shadow">
+          <div class="absolute top-0 right-0 left-0 h-2 bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-700"></div>
+          
+          <h3 id="resSummaryTitle" class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 mb-4 flex items-center justify-between">
+            <span>VAT Apportionment Summary</span>
+            <span class="text-xs font-semibold px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded">Article 51 KSA</span>
+          </h3>
+
+          <!-- Ratio KPI Display -->
+          <div class="p-4 bg-emerald-50/70 border border-emerald-200 rounded-xl mb-5 text-center">
+            <p id="kpiRatioTitle" class="text-xs uppercase font-bold text-emerald-800 tracking-wider">Apportionment Recovery Ratio (P%)</p>
+            <div class="flex items-center justify-center space-x-2 mt-1">
+              <span id="resRecoveryPercentage" class="text-4xl sm:text-5xl font-black text-emerald-950 font-sans">80.00%</span>
+            </div>
+            <p id="kpiFormulaText" class="text-xs text-emerald-700 mt-2 font-medium">(Taxable Supplies / Total Relevant Supplies) × 100</p>
+          </div>
+
+          <!-- Breakdown Table -->
+          <div class="space-y-3 text-sm">
+            <div class="flex justify-between py-1.5 border-b border-slate-100">
+              <span id="lblResTotSupplies" class="text-slate-600">Total Eligible Turnover:</span>
+              <span id="resTotalSupplies" class="font-bold text-slate-900">SAR 5,000,000.00</span>
+            </div>
+
+            <div class="flex justify-between py-1.5 border-b border-slate-100">
+              <span id="lblResDirectAllowed" class="text-slate-600">Direct Taxable Input Tax (100%):</span>
+              <span id="resDirectDeductible" class="font-bold text-emerald-700">SAR 145,000.00</span>
+            </div>
+
+            <div class="flex justify-between py-1.5 border-b border-slate-100">
+              <span id="lblResResidualAllowed" class="text-slate-600">Allowable Residual Input Tax (P%):</span>
+              <span id="resResidualDeductible" class="font-bold text-emerald-700">SAR 48,000.00</span>
+            </div>
+
+            <div class="flex justify-between py-1.5 border-b border-slate-100 text-rose-600">
+              <span id="lblResBlocked" class="">Blocked / Disallowed Input Tax:</span>
+              <span id="resBlockedVat" class="font-bold">SAR 40,000.00</span>
+            </div>
+
+            <div class="flex justify-between pt-3 pb-1 border-t-2 border-slate-200 text-base font-extrabold">
+              <span id="lblResTotalClaimable" class="text-slate-900">Total Claimable VAT Refund/Credit:</span>
+              <span id="resTotalClaimable" class="text-emerald-700">SAR 193,000.00</span>
+            </div>
+          </div>
+
+          <!-- Annual Washup KPI (Conditional) -->
+          <div id="washupResultCard" class="hidden mt-5 p-3.5 bg-slate-900 text-white rounded-xl">
+            <div class="flex justify-between items-center text-xs mb-1.5">
+              <span id="lblWashupTitle" class="font-semibold text-amber-400">Year-End Wash-Up Adjustment:</span>
+              <span id="resWashupStatusBadge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-400 text-slate-950">Adjustment Due</span>
+            </div>
+            <div class="flex justify-between items-baseline">
+              <span id="washupAdjustmentDesc" class="text-xs text-slate-300">Payable to / (Refund from) ZATCA:</span>
+              <span id="resWashupAmount" class="text-lg font-extrabold text-amber-300">SAR +12,000.00</span>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="mt-6 space-y-2 no-print">
+            <button onclick="window.print()" class="w-full flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white font-semibold py-2.5 px-4 rounded-xl text-sm transition shadow-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <span id="btnPrint">Print Official Audit Summary</span>
+            </button>
+
+            <button onclick="exportCSV()" class="w-full flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2.5 px-4 rounded-xl text-sm border border-slate-300 transition">
+              <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span id="btnCsv">Export Breakdown (CSV)</span>
+            </button>
+          </div>
+
+          <!-- Legal Disclaimer -->
+          <div class="mt-5 p-3 bg-slate-50 border border-slate-200 rounded-lg text-[11px] leading-relaxed text-slate-500">
+            <p id="disclaimerText">
+              <strong>Disclaimer:</strong> This calculator provides mathematical estimations in accordance with KSA VAT Law Article 51 (Proportional Deduction) and standard apportionment rules. Complex allocations, alternative methods approved by ZATCA, or specific financial exemptions must be validated by a licensed Saudi SOCPA Tax Advisor before final tax return filing.
+            </p>
+          </div>
+        </div>
+
+        <!-- High-Converting Sales Pitch Box -->
+        <div class="no-print bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-6 shadow-md border border-slate-700">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="bg-amber-400 text-slate-950 text-[10px] font-black uppercase px-2 py-0.5 rounded">Excel Master Tool</span>
+            <span class="text-xs text-amber-300 font-bold">CFO & Tax Controller Edition</span>
+          </div>
+          <h4 id="bannerTitle" class="text-base font-bold text-white mb-2">
+            Complete Saudi VAT & Zakat Working Papers Suite (2025)
+          </h4>
+          <p id="bannerDesc" class="text-xs text-slate-300 mb-4 leading-relaxed">
+            Automate 4-quarter proportional VAT apportionment, direct expense attribution logs, capital asset adjustment tracking (over 6/10 years), and ZATCA audit trail schedules.
+          </p>
+          <a href="https://gumroad.com" target="_blank" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold py-3 px-4 rounded-xl text-xs sm:text-sm uppercase tracking-wider transition shadow-lg">
+            <span id="bannerBtn">Get Full Excel Model — $29 (Instant Download)</span>
+          </a>
+          <div class="mt-3 flex items-center justify-center space-x-3 text-[11px] text-slate-400">
+            <span>✔ Unlocked Formulas</span>
+            <span>•</span>
+            <span>✔ ZATCA Compliant</span>
+            <span>•</span>
+            <span>✔ Instant VAT Return Mapping</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Comprehensive 800+ Word SEO & Technical Guide Section -->
+    <section class="mt-14 bg-white rounded-2xl border border-slate-200 p-8 sm:p-10 shadow-sm leading-relaxed text-slate-700 text-sm sm:text-base space-y-8">
+      
+      <div>
+        <h2 id="guideH2_1" class="text-xl sm:text-2xl font-black text-slate-900 mb-3">
+          Comprehensive Guide to Saudi VAT Partial Exemption & Apportionment
+        </h2>
+        <p id="guideP_1" class="mb-3 text-slate-600">
+          In the Kingdom of Saudi Arabia, the Value Added Tax (VAT) system operates under the legal framework established by Royal Decree No. (M/113) and the Implementing Regulations issued by the Zakat, Tax and Customs Authority (ZATCA). Under general principles, a taxable enterprise is entitled to deduct input tax paid on its purchases and expenses, provided those costs are incurred in making taxable supplies (both standard-rated at 15% and zero-rated at 0%).
+        </p>
+        <p id="guideP_2" class="text-slate-600">
+          However, businesses operating in sectors such as financial services, real estate (residential leasing), healthcare, education, or insurance often generate a mix of <strong>taxable supplies</strong> and <strong>exempt supplies</strong>. Under Article 51 of the Saudi VAT Implementing Regulations, input VAT directly associated with exempt activities is strictly non-deductible. When input VAT is incurred on general overheads that serve both activities—such as ERP subscriptions, IT infrastructure, audit fees, or headquarters lease—the enterprise must perform <em>Proportional Input Tax Deduction Apportionment</em>.
+        </p>
+      </div>
+
+      <div class="border-t border-slate-100 pt-6">
+        <h3 id="guideH3_2" class="text-lg font-bold text-slate-900 mb-3">
+          Mathematical Formula for Proportional Input Tax Recovery (Article 51)
+        </h3>
+        <p id="guideP_3" class="mb-4 text-slate-600">
+          ZATCA mandates the standard turnover-based apportionment calculation to determine the recovery fraction of residual/overhead input VAT:
+        </p>
+        <div class="bg-slate-900 text-emerald-400 p-4 rounded-xl font-mono text-xs sm:text-sm overflow-x-auto shadow-inner">
+          Apportionment Ratio (P%) = [ Taxable Supplies (Standard + Zero-Rated) / Total Eligible Supplies (Taxable + Exempt) ] × 100
+        </div>
+        <ul class="list-disc list-inside mt-4 space-y-2 text-slate-600 pl-2">
+          <li><strong>Numerator:</strong> The value of supplies made during the period that give rise to input VAT deduction (15% standard supplies + 0% zero-rated supplies + qualifying out-of-scope supplies with deduction rights).</li>
+          <li><strong>Denominator:</strong> Total value of all economic supplies made in the period (Taxable supplies + Exempt supplies).</li>
+          <li><strong>Exclusions:</strong> Article 51 explicitly excludes capital assets sales (e.g., selling office property or company machinery), supplies from non-economic activities, and internal branch transfers from both numerator and denominator to avoid distorting the ongoing operational recovery ratio.</li>
+        </ul>
+      </div>
+
+      <div class="border-t border-slate-100 pt-6">
+        <h3 id="guideH3_3" class="text-lg font-bold text-slate-900 mb-3">
+          Three-Bucket Input VAT Classification Methodology
+        </h3>
+        <p id="guideP_4" class="mb-4 text-slate-600">
+          Saudi registered entities must maintain audited evidence segmenting all incurred input VAT into three distinct streams before filing Form VAT201:
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs sm:text-sm">
+          <div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+            <span class="font-bold text-emerald-900 text-sm block mb-1">Bucket 1: Direct Taxable (100%)</span>
+            <p class="text-slate-600 leading-normal">Input VAT on goods or services used exclusively to execute standard-rated or zero-rated activities. 100% deductible on line 7 or 8 of the VAT return.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-rose-50 border border-rose-200">
+            <span class="font-bold text-rose-900 text-sm block mb-1">Bucket 2: Direct Exempt (0%)</span>
+            <p class="text-slate-600 leading-normal">Input VAT incurred strictly to make exempt supplies (e.g., refurbishment of residential rental apartments). 0% deductible; expensed in the P&L.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-blue-50 border border-blue-200">
+            <span class="font-bold text-blue-900 text-sm block mb-1">Bucket 3: Residual / Common (P%)</span>
+            <p class="text-slate-600 leading-normal">Overheads, shared operational costs, and general corporate expenses. Multiplied by the Apportionment Ratio (P%) to derive allowable deduction.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 pt-6">
+        <h3 id="guideH3_4" class="text-lg font-bold text-slate-900 mb-3">
+          Year-End Annual Wash-Up (Reconciliation Adjustment)
+        </h3>
+        <p id="guideP_5" class="text-slate-600 mb-3">
+          Throughout the financial year, monthly or quarterly taxpayers apply either the previous tax year's proportional ratio or the current periodic ratio as a provisional deduction. At the end of the 4th tax period (Quarter 4 or December return), Article 51 requires a mandatory full-year recalculation.
+        </p>
+        <p id="guideP_6" class="text-slate-600">
+          The final actual annual recovery ratio is calculated across the entire 12-month turnover. If the provisional deductions claimed exceed the true annual entitlement, the taxpayer must repay the difference to ZATCA. Conversely, if provisional claims were lower than actual annual entitlement, the entity is eligible for a credit adjustment.
+        </p>
+      </div>
+
+      <!-- FAQ Accordion -->
+      <div class="border-t border-slate-100 pt-6">
+        <h3 id="faqHeader" class="text-lg font-bold text-slate-900 mb-4">Frequently Asked Questions (FAQ)</h3>
+        <div class="space-y-4">
+          <details class="group bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <summary id="faqQ1" class="font-semibold text-slate-900 cursor-pointer list-none flex justify-between items-center">
+              <span>Can an entity use an alternative apportionment method instead of turnover?</span>
+              <span class="text-emerald-600 font-bold group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p id="faqA1" class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Yes. Under Article 51(7) of the VAT Implementing Regulations, a taxable person may apply in writing to ZATCA to approve an alternative method (e.g., headcount basis, floor area apportionment, input cost ratio, or transaction count) if the standard turnover method does not provide a fair and reasonable reflection of overhead resource usage. Written ZATCA approval is legally mandatory before applying any alternative method.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <summary id="faqQ2" class="font-semibold text-slate-900 cursor-pointer list-none flex justify-between items-center">
+              <span>Are bank financing interest and residential rental income exempt from Saudi VAT?</span>
+              <span class="text-emerald-600 font-bold group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p id="faqA2" class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Yes. Under Article 29 and Article 30, financial services where consideration is an implicit margin, spread, or interest (including Murabaha profit margins and loan interest), as well as residential real estate leases, are exempt supplies. They must be included in the denominator of the apportionment formula.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 p-4 rounded-xl border border-slate-200">
+            <summary id="faqQ3" class="font-semibold text-slate-900 cursor-pointer list-none flex justify-between items-center">
+              <span>How does ZATCA treat capital asset adjustments (Article 52)?</span>
+              <span class="text-emerald-600 font-bold group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <p id="faqA3" class="mt-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
+              Capital assets with a purchase cost equal to or exceeding SAR 50,000 are subject to multi-year adjustment rules: 6 years for tangible moveable capital assets (equipment, IT servers, vehicles) and 10 years for immovable property (buildings). If the taxable use ratio changes over this tracking lifecycle, annual adjustments must be booked.
+            </p>
+          </details>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800 no-print mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="text-center sm:text-left rtl:sm:text-right">
+        <p class="text-slate-300 font-semibold">Saudi B2B Micro-SaaS Financial Architecture Tools</p>
+        <p class="mt-1 text-slate-500">Designed for SOCPA Certified Public Accountants, CFOs, and ZATCA Registered Tax Agents in KSA.</p>
+      </div>
+      <div class="text-center sm:text-right rtl:sm:text-left">
+        <p>© <span id="yearSpan"></span> Saudi VAT Apportionment Calculator. All rights reserved.</p>
+        <p class="text-slate-600 mt-0.5">ZATCA VAT Article 51 & 52 Verification Standard</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Calculation & Language Logic Script -->
+  <script>
+    document.getElementById('yearSpan').textContent = new Date().getFullYear();
+
+    let currentLang = 'en';
+
+    const translations = {
+      en: {
+        topBanner: "Streamline mixed-supply proportional VAT deductions under Article 51 of KSA VAT Law.",
+        langBtn: "العربية",
+        tagline: "Saudi ZATCA Article 51 Proportional Input Tax",
+        mainTitle: "Saudi VAT Apportionment & Partial Exemption Calculator",
+        subTitle: "Calculate proportional recovery ratio, overhead input VAT deductibility, and annual wash-up adjustment for businesses with mixed taxable and exempt supplies in Saudi Arabia.",
+        inputSectionTitle: "1. Revenue & Turnover Breakdown (SAR)",
+        resetBtn: "Reset Defaults",
+        lblStandardSupplies: "Standard Rated Taxable Supplies (15% VAT) [A]",
+        hintStandard: "Local sales subject to standard 15% VAT during the tax period.",
+        lblZeroSupplies: "Zero-Rated Supplies (0% VAT - Exports, Transport, etc.) [B]",
+        hintZero: "Supplies taxable at 0% which grant full right of input tax deduction.",
+        lblExemptSupplies: "Exempt Supplies (Residential rent, margin financial services) [C]",
+        hintExempt: "Supplies with no output VAT and strictly no input tax credit entitlement.",
+        noteTitle: "ZATCA Note:",
+        noteBody: "Capital asset sales, government disbursements, and non-economic transactions are excluded from both numerator and denominator per Article 51.",
+        inputVatTitle: "2. Input VAT Incurred (Purchases & Overheads)",
+        lblDirectTaxable: "Input VAT Directly Attributable to Taxable Supplies (100% Recoverable)",
+        lblDirectExempt: "Input VAT Directly Attributable to Exempt Supplies (0% Recoverable)",
+        lblResidualVat: "Residual / General Overhead Common Input VAT (To be Apportioned) [R]",
+        hintResidual: "e.g., Audit fees, head office rent, ERP licenses, utility bills shared across all divisions.",
+        lblAnnualToggle: "Include Annual Wash-Up / Year-End Adjustment?",
+        hintAnnualToggle: "Compare quarterly claims against official whole-year actual percentage.",
+        lblPriorRatio: "Provisional Ratio Applied During Year (%)",
+        lblTotalYearResidual: "Full-Year Residual Input VAT (SAR)",
+        resSummaryTitle: "VAT Apportionment Summary",
+        kpiRatioTitle: "Apportionment Recovery Ratio (P%)",
+        kpiFormulaText: "(Taxable Supplies / Total Relevant Supplies) × 100",
+        lblResTotSupplies: "Total Eligible Turnover:",
+        lblResDirectAllowed: "Direct Taxable Input Tax (100%):",
+        lblResResidualAllowed: "Allowable Residual Input Tax (P%):",
+        lblResBlocked: "Blocked / Disallowed Input Tax:",
+        lblResTotalClaimable: "Total Claimable VAT Refund/Credit:",
+        lblWashupTitle: "Year-End Wash-Up Adjustment:",
+        washupDesc: "Payable to / (Refund from) ZATCA:",
+        btnPrint: "Print Official Audit Summary",
+        btnCsv: "Export Breakdown (CSV)",
+        disclaimerText: "<strong>Disclaimer:</strong> This calculator provides mathematical estimations in accordance with KSA VAT Law Article 51 (Proportional Deduction) and standard apportionment rules. Complex allocations, alternative methods approved by ZATCA, or specific financial exemptions must be validated by a licensed Saudi SOCPA Tax Advisor before final tax return filing.",
+        bannerTitle: "Complete Saudi VAT & Zakat Working Papers Suite (2025)",
+        bannerDesc: "Automate 4-quarter proportional VAT apportionment, direct expense attribution logs, capital asset adjustment tracking (over 6/10 years), and ZATCA audit trail schedules.",
+        bannerBtn: "Get Full Excel Model — $29 (Instant Download)"
+      },
+      ar: {
+        topBanner: "حساب التخصيص التناسبي لضريبة المدخلات وفقاً للمادة 51 من اللائحة التنفيذية لضريبة القيمة المضافة.",
+        langBtn: "English",
+        tagline: "هيئة الزكاة والضريبة والجمارك - المادة 51 (الخصم النسبي)",
+        mainTitle: "حاسبة تخصيص ضريبة القيمة المضافة وخصم المدخلات الجزئي",
+        subTitle: "احتساب نسبة الاسترداد التناسبية، وضريبة المدخلات على المصاريف المشتركة، والتسوية السنوية النهائية للأنشطة المختلطة (الخاضعة والمعفاة).",
+        inputSectionTitle: "١. تفاصيل الإيرادات والمبيعات (ريال سعودي)",
+        resetBtn: "استعادة الافتراضي",
+        lblStandardSupplies: "التوريدات الخاضعة للنسبة الأساسية (15%) [أ]",
+        hintStandard: "المبيعات المحلية الخاضعة لنسبة 15% خلال الفترة الضريبية.",
+        lblZeroSupplies: "التوريدات الخاضعة لنسبة الصفر (0% - الصادرات والنقل الدولي) [ب]",
+        hintZero: "توريدات بنسبة 0% تمنح الحق الكامل في خصم ضريبة المدخلات.",
+        lblExemptSupplies: "التوريدات المعفاة من الضريبة (تأجير سكني، خدمات مالية بهامش) [ج]",
+        hintExempt: "توريدات لا يُفرض عليها ضريبة ولا تمنح أي حق في استرداد المدخلات.",
+        noteTitle: "تنبيه الهيئة:",
+        noteBody: "تُستبعد مبيعات الأصول الرأسمالية والتعويضات الحكومية من البسط والمقام طبقاً للمادة 51.",
+        inputVatTitle: "٢. ضريبة المدخلات المتكبدة (المشتريات والمصاريف)",
+        lblDirectTaxable: "ضريبة مدخلات مرتبطة مباشرة بتوريدات خاضعة (قابلة للخصم 100%)",
+        lblDirectExempt: "ضريبة مدخلات مرتبطة مباشرة بتوريدات معفاة (غير قابلة للخصم 0%)",
+        lblResidualVat: "ضريبة المدخلات المشتركة / المصاريف الإدارية العامة [ر]",
+        hintResidual: "مثل: أتعاب المراجعة المحاسبية، إيجار الإدارة، تراخيص البرامج، الفواتير المشتركة.",
+        lblAnnualToggle: "تفعيل التسوية السنوية الشاملة (نهاية العام)؟",
+        hintAnnualToggle: "مقارنة النسب المؤقتة المطالب بها فصلياً مع النسبة الفعلية السنوية.",
+        lblPriorRatio: "النسبة المؤقتة المعتمدة خلال فترات العام (%)",
+        lblTotalYearResidual: "إجمالي ضريبة المدخلات المشتركة للعام كاملاً (ريال)",
+        resSummaryTitle: "ملخص تخصيص ضريبة القيمة المضافة",
+        kpiRatioTitle: "نسبة الاسترداد التناسبية (P%)",
+        kpiFormulaText: "(التوريدات الخاضعة ÷ إجمالي التوريدات المؤهلة) × 100",
+        lblResTotSupplies: "إجمالي التوريدات المؤهلة:",
+        lblResDirectAllowed: "ضريبة المدخلات الخاضعة المباشرة (100%):",
+        lblResResidualAllowed: "ضريبة المدخلات المشتركة المستردة (P%):",
+        lblResBlocked: "ضريبة المدخلات المستبعدة (غير قابلة للخصم):",
+        lblResTotalClaimable: "إجمالي الضريبة القابلة للخصم (الإقرار):",
+        lblWashupTitle: "تسوية التسوية السنوية النهائية:",
+        washupDesc: "واجب السداد للهيئة / (رصيد مسترد):",
+        btnPrint: "طباعة تقرير الفحص والتدقيق الضريبي",
+        btnCsv: "تصدير الجدول المحاسبي (CSV)",
+        disclaimerText: "<strong>إخلاء مسؤولية قانوني:</strong> تقدم هذه الحاسبة تقديرات حسابية وفقاً للمادة 51 من اللائحة التنفيذية لضريبة القيمة المضافة في المملكة العربية السعودية. تتطلب الطرق البديلة المعتمدة من الهيئة أو المعاملات التمويلية المعقدة مراجعة محاسب قانوني مرخص من SOCPA قبل تقديم الإقرار الضريبي النهائي.",
+        bannerTitle: "ملف إكسيل الشامل لنماذج ضريبة القيمة المضافة والزكاة (2025)",
+        bannerDesc: "أتمتة حسابات التخصيص النسبي للأرباع الأربعة، وسجلات تتبع استهلاك الأصول الرأسمالية (6 و10 سنوات)، ومطابقة إقرارات هيئة الزكاة.",
+        bannerBtn: "تحميل نموذج الإكسيل الاحترافي — $29 (تحميل فوري)"
+      }
+    };
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      const doc = document.documentElement;
+      const t = translations[currentLang];
+
+      if (currentLang === 'ar') {
+        doc.setAttribute('dir', 'rtl');
+        doc.setAttribute('lang', 'ar');
+        document.body.classList.remove('font-en');
+        document.body.classList.add('font-ar');
+      } else {
+        doc.setAttribute('dir', 'ltr');
+        doc.setAttribute('lang', 'en');
+        document.body.classList.remove('font-ar');
+        document.body.classList.add('font-en');
+      }
+
+      // Translate text fields
+      document.getElementById('topBannerText').textContent = t.topBanner;
+      document.getElementById('langBtnLabel').textContent = t.langBtn;
+      document.getElementById('tagline').textContent = t.tagline;
+      document.getElementById('mainTitle').textContent = t.mainTitle;
+      document.getElementById('subTitle').textContent = t.subTitle;
+      document.getElementById('inputSectionTitle').textContent = t.inputSectionTitle;
+      document.getElementById('resetBtnText').textContent = t.resetBtn;
+      document.getElementById('lblStandardSupplies').textContent = t.lblStandardSupplies;
+      document.getElementById('hintStandard').textContent = t.hintStandard;
+      document.getElementById('lblZeroSupplies').textContent = t.lblZeroSupplies;
+      document.getElementById('hintZero').textContent = t.hintZero;
+      document.getElementById('lblExemptSupplies').textContent = t.lblExemptSupplies;
+      document.getElementById('hintExempt').textContent = t.hintExempt;
+      document.getElementById('noteTitle').textContent = t.noteTitle;
+      document.getElementById('noteBody').textContent = t.noteBody;
+      document.getElementById('inputVatTitle').textContent = t.inputVatTitle;
+      document.getElementById('lblDirectTaxable').textContent = t.lblDirectTaxable;
+      document.getElementById('lblDirectExempt').textContent = t.lblDirectExempt;
+      document.getElementById('lblResidualVat').textContent = t.lblResidualVat;
+      document.getElementById('hintResidual').textContent = t.hintResidual;
+      document.getElementById('lblAnnualToggle').textContent = t.lblAnnualToggle;
+      document.getElementById('hintAnnualToggle').textContent = t.hintAnnualToggle;
+      document.getElementById('lblPriorRatio').textContent = t.lblPriorRatio;
+      document.getElementById('lblTotalYearResidual').textContent = t.lblTotalYearResidual;
+      document.getElementById('resSummaryTitle').children[0].textContent = t.resSummaryTitle;
+      document.getElementById('kpiRatioTitle').textContent = t.kpiRatioTitle;
+      document.getElementById('kpiFormulaText').textContent = t.kpiFormulaText;
+      document.getElementById('lblResTotSupplies').textContent = t.lblResTotSupplies;
+      document.getElementById('lblResDirectAllowed').textContent = t.lblResDirectAllowed;
+      document.getElementById('lblResResidualAllowed').textContent = t.lblResResidualAllowed;
+      document.getElementById('lblResBlocked').textContent = t.lblResBlocked;
+      document.getElementById('lblResTotalClaimable').textContent = t.lblResTotalClaimable;
+      document.getElementById('lblWashupTitle').textContent = t.lblWashupTitle;
+      document.getElementById('washupAdjustmentDesc').textContent = t.washupDesc;
+      document.getElementById('btnPrint').textContent = t.btnPrint;
+      document.getElementById('btnCsv').textContent = t.btnCsv;
+      document.getElementById('disclaimerText').innerHTML = t.disclaimerText;
+      document.getElementById('bannerTitle').textContent = t.bannerTitle;
+      document.getElementById('bannerDesc').textContent = t.bannerDesc;
+      document.getElementById('bannerBtn').textContent = t.bannerBtn;
+
+      calculateApportionment();
+    }
+
+    function formatSAR(val) {
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(val);
+    }
+
+    function toggleAnnualSection() {
+      const isChecked = document.getElementById('enableAnnual').checked;
+      const panel = document.getElementById('annualFields');
+      const resultBadge = document.getElementById('washupResultCard');
+      if (isChecked) {
+        panel.classList.remove('hidden');
+        resultBadge.classList.remove('hidden');
+      } else {
+        panel.classList.add('hidden');
+        resultBadge.classList.add('hidden');
+      }
+      calculateApportionment();
+    }
+
+    function resetInputs() {
+      document.getElementById('standardSupplies').value = 3250000;
+      document.getElementById('zeroSupplies').value = 750000;
+      document.getElementById('exemptSupplies').value = 1000000;
+      document.getElementById('directTaxableVat').value = 145000;
+      document.getElementById('directExemptVat').value = 28000;
+      document.getElementById('residualVat').value = 60000;
+      document.getElementById('enableAnnual').checked = false;
+      document.getElementById('priorRatio').value = 75;
+      document.getElementById('fullYearResidual').value = 240000;
+      toggleAnnualSection();
+      calculateApportionment();
+    }
+
+    function calculateApportionment() {
+      const stdSupplies = parseFloat(document.getElementById('standardSupplies').value) || 0;
+      const zeroSupplies = parseFloat(document.getElementById('zeroSupplies').value) || 0;
+      const exemptSupplies = parseFloat(document.getElementById('exemptSupplies').value) || 0;
+
+      const directTaxable = parseFloat(document.getElementById('directTaxableVat').value) || 0;
+      const directExempt = parseFloat(document.getElementById('directExemptVat').value) || 0;
+      const residualVat = parseFloat(document.getElementById('residualVat').value) || 0;
+
+      const taxableTotal = stdSupplies + zeroSupplies;
+      const totalSupplies = taxableTotal + exemptSupplies;
+
+      let recoveryRatio = 0;
+      if (totalSupplies > 0) {
+        recoveryRatio = (taxableTotal / totalSupplies) * 100;
+      }
+      // ZATCA rounding to 2 decimal places
+      const roundedRatio = Math.round(recoveryRatio * 100) / 100;
+
+      // Calculations
+      const allowableResidualVat = (residualVat * (roundedRatio / 100));
+      const blockedResidualVat = residualVat - allowableResidualVat;
+      const totalBlocked = directExempt + blockedResidualVat;
+      const totalClaimable = directTaxable + allowableResidualVat;
+
+      // Populate UI
+      document.getElementById('resRecoveryPercentage').textContent = roundedRatio.toFixed(2) + '%';
+      document.getElementById('resTotalSupplies').textContent = 'SAR ' + formatSAR(totalSupplies);
+      document.getElementById('resDirectDeductible').textContent = 'SAR ' + formatSAR(directTaxable);
+      document.getElementById('resResidualDeductible').textContent = 'SAR ' + formatSAR(allowableResidualVat);
+      document.getElementById('resBlockedVat').textContent = 'SAR ' + formatSAR(totalBlocked);
+      document.getElementById('resTotalClaimable').textContent = 'SAR ' + formatSAR(totalClaimable);
+
+      // Annual adjustment
+      const isAnnualEnabled = document.getElementById('enableAnnual').checked;
+      if (isAnnualEnabled) {
+        const priorRatio = parseFloat(document.getElementById('priorRatio').value) || 0;
+        const fullYearResidual = parseFloat(document.getElementById('fullYearResidual').value) || 0;
+
+        const previouslyClaimed = fullYearResidual * (priorRatio / 100);
+        const finalEntitled = fullYearResidual * (roundedRatio / 100);
+        const diff = finalEntitled - previouslyClaimed; // positive = credit from ZATCA, negative = payable to ZATCA
+
+        const washupSpan = document.getElementById('resWashupAmount');
+        const statusBadge = document.getElementById('resWashupStatusBadge');
+
+        if (diff >= 0) {
+          washupSpan.textContent = '+ SAR ' + formatSAR(diff) + ' (Credit from ZATCA)';
+          washupSpan.className = 'text-lg font-extrabold text-emerald-400';
+          statusBadge.textContent = currentLang === 'ar' ? 'رصيد إضافي لصالح المكلف' : 'Refund / Credit';
+          statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-400 text-slate-950';
+        } else {
+          washupSpan.textContent = '- SAR ' + formatSAR(Math.abs(diff)) + ' (Payable to ZATCA)';
+          washupSpan.className = 'text-lg font-extrabold text-rose-400';
+          statusBadge.textContent = currentLang === 'ar' ? 'مستحق السداد للهيئة' : 'Payable to ZATCA';
+          statusBadge.className = 'px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-rose-400 text-slate-950';
+        }
+      }
+    }
+
+    function exportCSV() {
+      const std = document.getElementById('standardSupplies').value;
+      const zero = document.getElementById('zeroSupplies').value;
+      const exempt = document.getElementById('exemptSupplies').value;
+      const ratio = document.getElementById('resRecoveryPercentage').textContent;
+      const directTaxable = document.getElementById('directTaxableVat').value;
+      const directExempt = document.getElementById('directExemptVat').value;
+      const residual = document.getElementById('residualVat').value;
+      const allowedResidual = document.getElementById('resResidualDeductible').textContent.replace('SAR ', '').replace(/,/g, '');
+      const totalClaim = document.getElementById('resTotalClaimable').textContent.replace('SAR ', '').replace(/,/g, '');
+      const blocked = document.getElementById('resBlockedVat').textContent.replace('SAR ', '').replace(/,/g, '');
+
+      let csvContent = 'data:text/csv;charset=utf-8,';
+      csvContent += 'Parameter,Value (SAR / %)\r\n';
+      csvContent += `Standard-Rated Supplies (15%),${std}\r\n`;
+      csvContent += `Zero-Rated Supplies (0%),${zero}\r\n`;
+      csvContent += `Exempt Supplies,${exempt}\r\n`;
+      csvContent += `ZATCA Recovery Ratio,${ratio}\r\n`;
+      csvContent += `Direct Taxable Input VAT,${directTaxable}\r\n`;
+      csvContent += `Direct Exempt Input VAT,${directExempt}\r\n`;
+      csvContent += `Common Overhead Residual VAT,${residual}\r\n`;
+      csvContent += `Allowable Overhead VAT,${allowedResidual}\r\n`;
+      csvContent += `Total Blocked VAT,${blocked}\r\n`;
+      csvContent += `Total Claimable Input Tax,${totalClaim}\r\n`;
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `saudi_vat_apportionment_audit_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Run on mount
+    calculateApportionment();
+  </script>
+</body>
+</html>
