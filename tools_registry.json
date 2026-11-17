@@ -257,5 +257,12 @@
     "title_ar": "حساب رسوم السجل التجاري وغرفة التجارة في السعودية",
     "description_en": "Calculate accurate Saudi Commercial Register (CR) renewal fees, main/branch office costs, and Chamber of Commerce subscription fees instantly.",
     "date": "2026-11-17"
+  },
+  {
+    "slug": "saudi-zatca-e-invoice-qr-code-and-tlv-generator",
+    "title_en": "Saudi ZATCA E-Invoice QR Code & TLV Generator / Decoder",
+    "title_ar": "أداة توليد وفك تشفير رمز الاستجابة السريعة (QR) للفاتورة الإلكترونية - زاتكا",
+    "description_en": "Generate, test, and decode ZATCA compliant e-invoicing Phase 1 & 2 TLV Base64 QR codes. Validate 15-digit KSA VAT numbers and export compliant receipts.",
+    "date": "2026-11-17"
   }
 ]

@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi ZATCA E-Invoice QR Code & TLV Generator / Decoder</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    [dir="rtl"] body, [dir="rtl"] .font-ar { font-family: 'Cairo', sans-serif; }
+    .tab-active { border-bottom: 3px solid #059669; color: #059669; font-weight: 700; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+      body { background: white !important; color: black !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- STICKY TOP PROMO BANNER -->
+  <aside class="sticky top-0 z-50 bg-gradient-to-r from-emerald-900 via-teal-800 to-emerald-950 text-white px-4 py-2.5 shadow-md no-print" aria-label="Promotional Announcement">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-xs md:text-sm font-medium">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse">
+        <span class="bg-amber-400 text-slate-950 text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">ZATCA Ready</span>
+        <span id="bannerText">Need automated offline ZATCA QR generation inside Excel &amp; ERP?</span>
+      </div>
+      <a href="https://gumroad.com" target="_blank" rel="noopener" class="inline-flex items-center bg-amber-400 hover:bg-amber-300 text-slate-950 px-3 py-1.5 rounded-md font-bold transition shadow-sm">
+        <span id="bannerBtn">Get Automated Excel &amp; VBA Master Template ($29)</span>
+        <svg class="w-3.5 h-3.5 ml-1.5 rtl:mr-1.5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN HEADER -->
+  <header class="bg-white border-b border-slate-200 py-4 px-4 sm:px-6 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-xl shadow-md">
+          ق
+        </div>
+        <div>
+          <h1 class="text-lg sm:text-xl font-black text-slate-900 tracking-tight leading-snug" id="appTitle">
+            Saudi ZATCA E-Invoice QR &amp; TLV Engine
+          </h1>
+          <p class="text-xs text-slate-500 font-medium" id="appSubtitle">
+            Phase 1 &amp; Phase 2 Base64 TLV Encoding, Validation &amp; Decoding Tool
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <button id="langToggleBtn" class="border border-slate-300 hover:border-emerald-600 bg-slate-100 hover:bg-white text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-1.5 shadow-sm">
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+          <span id="langLabel">عربي</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-grow w-full">
+
+    <!-- MODE TABS -->
+    <div class="flex border-b border-slate-200 mb-6 font-semibold text-sm no-print">
+      <button id="tabGenBtn" class="tab-active py-3 px-6 transition flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+        <span id="tabGenText">Generate &amp; Encode QR (توليد الرمز)</span>
+      </button>
+      <button id="tabDecBtn" class="text-slate-500 hover:text-slate-800 py-3 px-6 transition flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        <span id="tabDecText">Decode &amp; Audit Base64 (فك وتدقيق الرمز)</span>
+      </button>
+    </div>
+
+    <!-- ================= GENERATOR SECTION ================= -->
+    <div id="sectionGenerator" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- INPUT PANEL -->
+      <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center mb-5 pb-3 border-b border-slate-100">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2" id="genFormHeading">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block"></span>
+              ZATCA Mandatory Invoice Data (Phase 1 &amp; 2)
+            </h2>
+            <button id="loadSampleBtn" class="text-xs text-emerald-700 hover:text-emerald-900 font-semibold bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200 transition">
+              Fill Sample Data (تعبئة بيانات تجريبية)
+            </button>
+          </div>
+
+          <form id="qrForm" class="space-y-4" onsubmit="return false;">
+            <!-- Tag 1: Seller Name -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1 flex justify-between">
+                <span>1. Seller Name (اسم المورد / الشركة) *</span>
+                <span class="text-slate-400 font-normal lowercase">Tag 1 (UTF-8)</span>
+              </label>
+              <input type="text" id="sellerName" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="e.g. Al-Fawzan Trading & Contracting Co.">
+              <p class="text-[11px] text-slate-500 mt-0.5">Mandatory registered corporate or branch name.</p>
+            </div>
+
+            <!-- Tag 2: VAT Number -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1 flex justify-between">
+                <span>2. VAT Registration Number (الرقم الضريبي) *</span>
+                <span class="text-slate-400 font-normal lowercase">Tag 2 (15 digits)</span>
+              </label>
+              <div class="relative">
+                <input type="text" id="vatNumber" maxlength="15" class="w-full font-mono text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="300000000000003">
+                <div id="vatValidationBadge" class="absolute inset-y-0 right-3 rtl:right-auto rtl:left-3 flex items-center pointer-events-none text-xs font-bold"></div>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-0.5">Must be exactly 15 digits, starting with 3 and ending with 3.</p>
+            </div>
+
+            <!-- Tag 3: Timestamp -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1 flex justify-between">
+                <span>3. Invoice Timestamp (تاريخ ووقت الفاتورة) *</span>
+                <span class="text-slate-400 font-normal lowercase">Tag 3 (ISO 8601)</span>
+              </label>
+              <div class="flex gap-2">
+                <input type="datetime-local" id="invoiceTimestamp" step="1" class="w-full text-sm rounded-lg border-slate-300 border px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                <button type="button" id="setNowBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold px-3 py-2 rounded-lg border border-slate-300 whitespace-nowrap transition">
+                  Now (الآن)
+                </button>
+              </div>
+            </div>
+
+            <!-- Amounts Calculation helper -->
+            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-3">
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-slate-800 uppercase tracking-wider">Financial Amounts (المبالغ المالية)</span>
+                <span class="text-[11px] text-emerald-700 font-semibold">Standard Saudi VAT Rate: 15%</span>
+              </div>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-1">Subtotal Excl. VAT (SAR)</label>
+                  <input type="number" id="subtotalAmount" step="0.01" min="0" class="w-full text-sm rounded-lg border-slate-300 border px-2.5 py-1.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="1000.00">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-1">Tag 5: VAT Total (SAR) *</label>
+                  <input type="number" id="vatAmount" step="0.01" min="0" class="w-full text-sm font-semibold text-emerald-800 rounded-lg border-slate-300 border px-2.5 py-1.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="150.00">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-600 mb-1">Tag 4: Total With VAT (SAR) *</label>
+                  <input type="number" id="totalAmount" step="0.01" min="0" class="w-full text-sm font-bold text-slate-900 rounded-lg border-slate-300 border px-2.5 py-1.5 focus:ring-2 focus:ring-emerald-500 focus:outline-none" placeholder="1150.00">
+                </div>
+              </div>
+            </div>
+
+            <!-- Optional Phase 2 Fields (Accordion toggle) -->
+            <div class="border border-slate-200 rounded-xl overflow-hidden">
+              <button type="button" id="phase2ToggleBtn" class="w-full bg-slate-100 hover:bg-slate-200/70 p-3 text-left rtl:text-right text-xs font-bold text-slate-800 flex justify-between items-center transition">
+                <span class="flex items-center gap-1.5">
+                  <span class="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded font-black">Phase 2</span>
+                  <span>Advanced Cryptographic Tags 6, 7 &amp; 8 (اختياري / مرحلة الربط والتكامل)</span>
+                </span>
+                <svg id="p2Chevron" class="w-4 h-4 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+              </button>
+              <div id="phase2Fields" class="p-3.5 space-y-3 bg-white hidden">
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Tag 6: Invoice Hash (Base64 SHA-256)</label>
+                  <input type="text" id="tag6Hash" class="w-full font-mono text-xs rounded border-slate-300 border px-2.5 py-1.5" placeholder="e.g. NWZlY2Q1M2Y...">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Tag 7: Cryptographic ECDSA Signature</label>
+                  <input type="text" id="tag7Sig" class="w-full font-mono text-xs rounded border-slate-300 border px-2.5 py-1.5" placeholder="e.g. MEQCICo6Z0X...">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 mb-1">Tag 8: Public Key (X.509 / EC PEM)</label>
+                  <input type="text" id="tag8PubKey" class="w-full font-mono text-xs rounded border-slate-300 border px-2.5 py-1.5" placeholder="e.g. MFkwEwYHKoZ...">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-100 flex flex-wrap gap-2 justify-between items-center text-xs text-slate-500">
+          <span>Instant automatic live encoding engine</span>
+          <button type="button" id="resetFormBtn" class="text-rose-600 hover:text-rose-800 font-semibold transition">
+            Clear Form (إعادة تعيين)
+          </button>
+        </div>
+      </div>
+
+      <!-- PREVIEW & RESULTS PANEL -->
+      <div class="lg:col-span-5 flex flex-col space-y-6">
+        
+        <!-- QR Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col items-center text-center relative">
+          <span class="absolute top-4 right-4 rtl:right-auto rtl:left-4 bg-emerald-50 text-emerald-800 border border-emerald-200 text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase">
+            Live Scannable QR
+          </span>
+
+          <h3 class="text-sm font-bold text-slate-900 mb-4" id="qrCardTitle">ZATCA Compliant QR Code</h3>
+          
+          <!-- Canvas Wrapper -->
+          <div id="qrcodeContainer" class="p-3 bg-white border border-slate-200 rounded-xl shadow-inner flex items-center justify-center min-w-[200px] min-h-[200px]">
+            <!-- Rendered QR -->
+          </div>
+
+          <p class="text-xs text-slate-500 mt-3" id="qrNotice">
+            Scan with official ZATCA app (تطبيق زاتكا) to test compliance.
+          </p>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap gap-2 justify-center w-full mt-4 no-print">
+            <button id="downloadQrBtn" class="flex-1 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition shadow-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span>Download PNG (تحميل)</span>
+            </button>
+            <button id="printReceiptBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2.5 px-3 rounded-lg flex items-center justify-center gap-1.5 transition shadow-sm">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              <span>Print Receipt (طباعة الفاتورة)</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Base64 & TLV Details Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+          <div class="flex justify-between items-center">
+            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider">Encoded Base64 String</h4>
+            <button id="copyBase64Btn" class="text-xs font-bold text-emerald-700 hover:text-emerald-900 bg-emerald-50 px-2.5 py-1 rounded border border-emerald-200 flex items-center gap-1 transition">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/></svg>
+              <span id="copyText">Copy Base64 (نسخ)</span>
+            </button>
+          </div>
+
+          <textarea id="outputBase64" readonly rows="3" class="w-full font-mono text-[11px] bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-slate-700 break-all select-all focus:outline-none"></textarea>
+
+          <!-- Hexadecimal Byte Stream summary -->
+          <div>
+            <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Hexadecimal TLV Stream</label>
+            <div id="outputHex" class="font-mono text-[10px] bg-slate-50 border border-slate-200 rounded p-2 text-slate-600 max-h-20 overflow-y-auto break-all"></div>
+          </div>
+
+          <!-- CSV Export Button -->
+          <button id="exportCsvBtn" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2 rounded-lg border border-slate-300 transition flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <span>Export TLV Breakdown to CSV (تصدير كملف إكسل)</span>
+          </button>
+        </div>
+
+        <!-- CTA CARD FOR EXCEL VBA TEMPLATE -->
+        <div class="bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden">
+          <div class="relative z-10 space-y-2.5">
+            <div class="inline-block bg-slate-950 text-amber-400 font-black text-[10px] px-2 py-0.5 rounded tracking-wider uppercase">
+              B2B Excel &amp; ERP Automation
+            </div>
+            <h4 class="text-base font-extrabold leading-snug">Automate ZATCA QR In Excel &amp; Access Without External APIs</h4>
+            <p class="text-xs text-amber-100 leading-relaxed">
+              Includes 100% native VBA TLV encoder macro module, UTF-8 byte stream builder, dynamic barcode fonts, and invoice templates.
+            </p>
+            <div class="pt-2">
+              <a href="https://gumroad.com" target="_blank" rel="noopener" class="inline-flex items-center justify-center w-full bg-slate-950 hover:bg-slate-900 text-amber-300 font-bold text-xs py-2.5 px-4 rounded-xl shadow-md transition">
+                <span>Get Complete Offline Excel VBA Master Template ($29)</span>
+                <svg class="w-4 h-4 ml-1.5 rtl:mr-1.5 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ================= DECODER SECTION ================= -->
+    <div id="sectionDecoder" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- DECODER INPUT -->
+      <div class="lg:col-span-6 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+        <div>
+          <h2 class="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-teal-600 inline-block"></span>
+            Decode &amp; Inspect Any ZATCA Base64 QR Code
+          </h2>
+          <p class="text-xs text-slate-500 mb-4">
+            Paste raw Base64 string from an invoice QR code or optical barcode scanner to parse every TLV tag.
+          </p>
+
+          <div class="space-y-4">
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Paste Base64 String Here:</label>
+              <textarea id="decoderInput" rows="6" class="w-full font-mono text-xs rounded-lg border-slate-300 border p-3 focus:ring-2 focus:ring-teal-500 focus:outline-none" placeholder="AQxBbC1GYXd6YW4gQ28CDzMwMDAwMDAwMDAwMDAwMwMUMjAyNS0wMi0yM1QxNDozMDowMFoEBzExNTAuMDAEBTE1MC4wMA=="></textarea>
+            </div>
+            
+            <div class="flex gap-3">
+              <button type="button" id="decodeActionBtn" class="bg-teal-600 hover:bg-teal-700 text-white text-xs font-bold py-2.5 px-5 rounded-lg transition shadow-sm flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <span>Decode String (فك التشفير)</span>
+              </button>
+              <button type="button" id="clearDecoderBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold py-2.5 px-4 rounded-lg border border-slate-300 transition">
+                Clear (مسح)
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-100 text-xs text-slate-400">
+          Supports both Phase 1 (Tags 1-5) and Phase 2 (Tags 6-9) TLV standards.
+        </div>
+      </div>
+
+      <!-- DECODER RESULTS -->
+      <div class="lg:col-span-6 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-100">
+            <h3 class="text-sm font-bold text-slate-900">Parsed Tag Breakdown (البيانات المستخرجة)</h3>
+            <span id="decodeStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">Waiting for input</span>
+          </div>
+
+          <div id="decodeResultsWrapper" class="space-y-3">
+            <div class="text-center py-12 text-slate-400 text-xs">
+              Paste a Base64 string on the left and click "Decode String" to view parsed tags.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= COMPLIANCE & LEGAL DISCLAIMER ================= -->
+    <div class="my-8 bg-amber-50 border-l-4 rtl:border-l-0 rtl:border-r-4 border-amber-500 p-4 rounded-r-xl rtl:rounded-r-none rtl:rounded-l-xl text-xs text-amber-900 leading-relaxed">
+      <div class="font-bold flex items-center gap-1.5 mb-1">
+        <svg class="w-4 h-4 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <span>Regulatory &amp; Compliance Disclaimer / إخلاء مسؤولية تنظيمي وقانوني</span>
+      </div>
+      <p>
+        <strong>EN:</strong> This tool is provided solely for informational, development testing, and administrative calculation purposes. It does not replace official integration testing with the ZATCA Fatoora Portal or clearance through official cryptographic hardware (CSID). All VAT figures, dates, and numbers must be reconciled with your enterprise accounting records and current Saudi ZATCA bylaws before submitting tax returns.
+        <br>
+        <strong>AR:</strong> هذه الأداة مخصصة للأغراض التجريبية والتدقيق الإداري والتحقق البرمجي فقط، ولا تغني عن الربط المباشر مع منصة فاتورة التابعة لهيئة الزكاة والضريبة والجمارك أو الحصول على شهادات التشفير الرسمية (CSID). يجب مراجعة وتدقيق جميع المبالغ والبيانات الضريبية مع المستشار المالي قبل تقديم الإقرارات الضريبية.
+      </p>
+    </div>
+
+    <!-- ================= PRINTABLE RECEIPT TEMPLATE (Hidden until print) ================= -->
+    <div id="printableReceipt" class="print-only hidden p-8 max-w-sm mx-auto border border-dashed border-slate-300 text-center font-mono">
+      <h2 class="text-base font-black uppercase tracking-tight" id="prSeller">COMPANY NAME</h2>
+      <p class="text-xs mt-1">فاتورة ضريبية مبسطة</p>
+      <p class="text-xs">Simplified Tax Invoice</p>
+      <hr class="my-2 border-slate-300" />
+      <div class="text-left text-xs space-y-1">
+        <div class="flex justify-between"><span>VAT No (الرقم الضريبي):</span> <strong id="prVat">-</strong></div>
+        <div class="flex justify-between"><span>Date (التاريخ):</span> <span id="prDate">-</span></div>
+        <div class="flex justify-between"><span>Subtotal (المجموع):</span> <span id="prSub">0.00 SAR</span></div>
+        <div class="flex justify-between"><span>VAT 15% (الضريبة):</span> <span id="prTax">0.00 SAR</span></div>
+        <div class="flex justify-between font-bold text-sm border-t border-slate-300 pt-1"><span>Total (الإجمالي):</span> <span id="prTotal">0.00 SAR</span></div>
+      </div>
+      <div class="mt-4 flex justify-center" id="prQrHolder"></div>
+      <p class="text-[10px] mt-2 text-slate-500">ZATCA Electronic Invoice Compliant</p>
+    </div>
+
+    <!-- ================= SEO CONTENT & TECHNICAL GUIDE ================= -->
+    <article class="mt-12 bg-white rounded-2xl border border-slate-200 p-8 shadow-sm space-y-8 no-print">
+      
+      <div>
+        <h2 class="text-xl font-extrabold text-slate-900 mb-4">
+          Complete Technical Guide to ZATCA E-Invoicing QR Code Requirements in Saudi Arabia
+        </h2>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4">
+          Under the Kingdom of Saudi Arabia's Electronic Invoicing (Fatoora) Regulations issued by the Zakat, Tax and Customs Authority (ZATCA), all taxable persons resident in the Kingdom are required to issue electronic invoices containing a standardized, machine-readable Two-Dimensional Barcode (QR Code). For <strong>Simplified Tax Invoices</strong> (B2C) and <strong>Standard Tax Invoices</strong> (B2B summary representations), the QR code must adhere strictly to the Tag-Length-Value (TLV) encoding format converted into a UTF-8 Base64 string. Plain text QR codes containing plain URLs or JSON are non-compliant and subject to regulatory penalties.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+          <h3 class="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+            Phase 1 (Generation Phase - مرحلة الإصدار)
+          </h3>
+          <p class="text-xs text-slate-600 leading-relaxed mb-3">
+            Enforced since December 4, 2021. Any cash register or billing system issuing Simplified Tax Invoices must encode 5 mandatory fields into the TLV Base64 QR code:
+          </p>
+          <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside font-medium">
+            <li><strong>Tag 1:</strong> Seller’s commercial or branch name (UTF-8).</li>
+            <li><strong>Tag 2:</strong> 15-digit VAT registration number (starts &amp; ends with 3).</li>
+            <li><strong>Tag 3:</strong> Invoice issuance date &amp; time in ISO 8601 format (YYYY-MM-DDTHH:mm:ssZ).</li>
+            <li><strong>Tag 4:</strong> Total invoice amount with VAT included (as string formatted decimal).</li>
+            <li><strong>Tag 5:</strong> Total VAT liability amount.</li>
+          </ul>
+        </div>
+
+        <div class="bg-slate-50 p-5 rounded-xl border border-slate-200">
+          <h3 class="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-purple-600"></span>
+            Phase 2 (Integration Phase - مرحلة الربط والتكامل)
+          </h3>
+          <p class="text-xs text-slate-600 leading-relaxed mb-3">
+            Rolling out in phased compliance waves since January 1, 2023. Adds advanced cryptographic security to prevent invoice tampering and backdating:
+          </p>
+          <ul class="text-xs text-slate-700 space-y-1.5 list-disc list-inside font-medium">
+            <li><strong>Tag 6:</strong> Invoice Hash (SHA-256 digested invoice XML).</li>
+            <li><strong>Tag 7:</strong> ECDSA Digital Cryptographic Signature (secp256k1).</li>
+            <li><strong>Tag 8:</strong> Public Key of the Cryptographic Stamp identifier (X.509 cert).</li>
+            <li><strong>Tag 9:</strong> Cryptographic Stamp Identifier (for certified devices).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="text-base font-bold text-slate-900 mb-3">
+          How the TLV (Tag-Length-Value) Byte Structure Works
+        </h3>
+        <p class="text-xs text-slate-600 leading-relaxed mb-4">
+          TLV is a compact binary serialization protocol where each data element consists of three sequential byte components:
+        </p>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-xs text-left rtl:text-right border border-slate-200 rounded-lg">
+            <thead class="bg-slate-100 text-slate-700 font-bold">
+              <tr>
+                <th class="p-2.5 border-b">Component</th>
+                <th class="p-2.5 border-b">Byte Size</th>
+                <th class="p-2.5 border-b">Description &amp; Example</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 text-slate-600">
+              <tr>
+                <td class="p-2.5 font-bold text-slate-800">Tag (Identifier)</td>
+                <td class="p-2.5 font-mono">1 Byte</td>
+                <td class="p-2.5">Sequential integer from 1 to 9 (e.g. <code>0x01</code> for Seller Name, <code>0x02</code> for VAT number).</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-800">Length</td>
+                <td class="p-2.5 font-mono">1 Byte (or variable)</td>
+                <td class="p-2.5">The byte count of the UTF-8 encoded value string (e.g., 15 bytes = <code>0x0F</code>).</td>
+              </tr>
+              <tr>
+                <td class="p-2.5 font-bold text-slate-800">Value</td>
+                <td class="p-2.5 font-mono">Variable Bytes</td>
+                <td class="p-2.5">The actual UTF-8 byte payload (Arabic letters typically take 2 bytes each in UTF-8).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">
+          Once all tags are serialized sequentially into a contiguous byte buffer, the entire byte array is encoded into standard Base64 representation. This Base64 text is then printed directly as an ISO/IEC 18004 QR Code.
+        </p>
+      </div>
+
+      <!-- FAQS -->
+      <div>
+        <h3 class="text-base font-bold text-slate-900 mb-4">Frequently Asked Questions (الأسئلة الشائعة)</h3>
+        <div class="space-y-4 text-xs">
+          <div class="border border-slate-200 rounded-xl p-4">
+            <h4 class="font-bold text-slate-800 mb-1">1. What happens if I put a simple website URL or JSON in my Saudi invoice QR code?</h4>
+            <p class="text-slate-600 leading-relaxed">
+              ZATCA field inspectors utilize the official Fatoora inspection mobile application. Scanning a non-TLV QR code fails verification instantly, triggering statutory fines under the VAT implementation regulations for non-compliant billing systems.
+            </p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <h4 class="font-bold text-slate-800 mb-1">2. Why does my Arabic seller name show corrupted characters in standard QR readers?</h4>
+            <p class="text-slate-600 leading-relaxed">
+              Arabic text must be encoded using UTF-8 byte streams rather than ASCII or Windows-1256. When calculating the "Length" byte in TLV, you must count the UTF-8 bytes rather than the character length (each Arabic letter equals 2 bytes). This web tool handles multi-byte UTF-8 string encoding natively.
+            </p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <h4 class="font-bold text-slate-800 mb-1">3. Does a B2B Standard Tax Invoice require a QR code?</h4>
+            <p class="text-slate-600 leading-relaxed">
+              Under Phase 1, QR codes were strictly mandatory on Simplified Tax Invoices (B2C) and optional for Standard Tax Invoices (B2B). Under Phase 2, when integrated with the Fatoora Portal, the portal returns the cryptographic stamp which must be printed as a QR code on both B2B and B2C invoices.
+            </p>
+          </div>
+          <div class="border border-slate-200 rounded-xl p-4">
+            <h4 class="font-bold text-slate-800 mb-1">4. How do I generate this inside Microsoft Excel without third-party web calls?</h4>
+            <p class="text-slate-600 leading-relaxed">
+              Pure VBA functions can assemble the byte array and convert binary data into Base64 using Microsoft XML Core Services (MSXML2). You can then bind the string to a 2D font or an embedded active shape. Check out our ready-to-deploy Excel Master Template available above.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </article>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="bg-white border-t border-slate-200 py-6 px-4 text-center text-xs text-slate-500 no-print">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
+      <p>© 2025 Saudi ZATCA E-Invoice TLV Generator Engine. All rights reserved.</p>
+      <p class="text-slate-400">Compatible with ZATCA Electronic Invoicing Specifications V2.3</p>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script>
+    // TRANSLATIONS
+    const i18n = {
+      en: {
+        appTitle: "Saudi ZATCA E-Invoice QR & TLV Engine",
+        appSubtitle: "Phase 1 & Phase 2 Base64 TLV Encoding, Validation & Decoding Tool",
+        bannerText: "Need automated offline ZATCA QR generation inside Excel & ERP?",
+        bannerBtn: "Get Automated Excel & VBA Master Template ($29)",
+        tabGenText: "Generate & Encode QR (توليد الرمز)",
+        tabDecText: "Decode & Audit Base64 (فك وتدقيق الرمز)",
+        langBtn: "عربي",
+        qrCardTitle: "ZATCA Compliant QR Code",
+        qrNotice: "Scan with official ZATCA app (تطبيق زاتكا) to test compliance.",
+        copySuccess: "Copied to Clipboard!",
+        copyDefault: "Copy Base64 (نسخ)"
+      },
+      ar: {
+        appTitle: "محرك توليد وفك تشفير رمز QR للفاتورة الإلكترونية (زاتكا)",
+        appSubtitle: "أداة معتمدة لترميز وتدقيق نصوص TLV Base64 للمرحلة الأولى والمرحلة الثانية",
+        bannerText: "هل تحتاج لتوليد رمز الاستجابة السريعة تلقائياً داخل الإكسل وبرامج المحاسبة دون اتصال؟",
+        bannerBtn: "احصل على قالب الإكسل والماكرو التلقائي ($29)",
+        tabGenText: "توليد وترميز QR",
+        tabDecText: "فك التشفير والتدقيق",
+        langBtn: "English",
+        qrCardTitle: "رمز الاستجابة السريعة المعتمد",
+        qrNotice: "امسح الرمز عبر تطبيق زاتكا الرسمي للتحقق من الصلاحية.",
+        copySuccess: "تم النسخ بنجاح!",
+        copyDefault: "نسخ Base64"
+      }
+    };
+
+    let currentLang = 'en';
+
+    // STATE & REFS
+    const sellerNameInput = document.getElementById('sellerName');
+    const vatNumberInput = document.getElementById('vatNumber');
+    const invoiceTimestampInput = document.getElementById('invoiceTimestamp');
+    const subtotalAmountInput = document.getElementById('subtotalAmount');
+    const vatAmountInput = document.getElementById('vatAmount');
+    const totalAmountInput = document.getElementById('totalAmount');
+    const tag6HashInput = document.getElementById('tag6Hash');
+    const tag7SigInput = document.getElementById('tag7Sig');
+    const tag8PubKeyInput = document.getElementById('tag8PubKey');
+    const vatValidationBadge = document.getElementById('vatValidationBadge');
+    const outputBase64 = document.getElementById('outputBase64');
+    const outputHex = document.getElementById('outputHex');
+    const qrcodeContainer = document.getElementById('qrcodeContainer');
+
+    let qrInstance = null;
+
+    // HELPER: Format Date to ISO Local string
+    function getNowLocalIso() {
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      return now.toISOString().slice(0, 19);
+    }
+
+    // TLV ENCODING UTILITIES (UTF-8 SAFE)
+    function getUtf8Bytes(str) {
+      return new TextEncoder().encode(str);
+    }
+
+    function buildTlvTag(tagNumber, textValue) {
+      if (!textValue || textValue.trim() === '') return null;
+      const valueBytes = getUtf8Bytes(textValue.trim());
+      const len = valueBytes.length;
+      
+      // Basic 1-byte length check per ZATCA Phase 1 standard
+      // For extremely long Phase 2 keys, support variable length if needed
+      let headerBytes;
+      if (len < 128) {
+        headerBytes = new Uint8Array([tagNumber, len]);
+      } else if (len <= 255) {
+        headerBytes = new Uint8Array([tagNumber, len]);
+      } else {
+        // Multibyte length representation
+        headerBytes = new Uint8Array([tagNumber, 0x82, (len >> 8) & 0xff, len & 0xff]);
+      }
+      
+      const tagBuffer = new Uint8Array(headerBytes.length + len);
+      tagBuffer.set(headerBytes, 0);
+      tagBuffer.set(valueBytes, headerBytes.length);
+      return tagBuffer;
+    }
+
+    function bytesToBase64(bytes) {
+      let binary = '';
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    }
+
+    function bytesToHex(bytes) {
+      return Array.from(bytes)
+        .map(b => b.toString(16).padStart(2, '0').toUpperCase())
+        .join(' ');
+    }
+
+    // VAT NUMBER VALIDATION
+    function validateSaudiVat(vat) {
+      const cleaned = (vat || '').replace(/\s+/g, '');
+      const isValid = /^3\d{13}3$/.test(cleaned);
+      return { isValid, cleaned };
+    }
+
+    // UPDATE GENERATOR
+    function updateQrGeneration() {
+      const seller = sellerNameInput.value.trim() || 'Al-Amal Trading Est';
+      const vatRaw = vatNumberInput.value.trim() || '310123456700003';
+      const timestamp = invoiceTimestampInput.value ? (invoiceTimestampInput.value + 'Z') : new Date().toISOString();
+      const total = parseFloat(totalAmountInput.value) || 0;
+      const vat = parseFloat(vatAmountInput.value) || 0;
+
+      // Validate VAT visually
+      const vatCheck = validateSaudiVat(vatRaw);
+      if (vatRaw.length > 0) {
+        if (vatCheck.isValid) {
+          vatValidationBadge.innerHTML = '<span class="text-emerald-600 flex items-center gap-0.5">✓ Valid KSA VAT</span>';
+          vatNumberInput.classList.remove('border-rose-400');
+          vatNumberInput.classList.add('border-emerald-400');
+        } else {
+          vatValidationBadge.innerHTML = '<span class="text-rose-500 text-[10px]">Must be 15 digits (Starts & ends with 3)</span>';
+          vatNumberInput.classList.remove('border-emerald-400');
+          vatNumberInput.classList.add('border-rose-400');
+        }
+      } else {
+        vatValidationBadge.innerHTML = '';
+        vatNumberInput.classList.remove('border-rose-400', 'border-emerald-400');
+      }
+
+      // Build tags array
+      const tagList = [];
+      tagList.push(buildTlvTag(1, seller));
+      tagList.push(buildTlvTag(2, vatRaw));
+      tagList.push(buildTlvTag(3, timestamp));
+      tagList.push(buildTlvTag(4, total.toFixed(2)));
+      tagList.push(buildTlvTag(5, vat.toFixed(2)));
+
+      // Phase 2 optional tags
+      const t6 = buildTlvTag(6, tag6HashInput.value.trim());
+      if (t6) tagList.push(t6);
+      const t7 = buildTlvTag(7, tag7SigInput.value.trim());
+      if (t7) tagList.push(t7);
+      const t8 = buildTlvTag(8, tag8PubKeyInput.value.trim());
+      if (t8) tagList.push(t8);
+
+      // Combine buffers
+      const validTags = tagList.filter(t => t !== null);
+      const totalBytesLength = validTags.reduce((acc, curr) => acc + curr.length, 0);
+      const combined = new Uint8Array(totalBytesLength);
+      let offset = 0;
+      for (const t of validTags) {
+        combined.set(t, offset);
+        offset += t.length;
+      }
+
+      // Convert to Base64 and Hex
+      const b64 = bytesToBase64(combined);
+      const hex = bytesToHex(combined);
+
+      outputBase64.value = b64;
+      outputHex.textContent = hex;
+
+      // Render QR Code
+      qrcodeContainer.innerHTML = '';
+      try {
+        if (typeof QRCode !== 'undefined') {
+          qrInstance = new QRCode(qrcodeContainer, {
+            text: b64,
+            width: 190,
+            height: 190,
+            colorDark: "#0f172a",
+            colorLight: "#ffffff",
+            correctLevel: QRCode.CorrectLevel.M
+          });
+        } else {
+          qrcodeContainer.innerHTML = '<span class="text-xs text-slate-400">QR library loading...</span>';
+        }
+      } catch (err) {
+        console.error('QR rendering error:', err);
+        qrcodeContainer.innerHTML = '<span class="text-xs text-rose-500">Error rendering QR code</span>';
+      }
+
+      // Update printable receipt elements
+      document.getElementById('prSeller').textContent = seller;
+      document.getElementById('prVat').textContent = vatRaw;
+      document.getElementById('prDate').textContent = timestamp;
+      document.getElementById('prSub').textContent = (total - vat).toFixed(2) + ' SAR';
+      document.getElementById('prTax').textContent = vat.toFixed(2) + ' SAR';
+      document.getElementById('prTotal').textContent = total.toFixed(2) + ' SAR';
+    }
+
+    // AMOUNTS CALCULATION ASSISTANT
+    subtotalAmountInput.addEventListener('input', () => {
+      const sub = parseFloat(subtotalAmountInput.value) || 0;
+      const tax = +(sub * 0.15).toFixed(2);
+      const tot = +(sub + tax).toFixed(2);
+      vatAmountInput.value = tax.toFixed(2);
+      totalAmountInput.value = tot.toFixed(2);
+      updateQrGeneration();
+    });
+
+    totalAmountInput.addEventListener('input', () => {
+      updateQrGeneration();
+    });
+
+    vatAmountInput.addEventListener('input', () => {
+      updateQrGeneration();
+    });
+
+    // DECODER LOGIC
+    function decodeZatcaBase64(base64String) {
+      const cleanStr = base64String.trim();
+      if (!cleanStr) return { error: 'Please enter a valid Base64 string.' };
+
+      let binaryStr;
+      try {
+        binaryStr = atob(cleanStr);
+      } catch (e) {
+        return { error: 'Invalid Base64 format. Unable to decode string.' };
+      }
+
+      const bytes = new Uint8Array(binaryStr.length);
+      for (let i = 0; i < binaryStr.length; i++) {
+        bytes[i] = binaryStr.charCodeAt(i);
+      }
+
+      const decoder = new TextDecoder('utf-8');
+      const parsed = [];
+      let idx = 0;
+
+      const tagNames = {
+        1: { en: 'Seller Name', ar: 'اسم المورد' },
+        2: { en: 'VAT Registration Number', ar: 'الرقم الضريبي' },
+        3: { en: 'Invoice Timestamp', ar: 'تاريخ ووقت الفاتورة' },
+        4: { en: 'Invoice Total (with VAT)', ar: 'إجمالي الفاتورة مع الضريبة' },
+        5: { en: 'VAT Amount', ar: 'مجموع ضريبة القيمة المضافة' },
+        6: { en: 'Invoice Hash', ar: 'الرقم المميز للفاتورة (هاش)' },
+        7: { en: 'Cryptographic Signature', ar: 'الختم الرقمي' },
+        8: { en: 'Public Key', ar: 'المفتاح العام' },
+        9: { en: 'Stamp Identifier', ar: 'معرف الختم' }
+      };
+
+      while (idx < bytes.length) {
+        const tagId = bytes[idx];
+        idx++;
+        if (idx >= bytes.length) break;
+
+        let len = bytes[idx];
+        idx++;
+        
+        // Multi-byte length parsing
+        if (len === 0x82 && idx + 1 < bytes.length) {
+          len = (bytes[idx] << 8) | bytes[idx + 1];
+          idx += 2;
+        }
+
+        if (idx + len > bytes.length) {
+          // Incomplete buffer or corrupted tag
+          const partial = bytes.slice(idx);
+          parsed.push({
+            tag: tagId,
+            name: tagNames[tagId] || { en: `Tag ${tagId}`, ar: `العنصر ${tagId}` },
+            length: partial.length,
+            value: decoder.decode(partial) + ' (truncated)',
+            rawHex: bytesToHex(partial)
+          });
+          break;
+        }
+
+        const valBytes = bytes.slice(idx, idx + len);
+        idx += len;
+        const textVal = decoder.decode(valBytes);
+
+        parsed.push({
+          tag: tagId,
+          name: tagNames[tagId] || { en: `Tag ${tagId}`, ar: `العنصر ${tagId}` },
+          length: len,
+          value: textVal,
+          rawHex: bytesToHex(valBytes)
+        });
+      }
+
+      return { error: null, tags: parsed, totalBytes: bytes.length };
+    }
+
+    function renderDecodedResults(result) {
+      const wrapper = document.getElementById('decodeResultsWrapper');
+      const badge = document.getElementById('decodeStatusBadge');
+
+      if (result.error) {
+        badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-700';
+        badge.textContent = 'Decode Error';
+        wrapper.innerHTML = `
+          <div class="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs">
+            <strong>Parsing Error:</strong> ${result.error}
+          </div>
+        `;
+        return;
+      }
+
+      badge.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
+      badge.textContent = `${result.tags.length} Tags Identified (${result.totalBytes} bytes)`;
+
+      let html = '<div class="divide-y divide-slate-100 border border-slate-200 rounded-xl overflow-hidden">';
+      
+      result.tags.forEach(item => {
+        const isVatTag = item.tag === 2;
+        let extraBadge = '';
+        if (isVatTag) {
+          const vChk = validateSaudiVat(item.value);
+          extraBadge = vChk.isValid 
+            ? '<span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded ml-2">Valid 15-digit KSA VAT</span>'
+            : '<span class="text-[10px] bg-rose-100 text-rose-700 font-bold px-1.5 py-0.5 rounded ml-2">Invalid VAT format</span>';
+        }
+
+        html += `
+          <div class="p-3 bg-white hover:bg-slate-50 transition text-xs">
+            <div class="flex justify-between items-center text-slate-500 text-[11px] mb-1">
+              <span class="font-bold text-slate-800">
+                Tag ${item.tag}: ${currentLang === 'ar' ? item.name.ar : item.name.en}
+                ${extraBadge}
+              </span>
+              <span class="font-mono text-[10px]">${item.length} byte(s)</span>
+            </div>
+            <div class="font-medium text-slate-900 break-all select-all font-mono text-xs bg-slate-50 p-1.5 rounded border border-slate-200">
+              ${escapeHtml(item.value)}
+            </div>
+          </div>
+        `;
+      });
+
+      html += '</div>';
+      wrapper.innerHTML = html;
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // CSV EXPORT
+    function exportCsv() {
+      const seller = sellerNameInput.value || '';
+      const vat = vatNumberInput.value || '';
+      const dt = invoiceTimestampInput.value || '';
+      const tot = totalAmountInput.value || '';
+      const tax = vatAmountInput.value || '';
+      const b64 = outputBase64.value || '';
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Tag,Field_Name,Field_Name_Arabic,Value,Length_Bytes\r\n";
+      csvContent += `1,Seller Name,اسم المورد,"${seller.replace(/"/g, '""')}",${getUtf8Bytes(seller).length}\r\n`;
+      csvContent += `2,VAT Registration Number,الرقم الضريبي,"${vat}",${vat.length}\r\n`;
+      csvContent += `3,Invoice Timestamp,تاريخ ووقت الفاتورة,"${dt}",${dt.length}\r\n`;
+      csvContent += `4,Invoice Total,إجمالي الفاتورة,"${tot}",${tot.length}\r\n`;
+      csvContent += `5,VAT Total,مجموع الضريبة,"${tax}",${tax.length}\r\n`;
+      csvContent += `Base64,Combined TLV,النص المرمز,"${b64}",${b64.length}\r\n`;
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `ZATCA_EInvoice_TLV_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // DOWNLOAD QR CODE PNG
+    function downloadQrImage() {
+      const img = qrcodeContainer.querySelector('img');
+      if (img && img.src) {
+        const a = document.createElement('a');
+        a.href = img.src;
+        a.download = `ZATCA_QR_${Date.now()}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } else {
+        const canvas = qrcodeContainer.querySelector('canvas');
+        if (canvas) {
+          const a = document.createElement('a');
+          a.href = canvas.toDataURL('image/png');
+          a.download = `ZATCA_QR_${Date.now()}.png`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        }
+      }
+    }
+
+    // BILINGUAL TOGGLE
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      const htmlTag = document.documentElement;
+      htmlTag.setAttribute('lang', currentLang);
+      htmlTag.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+
+      document.getElementById('appTitle').innerHTML = i18n[currentLang].appTitle;
+      document.getElementById('appSubtitle').innerHTML = i18n[currentLang].appSubtitle;
+      document.getElementById('bannerText').innerHTML = i18n[currentLang].bannerText;
+      document.getElementById('bannerBtn').innerHTML = i18n[currentLang].bannerBtn;
+      document.getElementById('tabGenText').innerHTML = i18n[currentLang].tabGenText;
+      document.getElementById('tabDecText').innerHTML = i18n[currentLang].tabDecText;
+      document.getElementById('langLabel').textContent = i18n[currentLang].langBtn;
+      document.getElementById('qrCardTitle').textContent = i18n[currentLang].qrCardTitle;
+      document.getElementById('qrNotice').textContent = i18n[currentLang].qrNotice;
+    }
+
+    // EVENT LISTENERS
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set default timestamp
+      invoiceTimestampInput.value = getNowLocalIso();
+      
+      // Pre-fill sample values
+      sellerNameInput.value = 'شركة الفوزان للتجارة والمقاولات';
+      vatNumberInput.value = '300078912300003';
+      subtotalAmountInput.value = '1000.00';
+      vatAmountInput.value = '150.00';
+      totalAmountInput.value = '1150.00';
+
+      updateQrGeneration();
+
+      // Form inputs change
+      [sellerNameInput, vatNumberInput, invoiceTimestampInput, tag6HashInput, tag7SigInput, tag8PubKeyInput].forEach(elem => {
+        elem.addEventListener('input', updateQrGeneration);
+      });
+
+      document.getElementById('setNowBtn').addEventListener('click', () => {
+        invoiceTimestampInput.value = getNowLocalIso();
+        updateQrGeneration();
+      });
+
+      document.getElementById('loadSampleBtn').addEventListener('click', () => {
+        sellerNameInput.value = 'مؤسسة التقنية المتقدمة للحلول البرمجية';
+        vatNumberInput.value = '310998877600003';
+        invoiceTimestampInput.value = getNowLocalIso();
+        subtotalAmountInput.value = '2500.00';
+        vatAmountInput.value = '375.00';
+        totalAmountInput.value = '2875.00';
+        updateQrGeneration();
+      });
+
+      document.getElementById('resetFormBtn').addEventListener('click', () => {
+        sellerNameInput.value = '';
+        vatNumberInput.value = '';
+        subtotalAmountInput.value = '';
+        vatAmountInput.value = '';
+        totalAmountInput.value = '';
+        tag6HashInput.value = '';
+        tag7SigInput.value = '';
+        tag8PubKeyInput.value = '';
+        invoiceTimestampInput.value = getNowLocalIso();
+        updateQrGeneration();
+      });
+
+      // Copy button
+      document.getElementById('copyBase64Btn').addEventListener('click', () => {
+        outputBase64.select();
+        navigator.clipboard.writeText(outputBase64.value).then(() => {
+          const copyText = document.getElementById('copyText');
+          copyText.textContent = i18n[currentLang].copySuccess;
+          setTimeout(() => {
+            copyText.textContent = i18n[currentLang].copyDefault;
+          }, 2000);
+        });
+      });
+
+      // Download QR
+      document.getElementById('downloadQrBtn').addEventListener('click', downloadQrImage);
+
+      // Export CSV
+      document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
+
+      // Print receipt
+      document.getElementById('printReceiptBtn').addEventListener('click', () => {
+        const prHolder = document.getElementById('prQrHolder');
+        prHolder.innerHTML = '';
+        const img = qrcodeContainer.querySelector('img');
+        if (img) {
+          prHolder.appendChild(img.cloneNode(true));
+        }
+        window.print();
+      });
+
+      // Tabs switching
+      const tabGenBtn = document.getElementById('tabGenBtn');
+      const tabDecBtn = document.getElementById('tabDecBtn');
+      const secGen = document.getElementById('sectionGenerator');
+      const secDec = document.getElementById('sectionDecoder');
+
+      tabGenBtn.addEventListener('click', () => {
+        tabGenBtn.classList.add('tab-active');
+        tabGenBtn.classList.remove('text-slate-500');
+        tabDecBtn.classList.remove('tab-active');
+        tabDecBtn.classList.add('text-slate-500');
+        secGen.classList.remove('hidden');
+        secDec.classList.add('hidden');
+      });
+
+      tabDecBtn.addEventListener('click', () => {
+        tabDecBtn.classList.add('tab-active');
+        tabDecBtn.classList.remove('text-slate-500');
+        tabGenBtn.classList.remove('tab-active');
+        tabGenBtn.classList.add('text-slate-500');
+        secDec.classList.remove('hidden');
+        secGen.classList.add('hidden');
+      });
+
+      // Phase 2 Accordion
+      const p2Btn = document.getElementById('phase2ToggleBtn');
+      const p2Fields = document.getElementById('phase2Fields');
+      const p2Chevron = document.getElementById('p2Chevron');
+      p2Btn.addEventListener('click', () => {
+        const isHidden = p2Fields.classList.contains('hidden');
+        if (isHidden) {
+          p2Fields.classList.remove('hidden');
+          p2Chevron.classList.add('rotate-180');
+        } else {
+          p2Fields.classList.add('hidden');
+          p2Chevron.classList.remove('rotate-180');
+        }
+      });
+
+      // Decoder actions
+      document.getElementById('decodeActionBtn').addEventListener('click', () => {
+        const input = document.getElementById('decoderInput').value;
+        const res = decodeZatcaBase64(input);
+        renderDecodedResults(res);
+      });
+
+      document.getElementById('clearDecoderBtn').addEventListener('click', () => {
+        document.getElementById('decoderInput').value = '';
+        document.getElementById('decodeResultsWrapper').innerHTML = `
+          <div class="text-center py-12 text-slate-400 text-xs">
+            Paste a Base64 string on the left and click "Decode String" to view parsed tags.
+          </div>
+        `;
+        document.getElementById('decodeStatusBadge').textContent = 'Waiting for input';
+        document.getElementById('decodeStatusBadge').className = 'text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600';
+      });
+
+      // Language button
+      document.getElementById('langToggleBtn').addEventListener('click', toggleLanguage);
+    });
+  </script>
+</body>
+</html>
