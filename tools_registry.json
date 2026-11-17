@@ -250,5 +250,12 @@
     "title_ar": "حاسبة تخصيص ضريبة القيمة المضافة وخصم المدخلات الجزئي في السعودية",
     "description_en": "Calculate KSA proportional VAT input tax recovery, partial exemption ratio, and ZATCA annual adjustments accurately under VAT Implementing Regulations.",
     "date": "2026-11-16"
+  },
+  {
+    "slug": "saudi-commercial-register-cr-fees-and-chamber-of-commerce-calculator",
+    "title_en": "Saudi Commercial Register (CR) Fees & Chamber of Commerce Calculator",
+    "title_ar": "حساب رسوم السجل التجاري وغرفة التجارة في السعودية",
+    "description_en": "Calculate accurate Saudi Commercial Register (CR) renewal fees, main/branch office costs, and Chamber of Commerce subscription fees instantly.",
+    "date": "2026-11-17"
   }
 ]

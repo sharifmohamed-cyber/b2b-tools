@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi Commercial Register (CR) Fees & Chamber of Commerce Calculator</title>
+    <meta name="description" content="Calculate accurate Saudi Commercial Register (CR) renewal fees, main/branch office costs, and Chamber of Commerce subscription fees instantly.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            600: '#047857',
+                            700: '#065F46',
+                            800: '#064E3B',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .rtl-support { direction: rtl; }
+        .ltr-support { direction: ltr; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased">
+
+    <!-- Top Sticky Conversion Banner -->
+    <div class="bg-emerald-900 text-white text-xs md:text-sm py-2 px-4 text-center sticky top-0 z-50 shadow-md flex flex-wrap justify-center items-center gap-2">
+        <span id="bannerText">🚀 Need automated compliance & corporate license tracking? Get the Complete Saudi Business License & HR Excel Master Suite.</span>
+        <a href="https://gumroad.com" target="_blank" class="bg-amber-400 text-slate-900 font-bold px-3 py-1 rounded text-xs hover:bg-amber-300 transition shadow">Get Template ($29)</a>
+    </div>
+
+    <!-- Main Header -->
+    <header class="bg-white border-b border-slate-200 py-6 px-4 sm:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 id="mainTitle" class="text-2xl sm:text-3xl font-bold text-slate-900">Saudi Commercial Register (CR) & Chamber Calculator</h1>
+                <p id="subTitle" class="text-sm text-slate-500 mt-1">Calculate Ministry of Commerce (MoC) CR fees and regional Chamber of Commerce dues accurately.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <button onclick="toggleLanguage()" id="langBtn" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg text-sm transition">
+                    العربية / English
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Calculator Form Panel (7 Cols) -->
+            <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+                <h2 id="calcHeader" class="text-lg font-bold text-slate-900 mb-6 pb-2 border-b border-slate-100">License & Entity Parameters</h2>
+                
+                <form id="crCalculatorForm" onsubmit="event.preventDefault(); calculateFees();" class="space-y-6">
+                    <!-- Entity Type -->
+                    <div>
+                        <label id="lblEntityType" class="block text-sm font-medium text-slate-700 mb-2">Entity Type / نوع المنشأة</label>
+                        <select id="entityType" onchange="calculateFees()" class="w-full rounded-lg border border-slate-300 py-2.5 px-3 text-slate-800 focus:ring-2 focus:ring-brand-600 focus:outline-none">
+                            <option value="llc">Limited Liability Company (LLC) / شركة ذات مسؤولية محدودة</option>
+                            <option value="establishment">Sole Proprietorship / مؤسسة فردية</option>
+                            <option value="joint_stock">Joint Stock Company (JSC) / شركة مساهمة</option>
+                            <option value="branch">Foreign Branch / فرع شركة أجنبية</option>
+                        </select>
+                    </div>
+
+                    <!-- Registration Type -->
+                    <div>
+                        <label id="lblRegType" class="block text-sm font-medium text-slate-700 mb-2">Registration Category / تصنيف التسجيل</label>
+                        <select id="regType" onchange="calculateFees()" class="w-full rounded-lg border border-slate-300 py-2.5 px-3 text-slate-800 focus:ring-2 focus:ring-brand-600 focus:outline-none">
+                            <option value="main">Main Commercial Register / السجل الرئيسي</option>
+                            <option value="branch">Branch Commercial Register / سجل فرعي</option>
+                        </select>
+                    </div>
+
+                    <!-- Validity Years -->
+                    <div>
+                        <label id="lblYears" class="block text-sm font-medium text-slate-700 mb-2">Renewal Duration (Years) / مدة التجديد (سنوات)</label>
+                        <select id="validityYears" onchange="calculateFees()" class="w-full rounded-lg border border-slate-300 py-2.5 px-3 text-slate-800 focus:ring-2 focus:ring-brand-600 focus:outline-none">
+                            <option value="1">1 Year / سنة واحدة</option>
+                            <option value="2">2 Years / سنتان</option>
+                            <option value="3">3 Years / ثلاث سنوات</option>
+                            <option value="4">4 Years / أربع سنوات</option>
+                            <option value="5">5 Years / خمس سنوات</option>
+                        </select>
+                    </div>
+
+                    <!-- Chamber of Commerce Region & Grade -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label id="lblChamber" class="block text-sm font-medium text-slate-700 mb-2">Chamber of Commerce / غرفة التجارة</label>
+                            <select id="chamberRegion" onchange="calculateFees()" class="w-full rounded-lg border border-slate-300 py-2.5 px-3 text-slate-800 focus:ring-2 focus:ring-brand-600 focus:outline-none">
+                                <option value="riyadh">Riyadh / الرياض</option>
+                                <option value="jeddah">Jeddah / جدة</option>
+                                <option value="eastern">Eastern Province (Dammam) / الشرقية</option>
+                                <option value="makkah">Makkah / مكة المكرمة</option>
+                                <option value="madinah">Madinah / المدينة المنورة</option>
+                                <option value="other">Other Regions / مناطق أخرى</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label id="lblChamberGrade" class="block text-sm font-medium text-slate-700 mb-2">Chamber Grade / درجة الغرفة</label>
+                            <select id="chamberGrade" onchange="calculateFees()" class="w-full rounded-lg border border-slate-300 py-2.5 px-3 text-slate-800 focus:ring-2 focus:ring-brand-600 focus:outline-none">
+                                <option value=" ممتاز ">Grade ممتاز (Excellence / ممتاز)</option>
+                                <option value="first">Grade 1st (الأولى)</option>
+                                <option value="second">Grade 2nd (الثانية)</option>
+                                <option value="third">Grade 3rd (الثالثة)</option>
+                                <option value="fourth">Grade 4th (الرابعة)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4 pt-4">
+                        <button type="button" onclick="calculateFees()" id="btnCalculate" class="flex-1 bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-6 rounded-xl transition shadow-sm">
+                            Calculate Total Fees / احسب الرسوم
+                        </button>
+                        <button type="button" onclick="exportCSV()" id="btnExport" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-3 px-4 rounded-xl transition">
+                            Export CSV
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Panel (5 Cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 sticky top-20">
+                    <h3 id="resHeader" class="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">Fee Breakdown & Summary</h3>
+                    
+                    <div class="space-y-4 text-sm">
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span id="resCrFeeLbl" class="text-slate-600">CR Official Fee (MoC):</span>
+                            <span id="resCrFeeVal" class="font-semibold text-slate-900">0.00 SAR</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span id="resChamberFeeLbl" class="text-slate-600">Chamber of Commerce Dues:</span>
+                            <span id="resChamberFeeVal" class="font-semibold text-slate-900">0.00 SAR</span>
+                        </div>
+                        <div class="flex justify-between py-2 border-b border-slate-100">
+                            <span id="resPostFeeLbl" class="text-slate-600">Postal / Electronic Services:</span>
+                            <span id="resPostFeeVal" class="font-semibold text-slate-900">100.00 SAR</span>
+                        </div>
+                        <div class="flex justify-between py-3 bg-emerald-50 px-3 rounded-lg border border-emerald-100">
+                            <span id="resTotalLbl" class="font-bold text-brand-800">Total Payable Amount:</span>
+                            <span id="resTotalVal" class="font-extrabold text-brand-800 text-lg">0.00 SAR</span>
+                        </div>
+                    </div>
+
+                    <!-- Disclaimer -->
+                    <div class="mt-6 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800 leading-relaxed">
+                        <span id="disclaimerText">
+                            <strong>Disclaimer:</strong> Outputs are estimates based on standard Ministry of Commerce (MoC) and Chamber regulations. Actual fees may vary based on exact capital structure, municipal levies, or special sector exemptions.
+                        </span>
+                    </div>
+
+                    <!-- CTA Box -->
+                    <div class="mt-6 bg-slate-900 rounded-xl p-5 text-white text-center">
+                        <h4 id="ctaTitle" class="font-bold text-base mb-1">Automate Your Compliance</h4>
+                        <p id="ctaDesc" class="text-xs text-slate-300 mb-4">Manage all Iqamas, GOSI, CRs, and VAT filings in one automated Excel master template.</p>
+                        <a href="https://gumroad.com" target="_blank" class="inline-block bg-amber-400 hover:bg-amber-300 text-slate-900 font-bold px-5 py-2.5 rounded-lg text-sm transition shadow">
+                            Download Master Template ($29)
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Comprehensive SEO Article & Guide Section -->
+        <section class="mt-16 bg-white rounded-2xl shadow-sm border border-slate-200 p-8 sm:p-12">
+            <article class="prose max-w-none text-slate-700 space-y-6">
+                <h2 class="text-2xl font-bold text-slate-900">Complete Guide to Saudi Commercial Register (CR) & Chamber of Commerce Fees</h2>
+                
+                <p>
+                    Operating a business in the Kingdom of Saudi Arabia requires maintaining active legal standing through the Ministry of Commerce (MoC) and the local Chamber of Commerce. Whether you run a Limited Liability Company (LLC), a branch office, or a Sole Proprietorship (Muassasa), understanding the fee structure is crucial for accurate corporate budgeting and cash flow forecasting.
+                </p>
+
+                <h3 class="text-xl font-semibold text-slate-900 mt-6">1. Ministry of Commerce (MoC) Commercial Register Fees</h3>
+                <p>
+                    The MoC commercial register fee depends on whether the registration is for a main office or a branch, and the number of years selected for renewal (up to 5 years). Typically, the base fee for a main commercial register is <strong>1,200 SAR per year</strong> for corporate entities like LLCs, plus variable fees for branches. Failing to renew on time incurs late penalties under Saudi commercial regulations.
+                </p>
+
+                <h3 class="text-xl font-semibold text-slate-900 mt-6">2. Chamber of Commerce Subscription Dues</h3>
+                <p>
+                    Chamber of Commerce membership is mandatory for all commercial entities in Saudi Arabia. The subscription fee is calculated based on the company's capital tier and the specific regional chamber (e.g., Riyadh Chamber, Jeddah Chamber, or Eastern Province Chamber). Chambers are categorized into grades (Excellence, 1st, 2nd, 3rd, 4th) reflecting the company size and capital investment.
+                </p>
+
+                <h3 class="text-xl font-semibold text-slate-900 mt-6">3. Formula & Calculation Methodology</h3>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 font-mono text-sm text-slate-800">
+                    Total CR & Chamber Fee = (MoC Annual Fee × Years) + (Chamber Annual Dues × Years) + Electronic Portal Services
+                </div>
+
+                <h3 class="text-xl font-semibold text-slate-900 mt-6">Frequently Asked Questions (FAQ)</h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-bold text-slate-900">Q: Can I renew my Commercial Register for more than one year?</h4>
+                        <p class="text-sm text-slate-600">A: Yes, the Saudi Ministry of Commerce allows businesses to renew their CRs for a duration ranging from 1 to 5 years, providing convenience and potential alignment with municipal licenses (Balady).</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900">Q: What happens if my CR renewal is delayed?</h4>
+                        <p class="text-sm text-slate-600">A: Delays in renewing the commercial register can lead to administrative fines, suspension of governmental e-services (Qiwa, GOSI, Muqeem), and potential legal complications with bank accounts.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900">Q: Are Chamber of Commerce fees uniform across all regions?</h4>
+                        <p class="text-sm text-slate-600">A: No, subscription dues vary slightly depending on the regional chamber (Riyadh, Jeddah, Dammam, etc.) and your established company grading tier.</p>
+                    </div>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 mt-16 py-8 px-4 text-center text-sm text-slate-500">
+        <p>&copy; 2025 Saudi CR & Chamber Calculator. Designed for B2B Corporate Operations & Finance Teams.</p>
+    </footer>
+
+    <!-- JavaScript Calculation Engine -->
+    <script>
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                bannerText: '🚀 Need automated compliance & corporate license tracking? Get the Complete Saudi Business License & HR Excel Master Suite.',
+                mainTitle: 'Saudi Commercial Register (CR) & Chamber Calculator',
+                subTitle: 'Calculate Ministry of Commerce (MoC) CR fees and regional Chamber of Commerce dues accurately.',
+                langBtn: 'العربية / English',
+                calcHeader: 'License & Entity Parameters',
+                lblEntityType: 'Entity Type / نوع المنشأة',
+                lblRegType: 'Registration Category / تصنيف التسجيل',
+                lblYears: 'Renewal Duration (Years) / مدة التجديد (سنوات)',
+                lblChamber: 'Chamber of Commerce / غرفة التجارة',
+                lblChamberGrade: 'Chamber Grade / درجة الغرفة',
+                btnCalculate: 'Calculate Total Fees / احسب الرسوم',
+                btnExport: 'Export CSV',
+                resHeader: 'Fee Breakdown & Summary',
+                resCrFeeLbl: 'CR Official Fee (MoC):',
+                resChamberFeeLbl: 'Chamber of Commerce Dues:',
+                resPostFeeLbl: 'Postal / Electronic Services:',
+                resTotalLbl: 'Total Payable Amount:',
+                disclaimerText: '<strong>Disclaimer:</strong> Outputs are estimates based on standard Ministry of Commerce (MoC) and Chamber regulations. Actual fees may vary based on exact capital structure, municipal levies, or special sector exemptions.',
+                ctaTitle: 'Automate Your Compliance',
+                ctaDesc: 'Manage all Iqamas, GOSI, CRs, and VAT filings in one automated Excel master template.',
+                footerText: '&copy; 2025 Saudi CR & Chamber Calculator. Designed for B2B Corporate Operations & Finance Teams.'
+            },
+            ar: {
+                bannerText: '🚀 هل تحتاج لتتبع آلي للتراخيص والامتثال؟ احصل على حزمة إكسس الرئيسية للتراخيص والموارد البشرية.',
+                mainTitle: 'حساب رسوم السجل التجاري وغرفة التجارة في السعودية',
+                subTitle: 'احسب رسوم وزارة التجارة للسجل التجاري واشتراكات غرف التجارة الإقليمية بدقة.',
+                langBtn: 'English / العربية',
+                calcHeader: 'معايير الكيان والترخيص',
+                lblEntityType: 'نوع المنشأة / Entity Type',
+                lblRegType: 'تصنيف التسجيل / Registration Category',
+                lblYears: 'مدة التجديد (سنوات) / Renewal Duration',
+                lblChamber: 'غرفة التجارة / Chamber of Commerce',
+                lblChamberGrade: 'درجة الغرفة / Chamber Grade',
+                btnCalculate: 'احسب الرسوم الإجمالية / Calculate Total',
+                btnExport: 'تصدير CSV',
+                resHeader: 'تفاصيل ورسوم الملخص',
+                resCrFeeLbl: 'رسوم السجل التجاري (وزارة التجارة):',
+                resChamberFeeLbl: 'اشتراك غرفة التجارة:',
+                resPostFeeLbl: 'الخدمات الإلكترونية والبريدية:',
+                resTotalLbl: 'إجمالي المبلغ المستحق:',
+                disclaimerText: '<strong>تنويه:</strong> النتائج تقديرية بناءً على لوائح وزارة التجارة والغرف التجارية القياسية. قد تختلف الرسوم الفعلية بناءً على هيكل رأس المال أو الرسوم البلدية.',
+                ctaTitle: 'أتمتة الامتثال الخاص بك',
+                ctaDesc: 'أدر جميع الإقامات، والتأمينات، والسجلات التجارية، وإقرارات ضريبة القيمة المضافة في نموذج إكسل واحد.',
+                footerText: '&copy; 2025 حساب رسوم السجل التجاري. مصمم لفرق العمليات والمالية للشركات.'
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const html = document.documentElement;
+            if (currentLang === 'ar') {
+                html.setAttribute('dir', 'rtl');
+                html.setAttribute('lang', 'ar');
+                html.classList.add('rtl-support');
+                html.classList.remove('ltr-support');
+            } else {
+                html.setAttribute('dir', 'ltr');
+                html.setAttribute('lang', 'en');
+                html.classList.add('ltr-support');
+                html.classList.remove('rtl-support');
+            }
+
+            // Update text elements
+            for (const [key, val] of Object.entries(translations[currentLang])) {
+                const el = document.getElementById(key);
+                if (el) {
+                    if (key === 'disclaimerText' || key === 'footerText') {
+                        el.innerHTML = val;
+                    } else {
+                        el.innerText = val;
+                    }
+                }
+            }
+        }
+
+        function calculateFees() {
+            const entityType = document.getElementById('entityType').value;
+            const regType = document.getElementById('regType').value;
+            const years = parseInt(document.getElementById('validityYears').value);
+            const chamberRegion = document.getElementById('chamberRegion').value;
+            const chamberGrade = document.getElementById('chamberGrade').value;
+
+            // Base MoC Fee per year
+            let annualCrFee = 1200; // Standard LLC main CR
+            if (entityType === 'establishment') {
+                annualCrFee = regType === 'main' ? 200 : 100;
+            } else if (entityType === 'llc') {
+                annualCrFee = regType === 'main' ? 1200 : 600;
+            } else if (entityType === 'joint_stock') {
+                annualCrFee = regType === 'main' ? 5000 : 2500;
+            } else if (entityType === 'branch') {
+                annualCrFee = 2000;
+            }
+
+            const totalCrFee = annualCrFee * years;
+
+            // Chamber Dues per year based on region and grade
+            let annualChamberFee = 2000; // Default Riyadh/Major
+            if (chamberRegion === 'riyadh' || chamberRegion === 'jeddah' || chamberRegion === 'eastern') {
+                switch(chamberGrade) {
+                    case ' ممتاز ': annualChamberFee = 10000; break;
+                    case 'first': annualChamberFee = 5000; break;
+                    case 'second': annualChamberFee = 2000; break;
+                    case 'third': annualChamberFee = 1000; break;
+                    case 'fourth': annualChamberFee = 300;
+                }
+            } else {
+                switch(chamberGrade) {
+                    case ' ممتاز ': annualChamberFee = 5000; break;
+                    case 'first': annualChamberFee = 2500; break;
+                    case 'second': annualChamberFee = 1000; break;
+                    case 'third': annualChamberFee = 500; break;
+                    case 'fourth': annualChamberFee = 150;
+                }
+            }
+
+            const totalChamberFee = annualChamberFee * years;
+            const postFee = 100 * years; // E-services / postal standard fee
+
+            const grandTotal = totalCrFee + totalChamberFee + postFee;
+
+            // Update UI
+            document.getElementById('resCrFeeVal').innerText = totalCrFee.toLocaleString() + ' SAR';
+            document.getElementById('resChamberFeeVal').innerText = totalChamberFee.toLocaleString() + ' SAR';
+            document.getElementById('resPostFeeVal').innerText = postFee.toLocaleString() + ' SAR';
+            document.getElementById('resTotalVal').innerText = grandTotal.toLocaleString() + ' SAR';
+        }
+
+        function exportCSV() {
+            const entityType = document.getElementById('entityType').value;
+            const regType = document.getElementById('regType').value;
+            const years = document.getElementById('validityYears').value;
+            const crFee = document.getElementById('resCrFeeVal').innerText;
+            const chamberFee = document.getElementById('resChamberFeeVal').innerText;
+            const total = document.getElementById('resTotalVal').innerText;
+
+            const csvContent = "data:text/csv;charset=utf-8," +
+                "Parameter,Value\n" +
+                `Entity Type,${entityType}\n` +
+                `Registration Type,${regType}\n` +
+                `Duration (Years),${years}\n` +
+                `CR Fee,${crFee}\n` +
+                `Chamber Fee,${chamberFee}\n` +
+                `Total Payable,${total}\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "saudi_cr_fee_estimate.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Run initial calculation on load
+        window.onload = calculateFees;
+    </script>
+</body>
+</html>
