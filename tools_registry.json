@@ -264,5 +264,12 @@
     "title_ar": "أداة توليد وفك تشفير رمز الاستجابة السريعة (QR) للفاتورة الإلكترونية - زاتكا",
     "description_en": "Generate, test, and decode ZATCA compliant e-invoicing Phase 1 & 2 TLV Base64 QR codes. Validate 15-digit KSA VAT numbers and export compliant receipts.",
     "date": "2026-11-17"
+  },
+  {
+    "slug": "saudi-judicial-court-costs-calculator",
+    "title_en": "Saudi Judicial & Commercial Court Costs Calculator (Law of Judicial Costs)",
+    "title_ar": "حاسبة التكاليف القضائية ورسوم الدعاوى التجارية في السعودية",
+    "description_en": "Calculate Saudi commercial court lawsuit fees, appeal costs, and judicial expenses under Royal Decree M/16 with instant statutory fee breakdowns.",
+    "date": "2026-11-18"
   }
 ]

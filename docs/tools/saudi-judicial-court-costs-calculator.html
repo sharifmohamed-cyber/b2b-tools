@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi Judicial & Commercial Court Costs Calculator | حاسبة التكاليف القضائية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        emerald: {
+                            850: '#064e3b',
+                            950: '#022c22',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .ltr-mode {
+            direction: ltr;
+            text-align: left;
+        }
+        .ltr-mode .text-end-custom {
+            text-align: right;
+        }
+        .rtl-mode .text-end-custom {
+            text-align: left;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Sticky Promotional Top Bar -->
+    <div class="sticky top-0 z-50 bg-gradient-to-r from-emerald-900 via-slate-900 to-emerald-950 text-white border-b border-emerald-600/30 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+            <div class="flex items-center gap-2">
+                <span class="bg-amber-400 text-slate-950 font-bold px-2 py-0.5 rounded text-[11px] uppercase tracking-wider">B2B Legal Tech</span>
+                <span id="topbar-text">حساب دقيق لرسوم المحاكم التجارية والمدنية وفق نظام التكاليف القضائية (م/16) ولائحته التنفيذية</span>
+            </div>
+            <a href="https://gumroad.com" target="_blank" rel="noopener" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1 rounded transition duration-200 shadow inline-flex items-center gap-1.5">
+                <span id="topbar-cta">تحميل نموذج إكسل الشامل لقضايا الشركات ($29)</span>
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="bg-white border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-700 text-white flex items-center justify-center font-black text-xl shadow-inner">
+                    ⚖️
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 leading-tight" id="header-title">حاسبة التكاليف القضائية السعودية</h1>
+                    <p class="text-xs text-slate-500" id="header-subtitle">نظام التكاليف القضائية | المرسوم الملكي رقم (م/16) وتعديلاته</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="lang-toggle" onclick="toggleLanguage()" class="border border-slate-300 hover:border-slate-400 bg-slate-50 hover:bg-slate-100 text-slate-700 font-semibold text-xs sm:text-sm px-3.5 py-1.5 rounded-lg transition">
+                    English
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Calculator Section -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-grow w-full">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- Inputs Column (7 Cols) -->
+            <div class="lg:col-span-7 bg-white p-6 sm:p-7 rounded-2xl border border-slate-200 shadow-sm space-y-6">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2" id="input-title">
+                        <span>📁</span> بيانات الدعوى والنزاع المالي
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-1" id="input-desc">أدخل قيمة المطالبة والمرحلة القضائية لاحتساب الرسوم النظامية فوراً.</p>
+                </div>
+
+                <div class="space-y-5">
+                    <!-- Claim Value -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5" id="lbl-claim-value">
+                            قيمة المطالبة المالية الإجمالية (بالريال السعودي - SAR)
+                        </label>
+                        <div class="relative rounded-lg shadow-sm">
+                            <input type="number" id="claimValue" min="0" step="1000" value="250000" class="w-full text-base sm:text-lg font-bold text-slate-900 px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600 outline-none transition placeholder-slate-400" placeholder="مثال: 500,000">
+                            <div class="absolute inset-y-0 left-0 rtl:left-0 ltr:right-0 ltr:left-auto flex items-center px-3.5 pointer-events-none text-slate-400 text-xs font-bold">
+                                SAR
+                            </div>
+                        </div>
+                        <div class="flex justify-between items-center mt-1 text-[11px] text-slate-500">
+                            <span id="lbl-brackets">شرائح النظام: 5% إلى 100 ألف، 4% إلى 500 ألف، 3% إلى مليون، 2% لما زاد</span>
+                            <span class="font-medium text-emerald-800" id="lbl-max-cap">الحد الأقصى: 1,000,000 ريال</span>
+                        </div>
+                    </div>
+
+                    <!-- Lawsuit Nature -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5" id="lbl-case-type">نوع الدعوى القضائية</label>
+                            <select id="caseType" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 font-medium focus:ring-2 focus:ring-emerald-600 outline-none">
+                                <option value="commercial">دعوى تجارية / مقاولات / توريد</option>
+                                <option value="general_civil">دعوى عامة / حقوقية مالية</option>
+                                <option value="non_monetary">دعوى غير مقدرة القيمة (محددة الرسوم)</option>
+                                <option value="urgent">طلب مستعجل / حجز تحفظي عاجل</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5" id="lbl-litigation-stage">المرحلة والدرجة القضائية</label>
+                            <select id="litigationStage" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 font-medium focus:ring-2 focus:ring-emerald-600 outline-none">
+                                <option value="first_instance">المحكمة الابتدائية (الدرجة الأولى فقط)</option>
+                                <option value="appeal">الاستئناف (اعتراض / تدقيق مرافعة)</option>
+                                <option value="supreme">المحكمة العليا (طلب نقض الحكم)</option>
+                                <option value="reconsideration">التماس إعادة النظر</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Ancillary Applications -->
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-3">
+                        <span class="text-xs font-bold text-slate-800 block uppercase tracking-wide" id="lbl-ancillary-title">الطلبات العارضة والإجراءات الإضافية</span>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="chkThirdParty" class="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4 border-slate-300">
+                                <span id="lbl-chk-third">طلب إدخال خصم أو تدخل (1,000 ريال)</span>
+                            </label>
+
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="chkJudgeRecusal" class="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4 border-slate-300">
+                                <span id="lbl-chk-recusal">طلب رد القاضي (1,000 ريال)</span>
+                            </label>
+
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="chkResumption" class="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4 border-slate-300">
+                                <span id="lbl-chk-resump">السير في الدعوى المشطوبة (25% من رسم الأولى)</span>
+                            </label>
+
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="chkCopies" class="rounded text-emerald-600 focus:ring-emerald-500 w-4 h-4 border-slate-300">
+                                <span id="lbl-chk-copies">نسخ مستندات وسجلات رسمية (+500 ريال)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Estimated Recovery Duration & In-House Legal Allocation -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lbl-lawyer-fee">أتعاب المحاماة والتمثيل التقديرية (SAR)</label>
+                            <input type="number" id="lawyerFees" value="35000" step="2500" class="w-full text-sm font-semibold text-slate-800 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-600 outline-none">
+                            <p class="text-[11px] text-slate-500 mt-0.5" id="lbl-lawyer-hint">يتم تضمينها في إجمالي تكلفة التقاضي للشركة</p>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" id="lbl-expert-fee">أتعاب الخبرة الحسابية/الهندسية المتوقعة (SAR)</label>
+                            <input type="number" id="expertFees" value="15000" step="1000" class="w-full text-sm font-semibold text-slate-800 px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-600 outline-none">
+                            <p class="text-[11px] text-slate-500 mt-0.5" id="lbl-expert-hint">وفق تقدير منصة "خبرة" بوزارة العدل</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results & Action Column (5 Cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-7 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-700"></div>
+                    
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900" id="results-title">ملخص التكاليف القضائية المستحقة</h3>
+                            <p class="text-xs text-slate-500" id="results-subtitle">بموجب المادة (3) والمادة (7) من نظام التكاليف القضائية</p>
+                        </div>
+                        <span class="bg-emerald-50 text-emerald-800 font-bold text-xs px-2.5 py-1 rounded-full border border-emerald-200/60" id="tag-statutory">نظامي إلزامي</span>
+                    </div>
+
+                    <!-- Primary Highlight Stat -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 mb-5 text-center">
+                        <span class="text-xs text-slate-500 font-medium block mb-1" id="lbl-total-court-fees">إجمالي الرسوم القضائية الحكومية</span>
+                        <div class="text-3xl sm:text-4xl font-extrabold text-emerald-800 tracking-tight flex items-baseline justify-center gap-1.5">
+                            <span id="res-court-fee">11,000</span>
+                            <span class="text-sm font-bold text-slate-600">SAR</span>
+                        </div>
+                        <span class="text-[11px] text-slate-500 mt-1 block" id="res-effective-rate">نسبة الرسم من أصل المطالبة: 4.40%</span>
+                    </div>
+
+                    <!-- Breakdown List -->
+                    <div class="space-y-3 text-xs text-slate-600 border-b border-slate-100 pb-4 mb-4">
+                        <div class="flex justify-between items-center">
+                            <span id="lbl-brk-first">رسم دعوى الدرجة الأولى:</span>
+                            <span class="font-bold text-slate-900" id="res-first-fee">11,000 SAR</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span id="lbl-brk-appeals">رسم مرحلة الاستئناف / النقض:</span>
+                            <span class="font-bold text-slate-900" id="res-appeal-fee">0 SAR</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span id="lbl-brk-ancillary">الطلبات العارضة والإجرائية:</span>
+                            <span class="font-bold text-slate-900" id="res-ancillary-fee">0 SAR</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span id="lbl-brk-lawyer-expert">أتعاب المحاماة والخبرة التقديرية:</span>
+                            <span class="font-bold text-slate-900" id="res-ext-fee">50,000 SAR</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-dashed border-slate-200 text-sm font-bold text-slate-900">
+                            <span id="lbl-total-all-in">إجمالي ميزانية النزاع المتوقعة:</span>
+                            <span class="text-emerald-700 font-extrabold" id="res-grand-total">61,000 SAR</span>
+                        </div>
+                    </div>
+
+                    <!-- Loser Pays Statutory Rule Note -->
+                    <div class="p-3 bg-amber-50 rounded-lg border border-amber-200/70 text-[11px] text-amber-900 leading-relaxed mb-5 flex gap-2">
+                        <span class="text-amber-600 font-bold text-sm leading-none">⚠️</span>
+                        <p id="note-loser-pays">تنص المادة (13) على أن الطرف الخاسر للدعوى يتحمل كامل التكاليف القضائية المقررة أو جزءاً منها بحسب ما يحكم به، ولا تؤثر على حق المدعي بالرجوع بأتعاب المحاماة.</p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="window.print()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs py-2.5 rounded-lg border border-slate-300 transition flex items-center justify-center gap-1.5 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                            <span id="btn-print">طباعة التقرير</span>
+                        </button>
+                        <button onclick="exportCSV()" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-semibold text-xs py-2.5 rounded-lg transition flex items-center justify-center gap-1.5 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            <span id="btn-csv">تصدير ملخص CSV</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Up-Sell Master Excel Pack Banner -->
+                <div class="bg-gradient-to-br from-emerald-950 via-slate-900 to-emerald-900 text-white p-5 rounded-2xl border border-emerald-500/30 shadow-lg space-y-3">
+                    <div class="flex items-center gap-2">
+                        <span class="bg-amber-400 text-slate-950 font-extrabold text-[10px] px-2 py-0.5 rounded uppercase tracking-wider">Excel Master Kit</span>
+                        <span class="text-xs text-emerald-300 font-semibold">لإدارات الشؤون القانونية والمالية</span>
+                    </div>
+                    <h4 class="text-sm font-bold leading-snug" id="card-gumroad-title">حقيبة نماذج النزاعات القضائية وحساب مخصص الديون المشكوك فيها (SAR 109 / $29)</h4>
+                    <p class="text-xs text-slate-300 leading-relaxed" id="card-gumroad-desc">تتضمن حاسبة الرسوم القضائية المؤتمتة، مصفوفة احتمالات كسب الدعوى والتقييم المحاسبي (IFRS 9 & 37) لمخصص القضايا والخسائر الائتمانية.</p>
+                    <a href="https://gumroad.com" target="_blank" rel="noopener" class="block text-center w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs py-2.5 rounded-lg transition shadow-md" id="card-gumroad-btn">
+                        الحصول على حزمة Excel & VBA الاحترافية فوراً ($29)
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bilingual Disclaimer -->
+        <div class="mt-8 p-4 rounded-xl bg-slate-100 border border-slate-300/80 text-xs text-slate-600 leading-relaxed">
+            <p class="font-bold text-slate-800 mb-1">⚠️ إخلاء مسؤولية قانوني ومحاسبي / Legal & Statutory Disclaimer:</p>
+            <p class="mb-1">
+                <strong>بالعربية:</strong> هذه الحاسبة أداة تقديرية إرشادية مصممة لمساعدة مسؤولي الشركات والإدارات المالية والقانونية في تقدير التكاليف المتوقعة للتقاضي وفق نظام التكاليف القضائية الصادر بالمرسوم الملكي رقم (م/16) لعام 1443هـ ولائحته التنفيذية. تقدير الرسوم النهائي يخضع حصرياً لسلطة وزارة العدل والدائرة القضائية الناظرة في النزاع. لا تعد نتائج هذه الحاسبة استشارة قانونية رسمية أو سنداً ملزماً.
+            </p>
+            <p>
+                <strong>In English:</strong> This tool provides non-binding estimates based on the Saudi Law of Judicial Costs (Royal Decree No. M/16 dated 1443H) and its Implementing Regulations. Final judicial costs, expert disbursements, and exemptions are determined solely by the Ministry of Justice and competent court benches. This does not constitute certified legal counsel or audit advice.
+            </p>
+        </div>
+
+        <!-- Comprehensive SEO Content & Statutory Guide (800+ Words) -->
+        <section class="mt-12 bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 shadow-sm space-y-8 text-slate-700 leading-relaxed text-sm">
+            <div>
+                <h2 class="text-xl font-bold text-slate-900 mb-3" id="seo-h2-main">الدليل الشامل لنظام التكاليف القضائية السعودي ورسوم القضايا التجارية (Royal Decree M/16)</h2>
+                <p class="text-justify leading-7">
+                    يمثل <strong>نظام التكاليف القضائية</strong> الصادر بالمرسوم الملكي رقم (م/16) بتاريخ 30 محرم 1443هـ ولائحته التنفيذية نقلة نوعية جوهرية في منظومة العدالة والاستثمار في المملكة العربية السعودية. يهدف النظام إلى تعزيز كفاءة المرفق القضائي، والحد من الدعاوى الكيدية أو الصورية، وحث المنشآت والشركات التجارية على اللجوء إلى الوسائل البديلة لتسوية المنازعات مثل التحكيم والوساطة والتسوية الودية، بالإضافة إلى تعجيل سداد الالتزامات المالية المتأخرة والوفاء بالعقود المبرمة.
+                </p>
+            </div>
+
+            <!-- Statutory Formula Breakdown -->
+            <div>
+                <h3 class="text-base font-bold text-slate-900 mb-3" id="seo-h3-brackets">شرائح وآلية احتساب التكاليف القضائية للدعاوى المقدرة القيمة</h3>
+                <p class="leading-7 mb-4">
+                    وفقاً للمادة الثالثة من اللائحة التنفيذية لنظام التكاليف القضائية، تفرض الرسوم على الدعاوى المالية المقدرة القيمة بنسبة مئوية تصاعدية شرائحية من قيمة المطالبة، بحيث لا يتجاوز الحد الأقصى للتكلفة <strong>1,000,000 ريال سعودي (مليون ريال)</strong> مهما بلغت قيمة الدعوى:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="text-emerald-700 font-extrabold text-lg block mb-1">الشريحة الأولى (5%)</span>
+                        <p class="text-xs text-slate-600">من 1 إلى 100,000 ريال سعودي.<br><span class="font-semibold text-slate-800">الحد الأقصى للشريحة: 5,000 SAR</span></p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="text-emerald-700 font-extrabold text-lg block mb-1">الشريحة الثانية (4%)</span>
+                        <p class="text-xs text-slate-600">من 100,001 إلى 500,000 ريال.<br><span class="font-semibold text-slate-800">تضاف 4% على ما زاد عن 100 ألف.</span></p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="text-emerald-700 font-extrabold text-lg block mb-1">الشريحة الثالثة (3%)</span>
+                        <p class="text-xs text-slate-600">من 500,001 إلى 1,000,000 ريال.<br><span class="font-semibold text-slate-800">تضاف 3% على ما زاد عن 500 ألف.</span></p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="text-emerald-700 font-extrabold text-lg block mb-1">الشريحة الرابعة (2%)</span>
+                        <p class="text-xs text-slate-600">للمبالغ التي تزيد عن مليون ريال.<br><span class="font-semibold text-slate-800">الحد الأقصى الإجمالي لا يتجاوز مليون ريال.</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appeal & Other Requests Fees -->
+            <div>
+                <h3 class="text-base font-bold text-slate-900 mb-3" id="seo-h3-appeals">تكاليف طلبات الاستئناف والالتماس والدعاوى غير المقدرة القيمة</h3>
+                <p class="leading-7 mb-3">
+                    حدد النظام تكاليف مقطوعة أو نسبية إضافية للطعون والاعتراضات الإجرائية، من أبرزها:
+                </p>
+                <ul class="list-disc list-inside space-y-2 text-xs sm:text-sm pl-2 rtl:pr-2 leading-relaxed">
+                    <li><strong>طلب الاستئناف مرافعة أو تدقيقاً:</strong> يفرض رسم بنسبة (2%) من تكلفة الدعوى المقررة أمام محكمة الدرجة الأولى، أو مبلغ مقطوع لا يتجاوز 10,000 ريال للدعاوى غير المقدرة القيمة.</li>
+                    <li><strong>طلب النقض أمام المحكمة العليا:</strong> رسم مقطوع قدره <strong>7,000 ريال سعودي</strong>.</li>
+                    <li><strong>طلب التماس إعادة النظر:</strong> رسم مقطوع قدره <strong>10,000 ريال سعودي</strong>.</li>
+                    <li><strong>الدعاوى غير المقدرة القيمة:</strong> تخضع لرسم مقطوع بحسب نوع المحكمة (المحاكم التجارية: 5,000 ريال، المحاكم العامة: 3,000 ريال، المحاكم الجزائية أو العمالية تخضع لقواعد الإعفاء المقررة).</li>
+                    <li><strong>الطلبات المستعجلة والتحفظية:</strong> تفرض تكلفة مقطوعة تراوح بين 1,000 إلى 3,000 ريال.</li>
+                </ul>
+            </div>
+
+            <!-- Who Pays and Exemptions -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200/80">
+                    <h4 class="text-sm font-bold text-slate-900 mb-2" id="seo-h4-loser">من يتحمل التكاليف القضائية؟ (قاعدة الطرف الخاسر)</h4>
+                    <p class="text-xs leading-6 text-slate-600">
+                        الأصل النظامي بحسب المادة (13) أن يتحمل <strong>الطرف الذي خسر الدعوى</strong> كامل التكاليف القضائية. وإذا حُكم لصالح المدعي ببعض طلباته، فيتحمل كل من الطرفين جزءاً من التكاليف بنسبة ما خسر من دعواه. كما لا تحول هذه التكاليف دون حق المحكوم لصالحه في مطالبة الطرف الآخر بأتعاب المحاماة والتعويض عن الضرر الناتج عن المماطلة.
+                    </p>
+                </div>
+                <div class="p-5 rounded-xl bg-slate-50 border border-slate-200/80">
+                    <h4 class="text-sm font-bold text-slate-900 mb-2" id="seo-h4-exemptions">الدعاوى والمعاملات المعفاة من التكاليف</h4>
+                    <p class="text-xs leading-6 text-slate-600">
+                        يعفي النظام فئات محددة من التكاليف تشمل: الدعاوى الجزائية العامة، دعاوى الأحوال الشخصية (النفقة، الحضانة، الزيارة)، <strong>الدعاوى العمالية المقامة من العمال</strong> ومستحقي المكافأة، بالإضافة إلى طلبات الإفلاس وتسوية الديون النظامية المعفاة، والمعسرين المثبت إعسارهم بحكم قضائي نهائي، والجهات الحكومية.
+                    </p>
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div>
+                <h3 class="text-base font-bold text-slate-900 mb-4" id="seo-faq-title">الأسئلة الشائعة حول التكاليف القضائية في الشركات (FAQs)</h3>
+                <div class="space-y-3">
+                    <details class="group bg-slate-50 p-3.5 rounded-xl border border-slate-200 cursor-pointer">
+                        <summary class="font-bold text-xs sm:text-sm text-slate-800 list-none flex justify-between items-center">
+                            <span>متى يجب سداد التكاليف القضائية إلى وزارة العدل؟</span>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <p class="text-xs text-slate-600 mt-2.5 leading-relaxed">
+                            وفقاً للائحة التنفيذية، تصدر فاتورة التكاليف القضائية عبر نظام "سداد" للمحكوم عليه بالرسم بعد صدور الحكم المكتسب للقطعية (أو قرار المحكمة ذي الصلة)، ويمنح الخاضع مهلة 30 يوماً للسداد، وفي حال عدم السداد تحال الفاتورة إلى محكمة التنفيذ كسند تنفيذي ملزم بموجب النظام.
+                        </p>
+                    </details>
+
+                    <details class="group bg-slate-50 p-3.5 rounded-xl border border-slate-200 cursor-pointer">
+                        <summary class="font-bold text-xs sm:text-sm text-slate-800 list-none flex justify-between items-center">
+                            <span>هل تسترد الشركة التكاليف القضائية إذا تصالحت مع المدعى عليه؟</span>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <p class="text-xs text-slate-600 mt-2.5 leading-relaxed">
+                            نعم! إذا انتهت الدعوى بالصلح بين الأطراف قبل قفل باب المرافعة أو قبل صدور الحكم الفاصل فيها، فيتم تخفيض التكاليف أو الإعفاء منها بنسبة محددة نظاماً تصل إلى استرداد كامل المبلغ أو إعفاء كامل بحسب مرحلة النزاع القضائي تشجيعاً لحلول التسوية السلمية.
+                        </p>
+                    </details>
+
+                    <details class="group bg-slate-50 p-3.5 rounded-xl border border-slate-200 cursor-pointer">
+                        <summary class="font-bold text-xs sm:text-sm text-slate-800 list-none flex justify-between items-center">
+                            <span>كيف يتم معالجة التكاليف القضائية محاسبياً في دفاتر الشركة؟</span>
+                            <span class="text-slate-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <p class="text-xs text-slate-600 mt-2.5 leading-relaxed">
+                            محاسبياً، تسجل التكاليف القضائية الأولية وأتعاب المحاماة كمصروفات قانونية وإدارية ضمن قائمة الدخل. وفي حال وجود مطالبة معلقة أو التزام محتمل عالي الترجيح، يتم تكوين مخصص قضايا والتزامات محتملة (Provision for Legal Claims) طبقاً لمعيار المحاسبة الدولي IFRS / IAS 37.
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 mt-12 py-8 text-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div>
+                <span class="font-bold text-white">حاسبة التكاليف القضائية السعودية</span> &copy; <span id="curr-year">2025</span> - أداة متخصصة لشركات المقاولات والتجارة والمؤسسات بالمملكة.
+            </div>
+            <div class="flex items-center gap-4 text-slate-300">
+                <span>وزارة العدل (نظام م/16)</span>
+                <span>•</span>
+                <a href="https://gumroad.com" target="_blank" class="text-emerald-400 hover:text-emerald-300 font-semibold">باقة إكسل للشركات ($29)</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Vanilla JavaScript Calculation Engine -->
+    <script>
+        let currentLang = 'ar';
+
+        const i18n = {
+            ar: {
+                topbarText: "حساب دقيق لرسوم المحاكم التجارية والمدنية وفق نظام التكاليف القضائية (م/16) ولائحته التنفيذية",
+                topbarCta: "تحميل نموذج إكسل الشامل لقضايا الشركات ($29)",
+                headerTitle: "حاسبة التكاليف القضائية السعودية",
+                headerSubtitle: "نظام التكاليف القضائية | المرسوم الملكي رقم (م/16) وتعديلاته",
+                inputTitle: "بيانات الدعوى والنزاع المالي",
+                inputDesc: "أدخل قيمة المطالبة والمرحلة القضائية لاحتساب الرسوم النظامية فوراً.",
+                lblClaimValue: "قيمة المطالبة المالية الإجمالية (بالريال السعودي - SAR)",
+                lblBrackets: "شرائح النظام: 5% إلى 100 ألف، 4% إلى 500 ألف، 3% إلى مليون، 2% لما زاد",
+                lblMaxCap: "الحد الأقصى: 1,000,000 ريال",
+                lblCaseType: "نوع الدعوى القضائية",
+                lblLitigationStage: "المرحلة والدرجة القضائية",
+                lblAncillaryTitle: "الطلبات العارضة والإجراءات الإضافية",
+                lblChkThird: "طلب إدخال خصم أو تدخل (1,000 ريال)",
+                lblChkRecusal: "طلب رد القاضي (1,000 ريال)",
+                lblChkResump: "السير في الدعوى المشطوبة (25% من رسم الأولى)",
+                lblChkCopies: "نسخ مستندات وسجلات رسمية (+500 ريال)",
+                lblLawyerFee: "أتعاب المحاماة والتمثيل التقديرية (SAR)",
+                lblLawyerHint: "يتم تضمينها في إجمالي تكلفة التقاضي للشركة",
+                lblExpertFee: "أتعاب الخبرة الحسابية/الهندسية المتوقعة (SAR)",
+                lblExpertHint: "وفق تقدير منصة \"خبرة\" بوزارة العدل",
+                resultsTitle: "ملخص التكاليف القضائية المستحقة",
+                resultsSubtitle: "بموجب المادة (3) والمادة (7) من نظام التكاليف القضائية",
+                tagStatutory: "نظامي إلزامي",
+                lblTotalCourtFees: "إجمالي الرسوم القضائية الحكومية",
+                lblBrkFirst: "رسم دعوى الدرجة الأولى:",
+                lblBrkAppeals: "رسم مرحلة الاستئناف / النقض:",
+                lblBrkAncillary: "الطلبات العارضة والإجرائية:",
+                lblBrkLawyerExpert: "أتعاب المحاماة والخبرة التقديرية:",
+                lblTotalAllIn: "إجمالي ميزانية النزاع المتوقعة:",
+                noteLoserPays: "تنص المادة (13) على أن الطرف الخاسر للدعوى يتحمل كامل التكاليف القضائية المقررة أو جزءاً منها بحسب ما يحكم به، ولا تؤثر على حق المدعي بالرجوع بأتعاب المحاماة.",
+                btnPrint: "طباعة التقرير",
+                btnCsv: "تصدير ملخص CSV",
+                cardGumroadTitle: "حقيبة نماذج النزاعات القضائية وحساب مخصص الديون المشكوك فيها (SAR 109 / $29)",
+                cardGumroadDesc: "تتضمن حاسبة الرسوم القضائية المؤتمتة، مصفوفة احتمالات كسب الدعوى والتقييم المحاسبي (IFRS 9 & 37) لمخصص القضايا والخسائر الائتمانية.",
+                cardGumroadBtn: "الحصول على حزمة Excel & VBA الاحترافية فوراً ($29)"
+            },
+            en: {
+                topbarText: "Accurate Saudi Commercial & Judicial Court Fees Calculator (Royal Decree M/16)",
+                topbarCta: "Download Corporate Litigation Excel Template ($29)",
+                headerTitle: "Saudi Judicial & Commercial Court Costs Calculator",
+                headerSubtitle: "Law of Judicial Costs | Royal Decree No. (M/16) & Regulations",
+                inputTitle: "Claim & Dispute Particulars",
+                inputDesc: "Enter your claim amount and litigation stage for instantaneous statutory fee computation.",
+                lblClaimValue: "Total Monetary Claim Amount (Saudi Riyals - SAR)",
+                lblBrackets: "Brackets: 5% up to 100k, 4% to 500k, 3% to 1M, 2% above 1M",
+                lblMaxCap: "Statutory Cap: SAR 1,000,000",
+                lblCaseType: "Case / Litigation Type",
+                lblLitigationStage: "Litigation Tier / Stage",
+                lblAncillaryTitle: "Interlocutory & Ancillary Applications",
+                lblChkThird: "Third-Party Joinder / Intervention (SAR 1,000)",
+                lblChkRecusal: "Judge Recusal / Disqualification (SAR 1,000)",
+                lblChkResump: "Resuming Struck-out Case (25% of Primary Fee)",
+                lblChkCopies: "Certified Copying & Registry Records (+SAR 500)",
+                lblLawyerFee: "Estimated Legal Counsel & Lawyer Fees (SAR)",
+                lblLawyerHint: "Included in overall corporate dispute budget",
+                lblExpertFee: "Expected Technical / Expert Accounting Fees (SAR)",
+                lblExpertHint: "Via MOJ 'Khibra' certified panel",
+                resultsTitle: "Statutory Court Cost Summary",
+                resultsSubtitle: "Under Articles (3) & (7) of the Saudi Judicial Costs Law",
+                tagStatutory: "Mandatory",
+                lblTotalCourtFees: "Total Government Court Fees",
+                lblBrkFirst: "First Instance Claim Fee:",
+                lblBrkAppeals: "Appellate / Supreme Appeal Fee:",
+                lblBrkAncillary: "Ancillary & Procedural Motions:",
+                lblBrkLawyerExpert: "Estimated Legal & Expert Fees:",
+                lblTotalAllIn: "Total Estimated Dispute Budget:",
+                noteLoserPays: "Article (13) prescribes that the losing party bears all adjudicated judicial costs, without prejudice to the prevailing claimant's right to claim lawyer fees.",
+                btnPrint: "Print Summary",
+                btnCsv: "Export CSV Report",
+                cardGumroadTitle: "Corporate Dispute & Bad Debt Litigation Excel Pack ($29)",
+                cardGumroadDesc: "Includes automated court fee engine, win-probability matrix, and IFRS 9 / IAS 37 legal claim provision schedules.",
+                cardGumroadBtn: "Get Professional Excel & VBA Suite ($29)"
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.body.className = currentLang === 'ar' ? 'rtl-mode text-slate-800 antialiased min-h-screen flex flex-col justify-between' : 'ltr-mode text-slate-800 antialiased min-h-screen flex flex-col justify-between';
+            
+            document.getElementById('lang-toggle').innerText = currentLang === 'ar' ? 'English' : 'العربية';
+            
+            // Update all translated labels
+            const t = i18n[currentLang];
+            document.getElementById('topbar-text').innerText = t.topbarText;
+            document.getElementById('topbar-cta').innerText = t.topbarCta;
+            document.getElementById('header-title').innerText = t.headerTitle;
+            document.getElementById('header-subtitle').innerText = t.headerSubtitle;
+            document.getElementById('input-title').innerHTML = `<span>📁</span> ${t.inputTitle}`;
+            document.getElementById('input-desc').innerText = t.inputDesc;
+            document.getElementById('lbl-claim-value').innerText = t.lblClaimValue;
+            document.getElementById('lbl-brackets').innerText = t.lblBrackets;
+            document.getElementById('lbl-max-cap').innerText = t.lblMaxCap;
+            document.getElementById('lbl-case-type').innerText = t.lblCaseType;
+            document.getElementById('lbl-litigation-stage').innerText = t.lblLitigationStage;
+            document.getElementById('lbl-ancillary-title').innerText = t.lblAncillaryTitle;
+            document.getElementById('lbl-chk-third').innerText = t.lblChkThird;
+            document.getElementById('lbl-chk-recusal').innerText = t.lblChkRecusal;
+            document.getElementById('lbl-chk-resump').innerText = t.lblChkResump;
+            document.getElementById('lbl-chk-copies').innerText = t.lblChkCopies;
+            document.getElementById('lbl-lawyer-fee').innerText = t.lblLawyerFee;
+            document.getElementById('lbl-lawyer-hint').innerText = t.lblLawyerHint;
+            document.getElementById('lbl-expert-fee').innerText = t.lblExpertFee;
+            document.getElementById('lbl-expert-hint').innerText = t.lblExpertHint;
+            document.getElementById('results-title').innerText = t.resultsTitle;
+            document.getElementById('results-subtitle').innerText = t.resultsSubtitle;
+            document.getElementById('tag-statutory').innerText = t.tagStatutory;
+            document.getElementById('lbl-total-court-fees').innerText = t.lblTotalCourtFees;
+            document.getElementById('lbl-brk-first').innerText = t.lblBrkFirst;
+            document.getElementById('lbl-brk-appeals').innerText = t.lblBrkAppeals;
+            document.getElementById('lbl-brk-ancillary').innerText = t.lblBrkAncillary;
+            document.getElementById('lbl-brk-lawyer-expert').innerText = t.lblBrkLawyerExpert;
+            document.getElementById('lbl-total-all-in').innerText = t.lblTotalAllIn;
+            document.getElementById('note-loser-pays').innerText = t.noteLoserPays;
+            document.getElementById('btn-print').innerText = t.btnPrint;
+            document.getElementById('btn-csv').innerText = t.btnCsv;
+            document.getElementById('card-gumroad-title').innerText = t.cardGumroadTitle;
+            document.getElementById('card-gumroad-desc').innerText = t.cardGumroadDesc;
+            document.getElementById('card-gumroad-btn').innerText = t.cardGumroadBtn;
+
+            calculateCosts();
+        }
+
+        function calculatePrimaryCourtFee(amount) {
+            // Tiered bracket formula per Article 3 of Judicial Costs Law (RD M/16):
+            // Cap: 1,000,000 SAR
+            // Bracket 1: 0 - 100,000 SAR => 5%
+            // Bracket 2: 100,001 - 500,000 SAR => 4%
+            // Bracket 3: 500,001 - 1,000,000 SAR => 3%
+            // Bracket 4: > 1,000,000 SAR => 2%
+            if (amount <= 0) return 0;
+            let fee = 0;
+
+            if (amount <= 100000) {
+                fee = amount * 0.05;
+            } else if (amount <= 500000) {
+                fee = (100000 * 0.05) + ((amount - 100000) * 0.04);
+            } else if (amount <= 1000000) {
+                fee = (100000 * 0.05) + (400000 * 0.04) + ((amount - 500000) * 0.03);
+            } else {
+                fee = (100000 * 0.05) + (400000 * 0.04) + (500000 * 0.03) + ((amount - 1000000) * 0.02);
+            }
+
+            // Absolute statutory cap
+            return Math.min(fee, 1000000);
+        }
+
+        function calculateCosts() {
+            const claimAmount = parseFloat(document.getElementById('claimValue').value) || 0;
+            const caseType = document.getElementById('caseType').value;
+            const stage = document.getElementById('litigationStage').value;
+            const lawyerFee = parseFloat(document.getElementById('lawyerFees').value) || 0;
+            const expertFee = parseFloat(document.getElementById('expertFees').value) || 0;
+
+            let baseFirstInstanceFee = 0;
+
+            if (caseType === 'non_monetary') {
+                baseFirstInstanceFee = 5000; // Fixed standard fee for non-monetary commercial lawsuits
+            } else if (caseType === 'urgent') {
+                baseFirstInstanceFee = 2000; // Fixed standard urgent / injunction application fee
+            } else {
+                baseFirstInstanceFee = calculatePrimaryCourtFee(claimAmount);
+            }
+
+            // Additional Stage Fees:
+            let stageFee = 0;
+            if (stage === 'appeal') {
+                // Appeal fee is 2% of the primary lawsuit fee, or fixed min 1,000 capped at 10,000
+                stageFee = Math.min(Math.max(baseFirstInstanceFee * 0.02, 1000), 10000);
+            } else if (stage === 'supreme') {
+                // Supreme court cassation fee is fixed at SAR 7,000
+                stageFee = 7000;
+            } else if (stage === 'reconsideration') {
+                // Petition for reconsideration fee is fixed at SAR 10,000
+                stageFee = 10000;
+            }
+
+            // Ancillary motions
+            let ancillaryTotal = 0;
+            if (document.getElementById('chkThirdParty').checked) ancillaryTotal += 1000;
+            if (document.getElementById('chkJudgeRecusal').checked) ancillaryTotal += 1000;
+            if (document.getElementById('chkResumption').checked) ancillaryTotal += (baseFirstInstanceFee * 0.25);
+            if (document.getElementById('chkCopies').checked) ancillaryTotal += 500;
+
+            const totalGovernmentCourtFee = baseFirstInstanceFee + stageFee + ancillaryTotal;
+            const grandTotal = totalGovernmentCourtFee + lawyerFee + expertFee;
+
+            const effectiveRate = claimAmount > 0 ? ((totalGovernmentCourtFee / claimAmount) * 100).toFixed(2) : 0;
+
+            // Format numbers
+            document.getElementById('res-court-fee').innerText = totalGovernmentCourtFee.toLocaleString('en-US', { maximumFractionDigits: 0 });
+            document.getElementById('res-first-fee').innerText = baseFirstInstanceFee.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' SAR';
+            document.getElementById('res-appeal-fee').innerText = stageFee.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' SAR';
+            document.getElementById('res-ancillary-fee').innerText = ancillaryTotal.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' SAR';
+            document.getElementById('res-ext-fee').innerText = (lawyerFee + expertFee).toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' SAR';
+            document.getElementById('res-grand-total').innerText = grandTotal.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' SAR';
+            
+            if (currentLang === 'ar') {
+                document.getElementById('res-effective-rate').innerText = `نسبة الرسم من أصل المطالبة: ${effectiveRate}%`;
+            } else {
+                document.getElementById('res-effective-rate').innerText = `Effective court fee rate: ${effectiveRate}% of claim`;
+            }
+        }
+
+        function exportCSV() {
+            const claim = document.getElementById('claimValue').value || 0;
+            const first = document.getElementById('res-first-fee').innerText;
+            const stage = document.getElementById('res-appeal-fee').innerText;
+            const ancillary = document.getElementById('res-ancillary-fee').innerText;
+            const govTotal = document.getElementById('res-court-fee').innerText;
+            const legalExp = document.getElementById('res-ext-fee').innerText;
+            const grand = document.getElementById('res-grand-total').innerText;
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Metric / Item,Amount (SAR)\n";
+            csvContent += `Claim Monetary Value,${claim}\n`;
+            csvContent += `First Instance Court Fee,${first.replace(' SAR', '').replace(/,/g, '')}\n`;
+            csvContent += `Appeal and Cassation Fee,${stage.replace(' SAR', '').replace(/,/g, '')}\n`;
+            csvContent += `Ancillary Motions Fee,${ancillary.replace(' SAR', '').replace(/,/g, '')}\n`;
+            csvContent += `Total Judicial Government Fees,${govTotal.replace(/,/g, '')}\n`;
+            csvContent += `Estimated Legal and Expert Disbursements,${legalExp.replace(' SAR', '').replace(/,/g, '')}\n`;
+            csvContent += `Grand Total Dispute Budget,${grand.replace(' SAR', '').replace(/,/g, '')}\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `saudi_judicial_costs_estimate_${Date.now()}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Event Listeners for Live Calculation
+        const inputs = ['claimValue', 'caseType', 'litigationStage', 'chkThirdParty', 'chkJudgeRecusal', 'chkResumption', 'chkCopies', 'lawyerFees', 'expertFees'];
+        inputs.forEach(id => {
+            const elem = document.getElementById(id);
+            if (elem) {
+                elem.addEventListener('input', calculateCosts);
+                elem.addEventListener('change', calculateCosts);
+            }
+        });
+
+        // Set Year
+        document.getElementById('curr-year').innerText = new Date().getFullYear();
+
+        // Run initial calculation
+        calculateCosts();
+    </script>
+</body>
+</html>
