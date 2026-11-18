@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi Nitaqat Wage Threshold &amp; Saudization Weight Calculator | حاسبة نسب توطين نطاقات</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            cairo: ['Cairo', 'sans-serif']
+          },
+          colors: {
+            mhrsd: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    [dir="rtl"] .font-cairo-override { font-family: 'Cairo', sans-serif; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-shadow-none { box-shadow: none !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+  <!-- Sticky Monetization Banner -->
+  <div class="sticky top-0 z-50 bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white shadow-md border-b border-emerald-500/30 no-print">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+      <div class="flex items-center space-x-2 space-x-reverse font-cairo-override">
+        <span class="bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded font-bold border border-emerald-400/30 uppercase tracking-wide text-[11px]">HR &amp; Payroll Pro</span>
+        <span class="hidden md:inline text-slate-200">Instant MHRSD Qiwa Compliance Formula:</span>
+        <span class="font-semibold text-emerald-300">Complete Offline Automated Excel &amp; VBA Master Template ($29)</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1.5 rounded-lg transition-all shadow-sm transform hover:scale-105 active:scale-95 text-xs font-cairo-override">
+          Download Template &rarr;
+        </a>
+        <button onclick="toggleLanguage()" id="langToggleBtn" class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 px-2.5 py-1 rounded text-xs transition">
+          العربية (AR)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="inline-block w-3 h-3 rounded-full bg-emerald-600"></span>
+          <p class="text-xs font-semibold text-emerald-700 uppercase tracking-wider" id="badge_kpi">MHRSD Nitaqat Portal Standard (4,000 SAR Wage Rule)</p>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-cairo-override" id="app_title">
+          Saudi Nitaqat Wage &amp; Saudization Weight Calculator
+        </h1>
+        <p class="text-sm text-slate-600 mt-1" id="app_subtitle">
+          Simulate Saudi employee weight count (1.0, 0.5, or 0.0) based on gross wage tiers, special categories, and enterprise Saudization ratio.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 no-print">
+        <button onclick="window.print()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 transition shadow-sm font-cairo-override">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          <span id="btn_print">Print Report</span>
+        </button>
+        <button onclick="exportCSV()" class="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg bg-emerald-700 text-white hover:bg-emerald-800 transition shadow-sm font-cairo-override">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          <span id="btn_export">Export CSV</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main App Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Input Section (7 Cols) -->
+    <div class="lg:col-span-7 space-y-6">
+      
+      <!-- Quick Mode Switcher & Presets -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+          <h2 class="text-base font-bold text-slate-800 font-cairo-override flex items-center gap-2">
+            <span class="p-1.5 bg-emerald-100 text-emerald-800 rounded-lg">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+            </span>
+            <span id="section_workforce_breakdown">Workforce Headcount &amp; Wage Distribution</span>
+          </h2>
+          <button onclick="resetDefaults()" class="text-xs text-slate-500 hover:text-emerald-700 underline font-cairo-override" id="btn_reset">Reset Defaults</button>
+        </div>
+
+        <!-- Expatriate Base -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5 p-3.5 bg-slate-50 rounded-lg border border-slate-200">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1 font-cairo-override" id="lbl_expats">
+              Expatriate Employees (Non-Saudi Headcount)
+            </label>
+            <div class="relative">
+              <input type="number" id="inp_expats" min="0" value="45" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 font-mono font-medium" oninput="calculateWeights()" />
+              <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-cairo-override">عمالة وافدة</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1 font-cairo-override" id="help_expats">Counted as 1.0 foreign unit in total workforce divisor.</p>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1 font-cairo-override" id="lbl_target_quota">
+              Target Saudization Threshold (%)
+            </label>
+            <div class="relative">
+              <input type="number" id="inp_target_quota" min="0" max="100" step="0.1" value="25.0" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 font-mono font-medium" oninput="calculateWeights()" />
+              <span class="absolute right-3 top-2.5 text-xs text-slate-400">%</span>
+            </div>
+            <p class="text-[11px] text-slate-500 mt-1 font-cairo-override" id="help_quota">Sector Nitaqat required green band minimum.</p>
+          </div>
+        </div>
+
+        <!-- Saudi Tiers by Monthly Salary -->
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider font-cairo-override" id="subhead_saudi_tiers">Saudi Nationals by Registered Monthly Wage (GOSI)</h3>
+            <span class="text-[11px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-cairo-override">Rule: &ge; 4,000 SAR = 1.0 Weight</span>
+          </div>
+
+          <!-- Tier 1: Full Weight (>= 4000) -->
+          <div class="flex items-center justify-between p-3 rounded-lg border border-emerald-200 bg-emerald-50/40 gap-3">
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-emerald-900 font-cairo-override" id="lbl_tier1">Full Wage (&ge; SAR 4,000 / month)</span>
+                <span class="text-[10px] bg-emerald-600 text-white font-bold px-1.5 py-0.5 rounded">1.0 Wt</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-cairo-override" id="desc_tier1">Eligible for full Nitaqat calculation (100% headcount credit).</p>
+            </div>
+            <div class="w-28">
+              <input type="number" id="inp_saudi_full" min="0" value="14" class="w-full bg-white border border-emerald-300 rounded-lg px-2.5 py-1.5 text-sm font-mono text-right font-semibold focus:ring-2 focus:ring-emerald-500" oninput="calculateWeights()" />
+            </div>
+          </div>
+
+          <!-- Tier 2: Half Weight (3000 - 3999) -->
+          <div class="flex items-center justify-between p-3 rounded-lg border border-amber-200 bg-amber-50/40 gap-3">
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-amber-900 font-cairo-override" id="lbl_tier2">Partial Wage (SAR 3,000 &ndash; SAR 3,999)</span>
+                <span class="text-[10px] bg-amber-600 text-white font-bold px-1.5 py-0.5 rounded">0.5 Wt</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-cairo-override" id="desc_tier2">Counts as 0.5 employee. Raising to SAR 4,000 doubles point yield.</p>
+            </div>
+            <div class="w-28">
+              <input type="number" id="inp_saudi_half" min="0" value="4" class="w-full bg-white border border-amber-300 rounded-lg px-2.5 py-1.5 text-sm font-mono text-right font-semibold focus:ring-2 focus:ring-amber-500" oninput="calculateWeights()" />
+            </div>
+          </div>
+
+          <!-- Tier 3: Zero Weight (< 3000) -->
+          <div class="flex items-center justify-between p-3 rounded-lg border border-rose-200 bg-rose-50/40 gap-3">
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-rose-900 font-cairo-override" id="lbl_tier3">Sub-Minimum Wage (&lt; SAR 3,000)</span>
+                <span class="text-[10px] bg-rose-600 text-white font-bold px-1.5 py-0.5 rounded">0.0 Wt</span>
+              </div>
+              <p class="text-[11px] text-slate-500 font-cairo-override" id="desc_tier3">Registered in GOSI but 0% Saudization credit given by Qiwa.</p>
+            </div>
+            <div class="w-28">
+              <input type="number" id="inp_saudi_zero" min="0" value="1" class="w-full bg-white border border-rose-300 rounded-lg px-2.5 py-1.5 text-sm font-mono text-right font-semibold focus:ring-2 focus:ring-rose-500" oninput="calculateWeights()" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Special Categories Accordion / Section -->
+        <div class="mt-6 pt-5 border-t border-slate-100">
+          <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3 font-cairo-override" id="subhead_special">Special Employment Categories (MHRSD Policy Caps)</h3>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <!-- Disabled Workers -->
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-bold text-slate-800 font-cairo-override" id="lbl_disabled">Disabled Saudi (ذوي الإعاقة)</span>
+                <span class="text-[10px] bg-indigo-600 text-white font-bold px-1 py-0.5 rounded">4.0 Wt</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mb-2 font-cairo-override" id="desc_disabled">Must earn &ge;4k SAR. Capped at max 10% of total workforce.</p>
+              <input type="number" id="inp_disabled" min="0" value="1" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-sm font-mono text-right" oninput="calculateWeights()" />
+            </div>
+
+            <!-- Released Prisoners -->
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-bold text-slate-800 font-cairo-override" id="lbl_prisoners">Released Inmates (المفرج عنهم)</span>
+                <span class="text-[10px] bg-blue-600 text-white font-bold px-1 py-0.5 rounded">2.0 Wt</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mb-2 font-cairo-override" id="desc_prisoners">Counts as 2 workers for first 24 months, capped at 10%.</p>
+              <input type="number" id="inp_prisoners" min="0" value="0" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-sm font-mono text-right" oninput="calculateWeights()" />
+            </div>
+
+            <!-- Part-time / Students -->
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-bold text-slate-800 font-cairo-override" id="lbl_students">Students / Part-Time (الطلاب)</span>
+                <span class="text-[10px] bg-teal-600 text-white font-bold px-1 py-0.5 rounded">0.5 Wt</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mb-2 font-cairo-override" id="desc_students">Min SAR 3,000. Subject to student ratio limits in establishment.</p>
+              <input type="number" id="inp_students" min="0" value="2" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-sm font-mono text-right" oninput="calculateWeights()" />
+            </div>
+
+            <!-- Flexible Work Hours Aggregator -->
+            <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+              <div class="flex items-center justify-between mb-1">
+                <span class="text-xs font-bold text-slate-800 font-cairo-override" id="lbl_flexible">Flexible Work (مرن - ساعات)</span>
+                <span class="text-[10px] bg-slate-700 text-white font-bold px-1 py-0.5 rounded">168h = 1.0</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mb-2 font-cairo-override" id="desc_flexible">Monthly total contract hours performed via 'Mrn' platform.</p>
+              <div class="relative">
+                <input type="number" id="inp_flexible_hrs" min="0" step="10" value="336" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1 text-sm font-mono text-right" oninput="calculateWeights()" />
+                <span class="absolute left-2.5 top-1.5 text-xs text-slate-400">hrs</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Simulation / Upgrade Scenario Card -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+        <h3 class="text-sm font-bold text-slate-800 mb-2 font-cairo-override flex items-center gap-2">
+          <span class="text-emerald-600">&uarr;</span>
+          <span id="sim_title">Wage Increment ROI Optimizer (Quick Strategy)</span>
+        </h3>
+        <p class="text-xs text-slate-600 mb-4 font-cairo-override" id="sim_desc">
+          Calculate the immediate Saudization percentage gain if you increase employees in the SAR 3,000 - SAR 3,999 bracket to SAR 4,000.
+        </p>
+        <div class="bg-emerald-50/70 border border-emerald-200 rounded-lg p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div>
+            <div class="text-xs font-medium text-emerald-900 font-cairo-override" id="sim_subtext">Eligible partial-weight employees currently:</div>
+            <div class="text-xl font-extrabold text-emerald-800 font-mono" id="sim_eligible_count">4 Employees</div>
+            <div class="text-xs text-slate-600 mt-0.5 font-cairo-override" id="sim_cost_text">Estimated extra monthly payroll: <span class="font-bold font-mono text-slate-900" id="sim_extra_cost">SAR 2,000</span></div>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-slate-500 font-cairo-override block" id="sim_gain_lbl">Saudization Potential Gain</span>
+            <span class="text-2xl font-black text-emerald-600 font-mono" id="sim_point_delta">+3.08%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary & Results Section (5 Cols) -->
+    <div class="lg:col-span-5 space-y-6">
+      
+      <!-- High Level KPI Card -->
+      <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white p-6">
+          <div class="flex items-center justify-between">
+            <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold font-cairo-override" id="kpi_card_badge">Nitaqat Compliance Engine</span>
+            <span id="pill_band_status" class="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 font-cairo-override">Compliant &bull; Green</span>
+          </div>
+          
+          <div class="mt-4 flex items-baseline justify-between">
+            <div>
+              <p class="text-xs text-slate-300 font-cairo-override" id="lbl_saudization_rate">Effective Saudization Rate</p>
+              <h3 class="text-4xl font-extrabold font-mono tracking-tight text-white mt-1" id="res_saudization_pct">0.00%</h3>
+            </div>
+            <div class="text-right">
+              <p class="text-xs text-slate-400 font-cairo-override" id="lbl_target_quota_disp">Target Benchmark</p>
+              <p class="text-xl font-bold font-mono text-emerald-400 mt-1" id="res_target_quota">25.0%</p>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="mt-4">
+            <div class="w-full bg-slate-700/60 rounded-full h-2.5 overflow-hidden">
+              <div id="progress_bar" class="bg-emerald-500 h-2.5 rounded-full transition-all duration-500" style="width: 50%"></div>
+            </div>
+            <div class="flex justify-between text-[11px] text-slate-400 mt-1.5 font-mono">
+              <span>0%</span>
+              <span id="progress_diff_text">+0.0% vs Quota</span>
+              <span>100%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Detailed Headcount Math -->
+        <div class="p-6 space-y-4">
+          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider font-cairo-override" id="subhead_metrics_details">Effective Unit Metrics (Qiwa Formula)</h4>
+          
+          <div class="space-y-2.5 text-xs">
+            <div class="flex justify-between py-1.5 border-b border-slate-100">
+              <span class="text-slate-600 font-cairo-override" id="row_physical_saudis">Physical Saudi Employees:</span>
+              <span class="font-mono font-bold text-slate-800" id="val_physical_saudis">21</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-slate-100">
+              <span class="text-slate-600 font-cairo-override" id="row_weighted_saudis">Effective Saudi Weighted Units:</span>
+              <span class="font-mono font-bold text-emerald-700 text-sm" id="val_weighted_saudis">20.00</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-slate-100">
+              <span class="text-slate-600 font-cairo-override" id="row_expats_count">Total Expatriate Units:</span>
+              <span class="font-mono font-bold text-slate-800" id="val_expats">45.00</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-slate-100">
+              <span class="text-slate-600 font-cairo-override" id="row_total_effective">Effective Total Workforce:</span>
+              <span class="font-mono font-bold text-slate-900" id="val_effective_total">65.00</span>
+            </div>
+            <div class="flex justify-between py-1.5 border-b border-slate-100">
+              <span class="text-slate-600 font-cairo-override" id="row_lost_points">Lost Points (&lt; SAR 4,000 Wasted):</span>
+              <span class="font-mono font-semibold text-rose-600" id="val_lost_points">-3.00 Units</span>
+            </div>
+            <div class="flex justify-between py-1.5">
+              <span class="text-slate-600 font-cairo-override" id="row_gap_headcount">Additional Saudis to Reach Target:</span>
+              <span class="font-mono font-bold text-slate-900" id="val_saudis_needed">0 Saudis</span>
+            </div>
+          </div>
+
+          <!-- Disclaimer Container -->
+          <div class="p-3.5 bg-amber-50/80 border border-amber-200/90 rounded-xl text-[11px] text-amber-900 leading-relaxed font-cairo-override">
+            <div class="flex items-center gap-1.5 font-bold mb-1 text-amber-950">
+              <svg class="w-4 h-4 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+              <span id="disc_title">Bilingual Official Disclaimer / إخلاء مسؤولية رسمي</span>
+            </div>
+            <p id="disc_text">
+              Estimates provided are for administrative simulation and advisory purposes based on MHRSD ministerial decree guidelines. Final Saudization categorization is calculated dynamically through Qiwa / MHRSD systems based on moving 26-week moving averages and specific economic activity charts.
+            </p>
+            <p class="mt-1 text-[10px] text-amber-800" dir="rtl">
+              تنبيه: النتائج المستخرجة تقديرية استرشادية بناءً على قرارات وزارة الموارد البشرية والتنمية الاجتماعية بخصوص الحد الأدنى لأجور التوطين (4,000 ريال). يتم تحديد النطاق الفعلي للمنشأة بصورة دورية عبر منصة قوى وفق المتوسط الحسابي لـ 26 أسبوعاً.
+            </p>
+          </div>
+
+          <!-- Gumroad Upsell Card -->
+          <div class="p-4 bg-gradient-to-br from-emerald-900 to-slate-900 text-white rounded-xl shadow-md space-y-3 no-print">
+            <div class="flex items-start justify-between gap-2">
+              <div>
+                <span class="text-[10px] bg-emerald-400 text-slate-950 px-2 py-0.5 rounded font-black tracking-wider uppercase font-cairo-override">Master HR Pack</span>
+                <h5 class="text-sm font-bold mt-1.5 text-white font-cairo-override" id="cta_box_title">Download Automated 26-Week Qiwa Audit Spreadsheet</h5>
+              </div>
+              <span class="text-xl font-black text-emerald-400 font-mono">$29</span>
+            </div>
+            <p class="text-xs text-slate-300 font-cairo-override" id="cta_box_desc">
+              Pre-built offline Excel model with dynamic moving-averages, batch WPS/GOSI salary imports, and automatic warning alerts before falling into Low Green or Red.
+            </p>
+            <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="block text-center w-full py-2.5 px-4 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-lg text-xs transition font-cairo-override shadow-sm">
+              Get Master Excel &amp; VBA Model ($29) &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Long-Form SEO & Documentation Content Section -->
+  <article class="bg-white border-t border-slate-200 mt-12 py-12 px-4 sm:px-6">
+    <div class="max-w-5xl mx-auto space-y-10 text-slate-700 leading-relaxed text-sm">
+      
+      <!-- Header Guide -->
+      <div>
+        <h2 class="text-2xl font-black text-slate-900 mb-3 font-cairo-override" id="seo_h1">The Comprehensive Guide to Saudi Nitaqat Wage Thresholds &amp; Saudization Weight Calculation</h2>
+        <p class="text-slate-600 leading-normal font-cairo-override" id="seo_intro">
+          Under the regulations set forth by the Saudi Ministry of Human Resources and Social Development (MHRSD), Saudization (Nitaqat / نطاقات) calculations do not rely merely on raw employment headcounts. Instead, each Saudi employee registered under the General Organization for Social Insurance (GOSI) is assigned a specific weighted coefficient ranging from 0.0 to 4.0 depending on their gross registered monthly wage, physical condition, and labor contract type.
+        </p>
+      </div>
+
+      <!-- Table of Wage Rules -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold text-slate-900 font-cairo-override" id="seo_h2_rules">1. Minimum Wage Tiers for Saudi Employee Point Weighting</h3>
+        <p class="font-cairo-override" id="seo_p_rules">
+          The current ministerial decree dictates strict wage thresholds for counting a Saudi citizen in an establishment's nationalization ratio:
+        </p>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-xs text-left border border-slate-200 rounded-lg">
+            <thead class="bg-slate-100 text-slate-800 font-semibold uppercase">
+              <tr>
+                <th class="py-2.5 px-3 border-b">Gross Monthly Wage (GOSI)</th>
+                <th class="py-2.5 px-3 border-b">Nitaqat Point Weight</th>
+                <th class="py-2.5 px-3 border-b">Legal Classification</th>
+                <th class="py-2.5 px-3 border-b">Strategic HR Impact</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 font-mono text-[12px]">
+              <tr class="bg-emerald-50/40">
+                <td class="py-2 px-3 font-bold text-emerald-950 font-sans">SAR 4,000 or greater</td>
+                <td class="py-2 px-3 font-bold text-emerald-700">1.0 Worker</td>
+                <td class="py-2 px-3 font-sans">Full Saudization Weight</td>
+                <td class="py-2 px-3 font-sans text-slate-600">Provides 100% quota credit in Qiwa.</td>
+              </tr>
+              <tr class="bg-amber-50/40">
+                <td class="py-2 px-3 font-bold text-amber-950 font-sans">SAR 3,000 to SAR 3,999.99</td>
+                <td class="py-2 px-3 font-bold text-amber-700">0.5 Worker</td>
+                <td class="py-2 px-3 font-sans">Partial Weight Tier</td>
+                <td class="py-2 px-3 font-sans text-slate-600">Requires two employees to equal one full quota credit.</td>
+              </tr>
+              <tr class="bg-rose-50/40">
+                <td class="py-2 px-3 font-bold text-rose-950 font-sans">Below SAR 3,000</td>
+                <td class="py-2 px-3 font-bold text-rose-700">0.0 Worker</td>
+                <td class="py-2 px-3 font-sans">Non-Contributory</td>
+                <td class="py-2 px-3 font-sans text-slate-600">No Nitaqat benefit; company incurs GOSI fees without quota gain.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Special Categories Breakdown -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold text-slate-900 font-cairo-override" id="seo_h2_special">2. Special Employee Classifications &amp; Regulatory Quotas</h3>
+        <p class="font-cairo-override" id="seo_p_special">
+          To incentivize the employment of specific Saudi demographics, MHRSD provides enhanced multiplier points, provided the employee satisfies wage requirements (minimum SAR 4,000 for full benefit):
+        </p>
+        <ul class="list-disc list-inside space-y-2 text-slate-600 font-cairo-override">
+          <li><strong class="text-slate-800">Persons with Special Needs (Disabilities):</strong> Counted as <strong class="text-emerald-700">4.0 workers</strong> in the Nitaqat system, provided their monthly salary is not less than SAR 4,000. However, this multiplier is subject to an enterprise cap of maximum 10% of total national headcount.</li>
+          <li><strong class="text-slate-800">Released Inmates / Rehabilitated Prisoners:</strong> Counted as <strong class="text-blue-700">2.0 workers</strong> for a continuous period of 24 months from the date of employment, also subject to the statutory 10% maximum cap.</li>
+          <li><strong class="text-slate-800">Students (Part-Time):</strong> Counted as <strong class="text-amber-700">0.5 workers</strong> with a monthly salary of at least SAR 3,000, subject to student employment caps relative to total Saudi workforce.</li>
+          <li><strong class="text-slate-800">Flexible Work Contracts ('Mrn'):</strong> Aggregated based on total completed hourly timesheets. Every 168 certified hours accumulated within a month by Saudi flexible contract workers equal 1.0 full Saudization unit.</li>
+        </ul>
+      </div>
+
+      <!-- Mathematical Formula Breakdown -->
+      <div class="space-y-4">
+        <h3 class="text-lg font-bold text-slate-900 font-cairo-override" id="seo_h2_formula">3. Mathematical Calculation Formula Used by Qiwa &amp; MHRSD</h3>
+        <div class="p-4 bg-slate-900 text-emerald-400 rounded-xl font-mono text-xs overflow-x-auto">
+          Saudization Percentage (%) = [ Total Weighted Saudi Units / (Total Weighted Saudi Units + Total Expatriate Units) ] &times; 100
+          <br><br>
+          Where:
+          <br>
+          Total Weighted Saudi Units = (&Sigma; Saudis &ge; 4000 &times; 1.0) + (&Sigma; Saudis 3000-3999 &times; 0.5) + (Disabled Saudis &times; 4.0 [capped]) + (Flexible Hours / 168)
+        </div>
+        <p class="font-cairo-override" id="seo_p_calc_note">
+          Note that Nitaqat evaluations on the official Qiwa platform do not rely solely on end-of-month point-in-time snapshots. They are based on a <strong>26-week moving average (نطاقات الموزون)</strong> to prevent establishments from temporarily onboarding citizens right before submitting visa requests or renewal quotas. Any wage changes take effect across subsequent weekly snapshots.
+        </p>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="space-y-5 pt-6 border-t border-slate-200">
+        <h3 class="text-lg font-bold text-slate-900 font-cairo-override" id="seo_h2_faq">Frequently Asked Questions (FAQ)</h3>
+        
+        <div class="space-y-3">
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+            <h4 class="font-bold text-slate-800 text-sm font-cairo-override" id="faq1_q">What happens if a Saudi employee earns SAR 3,800?</h4>
+            <p class="text-xs text-slate-600 mt-1 font-cairo-override" id="faq1_a">A Saudi employee registered at SAR 3,800 monthly wage contributes only 0.5 points to the Saudization percentage. By increasing their registered salary by just SAR 200 to meet the SAR 4,000 threshold, your establishment immediately doubles their point value to 1.0.</p>
+          </div>
+
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+            <h4 class="font-bold text-slate-800 text-sm font-cairo-override" id="faq2_q">Does basic salary determine the Nitaqat weight or the total package?</h4>
+            <p class="text-xs text-slate-600 mt-1 font-cairo-override" id="faq2_a">The calculation is based on the <strong>total wage subject to GOSI deduction</strong> (الراتب الخاضع للاشتراك), which typically includes the Basic Salary + Housing Allowance (or equivalent monetary housing provision).</p>
+          </div>
+
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+            <h4 class="font-bold text-slate-800 text-sm font-cairo-override" id="faq3_q">How do GCC nationals count in Nitaqat?</h4>
+            <p class="text-xs text-slate-600 mt-1 font-cairo-override" id="faq3_a">Citizens of Gulf Cooperation Council (GCC) countries (Kuwait, Bahrain, Oman, Qatar, UAE) employed in Saudi Arabia are treated similarly to Saudi citizens regarding labor classification in most commercial sectors, subject to valid GOSI registration and minimum wage rules.</p>
+          </div>
+
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+            <h4 class="font-bold text-slate-800 text-sm font-cairo-override" id="faq4_q">What is the penalty if an establishment drops into the Red or Low Green band?</h4>
+            <p class="text-xs text-slate-600 mt-1 font-cairo-override" id="faq4_a">Dropping to the Low Green or Red tier blocks immediate automated Qiwa services, including issuing new block work visas, transferring expat employee sponsorships into the company, and renewing Iqamas without special exemptions.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-8 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="text-center md:text-left">
+        <p class="text-slate-300 font-semibold font-cairo-override">Saudi Nitaqat &amp; Saudization Operational HR Utility</p>
+        <p class="text-[11px] text-slate-500 mt-0.5">Designed for Saudi enterprise HR directors, financial controllers, and government relations managers.</p>
+      </div>
+      <div class="flex items-center gap-4">
+        <a href="https://gumroad.com" target="_blank" class="text-emerald-400 hover:text-emerald-300 font-medium transition">Get Master Spreadsheet ($29)</a>
+        <span class="text-slate-700">|</span>
+        <span class="text-[11px] text-slate-500">&copy; <span id="cur_year">2025</span> Saudi Business Tools</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Interactive Script -->
+  <script>
+    document.getElementById('cur_year').textContent = new Date().getFullYear();
+
+    let currentLang = 'en';
+
+    const i18n = {
+      en: {
+        badge_kpi: "MHRSD Nitaqat Portal Standard (4,000 SAR Wage Rule)",
+        app_title: "Saudi Nitaqat Wage & Saudization Weight Calculator",
+        app_subtitle: "Simulate Saudi employee weight count (1.0, 0.5, or 0.0) based on gross wage tiers, special categories, and enterprise Saudization ratio.",
+        btn_print: "Print Report",
+        btn_export: "Export CSV",
+        section_workforce_breakdown: "Workforce Headcount & Wage Distribution",
+        btn_reset: "Reset Defaults",
+        lbl_expats: "Expatriate Employees (Non-Saudi Headcount)",
+        help_expats: "Counted as 1.0 foreign unit in total workforce divisor.",
+        lbl_target_quota: "Target Saudization Threshold (%)",
+        help_quota: "Sector Nitaqat required green band minimum.",
+        subhead_saudi_tiers: "Saudi Nationals by Registered Monthly Wage (GOSI)",
+        lbl_tier1: "Full Wage (≥ SAR 4,000 / month)",
+        desc_tier1: "Eligible for full Nitaqat calculation (100% headcount credit).",
+        lbl_tier2: "Partial Wage (SAR 3,000 – SAR 3,999)",
+        desc_tier2: "Counts as 0.5 employee. Raising to SAR 4,000 doubles point yield.",
+        lbl_tier3: "Sub-Minimum Wage (< SAR 3,000)",
+        desc_tier3: "Registered in GOSI but 0% Saudization credit given by Qiwa.",
+        subhead_special: "Special Employment Categories (MHRSD Policy Caps)",
+        lbl_disabled: "Disabled Saudi (ذوي الإعاقة)",
+        desc_disabled: "Must earn ≥4k SAR. Capped at max 10% of total workforce.",
+        lbl_prisoners: "Released Inmates (المفرج عنهم)",
+        desc_prisoners: "Counts as 2 workers for first 24 months, capped at 10%.",
+        lbl_students: "Students / Part-Time (الطلاب)",
+        desc_students: "Min SAR 3,000. Subject to student ratio limits in establishment.",
+        lbl_flexible: "Flexible Work (مرن - ساعات)",
+        desc_flexible: "Monthly total contract hours performed via 'Mrn' platform.",
+        sim_title: "Wage Increment ROI Optimizer (Quick Strategy)",
+        sim_desc: "Calculate the immediate Saudization percentage gain if you increase employees in the SAR 3,000 - SAR 3,999 bracket to SAR 4,000.",
+        sim_subtext: "Eligible partial-weight employees currently:",
+        sim_gain_lbl: "Saudization Potential Gain",
+        kpi_card_badge: "Nitaqat Compliance Engine",
+        lbl_saudization_rate: "Effective Saudization Rate",
+        lbl_target_quota_disp: "Target Benchmark",
+        subhead_metrics_details: "Effective Unit Metrics (Qiwa Formula)",
+        row_physical_saudis: "Physical Saudi Employees:",
+        row_weighted_saudis: "Effective Saudi Weighted Units:",
+        row_expats_count: "Total Expatriate Units:",
+        row_total_effective: "Effective Total Workforce:",
+        row_lost_points: "Lost Points (< SAR 4,000 Wasted):",
+        row_gap_headcount: "Additional Saudis to Reach Target:",
+        disc_title: "Bilingual Official Disclaimer / إخلاء مسؤولية رسمي",
+        disc_text: "Estimates provided are for administrative simulation and advisory purposes based on MHRSD ministerial decree guidelines. Final Saudization categorization is calculated dynamically through Qiwa / MHRSD systems based on moving 26-week moving averages and specific economic activity charts.",
+        cta_box_title: "Download Automated 26-Week Qiwa Audit Spreadsheet",
+        cta_box_desc: "Pre-built offline Excel model with dynamic moving-averages, batch WPS/GOSI salary imports, and automatic warning alerts before falling into Low Green or Red.",
+        seo_h1: "The Comprehensive Guide to Saudi Nitaqat Wage Thresholds & Saudization Weight Calculation",
+        seo_intro: "Under the regulations set forth by the Saudi Ministry of Human Resources and Social Development (MHRSD), Saudization (Nitaqat / نطاقات) calculations do not rely merely on raw employment headcounts. Instead, each Saudi employee registered under the General Organization for Social Insurance (GOSI) is assigned a specific weighted coefficient ranging from 0.0 to 4.0 depending on their gross registered monthly wage, physical condition, and labor contract type."
+      },
+      ar: {
+        badge_kpi: "معايير برنامج نطاقات المعتمدة (قرار 4000 ريال للحد الأدنى للأجور)",
+        app_title: "حاسبة أوزان أجور التوطين ونسب نطاقات (الموارد البشرية)",
+        app_subtitle: "محاكاة احتساب وزن الموظف السعودي (1.0، 0.5، أو 0.0) وفق فئات الأجر في التأمينات، والفئات الخاصة، ونسبة التوطين الفعلية.",
+        btn_print: "طباعة التقرير",
+        btn_export: "تصدير ملف CSV",
+        section_workforce_breakdown: "توزيع أعداد الموظفين وسلم الأجور",
+        btn_reset: "استعادة الافتراضي",
+        lbl_expats: "عدد الموظفين غير السعوديين (العمالة الوافدة)",
+        help_expats: "يُحتسب كل موظف وافد بوزن 1.0 في مقام إجمالي القوى العاملة.",
+        lbl_target_quota: "نسبة التوطين المستهدفة للمنشأة (%)",
+        help_quota: "الحد الأدنى المطلوب لنطاق الأخضر المرتفع بحسب نشاط المنشأة.",
+        subhead_saudi_tiers: "المواطنون السعوديون بحسب الأجر الشهري المسجل بالتأمينات",
+        lbl_tier1: "أجر مكتمل (4,000 ريال شهرياً فأكثر)",
+        desc_tier1: "يُحتسب موظفاً كاملاً في نسبة التوطين (وزن 1.0 كامل).",
+        lbl_tier2: "أجر جزئي (3,000 ريال إلى 3,999 ريال)",
+        desc_tier2: "يُحتسب بنصف موظف (0.5). رفعه إلى 4,000 يضاعف وزنه فوراً.",
+        lbl_tier3: "أجر دون الحد (أقل من 3,000 ريال)",
+        desc_tier3: "مسجل بالتأمينات لكن وزنه صفر (0.0) ولا يُحتسب في التوطين.",
+        subhead_special: "الفئات الوظيفية الخاصة (وفق ضوابط وحدود الوزارة)",
+        lbl_disabled: "موظف سعودي من ذوي الإعاقة",
+        desc_disabled: "بشرط أجر ≥ 4 آلاف. يُحسب بـ 4 موظفين بسقف 10% من المنشأة.",
+        lbl_prisoners: "المفرج عنهم من السجون",
+        desc_prisoners: "يُحسب بـ 2 موظفين لمدة 24 شهراً بحد أقصى 10%.",
+        lbl_students: "الطلاب / العمل بدوام جزئي",
+        desc_students: "أجر أدنى 3 آلاف. يُحسب بـ 0.5 عامل وفق نسب الطلاب المقررة.",
+        lbl_flexible: "عقود العمل المرن (ساعات منصة مرن)",
+        desc_flexible: "إجمالي ساعات العمل الموثقة شهرياً. كل 168 ساعة = 1 سعودي.",
+        sim_title: "محاكي العائد لرفع الأجور إلى 4,000 ريال (استراتيجية الموارد البشرية)",
+        sim_desc: "احسب الزيادة الفورية في نسبة التوطين إذا تم تعديل رواتب الفئة الجزئية (3,000 - 3,999) إلى 4,000 ريال.",
+        sim_subtext: "عدد الموظفين بفئة النصف وزن حالياً:",
+        sim_gain_lbl: "الزيادة المتوقعة بنسبة التوطين",
+        kpi_card_badge: "محرك امتثال نطاقات وقوى",
+        lbl_saudization_rate: "نسبة التوطين الموزونة الفعلية",
+        lbl_target_quota_disp: "المستهدف المطلوب",
+        subhead_metrics_details: "تفاصيل الوحدات الموزونة (معادلة منصة قوى)",
+        row_physical_saudis: "عدد الموظفين السعوديين الفعلي (الرؤوس):",
+        row_weighted_saudis: "إجمالي الوحدات الموزونة للسعوديين:",
+        row_expats_count: "إجمالي العمالة غير السعودية:",
+        row_total_effective: "إجمالي القوى العاملة الموزونة:",
+        row_lost_points: "النقاط المهدورة (رواتب دون 4 آلاف):",
+        row_gap_headcount: "سعوديون إضافيون للوصول للمستهدف:",
+        disc_title: "إخلاء مسؤولية رسمي وقانوني",
+        disc_text: "المخرجات الناتجة استرشادية لغرض المحاكاة الإدارية وفق قرارات وزارة الموارد البشرية. يتم احتساب النطاق النهائي دورياً عبر منصة قوى استناداً للمتوسط الحسابي المتحرك لـ 26 أسبوعاً وجداول الأنشطة الاقتصادية المعتمدة.",
+        cta_box_title: "حمل قالب إكسيل المتقدم لحساب متوسط 26 أسبوعاً لمنصة قوى",
+        cta_box_desc: "نموذج إكسل متكامل مع معادلات VBA، استيراد رواتب حماية الأجور، وتنبيهات مبكرة قبل الهبوط للنطاق الأحمر أو الأصفر.",
+        seo_h1: "دليل احتساب الحد الأدنى لأجور التوطين وأوزان نقاط نطاقات في السعودية",
+        seo_intro: "وفقاً للوائح وزارة الموارد البشرية والتنمية الاجتماعية، لا يعتمد برنامج نطاقات على عدد العاملين الفعليين فحسب، بل يُعطى كل موظف سعودي وزناً نقطياً يتراوح بين 0.0 إلى 4.0 بناءً على الأجر الخاضع للتأمينات وفئته الوظيفية."
+      }
+    };
+
+    function toggleLanguage() {
+      currentLang = (currentLang === 'en') ? 'ar' : 'en';
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = (currentLang === 'ar') ? 'rtl' : 'ltr';
+      document.getElementById('langToggleBtn').textContent = (currentLang === 'ar') ? 'English (EN)' : 'العربية (AR)';
+      
+      const langSet = i18n[currentLang];
+      for (let key in langSet) {
+        const el = document.getElementById(key);
+        if (el) el.textContent = langSet[key];
+      }
+      calculateWeights();
+    }
+
+    function resetDefaults() {
+      document.getElementById('inp_expats').value = 45;
+      document.getElementById('inp_target_quota').value = 25.0;
+      document.getElementById('inp_saudi_full').value = 14;
+      document.getElementById('inp_saudi_half').value = 4;
+      document.getElementById('inp_saudi_zero').value = 1;
+      document.getElementById('inp_disabled').value = 1;
+      document.getElementById('inp_prisoners').value = 0;
+      document.getElementById('inp_students').value = 2;
+      document.getElementById('inp_flexible_hrs').value = 336;
+      calculateWeights();
+    }
+
+    function calculateWeights() {
+      // Get Inputs
+      const expats = Math.max(0, parseFloat(document.getElementById('inp_expats').value) || 0);
+      const targetQuota = Math.max(0, parseFloat(document.getElementById('inp_target_quota').value) || 0);
+      
+      const saudiFull = Math.max(0, parseFloat(document.getElementById('inp_saudi_full').value) || 0); // 1.0
+      const saudiHalf = Math.max(0, parseFloat(document.getElementById('inp_saudi_half').value) || 0); // 0.5
+      const saudiZero = Math.max(0, parseFloat(document.getElementById('inp_saudi_zero').value) || 0); // 0.0
+      
+      const disabledCount = Math.max(0, parseFloat(document.getElementById('inp_disabled').value) || 0); // 4.0
+      const prisonersCount = Math.max(0, parseFloat(document.getElementById('inp_prisoners').value) || 0); // 2.0
+      const studentCount = Math.max(0, parseFloat(document.getElementById('inp_students').value) || 0); // 0.5
+      const flexHours = Math.max(0, parseFloat(document.getElementById('inp_flexible_hrs').value) || 0); // 168 hrs = 1
+
+      // Physical Headcount
+      const physicalSaudis = saudiFull + saudiHalf + saudiZero + disabledCount + prisonersCount + studentCount;
+      
+      // Special category rules & caps
+      // Disabled workers: 4 points each, capped at 10% of total Saudis in standard formula or 10% total workforce
+      // For standard SMEs, each disabled counts as 4.0
+      const disabledPoints = disabledCount * 4.0;
+      const prisonerPoints = prisonersCount * 2.0;
+      const studentPoints = studentCount * 0.5;
+      const flexibleUnits = +(flexHours / 168).toFixed(2);
+
+      // Standard wages:
+      const fullWagePoints = saudiFull * 1.0;
+      const halfWagePoints = saudiHalf * 0.5;
+      const zeroWagePoints = 0.0;
+
+      // Total weighted Saudi count
+      const totalWeightedSaudis = fullWagePoints + halfWagePoints + disabledPoints + prisonerPoints + studentPoints + flexibleUnits;
+      
+      // Total workforce divisor (Weighted Saudis + Expats)
+      const effectiveTotalWorkforce = totalWeightedSaudis + expats;
+      
+      let saudizationPct = 0;
+      if (effectiveTotalWorkforce > 0) {
+        saudizationPct = (totalWeightedSaudis / effectiveTotalWorkforce) * 100;
+      }
+
+      // Lost points because of sub-4000 salaries:
+      // Each half wage loses 0.5. Each zero wage loses 1.0
+      const lostPoints = (saudiHalf * 0.5) + (saudiZero * 1.0);
+
+      // Required Saudis to reach target
+      // Target / 100 = (S + X) / (Total + X) => X = (Target * Total - 100*S) / (100 - Target)
+      let saudisNeeded = 0;
+      if (saudizationPct < targetQuota && targetQuota < 100) {
+        const needed = ( (targetQuota / 100) * effectiveTotalWorkforce - totalWeightedSaudis ) / (1 - (targetQuota / 100));
+        saudisNeeded = Math.max(0, Math.ceil(needed));
+      }
+
+      // Simulation: What if we upgrade all saudiHalf to 4000 SAR?
+      const upgradedSaudiWeighted = totalWeightedSaudis + (saudiHalf * 0.5);
+      const upgradedTotalWorkforce = upgradedSaudiWeighted + expats;
+      const upgradedPct = upgradedTotalWorkforce > 0 ? (upgradedSaudiWeighted / upgradedTotalWorkforce) * 100 : 0;
+      const deltaPct = Math.max(0, upgradedPct - saudizationPct);
+      const estimatedCost = saudiHalf * 500; // Average bump assumption 500 SAR
+
+      // Update DOM
+      document.getElementById('res_saudization_pct').textContent = saudizationPct.toFixed(2) + '%';
+      document.getElementById('res_target_quota').textContent = targetQuota.toFixed(1) + '%';
+      
+      document.getElementById('val_physical_saudis').textContent = physicalSaudis + (flexibleUnits > 0 ? ` + Flex (${flexibleUnits})` : '');
+      document.getElementById('val_weighted_saudis').textContent = totalWeightedSaudis.toFixed(2);
+      document.getElementById('val_expats').textContent = expats.toFixed(2);
+      document.getElementById('val_effective_total').textContent = effectiveTotalWorkforce.toFixed(2);
+      document.getElementById('val_lost_points').textContent = `-${lostPoints.toFixed(1)} Units`;
+      
+      const saudisNeededEl = document.getElementById('val_saudis_needed');
+      if (saudisNeeded > 0) {
+        saudisNeededEl.textContent = `${saudisNeeded} ${currentLang === 'ar' ? 'سعودي إضافي' : 'More Saudis'}`;
+        saudisNeededEl.className = "font-mono font-bold text-rose-600";
+      } else {
+        saudisNeededEl.textContent = currentLang === 'ar' ? 'المستهدف محقق ✓' : 'Target Achieved ✓';
+        saudisNeededEl.className = "font-mono font-bold text-emerald-600";
+      }
+
+      // Progress bar & pill
+      const pb = document.getElementById('progress_bar');
+      const cappedWidth = Math.min(100, Math.max(0, saudizationPct));
+      pb.style.width = cappedWidth + '%';
+
+      const diffText = document.getElementById('progress_diff_text');
+      const diffVal = saudizationPct - targetQuota;
+      diffText.textContent = `${diffVal >= 0 ? '+' : ''}${diffVal.toFixed(2)}% vs Quota`;
+
+      const bandPill = document.getElementById('pill_band_status');
+      if (saudizationPct >= targetQuota + 5) {
+        bandPill.className = "px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-400/40 font-cairo-override";
+        bandPill.textContent = currentLang === 'ar' ? 'النطاق البلاتيني / أخضر مرتفع' : 'Platinum / High Green';
+        pb.className = "bg-emerald-400 h-2.5 rounded-full transition-all duration-500";
+      } else if (saudizationPct >= targetQuota) {
+        bandPill.className = "px-2.5 py-1 text-xs font-bold rounded-full bg-teal-500/20 text-teal-300 border border-teal-400/40 font-cairo-override";
+        bandPill.textContent = currentLang === 'ar' ? 'النطاق الأخضر المتوسط' : 'Mid Green (Safe)';
+        pb.className = "bg-teal-500 h-2.5 rounded-full transition-all duration-500";
+      } else if (saudizationPct >= targetQuota - 3) {
+        bandPill.className = "px-2.5 py-1 text-xs font-bold rounded-full bg-amber-500/20 text-amber-300 border border-amber-400/40 font-cairo-override";
+        bandPill.textContent = currentLang === 'ar' ? 'النطاق الأخضر المنخفض (تحذير)' : 'Low Green (Caution)';
+        pb.className = "bg-amber-500 h-2.5 rounded-full transition-all duration-500";
+      } else {
+        bandPill.className = "px-2.5 py-1 text-xs font-bold rounded-full bg-rose-500/20 text-rose-300 border border-rose-400/40 font-cairo-override";
+        bandPill.textContent = currentLang === 'ar' ? 'النطاق الأحمر (حرج)' : 'Red Zone (Non-Compliant)';
+        pb.className = "bg-rose-500 h-2.5 rounded-full transition-all duration-500";
+      }
+
+      // Simulator card update
+      document.getElementById('sim_eligible_count').textContent = `${saudiHalf} ${currentLang === 'ar' ? 'موظف' : 'Employees'}`;
+      document.getElementById('sim_extra_cost').textContent = `SAR ${estimatedCost.toLocaleString()}`;
+      document.getElementById('sim_point_delta').textContent = `+${deltaPct.toFixed(2)}%`;
+    }
+
+    function exportCSV() {
+      const saudization = document.getElementById('res_saudization_pct').textContent;
+      const weighted = document.getElementById('val_weighted_saudis').textContent;
+      const expats = document.getElementById('val_expats').textContent;
+      const target = document.getElementById('res_target_quota').textContent;
+
+      const rows = [
+        ["Report", "Saudi Nitaqat Saudization Weight Audit"],
+        ["Generated Date", new Date().toISOString().split('T')[0]],
+        ["Effective Saudization Rate", saudization],
+        ["Target Benchmark", target],
+        ["Total Weighted Saudi Units", weighted],
+        ["Total Expatriates", expats],
+        ["Full Wage Saudis (>=4,000 SAR)", document.getElementById('inp_saudi_full').value],
+        ["Partial Wage Saudis (3,000-3,999 SAR)", document.getElementById('inp_saudi_half').value],
+        ["Sub-wage Saudis (<3,000 SAR)", document.getElementById('inp_saudi_zero').value],
+        ["Disabled Saudis (4x)", document.getElementById('inp_disabled').value],
+        ["Students (0.5x)", document.getElementById('inp_students').value],
+        ["Flexible Hours", document.getElementById('inp_flexible_hrs').value]
+      ];
+
+      let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.map(item => `"${item}"`).join(",")).join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Nitaqat_Saudization_Audit_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initial calculation on page load
+    calculateWeights();
+  </script>
+</body>
+</html>

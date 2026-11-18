@@ -271,5 +271,12 @@
     "title_ar": "حاسبة التكاليف القضائية ورسوم الدعاوى التجارية في السعودية",
     "description_en": "Calculate Saudi commercial court lawsuit fees, appeal costs, and judicial expenses under Royal Decree M/16 with instant statutory fee breakdowns.",
     "date": "2026-11-18"
+  },
+  {
+    "slug": "saudi-nitaqat-wage-weight-calculator",
+    "title_en": "Saudi Nitaqat Wage Threshold & Saudization Weight Calculator",
+    "title_ar": "حاسبة احتساب أجور التوطين ونسب نطاقات المعتمدة (الموارد البشرية)",
+    "description_en": "Calculate MHRSD Nitaqat Saudization weights based on the 4,000 SAR minimum wage rule, part-time, disabled, and student employee categories.",
+    "date": "2026-11-18"
   }
 ]
