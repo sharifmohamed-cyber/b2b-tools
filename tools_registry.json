@@ -278,5 +278,12 @@
     "title_ar": "حاسبة احتساب أجور التوطين ونسب نطاقات المعتمدة (الموارد البشرية)",
     "description_en": "Calculate MHRSD Nitaqat Saudization weights based on the 4,000 SAR minimum wage rule, part-time, disabled, and student employee categories.",
     "date": "2026-11-18"
+  },
+  {
+    "slug": "saudi-balady-municipal-license-fee-calculator",
+    "title_en": "Saudi Balady Municipal License & Signboard Fee Calculator",
+    "title_ar": "حاسبة رسوم رخص الأنشطة التجارية واللوحات البلدية (منصة بلدي)",
+    "description_en": "Calculate official Saudi Balady municipal license fees, commercial signboard tariffs, waste disposal levies, and 24-hour permits accurately under MOMRAH rules.",
+    "date": "2026-11-19"
   }
 ]

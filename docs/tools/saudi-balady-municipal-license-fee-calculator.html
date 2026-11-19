@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة رسوم رخص الأنشطة التجارية واللوحات البلدية - بلدي | Balady Municipal Fee Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; }
+        .en-mode { font-family: 'Inter', sans-serif; }
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Top Sticky Promotion Banner -->
+    <div class="sticky top-0 z-50 bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white shadow-md border-b border-emerald-500/30 px-4 py-2.5">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm font-medium">
+            <div class="flex items-center gap-2 text-center sm:text-right">
+                <span class="bg-emerald-500 text-slate-950 font-bold px-2 py-0.5 rounded text-[11px] uppercase tracking-wider">B2B Toolkit</span>
+                <span id="bannerText">وفّر ساعات التقدير: حمّل نموذج الإكسيل الشامل والآلي لحساب تكاليف ورخص بلدي لجميع الفروع ($29)</span>
+            </div>
+            <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-emerald-400 hover:bg-emerald-300 text-slate-950 font-bold px-4 py-1.5 rounded-lg transition-all shadow-sm flex items-center gap-1.5 whitespace-nowrap text-xs sm:text-sm">
+                <span id="bannerCta">تحميل نموذج الإكسيل الاحترافي</span>
+                <svg class="w-4 h-4 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="bg-white border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-emerald-600/30">
+                    ب
+                </div>
+                <div>
+                    <h1 id="headerTitle" class="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight leading-none">
+                        حاسبة رسوم رخص بلدي واللوحات التجارية
+                    </h1>
+                    <p id="headerSubtitle" class="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
+                        وفقاً للائحة المحدثة لرسوم الخدمات البلدية وتصنيف الأمانات (MOMRAH)
+                    </p>
+                </div>
+            </div>
+            <!-- Language Toggle Button -->
+            <button onclick="toggleLanguage()" id="langToggleBtn" class="px-3.5 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-100 font-bold text-xs sm:text-sm text-slate-700 transition flex items-center gap-2">
+                <span>English</span>
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Application Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Input Panel (7 Cols) -->
+            <div class="lg:col-span-7 bg-white rounded-2xl p-6 sm:p-7 shadow-sm border border-slate-200/80 space-y-6">
+                <div class="border-b border-slate-100 pb-4 flex items-center justify-between">
+                    <div>
+                        <h2 id="inputHeading" class="text-lg font-bold text-slate-900">بيانات المنشأة ومواصفات النشاط</h2>
+                        <p id="inputSub" class="text-xs text-slate-500 mt-0.5">أدخل بيانات المحل التجاري لحساب الرسوم الرسمية التقديرية بدقة</p>
+                    </div>
+                    <span class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-bold text-xs rounded-full border border-emerald-200/60">بلدي 2024-2025</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <!-- Municipality Category -->
+                    <div class="sm:col-span-2">
+                        <label id="lblMunicipality" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">تصنيف الأمانة / البلدية</label>
+                        <select id="municipalityLevel" onchange="calculateFees()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 p-3 font-semibold transition">
+                            <option value="1">المستوى الأول (أمانات: الرياض، مكة المكرمة، المدينة المنورة، جدة، المنطقة الشرقية)</option>
+                            <option value="2">المستوى الثاني (أمانات: القصيم، عسير، الطائف، تبوك، الأحساء)</option>
+                            <option value="3">المستوى الثالث (أمانات: حائل، جازان، نجران، الباحة، الحدود الشمالية، الجوف)</option>
+                            <option value="4">المستوى الرابع (بلديات المحافظات الكبرى فئة ب/ج)</option>
+                            <option value="5">المستوى الخامس (المراكز والقرى والهجر)</option>
+                        </select>
+                    </div>
+
+                    <!-- Activity Sector -->
+                    <div>
+                        <label id="lblActivity" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">قطاع النشاط الاقتصادي</label>
+                        <select id="activitySector" onchange="calculateFees()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 p-3 font-semibold transition">
+                            <option value="retail">تجارة التجزئة والخدمات العامة (بقايل، تموينات، ملابس، مكتبات)</option>
+                            <option value="fnb">مطاعم، كافيهات ومطابخ إعاشة (نشاط صحي غذائي)</option>
+                            <option value="offices">مكاتب شركات، استشارات ومراكز أعمال إدارية</option>
+                            <option value="health">أنشطة صحية شخصية (صالونات، صالات لياقة، سبا)</option>
+                            <option value="industrial">مستودعات، ورش ومستودعات تخزين لوجستية</option>
+                        </select>
+                    </div>
+
+                    <!-- Street Classification -->
+                    <div>
+                        <label id="lblStreetType" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">موقع المنشأة وعرض الشارع</label>
+                        <select id="streetType" onchange="calculateFees()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 p-3 font-semibold transition">
+                            <option value="commercial">شارع تجاري رئيسي (عرض أكثر من 20م)</option>
+                            <option value="sub_commercial">شارع فرعي تجاري (عرض أقل من 20م)</option>
+                            <option value="mall">داخل مركز تجاري مغلق / مجمع تسوق (مول)</option>
+                        </select>
+                    </div>
+
+                    <!-- Premise Area in Square Meters -->
+                    <div>
+                        <label id="lblArea" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">المساحة الإجمالية للمحل (م²)</label>
+                        <div class="relative rounded-xl shadow-sm">
+                            <input type="number" id="totalArea" value="120" min="1" max="50000" oninput="calculateFees()" class="w-full bg-slate-50 border border-slate-300 text-slate-900 text-sm rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 p-3 font-bold transition">
+                            <div class="absolute inset-y-0 left-0 rtl:left-0 rtl:right-auto ltr:right-0 ltr:left-auto flex items-center pr-3 pl-3 pointer-events-none text-slate-400 font-semibold text-xs">
+                                م²
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- License Duration (Years) -->
+                    <div>
+                        <label id="lblDuration" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">مدة الترخيص المطلوب (سنوات)</label>
+                        <select id="licenseYears" onchange="calculateFees()" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 p-3 font-semibold transition">
+                            <option value="1">سنة واحدة (1 Year)</option>
+                            <option value="2">سنتان (2 Years)</option>
+                            <option value="3">3 سنوات (3 Years)</option>
+                            <option value="4">4 سنوات (4 Years)</option>
+                            <option value="5" selected>5 سنوات (5 Years - الخيار الأوفر)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Signboard Section -->
+                <div class="pt-4 border-t border-slate-100">
+                    <h3 id="signboardHeading" class="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+                        <span>بيانات اللوحة الدعائية التعريفية (Signboard)</span>
+                    </h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div>
+                            <label id="lblSignWidth" class="block text-xs font-semibold text-slate-600 mb-1.5">عرض اللوحة (متر)</label>
+                            <input type="number" id="signWidth" value="4.5" step="0.1" min="0" oninput="calculateFees()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-bold">
+                        </div>
+                        <div>
+                            <label id="lblSignHeight" class="block text-xs font-semibold text-slate-600 mb-1.5">ارتفاع اللوحة (متر)</label>
+                            <input type="number" id="signHeight" value="1.2" step="0.1" min="0" oninput="calculateFees()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-bold">
+                        </div>
+                        <div>
+                            <label id="lblSignType" class="block text-xs font-semibold text-slate-600 mb-1.5">نوع اللوحة الإعلانية</label>
+                            <select id="signType" onchange="calculateFees()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-semibold">
+                                <option value="illuminated">مضيئة (Standard Illuminated)</option>
+                                <option value="regular">عادية / غير مضيئة (Flat Non-illuminated)</option>
+                                <option value="electronic">شاشة إلكترونية متغيرة (Digital Display)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Operational Switches -->
+                <div class="pt-4 border-t border-slate-100 space-y-3">
+                    <h3 id="addonsHeading" class="text-sm font-bold text-slate-900">تصاريح إضافية اختيارية</h3>
+                    
+                    <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition select-none">
+                        <input type="checkbox" id="twentyFourHours" onchange="calculateFees()" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                        <div class="flex-1">
+                            <div id="lbl24Hours" class="font-bold text-sm text-slate-800">تصريح العمل على مدار 24 ساعة (نشاط ليلي)</div>
+                            <div id="sub24Hours" class="text-xs text-slate-500">تطبيق رسم إضافي سنوي لأنشطة التجزئة والمطاعم المفتوحة بعد منتصف الليل</div>
+                        </div>
+                    </label>
+
+                    <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:bg-slate-50 cursor-pointer transition select-none">
+                        <input type="checkbox" id="outdoorSeating" onchange="calculateFees()" class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                        <div class="flex-1">
+                            <div id="lblOutdoor" class="font-bold text-sm text-slate-800">تصريح إشغال رصيف أو جلسات خارجية (مظلات / مقاعد)</div>
+                            <div id="subOutdoor" class="text-xs text-slate-500">يضاف رسم سنوي مخصص لإشغال الارتداد والمساحات الخارجية التابعة للبلدية</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Results Breakdown Panel (5 Cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-white rounded-2xl p-6 sm:p-7 shadow-lg border border-slate-200/90 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 left-0 h-2 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"></div>
+                    
+                    <div class="flex justify-between items-start mb-6">
+                        <div>
+                            <span id="resTag" class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md border border-emerald-200/60">ملخص الفاتورة التقديرية</span>
+                            <h3 id="resHeading" class="text-xl font-black text-slate-900 mt-2">إجمالي الرسوم البلدية المتوقعة</h3>
+                        </div>
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        </div>
+                    </div>
+
+                    <!-- Main Big Total Display -->
+                    <div class="p-5 bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl mb-6 shadow-inner text-center">
+                        <span id="resDurationBadge" class="inline-block text-xs font-semibold text-emerald-400 bg-emerald-950/80 px-3 py-1 rounded-full border border-emerald-500/30 mb-2">لمدة 5 سنوات</span>
+                        <div class="text-4xl sm:text-5xl font-black tracking-tight flex items-baseline justify-center gap-1.5">
+                            <span id="grandTotalDisplay">0</span>
+                            <span class="text-base font-bold text-slate-300">SAR</span>
+                        </div>
+                        <p id="annualAvgSubtitle" class="text-xs text-slate-400 mt-2 font-medium">بمتوسط سنوي قدره: <span id="annualAvgDisplay" class="font-bold text-slate-200">0</span> ريال / سنة</p>
+                    </div>
+
+                    <!-- Itemized Breakdown Table -->
+                    <div class="space-y-3.5 text-sm">
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span id="rowActivityFee" class="text-slate-600 font-medium">رسوم ترخيص النشاط (المساحة)</span>
+                            <span id="valActivityFee" class="font-bold text-slate-900">0 SAR</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span id="rowSignboardFee" class="text-slate-600 font-medium">رسوم اللوحة التعريفية والإعلانية</span>
+                            <span id="valSignboardFee" class="font-bold text-slate-900">0 SAR</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span id="rowWasteFee" class="text-slate-600 font-medium">رسوم جمع وتفريغ النفايات التجارية</span>
+                            <span id="valWasteFee" class="font-bold text-slate-900">0 SAR</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-slate-100">
+                            <span id="rowInspectionFee" class="text-slate-600 font-medium">رسم الكشف والمعاينة الفنية</span>
+                            <span id="valInspectionFee" class="font-bold text-slate-900">0 SAR</span>
+                        </div>
+                        <div id="row24Container" class="flex justify-between items-center py-2 border-b border-slate-100 hidden">
+                            <span id="row24Fee" class="text-slate-600 font-medium">تصريح تشغيل 24 ساعة</span>
+                            <span id="val24Fee" class="font-bold text-amber-600">0 SAR</span>
+                        </div>
+                        <div id="rowOutdoorContainer" class="flex justify-between items-center py-2 border-b border-slate-100 hidden">
+                            <span id="rowOutdoorFee" class="text-slate-600 font-medium">تصريح إشغال أرصفة وجلسات خارجية</span>
+                            <span id="valOutdoorFee" class="font-bold text-amber-600">0 SAR</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="grid grid-cols-2 gap-3 mt-6 pt-4 border-t border-slate-100">
+                        <button onclick="window.print()" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                            <span id="btnPrint">طباعة التقرير</span>
+                        </button>
+                        <button onclick="exportCSV()" class="flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs transition">
+                            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <span id="btnExport">تصدير ملف CSV</span>
+                        </button>
+                    </div>
+
+                    <!-- High-Converting CTA Box -->
+                    <div class="mt-6 p-4 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200/80 text-center">
+                        <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider block mb-1">حقيبة تأسيس المنشآت التجارية</span>
+                        <p id="ctaHeading" class="text-xs font-bold text-slate-800 mb-2">احصل على قالب الإكسيل الذكي لحساب تراخيص بلدي وفروع الشركات ($29)</p>
+                        <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="block w-full py-2 px-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition shadow-sm shadow-emerald-600/30">
+                            <span id="ctaButton">شراء القالب الجاهز فوراً - $29</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Bilingual Legal Disclaimer Card -->
+                <div class="p-4 rounded-xl bg-amber-50 border border-amber-200/70 text-amber-900 text-xs leading-relaxed">
+                    <div class="font-bold flex items-center gap-1.5 mb-1">
+                        <svg class="w-4 h-4 text-amber-700 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <span id="disclaimerTitle">إخلاء مسؤولية نظامي وحسابي</span>
+                    </div>
+                    <p id="disclaimerBody">
+                        المخرجات المعروضة هي تقديرات مالية استرشادية مبنية على لائحة رسوم الخدمات البلدية الصادرة بقرار مجلس الوزراء وتعاميم وزارة البلديات والإسكان (MOMRAH). قد تختلف الرسوم الفعلية استناداً إلى اشتراطات المخطط الإعلاني المعتمد لكل أمانة، وحسابات الارتدادات الهندسية، وفحوصات سلامة الدفاع المدني، والترميز الجغرافي للشارع على منصة "بلدي".
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Comprehensive SEO Guide, Formula Breakdown & FAQ -->
+        <article class="mt-16 bg-white rounded-2xl p-8 sm:p-10 border border-slate-200 shadow-sm max-w-5xl mx-auto space-y-10">
+            <div class="border-b border-slate-200 pb-6">
+                <h2 id="guideMainTitle" class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight leading-snug">
+                    الدليل التشغيلي لحساب رسوم الرخص التجارية ورخص اللوحات البلدية في السعودية
+                </h2>
+                <p id="guideSubtitle" class="text-slate-600 text-sm sm:text-base mt-2 font-medium">
+                    مرجعك الشامل لتكاليف التأسيس، الاشتراطات المكانية، والتصنيفات الجغرافية لأمانات المملكة وفق بوابة "بلدي"
+                </p>
+            </div>
+
+            <!-- Core Formulas & Mechanics Section -->
+            <section class="space-y-4">
+                <h3 id="sec1Title" class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                    <span class="w-2.5 h-6 bg-emerald-600 rounded-full inline-block"></span>
+                    آلية احتساب رسوم رخص الأنشطة التجارية (بلدي)
+                </h3>
+                <p id="sec1Text" class="text-sm text-slate-700 leading-relaxed">
+                    تعتمد وزارة البلديات والإسكان في المملكة العربية السعودية نموذجاً متعدد الشرائح لتحديد قيمة رسوم رخصة ممارسة النشاط التجاري وتجديدها. لا يتم الحساب بقيمة مقطوعة موحدة، بل ترتكز المعادلة على 4 متغيرات جوهرية:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <h4 id="var1Title" class="font-bold text-slate-900 text-sm mb-1">1. تصنيف الأمانة والبلدية (Municipal Tier)</h4>
+                        <p id="var1Desc" class="text-xs text-slate-600">تم تقسيم مناطق ومدن المملكة إلى 5 مستويات. يقع المستوى الأول في الأمانات الخمس الكبرى (الرياض، العاصمة المقدسة، المدينة المنورة، جدة، وحاضرة الدمام والخبر بالشرقية) حيث تبلغ الرسوم حدها الأقصى لارتفاع الكثافة الاستثمارية.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <h4 id="var2Title" class="font-bold text-slate-900 text-sm mb-1">2. شرائح المساحة بالمتر المربع (Area Brackets)</h4>
+                        <p id="var2Desc" class="text-xs text-slate-600">تُقسم المساحات إلى شرائح تنازلية: الشريحة الأولى (حتى 150م²)، الشريحة الثانية (151 إلى 300م²)، الشريحة الثالثة (301 إلى 1,000م²)، وما فوق 1,000م² بهدف تخفيف العبء المالي على المنشآت ذات المساحات الضخمة كالمعارض والمستودعات.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <h4 id="var3Title" class="font-bold text-slate-900 text-sm mb-1">3. تصنيف الشارع وموقع المنشأة (Street Classification)</h4>
+                        <p id="var3Desc" class="text-xs text-slate-600">المحلات المطلة على الشوارع التجارية الرئيسية (أكبر من 20 متر) تخضع لتعرفة أعلى مقارنة بالشوارع الفرعية أو المتاجر الواقعة بالكامل داخل مراكز التسوق المغلقة (المولات).</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                        <h4 id="var4Title" class="font-bold text-slate-900 text-sm mb-1">4. طبيعة النشاط الصحي والتجاري (Risk Category)</h4>
+                        <p id="var4Desc" class="text-xs text-slate-600">تخضع أنشطة الأغذية، المقاهي والمطابخ لرسوم أعلى نظراً لمتطلبات الرقابة الصحية الدورية وتراخيص صحة البيئة مقارنة بمكاتب المحاماة والاستشارات أو مستودعات التخزين الجاف.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Signboard & Additional Fees Section -->
+            <section class="space-y-4">
+                <h3 id="sec2Title" class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                    <span class="w-2.5 h-6 bg-emerald-600 rounded-full inline-block"></span>
+                    رسوم اللوحات الإعلانية والتعريفية (Signboard Tariff)
+                </h3>
+                <p id="sec2Text" class="text-sm text-slate-700 leading-relaxed">
+                    تُفرض رسوم سنوية على اللوحات التعريفية المثبتة على واجهات المحلات طبقاً لكود التصميم العمراني ومساحة واجهة اللوحة (الطول × الارتفاع). عادةً ما تتراوح رسوم المتر المربع السنوي للوحة المضيئة بين 100 إلى 200 ريال في الشوارع التجارية من المستوى الأول، وتخفض اللوحات غير المضيئة، في حين تخضع الشاشات الإعلانية الإلكترونية لرسوم ورخص خاصة.
+                </p>
+                <div class="bg-emerald-50 border-r-4 rtl:border-r-4 ltr:border-l-4 border-emerald-600 p-4 rounded-xl text-slate-800 text-sm">
+                    <span class="font-bold block text-emerald-900 mb-1">معادلة اللوحة السنوية:</span>
+                    <code>رسوم اللوحة = مساحة اللوحة (م²) × الرسم المعتمد للمتر (حسب نوع اللوحة وتصنيف الأمانة) × عدد سنوات الترخيص</code>
+                </div>
+            </section>
+
+            <!-- Waste & 24h Permits -->
+            <section class="space-y-4">
+                <h3 id="sec3Title" class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                    <span class="w-2.5 h-6 bg-emerald-600 rounded-full inline-block"></span>
+                    رسوم النفايات التجارية وتصريح العمل 24 ساعة
+                </h3>
+                <p id="sec3Text" class="text-sm text-slate-700 leading-relaxed">
+                    تتضمن الفاتورة المجمعة لمنصة بلدي رسوم جمع ونقل النفايات التجارية، والتي تُحسب بالريال لكل متر مربع سنوياً بحدود دنيا وقصوى لضمان النظافة العامة. كما يجوز للأنشطة المستوفية للشروط طلب تصريح تشغيل 24 ساعة، وتبلغ رسومه السنوية ما بين 1,000 ريال إلى 10,000 ريال سنوياً بحسب النشاط وحجم المدينة، مع إعفاء بعض الأنشطة الحيوية كالصيدليات ومحطات الوقود.
+                </p>
+            </section>
+
+            <!-- Frequently Asked Questions (FAQ) -->
+            <section class="space-y-4 pt-4 border-t border-slate-100">
+                <h3 id="faqTitle" class="text-xl font-extrabold text-slate-900 mb-4">الأسئلة الأكثر شيوعاً حول تراخيص بلدي (FAQ)</h3>
+                
+                <div class="space-y-4">
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                        <h4 id="faqQ1" class="font-bold text-slate-900 text-sm mb-1.5">هل يمكن إصدار رخصة بلدي فورية للمنشآت التجارية؟</h4>
+                        <p id="faqA1" class="text-xs text-slate-600 leading-relaxed">نعم، لمعظم الأنشطة منخفضة الخطورة، تتيح منصة بلدي إصدار "الرخصة الفورية" بمجرد توفر عقد إيجار موثق عبر منصة إيجار أو صك ملكية، ورقم سجل تجاري نشط، وتعهد بالالتزام بالاشتراطات البلدية والدفاع المدني قبل إجراء الرقابة اللاحقة.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                        <h4 id="faqQ2" class="font-bold text-slate-900 text-sm mb-1.5">ما هي أقصى مدة يمكن إصدار الرخصة البلدية لها؟</h4>
+                        <p id="faqA2" class="text-xs text-slate-600 leading-relaxed">يمكن إصدار رخص الأنشطة التجارية لمدد تتراوح بين سنة واحدة وحتى 5 سنوات، ويستحسن اختيار مدد أطول لتثبيت التكاليف وتفادي غرامات انتهاء صلاحية الترخيص والتأخير في التجديد.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                        <h4 id="faqQ3" class="font-bold text-slate-900 text-sm mb-1.5">هل تختلف رسوم الرخصة باختلاف عرض الشارع؟</h4>
+                        <p id="faqA3" class="text-xs text-slate-600 leading-relaxed">نعم، تصنف الأنظمة البلدية الشوارع التجارية بحسب عرضها إلى شوارع تجارية رئيسية (عرض أكبر من 20 متراً) وشوارع تجارية فرعية، كما تتم معاملة المحلات داخل المجمعات التجارية المغلقة برسوم خاصة تعكس طبيعة الموقع والخدمات المقدمة.</p>
+                    </div>
+                </div>
+            </section>
+        </article>
+    </main>
+
+    <!-- Page Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500 mt-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <p id="footerText">© 2025 حاسبة رخص منصة بلدي والأنشطة التجارية للمنشآت - أداة B2B مستقلة وموجهة للشركات والمنشآت السعودية.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Calculation and i18n Engine -->
+    <script>
+        let currentLang = 'ar';
+
+        const i18n = {
+            ar: {
+                bannerText: "وفّر ساعات التقدير: حمّل نموذج الإكسيل الشامل والآلي لحساب تكاليف ورخص بلدي لجميع الفروع ($29)",
+                bannerCta: "تحميل نموذج الإكسيل الاحترافي",
+                headerTitle: "حاسبة رسوم رخص بلدي واللوحات التجارية",
+                headerSubtitle: "وفقاً للائحة المحدثة لرسوم الخدمات البلدية وتصنيف الأمانات (MOMRAH)",
+                inputHeading: "بيانات المنشأة ومواصفات النشاط",
+                inputSub: "أدخل بيانات المحل التجاري لحساب الرسوم الرسمية التقديرية بدقة",
+                lblMunicipality: "تصنيف الأمانة / البلدية",
+                lblActivity: "قطاع النشاط الاقتصادي",
+                lblStreetType: "موقع المنشأة وعرض الشارع",
+                lblArea: "المساحة الإجمالية للمحل (م²)",
+                lblDuration: "مدة الترخيص المطلوب (سنوات)",
+                signboardHeading: "بيانات اللوحة الدعائية التعريفية (Signboard)",
+                lblSignWidth: "عرض اللوحة (متر)",
+                lblSignHeight: "ارتفاع اللوحة (متر)",
+                lblSignType: "نوع اللوحة الإعلانية",
+                addonsHeading: "تصاريح إضافية اختيارية",
+                lbl24Hours: "تصريح العمل على مدار 24 ساعة (نشاط ليلي)",
+                sub24Hours: "تطبيق رسم إضافي سنوي لأنشطة التجزئة والمطاعم المفتوحة بعد منتصف الليل",
+                lblOutdoor: "تصريح إشغال رصيف أو جلسات خارجية (مظلات / مقاعد)",
+                subOutdoor: "يضاف رسم سنوي مخصص لإشغال الارتداد والمساحات الخارجية التابعة للبلدية",
+                resTag: "ملخص الفاتورة التقديرية",
+                resHeading: "إجمالي الرسوم البلدية المتوقعة",
+                annualAvgSubtitle: "بمتوسط سنوي قدره: ",
+                rowActivityFee: "رسوم ترخيص النشاط (المساحة)",
+                rowSignboardFee: "رسوم اللوحة التعريفية والإعلانية",
+                rowWasteFee: "رسوم جمع وتفريغ النفايات التجارية",
+                rowInspectionFee: "رسم الكشف والمعاينة الفنية",
+                row24Fee: "تصريح تشغيل 24 ساعة",
+                rowOutdoorFee: "تصريح إشغال أرصفة وجلسات خارجية",
+                btnPrint: "طباعة التقرير",
+                btnExport: "تصدير ملف CSV",
+                ctaHeading: "احصل على قالب الإكسيل الذكي لحساب تراخيص بلدي وفروع الشركات ($29)",
+                ctaButton: "شراء القالب الجاهز فوراً - $29",
+                disclaimerTitle: "إخلاء مسؤولية نظامي وحسابي",
+                disclaimerBody: "المخرجات المعروضة هي تقديرات مالية استرشادية مبنية على لائحة رسوم الخدمات البلدية الصادرة بقرار مجلس الوزراء وتعاميم وزارة البلديات والإسكان (MOMRAH). قد تختلف الرسوم الفعلية استناداً إلى اشتراطات المخطط الإعلاني المعتمد لكل أمانة، وحسابات الارتدادات الهندسية، وفحوصات سلامة الدفاع المدني، والترميز الجغرافي للشارع على منصة 'بلدي'.",
+                guideMainTitle: "الدليل التشغيلي لحساب رسوم الرخص التجارية ورخص اللوحات البلدية في السعودية",
+                guideSubtitle: "مرجعك الشامل لتكاليف التأسيس، الاشتراطات المكانية، والتصنيفات الجغرافية لأمانات المملكة وفق بوابة 'بلدي'",
+                sec1Title: "آلية احتساب رسوم رخص الأنشطة التجارية (بلدي)",
+                sec1Text: "تعتمد وزارة البلديات والإسكان في المملكة العربية السعودية نموذجاً متعدد الشرائح لتحديد قيمة رسوم رخصة ممارسة النشاط التجاري وتجديدها. لا يتم الحساب بقيمة مقطوعة موحدة، بل ترتكز المعادلة على 4 متغيرات جوهرية:",
+                var1Title: "1. تصنيف الأمانة والبلدية (Municipal Tier)",
+                var1Desc: "تم تقسيم مناطق ومدن المملكة إلى 5 مستويات. يقع المستوى الأول في الأمانات الخمس الكبرى (الرياض، العاصمة المقدسة، المدينة المنورة، جدة، وحاضرة الدمام والخبر بالشرقية) حيث تبلغ الرسوم حدها الأقصى لارتفاع الكثافة الاستثمارية.",
+                var2Title: "2. شرائح المساحة بالمتر المربع (Area Brackets)",
+                var2Desc: "تُقسم المساحات إلى شرائح تنازلية: الشريحة الأولى (حتى 150م²)، الشريحة الثانية (151 إلى 300م²)، الشريحة الثالثة (301 إلى 1,000م²)، وما فوق 1,000م² بهدف تخفيف العبء المالي على المنشآت ذات المساحات الضخمة كالمعارض والمستودعات.",
+                var3Title: "3. تصنيف الشارع وموقع المنشأة (Street Classification)",
+                var3Desc: "المحلات المطلة على الشوارع التجارية الرئيسية (أكبر من 20 متر) تخضع لتعرفة أعلى مقارنة بالشوارع الفرعية أو المتاجر الواقعة بالكامل داخل مراكز التسوق المغلقة (المولات).",
+                var4Title: "4. طبيعة النشاط الصحي والتجاري (Risk Category)",
+                var4Desc: "تخضع أنشطة الأغذية، المقاهي والمطابخ لرسوم أعلى نظراً لمتطلبات الرقابة الصحية الدورية وتراخيص صحة البيئة مقارنة بمكاتب المحاماة والاستشارات أو مستودعات التخزين الجاف.",
+                sec2Title: "رسوم اللوحات الإعلانية والتعريفية (Signboard Tariff)",
+                sec2Text: "تُفرض رسوم سنوية على اللوحات التعريفية المثبتة على واجهات المحلات طبقاً لكود التصميم العمراني ومساحة واجهة اللوحة (الطول × الارتفاع). عادةً ما تتراوح رسوم المتر المربع السنوي للوحة المضيئة بين 100 إلى 200 ريال في الشوارع التجارية من المستوى الأول، وتخفض اللوحات غير المضيئة، في حين تخضع الشاشات الإعلانية الإلكترونية لرسوم ورخص خاصة.",
+                sec3Title: "رسوم النفايات التجارية وتصريح العمل 24 ساعة",
+                sec3Text: "تتضمن الفاتورة المجمعة لمنصة بلدي رسوم جمع ونقل النفايات التجارية، والتي تُحسب بالريال لكل متر مربع سنوياً بحدود دنيا وقصوى لضمان النظافة العامة. كما يجوز للأنشطة المستوفية للشروط طلب تصريح تشغيل 24 ساعة، وتبلغ رسومه السنوية ما بين 1,000 ريال إلى 10,000 ريال سنوياً بحسب النشاط وحجم المدينة، مع إعفاء بعض الأنشطة الحيوية كالصيدليات ومحطات الوقود.",
+                faqTitle: "الأسئلة الأكثر شيوعاً حول تراخيص بلدي (FAQ)",
+                faqQ1: "هل يمكن إصدار رخصة بلدي فورية للمنشآت التجارية؟",
+                faqA1: "نعم، لمعظم الأنشطة منخفضة الخطورة، تتيح منصة بلدي إصدار 'الرخصة الفورية' بمجرد توفر عقد إيجار موثق عبر منصة إيجار أو صك ملكية، ورقم سجل تجاري نشط، وتعهد بالالتزام بالاشتراطات البلدية والدفاع المدني قبل إجراء الرقابة اللاحقة.",
+                faqQ2: "ما هي أقصى مدة يمكن إصدار الرخصة البلدية لها؟",
+                faqA2: "يمكن إصدار رخص الأنشطة التجارية لمدد تتراوح بين سنة واحدة وحتى 5 سنوات، ويستحسن اختيار مدد أطول لتثبيت التكاليف وتفادي غرامات انتهاء صلاحية الترخيص والتأخير في التجديد.",
+                faqQ3: "هل تختلف رسوم الرخصة باختلاف عرض الشارع؟",
+                faqA3: "نعم، تصنف الأنظمة البلدية الشوارع التجارية بحسب عرضها إلى شوارع تجارية رئيسية (عرض أكبر من 20 متراً) وشوارع تجارية فرعية، كما تتم معاملة المحلات داخل المجمعات التجارية المغلقة برسوم خاصة تعكس طبيعة الموقع والخدمات المقدمة.",
+                footerText: "© 2025 حاسبة رخص منصة بلدي والأنشطة التجارية للمنشآت - أداة B2B مستقلة وموجهة للشركات والمنشآت السعودية.",
+                badgeDuration: "لمدة {y} سنوات",
+                perYearSuffix: " ريال / سنة"
+            },
+            en: {
+                bannerText: "Save estimation hours: Download the Automated Multi-Branch Balady Licensing Excel Model ($29)",
+                bannerCta: "Get Master Excel Template",
+                headerTitle: "Saudi Balady Municipal License & Signboard Fee Calculator",
+                headerSubtitle: "Based on the updated MOMRAH Municipal Services Regulations & Tiers",
+                inputHeading: "Premises & Commercial Activity Parameters",
+                inputSub: "Enter commercial facility specs to calculate accurate estimated official fees",
+                lblMunicipality: "Municipality / Amanah Classification",
+                lblActivity: "Economic Activity Sector",
+                lblStreetType: "Premise Location & Street Width",
+                lblArea: "Total Facility Area (m²)",
+                lblDuration: "License Validity (Years)",
+                signboardHeading: "Commercial Signboard Specifications",
+                lblSignWidth: "Signboard Width (meters)",
+                lblSignHeight: "Signboard Height (meters)",
+                lblSignType: "Signboard Lighting Type",
+                addonsHeading: "Optional Operational Permits",
+                lbl24Hours: "24/7 Nighttime Operating Permit",
+                sub24Hours: "Annual municipal levy for retail & food activities operating past midnight",
+                lblOutdoor: "Outdoor Sidewalk Seating / Canopies Permit",
+                subOutdoor: "Annual setback occupancy surcharge for municipal frontage usage",
+                resTag: "Estimated Invoice Breakdown",
+                resHeading: "Total Estimated Municipal Licensing Fees",
+                annualAvgSubtitle: "Annualized Average: ",
+                rowActivityFee: "Commercial Activity License Fee (Area)",
+                rowSignboardFee: "Facade Signboard & Advertising Fee",
+                rowWasteFee: "Commercial Waste Collection Tariff",
+                rowInspectionFee: "Technical Inspection & Filing Fee",
+                row24Fee: "24-Hour Operations Permit",
+                rowOutdoorFee: "Outdoor Seating / Setback Permit",
+                btnPrint: "Print Summary",
+                btnExport: "Export CSV",
+                ctaHeading: "Get the Complete Automated Multi-Branch Balady Excel Model ($29)",
+                ctaButton: "Instant Download ($29)",
+                disclaimerTitle: "Legal & Calculation Disclaimer",
+                disclaimerBody: "Outputs are advisory financial estimates based on MOMRAH's official Municipal Service Fees Bylaws and municipal tiers. Exact invoice dues may vary slightly based on specific spatial GIS street tagging on the Balady portal, billboard urban design codes, and Civil Defense inspection requirements.",
+                guideMainTitle: "Operational Guide to Balady Municipal Licensing & Signboard Fees in Saudi Arabia",
+                guideSubtitle: "Your reference for establishment costs, spatial requirements, and Amanah municipal tier rankings in KSA",
+                sec1Title: "How Balady Commercial License Fees Are Calculated",
+                sec1Text: "The Saudi Ministry of Municipalities and Housing (MOMRAH) applies a graduated tier formula rather than a flat fee. Four core variables determine the final invoice:",
+                var1Title: "1. Amanah / Municipal Tier (5 Levels)",
+                var1Desc: "Municipalities are tiered into 5 levels. Tier 1 covers major urban capitals (Riyadh, Jeddah, Makkah, Madinah, Greater Dammam), commanding baseline regional rates due to commercial activity density.",
+                var2Title: "2. Area Brackets in Square Meters",
+                var2Desc: "Square footage is tiered: 0-150m², 151-300m², 301-1,000m², and >1,000m². Marginal rates per square meter decline in higher brackets to avoid disproportionate burdens on large logistics depots or showrooms.",
+                var3Title: "3. Street Classification & Frontage",
+                var3Desc: "Premises facing major commercial avenues (>20m wide) have higher tariffs than secondary roads or shops situated entirely within enclosed shopping malls.",
+                var4Title: "4. Activity Risk & Health Inspection Tiers",
+                var4Desc: "Food prep, restaurants, and hygiene establishments are subject to enhanced health surveillance tariffs relative to corporate administrative offices or dry warehouses.",
+                sec2Title: "Signboard & Outdoor Advertising Tariffs",
+                sec2Text: "Annual signboard levies are computed as Area (Width × Height) multiplied by the authorized municipal rate per m². Illuminated front signs incur between SAR 100 to 200 per m² annually in Tier 1 cities, while flat non-illuminated boards benefit from reduced tariffs.",
+                sec3Title: "Commercial Waste Collection & 24/7 Permits",
+                sec3Text: "The integrated Balady bill includes scheduled commercial solid waste levies scaled by premise size. Eligible retail and food businesses operating round-the-clock also require a 24-hour permit ranging from SAR 1,000 to SAR 10,000 per annum depending on location.",
+                faqTitle: "Frequently Asked Questions (FAQ)",
+                faqQ1: "Can businesses obtain an instant commercial license on Balady?",
+                faqA1: "Yes, for low-to-medium risk economic activities, the Balady portal issues immediate licenses upon verifying an active commercial register, a certified Ejar commercial lease or title deed, and civil defense compliance declarations.",
+                faqQ2: "What is the maximum validity period for a Balady license?",
+                faqA2: "Licenses can be issued for 1 up to 5 consecutive years. Selecting a 5-year duration locks in current tariffs and prevents unexpected regulatory price updates and lapse penalties.",
+                faqQ3: "Do fees vary if a shop is inside a shopping mall?",
+                faqA3: "Yes. Commercial shops located inside enclosed malls receive favorable categorization since base building permits, exterior signs, and primary municipal waste logistics are partly covered by the mall operator.",
+                footerText: "© 2025 Balady Municipal Licensing & Commercial Fee Calculator - Independent B2B Toolkit for Saudi Businesses.",
+                badgeDuration: "For {y} Years",
+                perYearSuffix: " SAR / Year"
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+            if (currentLang === 'en') {
+                document.body.classList.add('en-mode');
+                document.getElementById('langToggleBtn').innerHTML = `<span>العربية</span> <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>`;
+            } else {
+                document.body.classList.remove('en-mode');
+                document.getElementById('langToggleBtn').innerHTML = `<span>English</span> <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>`;
+            }
+
+            // Update all translated DOM IDs
+            const dict = i18n[currentLang];
+            for (const key in dict) {
+                const el = document.getElementById(key);
+                if (el && !key.includes('badgeDuration') && !key.includes('perYearSuffix')) {
+                    el.innerText = dict[key];
+                }
+            }
+
+            calculateFees();
+        }
+
+        // Calculation Engine
+        let currentSummary = {};
+
+        function calculateFees() {
+            const muniLevel = parseInt(document.getElementById('municipalityLevel').value) || 1;
+            const activity = document.getElementById('activitySector').value;
+            const street = document.getElementById('streetType').value;
+            const area = Math.max(1, parseFloat(document.getElementById('totalArea').value) || 1);
+            const years = parseInt(document.getElementById('licenseYears').value) || 1;
+            
+            const signWidth = Math.max(0, parseFloat(document.getElementById('signWidth').value) || 0);
+            const signHeight = Math.max(0, parseFloat(document.getElementById('signHeight').value) || 0);
+            const signType = document.getElementById('signType').value;
+            
+            const is24Hours = document.getElementById('twentyFourHours').checked;
+            const isOutdoor = document.getElementById('outdoorSeating').checked;
+
+            // Base rate per m² by Activity & Municipality Level
+            // Rates structured according to MOMRAH brackets
+            let baseRate = 12;
+            if (activity === 'fnb') baseRate = 22;
+            else if (activity === 'retail') baseRate = 14;
+            else if (activity === 'offices') baseRate = 8;
+            else if (activity === 'health') baseRate = 18;
+            else if (activity === 'industrial') baseRate = 6;
+
+            // Municipal Tier Multiplier
+            // Level 1 = 1.0, Level 2 = 0.85, Level 3 = 0.70, Level 4 = 0.55, Level 5 = 0.40
+            const muniFactors = { 1: 1.0, 2: 0.85, 3: 0.70, 4: 0.55, 5: 0.40 };
+            const muniFactor = muniFactors[muniLevel] || 1.0;
+
+            // Street Classification Multiplier
+            let streetFactor = 1.0;
+            if (street === 'commercial') streetFactor = 1.15;
+            else if (street === 'sub_commercial') streetFactor = 0.95;
+            else if (street === 'mall') streetFactor = 0.80;
+
+            // Tiered area calculation
+            // Bracket 1: 0 - 150 m² @ 100%
+            // Bracket 2: 151 - 300 m² @ 75%
+            // Bracket 3: 301 - 1000 m² @ 50%
+            // Bracket 4: > 1000 m² @ 25%
+            let effectiveAreaCost = 0;
+            const unitPrice = baseRate * muniFactor * streetFactor;
+
+            if (area <= 150) {
+                effectiveAreaCost = area * unitPrice;
+            } else if (area <= 300) {
+                effectiveAreaCost = (150 * unitPrice) + ((area - 150) * unitPrice * 0.75);
+            } else if (area <= 1000) {
+                effectiveAreaCost = (150 * unitPrice) + (150 * unitPrice * 0.75) + ((area - 300) * unitPrice * 0.50);
+            } else {
+                effectiveAreaCost = (150 * unitPrice) + (150 * unitPrice * 0.75) + (700 * unitPrice * 0.50) + ((area - 1000) * unitPrice * 0.25);
+            }
+
+            // Minimum commercial license floor: 300 SAR/year
+            effectiveAreaCost = Math.max(300, effectiveAreaCost);
+            const annualActivityFee = Math.round(effectiveAreaCost);
+            const totalActivityFee = annualActivityFee * years;
+
+            // Signboard Fee Calculation
+            const signArea = signWidth * signHeight;
+            let signTariffPerM2 = 175; // SAR per m² per year for illuminated in Level 1
+            if (signType === 'regular') signTariffPerM2 = 110;
+            else if (signType === 'electronic') signTariffPerM2 = 300;
+            signTariffPerM2 = signTariffPerM2 * muniFactor;
+
+            const annualSignboardFee = Math.round(signArea * signTariffPerM2);
+            const totalSignboardFee = annualSignboardFee * years;
+
+            // Waste Collection Fee (Scaled to Area & Sector)
+            // Tiered waste levy: ~ 2 SAR to 5 SAR / m² capped
+            let wasteRate = (activity === 'fnb' ? 4 : 2) * muniFactor;
+            let annualWasteFee = Math.min(4500, Math.max(250, Math.round(area * wasteRate)));
+            const totalWasteFee = annualWasteFee * years;
+
+            // Inspection & Application Fixed Technical Audit Fee (One-off or biennial)
+            const inspectionFee = 350; 
+
+            // 24 Hours Operating Permit (Annual)
+            let annual24Fee = 0;
+            if (is24Hours) {
+                annual24Fee = Math.round(2500 * muniFactor);
+            }
+            const total24Fee = annual24Fee * years;
+
+            // Outdoor Sidewalk Seating Permit (Annual)
+            let annualOutdoorFee = 0;
+            if (isOutdoor) {
+                annualOutdoorFee = Math.round(1800 * muniFactor);
+            }
+            const totalOutdoorFee = annualOutdoorFee * years;
+
+            // Grand Total
+            const grandTotal = totalActivityFee + totalSignboardFee + totalWasteFee + inspectionFee + total24Fee + totalOutdoorFee;
+            const annualAvg = Math.round(grandTotal / years);
+
+            // Store for export
+            currentSummary = {
+                years,
+                area,
+                signArea: signArea.toFixed(2),
+                totalActivityFee,
+                totalSignboardFee,
+                totalWasteFee,
+                inspectionFee,
+                total24Fee,
+                totalOutdoorFee,
+                grandTotal,
+                annualAvg
+            };
+
+            // Update UI elements
+            document.getElementById('grandTotalDisplay').innerText = grandTotal.toLocaleString();
+            document.getElementById('annualAvgDisplay').innerText = annualAvg.toLocaleString();
+            
+            // Badge duration translation
+            const badgeTemplate = i18n[currentLang].badgeDuration;
+            document.getElementById('resDurationBadge').innerText = badgeTemplate.replace('{y}', years);
+
+            document.getElementById('valActivityFee').innerText = totalActivityFee.toLocaleString() + ' SAR';
+            document.getElementById('valSignboardFee').innerText = totalSignboardFee.toLocaleString() + ' SAR';
+            document.getElementById('valWasteFee').innerText = totalWasteFee.toLocaleString() + ' SAR';
+            document.getElementById('valInspectionFee').innerText = inspectionFee.toLocaleString() + ' SAR';
+            
+            // Optional rows toggle
+            const row24 = document.getElementById('row24Container');
+            if (is24Hours) {
+                row24.classList.remove('hidden');
+                document.getElementById('val24Fee').innerText = total24Fee.toLocaleString() + ' SAR';
+            } else {
+                row24.classList.add('hidden');
+            }
+
+            const rowOutdoor = document.getElementById('rowOutdoorContainer');
+            if (isOutdoor) {
+                rowOutdoor.classList.remove('hidden');
+                document.getElementById('valOutdoorFee').innerText = totalOutdoorFee.toLocaleString() + ' SAR';
+            } else {
+                rowOutdoor.classList.add('hidden');
+            }
+        }
+
+        function exportCSV() {
+            const headers = ["Metric", "Value"];
+            const rows = [
+                ["Validity Years", currentSummary.years],
+                ["Premise Area (m²)", currentSummary.area],
+                ["Signboard Area (m²)", currentSummary.signArea],
+                ["Activity License Fee (SAR)", currentSummary.totalActivityFee],
+                ["Signboard Fee (SAR)", currentSummary.totalSignboardFee],
+                ["Waste Collection Fee (SAR)", currentSummary.totalWasteFee],
+                ["Inspection Fee (SAR)", currentSummary.inspectionFee],
+                ["24-Hour Permit (SAR)", currentSummary.total24Fee],
+                ["Outdoor Seating Permit (SAR)", currentSummary.totalOutdoorFee],
+                ["Grand Total (SAR)", currentSummary.grandTotal],
+                ["Annualized Average (SAR/Year)", currentSummary.annualAvg]
+            ];
+
+            let csvContent = "data:text/csv;charset=utf-8," 
+                + headers.join(",") + "\n"
+                + rows.map(e => e.join(",")).join("\n");
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `balady_municipal_fees_estimate_${currentSummary.years}yr.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initial Run
+        window.addEventListener('DOMContentLoaded', () => {
+            calculateFees();
+        });
+    </script>
+</body>
+</html>
