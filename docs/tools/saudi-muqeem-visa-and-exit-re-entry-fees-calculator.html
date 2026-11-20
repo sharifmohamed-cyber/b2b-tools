@@ -1,0 +1,385 @@
+<<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi Muqeem Visa & Exit Re-Entry Fees Calculator</title>
+    <meta name="description" content="Calculate Saudi Muqeem exit re-entry visa fees, dependent levies, and Iqama renewal costs accurately. Ensure compliance with Jawazat regulations.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Cairo', sans-serif; }
+        .rtl { direction: rtl; }
+        .ltr { direction: ltr; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 ltr" id="app-body">
+
+    <!-- Top Sticky Gumroad Banner -->
+    <div class="bg-amber-600 text-white text-xs sm:text-sm py-2 px-4 text-center font-medium sticky top-0 z-50 shadow-md flex items-center justify-center gap-2">
+        <span>🚀 Upgrade to our Complete Offline Automated Excel & VBA Master Template for Saudi HR & Payroll!</span>
+        <a href="https://gumroad.com" target="_blank" class="bg-white text-amber-800 px-3 py-1 rounded font-bold hover:bg-amber-50 transition">Get for $29</a>
+    </div>
+
+    <!-- Header & Language Toggle -->
+    <header class="bg-white border-b border-slate-200 py-6 px-4 sm:px-8">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 id="main-title" class="text-2xl sm:text-3xl font-bold text-slate-900">Saudi Muqeem Visa & Exit Re-Entry Fees Calculator</h1>
+                <p id="main-subtitle" class="text-sm text-slate-500 mt-1">Calculate exact Jawazat exit re-entry visa and dependent levies instantly.</p>
+            </div>
+            <button onclick="toggleLanguage()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-lg text-sm font-semibold transition border border-slate-300">
+                🌐 <span id="lang-btn-text">العربية</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 sm:px-8 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Calculator Inputs (2 cols) -->
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8">
+            <h2 id="calc-section-title" class="text-lg font-bold text-slate-800 mb-6 pb-2 border-b border-slate-100">Visa & Dependent Parameters</h2>
+            
+            <form id="calc-form" class="space-y-6" onsubmit="event.preventDefault(); calculateFees();">
+                
+                <!-- Visa Type -->
+                <div>
+                    <label id="label-visa-type" class="block text-sm font-semibold text-slate-700 mb-2">Visa/Service Type</label>
+                    <select id="visa-type" onchange="calculateFees()" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                        <option value="single">Single Exit Re-Entry Visa (تأشيرة خروج وعودة مفردة)</option>
+                        <option value="multiple">Multiple Exit Re-Entry Visa (تأشيرة خروج وعودة متعددة)</option>
+                        <option value="final">Final Exit Visa (تأشيرة خروج نهائي)</option>
+                        <option value="iqama">Iqama Renewal 1 Year (تجديد الإقامة - سنة)</option>
+                    </select>
+                </div>
+
+                <!-- Duration (for single/multiple exit re-entry) -->
+                <div id="duration-container">
+                    <label id="label-duration" class="block text-sm font-semibold text-slate-700 mb-2">Duration / Details</label>
+                    <select id="duration" onchange="calculateFees()" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                        <option value="2_months">2 Months Base + 100 SAR per extra month</option>
+                        <option value="3_months">3 Months (Single) - 500 SAR</option>
+                        <option value="3_months_mult">3 Months (Multiple) - 500 SAR</option>
+                        <option value="6_months_mult">6 Months (Multiple) - 1,000 SAR</option>
+                    </select>
+                </div>
+
+                <!-- Dependents Count -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label id="label-dependents" class="block text-sm font-semibold text-slate-700 mb-2">Number of Dependents (مرافقين)</label>
+                        <input type="number" id="dependents-count" min="0" value="0" oninput="calculateFees()" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                    <div id="dependent-duration-wrapper">
+                        <label id="label-dep-months" class="block text-sm font-semibold text-slate-700 mb-2">Extra Months (if applicable)</label>
+                        <input type="number" id="extra-months" min="0" value="0" oninput="calculateFees()" class="w-full rounded-lg border border-slate-300 p-3 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-wrap gap-4 pt-4">
+                    <button type="button" onclick="calculateFees()" id="btn-calculate" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 px-6 rounded-lg transition shadow-sm">
+                        Calculate Total Fees
+                    </button>
+                    <button type="button" onclick="exportCSV()" id="btn-export" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-3 px-6 rounded-lg transition border border-slate-300">
+                        📥 Export Summary
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Card & Sticky CTA (1 col) -->
+        <div class="space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-20">
+                <h3 id="res-title" class="text-lg font-bold text-slate-800 mb-4 pb-2 border-b border-slate-100">Fee Breakdown</h3>
+                
+                <div class="space-y-4 mb-6">
+                    <div class="flex justify-between text-sm">
+                        <span id="res-base-label" class="text-slate-600">Base Fee:</span>
+                        <span id="res-base-val" class="font-semibold text-slate-900">200 SAR</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                        <span id="res-dep-label" class="text-slate-600">Dependents Visa Fee:</span>
+                        <span id="res-dep-val" class="font-semibold text-slate-900">0 SAR</span>
+                    </div>
+                    <div class="flex justify-between text-sm border-t border-slate-100 pt-3">
+                        <span id="res-total-label" class="font-bold text-slate-800">Total Payable (SAR):</span>
+                        <span id="res-total-val" class="text-xl font-bold text-amber-600">200 SAR</span>
+                    </div>
+                </div>
+
+                <!-- Disclaimer -->
+                <p id="disclaimer-text" class="text-xs text-slate-400 mb-6 italic leading-relaxed">
+                    Disclaimer: Estimates are based on standard Jawazat regulations. Actual fees via Absher/Muqeem may vary depending on professional category, unpaid traffic fines, or regulatory updates.
+                </p>
+
+                <!-- Gumroad CTA -->
+                <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-5 text-center">
+                    <h4 id="cta-box-title" class="font-bold text-amber-900 text-sm mb-1">Need Automated HR Sheets?</h4>
+                    <p id="cta-box-desc" class="text-xs text-amber-700 mb-4">Get our Complete Offline Automated Excel & VBA Master Template for full compliance tracking.</p>
+                    <a href="https://gumroad.com" target="_blank" id="cta-box-btn" class="block w-full bg-amber-600 hover:bg-amber-700 text-white text-sm font-bold py-2.5 px-4 rounded-lg transition shadow-sm">
+                        Download Master Template ($29)
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- SEO Content & Guide Section -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-8 py-12 border-t border-slate-200 mt-12">
+        <div class="prose max-w-none text-slate-600 space-y-6">
+            <h2 class="text-2xl font-bold text-slate-900" id="guide-title">Complete Guide to Saudi Muqeem, Exit Re-Entry, and Iqama Fees</h2>
+            <p id="guide-p1">
+                Managing government relations (PRO) functions in Saudi Arabia requires accurate budgeting for employee Iqama renewals, dependent levies, and exit re-entry (Khurooj Oadah) visas. Under the regulations administered by the General Directorate of Passports (Jawazat) and accessed via Muqeem or Absher Business portals, fee schedules depend strictly on visa type, duration, and dependent status.
+            </p>
+            
+            <h3 class="text-xl font-semibold text-slate-800 mt-6" id="guide-h3-1">Official Fee Schedule Breakdown</h3>
+            <ul class="list-disc pl-6 space-y-2" id="guide-ul">
+                <li><strong>Single Exit Re-Entry Visa:</strong> 200 SAR for up to 2 months, plus 100 SAR for each additional month.</li>
+                <li><strong>Multiple Exit Re-Entry Visa:</strong> 500 SAR for 3 months, plus 200 SAR for each additional month.</li>
+                <li><strong>Final Exit Visa (Khurooj Nihai):</strong> Free of charge, provided valid Iqama and no pending traffic fines or violations.</li>
+                <li><strong>Iqama Renewal:</strong> Varies by profession category (e.g., 650 SAR for corporate employees, plus dependent expatriate levies where applicable).</li>
+            </ul>
+
+            <h3 class="text-xl font-semibold text-slate-800 mt-6" id="guide-h3-2">Frequently Asked Questions (FAQ)</h3>
+            <div class="space-y-4">
+                <div>
+                    <h4 class="font-bold text-slate-700" id="faq-q1">Q1: Can exit re-entry visas be refunded if unused?</h4>
+                    <p class="text-sm" id="faq-a1">Yes, unused exit re-entry visas can be cancelled through Absher or Muqeem before expiry to receive a fee refund credited to the employer's or employee's government account.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-700" id="faq-q2">Q2: Are traffic violations checked before issuing visas?</h4>
+                    <p class="text-sm" id="faq-a2">Yes, the system automatically blocks the issuance of exit re-entry or final exit visas if the sponsor or sponsored individual has unpaid traffic violations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400">
+        <p>© 2025 Saudi Muqeem Visa Calculator. B2B Micro-SaaS Tool for Corporate Operations & PROs.</p>
+    </footer>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                mainTitle: "Saudi Muqeem Visa & Exit Re-Entry Fees Calculator",
+                mainSubtitle: "Calculate exact Jawazat exit re-entry visa and dependent levies instantly.",
+                langBtn: "العربية",
+                calcTitle: "Visa & Dependent Parameters",
+                labelVisaType: "Visa/Service Type",
+                labelDuration: "Duration / Details",
+                labelDependents: "Number of Dependents (مرافقين)",
+                labelDepMonths: "Extra Months (if applicable)",
+                btnCalc: "Calculate Total Fees",
+                btnExport: "📥 Export Summary",
+                resTitle: "Fee Breakdown",
+                resBase: "Base Fee:",
+                resDep: "Dependents Visa Fee:",
+                resTotal: "Total Payable (SAR):",
+                disclaimer: "Disclaimer: Estimates are based on standard Jawazat regulations. Actual fees via Absher/Muqeem may vary depending on professional category, unpaid traffic fines, or regulatory updates.",
+                ctaTitle: "Need Automated HR Sheets?",
+                ctaDesc: "Get our Complete Offline Automated Excel & VBA Master Template for full compliance tracking.",
+                ctaBtn: "Download Master Template ($29)",
+                guideTitle: "Complete Guide to Saudi Muqeem, Exit Re-Entry, and Iqama Fees",
+                guideP1: "Managing government relations (PRO) functions in Saudi Arabia requires accurate budgeting for employee Iqama renewals, dependent levies, and exit re-entry (Khurooj Oadah) visas. Under the regulations administered by the General Directorate of Passports (Jawazat) and accessed via Muqeem or Absher Business portals, fee schedules depend strictly on visa type, duration, and dependent status.",
+                guideH3_1: "Official Fee Schedule Breakdown",
+                guideH3_2: "Frequently Asked Questions (FAQ)",
+                faqQ1: "Q1: Can exit re-entry visas be refunded if unused?",
+                faqA1: "Yes, unused exit re-entry visas can be cancelled through Absher or Muqeem before expiry to receive a fee refund credited to the employer's or employee's government account.",
+                faqQ2: "Q2: Are traffic violations checked before issuing visas?",
+                faqA2: "Yes, the system automatically blocks the issuance of exit re-entry or final exit visas if the sponsor or sponsored individual has unpaid traffic violations."
+            },
+            ar: {
+                mainTitle: "حاسبة رسوم تأشيرات مقيم والخروج والعودة السعودية",
+                mainTitle: "حاسبة رسوم تأشيرات مقيم وخروج وعودة والإقامة",
+                mainSubtitle: "احسب رسوم تأشيرات الخروج والعودة والرسوم المرفقين بدقة وفورية عبر نظام الجوازات.",
+                langBtn: "English",
+                calcTitle: "معايير التأشيرة والمرافقين",
+                labelVisaType: "نوع التأشيرة / الخدمة",
+                labelDuration: "المدة / التفاصيل",
+                labelDependents: "عدد المرافقين",
+                labelDepMonths: "الأشهر الإضافية (إن وجدت)",
+                btnCalc: "حساب إجمالي الرسوم",
+                btnExport: "📥 تصدير الملخص",
+                resTitle: "تفصيل الرسوم",
+                resBase: "الرسوم الأساسية:",
+                resDep: "رسوم تأشيرات المرافقين:",
+                resTotal: "إجمالي المستحق (ريال سعودي):",
+                disclaimer: "تنويه: التقديرات مبنية على لوائح الجوازات الرسمية. قد تختلف الرسوم الفعلية عبر أبشر/مقيم بناءً على المهنة أو المخالفات المرورية أو التحديثات التنظيمية.",
+                ctaTitle: "هل تحتاج إلى ملفات إكسل آلية للموارد البشرية؟",
+                ctaDesc: "احصل على قالب إكسل الشامل المعتمد بالماكرو لتتبع الامتثال الكامل.",
+                ctaBtn: "تحميل القالب الشامل ($29)",
+                guideTitle: "دليل شامل لرسوم مقيم وتأشيرات الخروج والعودة والإقامة في السعودية",
+                guideP1: "تتطلب إدارة علاقات الحكومة (التعقيب/الموارد البشرية) في المملكة العربية السعودية إعداد موازنات دقيقة لتجديد الإقامات، رسوم المرافقين، وتأشيرات الخروج والعودة. تتبعاً لأنظمة المديرية العامة للجوازات عبر بوابتي مقيم أو أبشر أعمال، ترتبط الرسوم ارتباطاً وثيقاً بنوع التأشيرة ومدة الإقامة.",
+                guideH3_1: "جدول الرسوم الرسمية",
+                guideH3_2: "الأسئلة الشائعة",
+                faqQ1: "س1: هل يمكن استرداد رسوم تأشيرة الخروج والعودة غير المستخدمة؟",
+                faqA1: "نعم، يمكن إلغاء تأشيرات الخروج والعودة غير المستخدمة عبر أبشر أو مقيم قبل انتهاء صلاحيتها لاسترداد الرسوم في حساب المنشأة أو المكلف.",
+                faqQ2: "س2: هل يتم فحص المخالفات المرورية قبل إصدار التأشيرات؟",
+                faqA2: "نعم، يحظر النظام تلقائياً إصدار تأشيرات الخروج والعودة أو الخروج النهائي في حال وجود مخالفات مرورية غير مسددة على الكفيل أو المكفول."
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const body = document.getElementById('app-body');
+            const t = translations[currentLang];
+
+            if (currentLang === 'ar') {
+                body.classList.remove('ltr');
+                body.classList.add('rtl');
+                body.setAttribute('dir', 'rtl');
+            } else {
+                body.classList.remove('rtl');
+                body.classList.add('ltr');
+                body.setAttribute('dir', 'ltr');
+            }
+
+            document.getElementById('main-title').innerText = t.mainTitle;
+            document.getElementById('main-subtitle').innerText = t.mainSubtitle;
+            document.getElementById('lang-btn-text').innerText = t.langBtn;
+            document.getElementById('calc-section-title').innerText = t.calcTitle;
+            document.getElementById('label-visa-type').innerText = t.labelVisaType;
+            document.getElementById('label-duration').innerText = t.labelDuration;
+            document.getElementById('label-dependents').innerText = t.labelDependents;
+            document.getElementById('label-dep-months').innerText = t.labelDepMonths;
+            document.getElementById('btn-calculate').innerText = t.btnCalc;
+            document.getElementById('btn-export').innerText = t.btnExport;
+            document.getElementById('res-title').innerText = t.resTitle;
+            document.getElementById('res-base-label').innerText = t.resBase;
+            document.getElementById('res-dep-label').innerText = t.resDep;
+            document.getElementById('res-total-label').innerText = t.resTotal;
+            document.getElementById('disclaimer-text').innerText = t.disclaimer;
+            document.getElementById('cta-box-title').innerText = t.ctaTitle;
+            document.getElementById('cta-box-desc').innerText = t.ctaDesc;
+            document.getElementById('cta-box-btn').innerText = t.ctaBtn;
+            document.getElementById('guide-title').innerText = t.guideTitle;
+            document.getElementById('guide-p1').innerText = t.guideP1;
+            document.getElementById('guide-h3-1').innerText = t.guideH3_1;
+            document.getElementById('guide-h3-2').innerText = t.guideH3_2;
+            document.getElementById('faq-q1').innerText = t.faqQ1;
+            document.getElementById('faq-a1').innerText = t.faqA1;
+            document.getElementById('faq-q2').innerText = t.faqQ2;
+            document.getElementById('faq-a2').innerText = t.faqA2;
+
+            updateDropdownOptions();
+            calculateFees();
+        }
+
+        function updateDropdownOptions() {
+            const visaType = document.getElementById('visa-type').value;
+            const durationSelect = document.getElementById('duration');
+            durationSelect.innerHTML = '';
+
+            if (visaType === 'single') {
+                if (currentLang === 'en') {
+                    durationSelect.innerHTML = `
+                        <option value="2_months">2 Months Base (200 SAR) + 100 SAR/extra month</option>
+                        <option value="3_months">3 Months Fixed (500 SAR)</option>
+                    `;
+                } else {
+                    durationSelect.innerHTML = `
+                        <option value="2_months">شهرين أساسي (200 ريال) + 100 ريال لكل شهر إضافي</option>
+                        <option value="3_months">3 أشهر ثابت (500 ريال)</option>
+                    `;
+                }
+            } else if (visaType === 'multiple') {
+                if (currentLang === 'en') {
+                    durationSelect.innerHTML = `
+                        <option value="3_months_mult">3 Months Multiple (500 SAR) + 200 SAR/extra month</option>
+                        <option value="6_months_mult">6 Months Multiple (1,000 SAR)</option>
+                    `;
+                } else {
+                    durationSelect.innerHTML = `
+                        <option value="3_months_mult">3 أشهر متعددة (500 ريال) + 200 ريال لكل شهر إضافي</option>
+                        <option value="6_months_mult">6 أشهر متعددة (1,000 ريال)</option>
+                    `;
+                }
+            } else if (visaType === 'final') {
+                if (currentLang === 'en') {
+                    durationSelect.innerHTML = `<option value="free">Final Exit Visa (Free of Charge)</option>`;
+                } else {
+                    durationSelect.innerHTML = `<option value="free">تأشيرة خروج نهائي (بدون رسوم)</option>`;
+                }
+            } else if (visaType === 'iqama') {
+                if (currentLang === 'en') {
+                    durationSelect.innerHTML = `<option value="1_year">Iqama Renewal 1 Year (650 SAR)</option>`;
+                } else {
+                    durationSelect.innerHTML = `<option value="1_year">تجديد الإقامة لمدة سنة (650 ريال)</option>`;
+                }
+            }
+        }
+
+        document.getElementById('visa-type').addEventListener('change', updateDropdownOptions);
+
+        function calculateFees() {
+            const visaType = document.getElementById('visa-type').value;
+            const duration = document.getElementById('duration').value;
+            const dependents = parseInt(document.getElementById('dependents-count').value) || 0;
+            const extraMonths = parseInt(document.getElementById('extra-months').value) || 0;
+
+            let baseFee = 0;
+            let dependentFee = 0;
+
+            if (visaType === 'single') {
+                if (duration === '2_months') {
+                    baseFee = 200 + (extraMonths * 100);
+                } else {
+                    baseFee = 500;
+                }
+                // Dependents single exit re-entry: 200 SAR for 2 months + 100 per extra month
+                dependentFee = dependents * (200 + (extraMonths * 100));
+            } else if (visaType === 'multiple') {
+                if (duration === '3_months_mult') {
+                    baseFee = 500 + (extraMonths * 200);
+                } else {
+                    baseFee = 1000;
+                }
+                // Dependents multiple exit re-entry: 500 SAR for 3 months + 200 per extra month
+                dependentFee = dependents * (500 + (extraMonths * 200));
+            } else if (visaType === 'final') {
+                baseFee = 0;
+                dependentFee = 0;
+            } else if (visaType === 'iqama') {
+                baseFee = 650;
+                dependentFee = 0; // Dependent levies managed separately via GOSI/Mudad/Jawazat monthly calculation
+            }
+
+            const total = baseFee + dependentFee;
+
+            document.getElementById('res-base-val').innerText = baseFee.toLocaleString() + ' SAR';
+            document.getElementById('res-dep-val').innerText = dependentFee.toLocaleString() + ' SAR';
+            document.getElementById('res-total-val').innerText = total.toLocaleString() + ' SAR';
+        }
+
+        function exportCSV() {
+            const visaType = document.getElementById('visa-type').value;
+            const baseFee = document.getElementById('res-base-val').innerText;
+            const depFee = document.getElementById('res-dep-val').innerText;
+            const total = document.getElementById('res-total-val').innerText;
+
+            const csvContent = "data:text/csv;charset=utf-8,"
+                + "Service Type,Base Fee,Dependent Fee,Total Payable\n"
+                + `${visaType},${baseFee},${depFee},${total}`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "muqeem_visa_fees_summary.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initial setup
+        updateDropdownOptions();
+        calculateFees();
+    </script>
+</body>
+</html>
