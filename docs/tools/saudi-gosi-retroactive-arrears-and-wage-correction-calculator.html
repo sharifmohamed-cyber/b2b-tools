@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi GOSI Retroactive Arrears and Wage Correction Calculator | حاسبة المتأخرات الرجعية وتصحيح الأجور</title>
+    <meta name="description" content="Calculate retroactive GOSI contribution arrears, occupational hazards, and wage correction fines for Saudi and non-Saudi employees under GOSI regulations.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', 'Cairo', sans-serif; }
+        .rtl { direction: rtl; }
+        .ltr { direction: ltr; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 ltr" id="bodyRoot">
+
+    <!-- Navigation / Header -->
+    <header class="bg-emerald-800 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold" data-en="Saudi GOSI Arrears & Wage Correction Tool" data-ar="أداة حساب متأخرات وتصحيح الأجور للتأمينات الاجتماعية">Saudi GOSI Arrears & Wage Correction Tool</h1>
+                <p class="text-xs text-emerald-200" data-en="Compliant with General Organization for Social Insurance (GOSI)" data-ar="متوافق مع أنظمة المؤسسة العامة للتأمينات الاجتماعية">Compliant with General Organization for Social Insurance (GOSI)</p>
+            </div>
+            <div class="flex items-center space-x-3 space-x-reverse">
+                <button onclick="toggleLanguage()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1.5 rounded text-sm font-medium transition">
+                    <span id="langBtnText">العربية</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Calculator Inputs -->
+        <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <h2 class="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100" data-en="Retroactive Correction Parameters" data-ar="معايير التصحيح الرجعي">Retroactive Correction Parameters</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Nationality -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" data-en="Employee Nationality" data-ar="جنسية الموظف">Employee Nationality</label>
+                    <select id="nationality" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500">
+                        <option value="saudi" data-en="Saudi National" data-ar="سعودي">Saudi National</option>
+                        <option value="non-saudi" data-en="Non-Saudi (Expatriate)" data-ar="غير سعودي (وافد)">Non-Saudi (Expatriate)</option>
+                    </select>
+                </div>
+
+                <!-- Number of Employees -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" data-en="Number of Employees Affected" data-ar="عدد الموظفين المتأثرين">Number of Employees Affected</label>
+                    <input type="number" id="empCount" value="1" min="1" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <!-- Previous Wage -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" data-en="Previous Registered Wage (SAR)" data-ar="الأجر المسجل السابق (ريال)">Previous Registered Wage (SAR)</label>
+                    <input type="number" id="oldWage" value="4000" min="0" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <!-- Correct Wage -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" data-en="Actual Correct Wage (SAR)" data-ar="الأجر الصحيح الفعلي (ريال)">Actual Correct Wage (SAR)</label>
+                    <input type="number" id="newWage" value="6000" min="0" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <!-- Number of Months in Arrears -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" data-en="Retroactive Period (Months)" data-ar="فترة المتأخرات (بالأشهر)">Retroactive Period (Months)</label>
+                    <input type="number" id="months" value="12" min="1" max="60" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <!-- Delay Fines Applicability -->
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1" data-en="Apply Late Payment Penalty (2%)" data-ar="تطبيق غرامة التأخير (2%)">Apply Late Payment Penalty (2%)</label>
+                    <select id="applyFines" class="w-full rounded-lg border-slate-300 border px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500">
+                        <option value="yes" data-en="Yes (Standard Delay)" data-ar="نعم (تأخير معتاد)">Yes (Standard Delay)</option>
+                        <option value="no" data-en="No (Self-Correction / Waiver)" data-ar="لا (تصحيح ذاتي / إعفاء)">No (Self-Correction / Waiver)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-6">
+                <button onclick="calculateGosiArrears()" class="w-full bg-emerald-700 hover:bg-emerald-800 text-white font-medium py-2.5 rounded-lg transition text-sm shadow" data-en="Calculate Arrears & Fines" data-ar="احسب المتأخرات والغرامات">Calculate Arrears & Fines</button>
+            </div>
+        </div>
+
+        <!-- Results Summary Card & Sticky CTA -->
+        <div class="space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h3 class="text-lg font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100" data-en="Financial Summary" data-ar="الملخص المالي">Financial Summary</h3>
+                
+                <div class="space-y-3 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-slate-600" data-en="Monthly Wage Difference:" data-ar="فرق الأجر الشهري:">Monthly Wage Difference:</span>
+                        <span id="resWageDiff" class="font-semibold text-slate-900">0.00 SAR</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-600" data-en="Employer Retroactive Share:" data-ar="حصة صاحب العمل الرجعية:">Employer Retroactive Share:</span>
+                        <span id="resEmpShare" class="font-semibold text-emerald-700">0.00 SAR</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-600" data-en="Employee Retroactive Share:" data-ar="حصة الموظف الرجعية:">Employee Retroactive Share:</span>
+                        <span id="resStaffShare" class="font-semibold text-slate-700">0.00 SAR</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-600" data-en="Delay Penalty Fines (2%):" data-ar="غرامات التأخير (2%):">Delay Penalty Fines (2%):</span>
+                        <span id="resFines" class="font-semibold text-rose-600">0.00 SAR</span>
+                    </div>
+                    <div class="border-t border-slate-200 pt-3 flex justify-between text-base font-bold">
+                        <span class="text-slate-900" data-en="Total Payable to GOSI:" data-ar="الإجمالي الواجب سداده للتأمينات:">Total Payable to GOSI:</span>
+                        <span id="resTotal" class="text-emerald-800">0.00 SAR</span>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <button onclick="exportSummary()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium py-2 rounded-lg transition text-xs border border-slate-300" data-en="Export Calculation Summary" data-ar="تصدير ملخص الحساب">Export Calculation Summary</button>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <p class="text-xs text-amber-800" data-en="Disclaimer: Estimates are for planning purposes. Final calculations and fines are determined directly via the GOSI online portal." data-ar="إخلاء مسؤولية: التقديرات لأغراض التخطيط فقط. يتم تحديد الحسابات النهائية والغرامات مباشرة عبر بوابة التأمينات الاجتماعية الإلكترونية.">Disclaimer: Estimates are for planning purposes. Final calculations and fines are determined directly via the GOSI online portal.</p>
+                </div>
+            </div>
+
+            <!-- Gumroad Sticky Banner / CTA -->
+            <div class="bg-gradient-to-br from-slate-900 to-emerald-950 text-white rounded-xl shadow-lg p-6 relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-32 h-32 bg-emerald-500 rounded-full opacity-10 blur-2xl"></div>
+                <h4 class="font-bold text-base mb-2" data-en="Need Automated GOSI & Payroll Templates?" data-ar="هل تحتاج لنموذج أجور وتأمينات آلي متكامل؟">Need Automated GOSI & Payroll Templates?</h4>
+                <p class="text-xs text-slate-300 mb-4" data-en="Get the Complete Offline Automated Excel & VBA Master Template for Saudi payroll auditing, GOSI tracking, and EOSB calculations." data-ar="احصل على نموذج Excel و VBA الشامل والمؤتمت بالكامل لمراجعة الرواتب السعودية وتتبع التأمينات الاجتماعية ومكافأة نهاية الخدمة.">Get the Complete Offline Automated Excel & VBA Master Template for Saudi payroll auditing, GOSI tracking, and EOSB calculations.</p>
+                <a href="https://gumroad.com" target="_blank" class="block text-center bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 px-4 rounded-lg text-sm transition shadow" data-en="Get Complete Excel Template ($29)" data-ar="احصل على نموذج الإكسل الشامل (29$)">Get Complete Excel Template ($29)</a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- SEO Guide & Article Section -->
+    <section class="max-w-7xl mx-auto px-4 py-12 border-t border-slate-200 mt-12">
+        <div class="max-w-4xl mx-auto prose prose-slate">
+            <h2 class="text-2xl font-bold text-slate-900 mb-4" data-en="Understanding Saudi GOSI Wage Correction and Retroactive Arrears" data-ar="فهم تصحيح الأجور والمتأخرات الرجعية في التأمينات الاجتماعية السعودية">Understanding Saudi GOSI Wage Correction and Retroactive Arrears</h2>
+            
+            <p data-en="Under the General Organization for Social Insurance (GOSI) regulations in the Kingdom of Saudi Arabia, employers are legally mandated to register employees under their actual, correct remuneration packages. Failure to register exact basic wages and allowances can lead to retroactive contribution audits, wage corrections, and severe late payment penalties." data-ar="بموجب نظام المؤسسة العامة للتأمينات الاجتماعية في المملكة العربية السعودية، يُلزم أصحاب العمل قانونياً بتسجيل الموظفين وفقاً لحزم أجورهم الفعلية والصحيحة. قد يؤدي عدم تسجيل الأجور والبدلات الأساسية بدقة إلى عمليات تدقيق للمساهمات الرجعية، وتصحيح الأجور، وغرامات تأخير صارمة.">
+                Under the General Organization for Social Insurance (GOSI) regulations in the Kingdom of Saudi Arabia, employers are legally mandated to register employees under their actual, correct remuneration packages...
+            </p>
+
+            <h3 class="text-xl font-semibold text-slate-900 mt-6 mb-3" data-en="GOSI Contribution Rates Breakdown" data-ar="تفصيل نسب اشتراكات التأمينات الاجتماعية">GOSI Contribution Rates Breakdown</h3>
+            <ul class="list-disc pl-5 space-y-2 text-slate-700">
+                <li>
+                    <strong data-en="Saudi Nationals:" data-ar="السعوديون:">Saudi Nationals:</strong> 
+                    <span data-en="Total contribution is 21.5% or 22% of the contributory wage. Annuities (pension) branch is 18% (9% employer, 9% employee), Occupational Hazards is 2% (employer), and Unemployment Insurance (SANED) is 2% (1% employer, 1% employee)." data-ar="إجمالي الاشتراك 21.5% أو 22% من الأجر الخاضع للاشتراك. فرع المعاشات 18% (9% صاحب عمل، 9% موظف)، الأخطار المهنية 2% (صاحب عمل)، وتعطل العمل (ساند) 2% (1% صاحب عمل، 1% موظف).">Total contribution is 21.5% or 22% of the contributory wage...</span>
+                </li>
+                <li>
+                    <strong data-en="Non-Saudi Nationals (Expatriates):" data-ar="غير السعوديين (الوافدين):">Non-Saudi Nationals (Expatriates):</strong> 
+                    <span data-en="Subject strictly to the Occupational Hazards branch at 2% paid entirely by the employer." data-ar="خاضعون حصرياً لفرع الأخطار المهنية بنسبة 2% يتحملها صاحب العمل بالكامل.">Subject strictly to the Occupational Hazards branch at 2% paid entirely by the employer.</span>
+                </li>
+            </ul>
+
+            <h3 class="text-xl font-semibold text-slate-900 mt-6 mb-3" data-en="Frequently Asked Questions (FAQ)" data-ar="الأسئلة الشائعة">Frequently Asked Questions (FAQ)</h3>
+            
+            <div class="space-y-4">
+                <div>
+                    <h4 class="font-bold text-slate-800" data-en="What triggers a GOSI wage correction audit?" data-ar="ما الذي يسبب تدقيق تصحيح أجور التأمينات الاجتماعية؟">What triggers a GOSI wage correction audit?</h4>
+                    <p class="text-sm text-slate-600" data-en="Audits are typically triggered by discrepancies between declared wages in GOSI versus WPS (Wage Protection System) bank records, Ministry of Human Resources (MHRSD) contract updates, or routine inspections." data-ar="تحدث عمليات التدقيق عادةً بسبب التناقضات بين الأجور المعلنة في التأمينات مقابل سجلات بنك نظام حماية الأجور (WPS)، أو تحديثات عقود وزارة الموارد البشرية، أو عمليات التفتيش الروتينية.">Audits are typically triggered by discrepancies between declared wages in GOSI versus WPS bank records...</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-slate-800" data-en="Who is responsible for paying retroactive arrears and delay fines?" data-ar="من المسؤول عن دفع المتأخرات الرجعية وغرامات التأخير؟">Who is responsible for paying retroactive arrears and delay fines?</h4>
+                    <p class="text-sm text-slate-600" data-en="The employer is legally accountable for remitting both employer and employee shares of arrears if discovered during an audit, plus any applicable 2% delay fines. Employers typically deduct the employee share from subsequent payrolls where legally permitted." data-ar="يتحمل صاحب العمل المسؤولية القانونية عن توريد حصتي صاحب العمل والموظف من المتأخرات إذا اكتشفت أثناء التدقيق، بالإضافة إلى غرامات التأخير بنسبة 2%.">The employer is legally accountable for remitting both employer and employee shares of arrears if discovered during an audit...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- JavaScript Calculation Engine -->
+    <script>
+        let currentLang = 'en';
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const body = document.getElementById('bodyRoot');
+            const btnText = document.getElementById('langBtnText');
+            
+            if (currentLang === 'ar') {
+                body.classList.remove('ltr');
+                body.classList.add('rtl');
+                body.setAttribute('dir', 'rtl');
+                btnText.innerText = 'English';
+            } else {
+                body.classList.remove('rtl');
+                body.classList.add('ltr');
+                body.setAttribute('dir', 'ltr');
+                btnText.innerText = 'العربية';
+            }
+
+            document.querySelectorAll('[data-en]').forEach(el => {
+                const text = el.getAttribute(`data-${currentLang}`);
+                if (text) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+                        // Handle placeholder or options if needed
+                    } else {
+                        el.innerText = text;
+                    }
+                }
+            });
+        }
+
+        function calculateGosiArrears() {
+            const nationality = document.getElementById('nationality').value;
+            const empCount = parseFloat(document.getElementById('empCount').value) || 1;
+            const oldWage = parseFloat(document.getElementById('oldWage').value) || 0;
+            const newWage = parseFloat(document.getElementById('newWage').value) || 0;
+            const months = parseFloat(document.getElementById('months').value) || 1;
+            const applyFines = document.getElementById('applyFines').value;
+
+            const wageDiff = Math.max(0, newWage - oldWage);
+            let empShareRate = 0;
+            let staffShareRate = 0;
+
+            if (nationality === 'saudi') {
+                // 11.5% employer share (9% pension + 1% saned + 1.5% avg occupational hazard or standard components)
+                // Total standard: 21.5% (9% employer pension, 1% employer saned, 2% hazard = 12% employer total; 9% employee pension, 1% employee saned = 10% employee total)
+                empShareRate = 0.12;
+                staffShareRate = 0.10;
+            } else {
+                // Non-Saudi: 2% occupational hazard paid by employer only
+                empShareRate = 0.02;
+                staffShareRate = 0.00;
+            }
+
+            const monthlyEmpArrears = wageDiff * empShareRate;
+            const monthlyStaffArrears = wageDiff * staffShareRate;
+
+            const totalEmpShare = monthlyEmpArrears * months * empCount;
+            const totalStaffShare = monthlyStaffArrears * months * empCount;
+            const totalArrears = totalEmpShare + totalStaffShare;
+
+            let fines = 0;
+            if (applyFines === 'yes') {
+                // GOSI applies 2% fine for each month of delay on unpaid contributions
+                fines = totalArrears * 0.02 * (months / 12);
+            }
+
+            const grandTotal = totalArrears + fines;
+
+            // Render results
+            document.getElementById('resWageDiff').innerText = (wageDiff * empCount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' SAR';
+            document.getElementById('resEmpShare').innerText = totalEmpShare.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' SAR';
+            document.getElementById('resStaffShare').innerText = totalStaffShare.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' SAR';
+            document.getElementById('resFines').innerText = fines.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' SAR';
+            document.getElementById('resTotal').innerText = grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' SAR';
+        }
+
+        function exportSummary() {
+            const total = document.getElementById('resTotal').innerText;
+            alert((currentLang === 'ar' ? 'تم تجهيز ملخص الحساب للتصدير. الإجمالي الواجب سداده: ' : 'Calculation summary ready for export. Total Payable: ') + total);
+        }
+
+        // Run initial calculation on load
+        window.onload = calculateGosiArrears;
+    </script>
+</body>
+</html>

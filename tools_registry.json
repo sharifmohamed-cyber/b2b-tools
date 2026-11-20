@@ -292,5 +292,12 @@
     "title_ar": "حاسبة رسوم تأشيرات مقيم والخروج والعودة السعودية",
     "description_en": "Calculate Saudi Muqeem exit re-entry visa fees, dependent levies, and Iqama renewal costs accurately. Ensure compliance with Jawazat regulations.",
     "date": "2026-11-20"
+  },
+  {
+    "slug": "saudi-gosi-retroactive-arrears-and-wage-correction-calculator",
+    "title_en": "Saudi GOSI Retroactive Arrears and Wage Correction Calculator",
+    "title_ar": "حاسبة المتأخرات الرجعية وتصحيح الأجور في التأمينات الاجتماعية السعودية",
+    "description_en": "Calculate retroactive GOSI contribution arrears, occupational hazards, and wage correction fines for Saudi and non-Saudi employees under GOSI regulations.",
+    "date": "2026-11-20"
   }
 ]
