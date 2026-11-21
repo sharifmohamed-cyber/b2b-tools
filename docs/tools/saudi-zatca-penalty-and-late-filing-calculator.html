@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi ZATCA Tax Penalty & Late Filing Fine Calculator | حاسبة غرامات زاتكا</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        zatca: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#0f3922',
+                            dark: '#082315'
+                        },
+                        gold: {
+                            500: '#d97706',
+                            600: '#b45309'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Cairo', 'Inter', sans-serif; }
+        .en-mode { font-family: 'Inter', sans-serif; }
+        @media print {
+            .no-print { display: none !important; }
+            .print-block { box-shadow: none !important; border: 1px solid #ccc !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 transition-colors duration-200 min-h-screen flex flex-col">
+
+    <!-- Sticky Top Gumroad CTA Banner -->
+    <aside aria-label="Promotional Offer" class="no-print bg-gradient-to-r from-zatca-900 via-zatca-800 to-slate-900 text-white px-4 py-2.5 text-xs sm:text-sm font-medium shadow-md sticky top-0 z-50 border-b border-emerald-600/30">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <span class="bg-gold-500 text-slate-950 font-bold px-2 py-0.5 rounded text-[11px] uppercase tracking-wider">ZATCA Ready</span>
+                <span data-i18n="banner_text">Get the Complete Saudi Tax Audit, ZATCA Late Penalty & Voluntary Disclosure Excel Tool (VBA Automated).</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="font-extrabold text-amber-300 text-base">$29</span>
+                <a href="https://gumroad.com" target="_blank" rel="noopener" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1 rounded transition shadow-sm text-xs flex items-center gap-1">
+                    <span data-i18n="banner_cta">Download Excel Master ($29)</span>
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Navigation / Header -->
+    <header class="bg-white border-b border-slate-200 py-4 px-4 sm:px-6 shadow-sm">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-zatca-800 text-white flex items-center justify-center font-bold text-xl shadow-inner">
+                    % 
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 leading-tight" data-i18n="app_heading">حاسبة غرامات زاتكا للتأخير ومخالفات الإقرارات الضريبية</h1>
+                    <p class="text-xs text-slate-500" data-i18n="app_subheading">وفقاً للائحة التنفيذية لضريبة القيمة المضافة ونظام ضريبة الدخل في المملكة العربية السعودية</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <button id="langToggleBtn" class="flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+                    <span id="langLabel">English</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- App Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 flex-grow">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left Input Column (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
+                <div class="bg-white border border-slate-200 rounded-2xl shadow-sm p-5 sm:p-6">
+                    <div class="border-b border-slate-100 pb-3 mb-5 flex justify-between items-center">
+                        <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <span class="p-1.5 bg-emerald-100 text-emerald-800 rounded-lg text-sm">⚙️</span>
+                            <span data-i18n="sec_parameters">بيانات الإقرار والالتزام الضريبي (Tax Parameters)</span>
+                        </h2>
+                        <button id="resetBtn" class="text-xs text-red-600 hover:underline" data-i18n="btn_reset">إعادة تعيين</button>
+                    </div>
+
+                    <div class="space-y-4 text-sm">
+                        <!-- Tax Regime -->
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1" data-i18n="lbl_tax_type">نوع الضريبة / الالتزام</label>
+                            <select id="taxType" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-slate-50 text-slate-900">
+                                <option value="vat">ضريبة القيمة المضافة (Value Added Tax - VAT)</option>
+                                <option value="cit">ضريبة الدخل على الكيانات الأجنبية (Corporate Income Tax)</option>
+                                <option value="wht">ضريبة الاستقطاع (Withholding Tax - WHT)</option>
+                                <option value="einv">مخالفة الفوترة الإلكترونية (E-Invoicing Fatoorah Violation)</option>
+                            </select>
+                        </div>
+
+                        <!-- Tax Amount Due -->
+                        <div id="taxAmountContainer">
+                            <label class="block font-semibold text-slate-700 mb-1">
+                                <span data-i18n="lbl_tax_due">مبلغ الضريبة المستحق السداد (ريال سعودي)</span>
+                                <span class="text-xs text-slate-400 font-normal" data-i18n="lbl_tax_due_hint">(صافي الضريبة الواجب سدادها للهيئة)</span>
+                            </label>
+                            <div class="relative rounded-lg">
+                                <input type="number" id="taxAmount" min="0" step="any" value="150000" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none font-mono text-slate-900 text-base" placeholder="0.00">
+                                <span class="absolute inset-y-0 ltr:right-3 rtl:left-3 flex items-center text-xs text-slate-400 pointer-events-none font-bold">SAR</span>
+                            </div>
+                        </div>
+
+                        <!-- E-Invoice Violation Type (conditional) -->
+                        <div id="einvTypeContainer" class="hidden">
+                            <label class="block font-semibold text-slate-700 mb-1" data-i18n="lbl_einv_violation">نوع مخالفة الفوترة الإلكترونية</label>
+                            <select id="einvViolation" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-slate-50 text-slate-900">
+                                <option value="not_issuing">عدم إصدار وحفظ الفواتير إلكترونياً (تنبيه أو حتى 5,000 ريال)</option>
+                                <option value="no_qr">إصدار فواتير ضريبية بدون رمز الاستجابة السريعة (QR) (حتى 50,000 ريال)</option>
+                                <option value="not_notifying">عدم إشعار الهيئة بالانقطاع الفني للربط خلال المدة (حتى 25,000 ريال)</option>
+                                <option value="tampering">التلاعب أو العبث في سجلات وأجهزة الفوترة (حتى 50,000 ريال للمرة الأولى)</option>
+                            </select>
+                        </div>
+
+                        <!-- Filing Status and Dates -->
+                        <div id="dateSection" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1" data-i18n="lbl_due_date">تاريخ الاستحقاق النظامي للإقرار والسداد</label>
+                                <input type="date" id="dueDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-slate-900 text-xs sm:text-sm">
+                                <p class="text-[11px] text-slate-400 mt-1" data-i18n="lbl_due_date_tip">نهاية الشهر التالي للفترة الضريبية لـ VAT</p>
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1" data-i18n="lbl_filing_date">تاريخ تقديم الإقرار الفعلي</label>
+                                <input type="date" id="filingDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-slate-900 text-xs sm:text-sm">
+                            </div>
+                        </div>
+
+                        <div id="paymentSection" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1" data-i18n="lbl_payment_date">تاريخ سداد أصل الضريبة الفعلي</label>
+                                <input type="date" id="paymentDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-slate-900 text-xs sm:text-sm">
+                            </div>
+                            <div>
+                                <label class="block font-semibold text-slate-700 mb-1" data-i18n="lbl_amendment">هل الإقرار ناتج عن تعديل فحص ذاتي؟</label>
+                                <select id="isSelfCorrection" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 text-slate-900 text-xs sm:text-sm bg-slate-50">
+                                    <option value="no" data-i18n="opt_unfiled">تأخر تقديم أولي / عدم إقرار أصلي</option>
+                                    <option value="yes" data-i18n="opt_amended">تعديل إقرار سابق طوعياً (تخفيض الغرامة أو إعفاء)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Amnesty Initiative Toggle -->
+                        <div class="mt-4 bg-emerald-50 border border-emerald-200 rounded-xl p-3.5">
+                            <div class="flex items-start gap-3">
+                                <div class="flex items-center h-5 mt-0.5">
+                                    <input id="amnestyActive" type="checkbox" checked class="w-4 h-4 text-emerald-600 rounded border-emerald-300 focus:ring-emerald-500">
+                                </div>
+                                <div>
+                                    <label for="amnestyActive" class="font-bold text-emerald-950 text-sm cursor-pointer" data-i18n="lbl_amnesty_title">مبادرة الإعفاء من الغرامات والتنازل عن العقوبات المالية (ZATCA Amnesty)</label>
+                                    <p class="text-xs text-emerald-800 mt-0.5 leading-relaxed" data-i18n="lbl_amnesty_desc">تطبيق الإعفاء بنسبة 100% من غرامات التأخير وغرامات تعديل الإقرار في حال سداد أصل الضريبة كاملاً والتسجيل في المبادرة قبل موعد انتهائها الرسمي.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Statutory Penalty Rules Overview Card -->
+                <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                    <h3 class="font-bold text-slate-900 text-sm mb-3 flex items-center gap-2">
+                        <span>⚖️</span>
+                        <span data-i18n="card_rules_title">الملخص النظامي لنسب الغرامات المقررة (Saudi Tax Laws)</span>
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                            <span class="block font-bold text-slate-800 text-xs mb-1" data-i18n="rule_1_title">تأخر تقديم الإقرار (VAT)</span>
+                            <p class="text-slate-600 leading-normal" data-i18n="rule_1_desc">5% كحد أدنى وحتى 25% من قيمة الضريبة غير المصرح بها بحسب مدة التأخير (مادة 39).</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                            <span class="block font-bold text-slate-800 text-xs mb-1" data-i18n="rule_2_title">تأخر سداد الضريبة (VAT)</span>
+                            <p class="text-slate-600 leading-normal" data-i18n="rule_2_desc">5% من قيمة الضريبة غير المسددة عن كل شهر أو جزء منه يبدأ من تاريخ الاستحقاق (مادة 40).</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                            <span class="block font-bold text-slate-800 text-xs mb-1" data-i18n="rule_3_title">غرامات ضريبة الدخل (CIT)</span>
+                            <p class="text-slate-600 leading-normal" data-i18n="rule_3_desc">1% عن كل 30 يوم تأخير في السداد، وغرامة إقرار من 5% حتى 25% من الضريبة أو 1% من الإيراد.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Results Column (5 cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-slate-900 text-white rounded-2xl shadow-xl p-5 sm:p-6 print-block border border-slate-800 sticky top-16">
+                    <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                        <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wider" data-i18n="res_header">تقرير احتساب المستحقات والغرامات</span>
+                        <span id="statusBadge" class="text-[11px] px-2 py-0.5 rounded font-bold bg-amber-500/20 text-amber-300 border border-amber-500/30">متأخر (Overdue)</span>
+                    </div>
+
+                    <!-- Main Total Payable -->
+                    <div class="mb-6 bg-slate-800/70 p-4 rounded-xl border border-slate-700/60">
+                        <span class="text-xs text-slate-400 block mb-1" data-i18n="lbl_total_with_penalties">إجمالي المبلغ المستحق (أصل الضريبة + الغرامات)</span>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-3xl font-extrabold text-white font-mono tracking-tight" id="totalPayableDisplay">0.00</span>
+                            <span class="text-xs text-emerald-400 font-bold">SAR</span>
+                        </div>
+                        <p id="amnestySavingsNotice" class="text-xs text-emerald-300 mt-2 font-medium flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-emerald-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                            <span data-i18n="amnesty_saved_txt">تم خصم الغرامات بموجب مبادرة الإعفاء!</span>
+                        </p>
+                    </div>
+
+                    <!-- Breakdown List -->
+                    <div class="space-y-3 text-xs sm:text-sm">
+                        <div class="flex justify-between items-center py-2 border-b border-slate-800">
+                            <span class="text-slate-400" data-i18n="row_principal_tax">أصل مبلغ الضريبة:</span>
+                            <span class="font-mono font-semibold text-white" id="dispPrincipal">0.00 SAR</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-2 border-b border-slate-800">
+                            <div>
+                                <span class="text-slate-400 block" data-i18n="row_filing_penalty">غرامة التأخر في تقديم الإقرار:</span>
+                                <span class="text-[11px] text-slate-500 font-mono" id="filingPenaltyRate">(0%)</span>
+                            </div>
+                            <span class="font-mono font-semibold text-rose-400" id="dispFilingPenalty">0.00 SAR</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-2 border-b border-slate-800">
+                            <div>
+                                <span class="text-slate-400 block" data-i18n="row_delay_penalty">غرامة التأخر في سداد الضريبة:</span>
+                                <span class="text-[11px] text-slate-500 font-mono" id="delayPenaltyMonths">(0 أشهر تأخير)</span>
+                            </div>
+                            <span class="font-mono font-semibold text-rose-400" id="dispDelayPenalty">0.00 SAR</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-2 border-b border-slate-800" id="einvRow">
+                            <span class="text-slate-400" data-i18n="row_einv_penalty">غرامة مخالفة الفوترة الإلكترونية:</span>
+                            <span class="font-mono font-semibold text-rose-400" id="dispEinvPenalty">0.00 SAR</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-2 border-b border-slate-800">
+                            <span class="text-slate-400" data-i18n="row_total_fines">إجمالي الغرامات القانونية المستحقة:</span>
+                            <span class="font-mono font-semibold text-amber-400" id="dispTotalFines">0.00 SAR</span>
+                        </div>
+
+                        <div class="flex justify-between items-center py-2 border-b border-slate-800 bg-emerald-950/40 px-2 rounded">
+                            <span class="text-emerald-300 font-bold" data-i18n="row_waiver_discount">وفر الإعفاء التقديري (Amnesty Waiver):</span>
+                            <span class="font-mono font-bold text-emerald-400" id="dispWaiver">-0.00 SAR</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-6 grid grid-cols-2 gap-3 no-print">
+                        <button onclick="window.print()" class="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+                            <span data-i18n="btn_print">طباعة التقرير</span>
+                        </button>
+                        <button id="exportCsvBtn" class="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-semibold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            <span data-i18n="btn_csv">تصدير CSV</span>
+                        </button>
+                    </div>
+
+                    <!-- Gumroad Conversion Box -->
+                    <div class="mt-6 pt-5 border-t border-slate-800 no-print text-center">
+                        <div class="p-3 bg-gradient-to-br from-emerald-900/60 to-slate-900 rounded-xl border border-emerald-500/40">
+                            <p class="text-xs text-emerald-200 font-bold mb-1" data-i18n="gumroad_box_title">نموذج إكسيل الشامل للفحص والاعتراض الضريبي</p>
+                            <p class="text-[11px] text-slate-300 mb-3 leading-relaxed" data-i18n="gumroad_box_desc">يتضمن معادلات ZATCA وحاسبة اعتراضات ومطابقة الإقرارات الشهرية والربع سنوية الآلية.</p>
+                            <a href="https://gumroad.com" target="_blank" rel="noopener" class="inline-flex items-center justify-center w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2 px-4 rounded-lg text-xs transition shadow-md gap-1.5">
+                                <span data-i18n="gumroad_box_btn">تحميل القالب الآلي (Automated Excel & VBA) - $29</span>
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Bilingual Legal Disclaimer Notice -->
+                    <div class="mt-5 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[11px] text-amber-200/90 leading-relaxed">
+                        <strong class="block font-bold mb-0.5" data-i18n="disclaimer_title">إخلاء مسؤولية نظامي / Legal Disclaimer:</strong>
+                        <span data-i18n="disclaimer_body">هذه الحاسبة أداة تقديرية وتوجيهية فقط. تخضع العقوبات النهائية لتقدير هيئة الزكاة والضريبة والجمارك (ZATCA) بناءً على الفحص الميداني، السجلات، وتطابق الشروط الخاصة بمبادرات الإعفاء. يوصى بمراجعة البوابة الرسمية أو مستشار زكوي وضريبي مرخص قبل السداد.</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Comprehensive 800+ Word SEO Guide, Legal Formulas & FAQ Section -->
+        <section class="mt-12 bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 text-slate-700 space-y-8 no-print">
+            
+            <div class="border-b border-slate-200 pb-5">
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-900 mb-2" data-i18n="guide_header">الدليل الشامل لاحتساب غرامات زاتكا ومخالفات الإقرارات في السعودية</h2>
+                <p class="text-sm text-slate-500" data-i18n="guide_intro">مرجع مهني لمحاسبي الشركات، المدراء الماليين، ومسؤولي الامتثال الضريبي لفهم آليات فرض الغرامات وكيفية الاستفادة من مبادرات الإعفاء الرسمية الصادرة عن هيئة الزكاة والضريبة والجمارك (ZATCA).</p>
+            </div>
+
+            <!-- Section 1: Detailed Law & Rules -->
+            <div class="space-y-4 text-sm leading-relaxed">
+                <h3 class="text-base font-bold text-slate-900" data-i18n="guide_s1_title">1. القواعد القانونية لغرامات ضريبة القيمة المضافة (KSA VAT Law)</h3>
+                <p data-i18n="guide_s1_p1">
+                    تخضع الغرامات الضريبية في المملكة لأحكام نظام ضريبة القيمة المضافة ولائحته التنفيذية الصادرة بالقرار الوزاري رقم (3839). تتوزع الغرامات على محاور رئيسية:
+                </p>
+                <ul class="list-disc list-inside space-y-2 pr-2">
+                    <li>
+                        <strong class="text-slate-900" data-i18n="guide_s1_li1_title">غرامة عدم تقديم الإقرار في موعده (المادة 39):</strong>
+                        <span data-i18n="guide_s1_li1_text">تفرض غرامة لا تقل عن 5% ولا تزيد على 25% من قيمة الضريبة التي كان يتعين على المكلف الإقرار بها. تتدرج النسبة تِبعاً لمدة التأخير (مثلاً: 5% عن التأخير لشهر واحد، ترتفع بنسبة 5% عن كل شهر تأخير إضافي حتى تصل إلى الحد الأقصى 25%).</span>
+                    </li>
+                    <li>
+                        <strong class="text-slate-900" data-i18n="guide_s1_li2_title">غرامة التأخر في سداد الضريبة المستحقة (المادة 40):</strong>
+                        <span data-i18n="guide_s1_li2_text">تفرض غرامة قدرها 5% من قيمة الضريبة غير المسددة عن كل شهر أو جزء منه لم تسدد عنه الضريبة. يبدأ احتساب الشهر من اليوم التالي لتاريخ الاستحقاق النظامي (اليوم الأخير من الشهر التالي للفترة الضريبية).</span>
+                    </li>
+                    <li>
+                        <strong class="text-slate-900" data-i18n="guide_s1_li3_title">غرامة تعديل الإقرار أو تقديم بيانات غير دقيقة (المادة 42):</strong>
+                        <span data-i18n="guide_s1_li3_text">تصل إلى 50% من قيمة الفرق بين الضريبة المحتسبة والضريبة المستحقة فعلاً، إلا إذا بادر المكلف بالتعديل الطوعي قبل فحص الهيئة واكتشاف الخطأ.</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Section 2: CIT and Withholding -->
+            <div class="space-y-4 text-sm leading-relaxed">
+                <h3 class="text-base font-bold text-slate-900" data-i18n="guide_s2_title">2. غرامات ضريبة الدخل وضريبة الاستقطاع (CIT & Withholding Tax)</h3>
+                <p data-i18n="guide_s2_p1">
+                    بموجب المادتين (76) و(77) من نظام ضريبة الدخل الصادر بالمرسوم الملكي رقم (م/1):
+                </p>
+                <ul class="list-disc list-inside space-y-2 pr-2">
+                    <li><strong class="text-slate-900" data-i18n="guide_s2_li1">تأخر تقديم الإقرار السنوي لضريبة الدخل:</strong> يفرض غرامة بنسبة 1% من إجمالي الإيرادات على ألا تتجاوز 20,000 ريال، أو نسب تتراوح بين 5% إلى 25% من الضريبة غير المسددة إن كانت الغرامة النسبية أعلى.</li>
+                    <li><strong class="text-slate-900" data-i18n="guide_s2_li2">تأخر سداد ضريبة الدخل أو الاستقطاع:</strong> يفرض غرامة تأخير قدرها 1% عن كل ثلاثين (30) يوماً من التأخير في السداد من تاريخ الاستحقاق.</li>
+                </ul>
+            </div>
+
+            <!-- Section 3: E-Invoicing Infractions -->
+            <div class="space-y-4 text-sm leading-relaxed">
+                <h3 class="text-base font-bold text-slate-900" data-i18n="guide_s3_title">3. جدول مخالفات الفوترة الإلكترونية (مشروع فاتورة - المرحلة 1 والمرحلة 2)</h3>
+                <p data-i18n="guide_s3_p1">
+                    حددت الهيئة لائحة جزاءات خاصة بضوابط الفوترة الإلكترونية لحماية نزاهة السجلات الرقمية وضمان الربط المباشر مع منصة (فاتورة):
+                </p>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-xs text-right border border-slate-200 divide-y divide-slate-200 mt-2">
+                        <thead class="bg-slate-100 font-semibold text-slate-800">
+                            <tr>
+                                <th class="p-2.5" data-i18n="th_violation">نوع المخالفة</th>
+                                <th class="p-2.5" data-i18n="th_first_action">الجزاء في المرة الأولى</th>
+                                <th class="p-2.5" data-i18n="th_repeat_penalty">العقوبة عند التكرار</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            <tr>
+                                <td class="p-2.5">عدم إصدار وحفظ الفواتير بصيغة إلكترونية</td>
+                                <td class="p-2.5 text-amber-700 font-medium">إشعار وتنبيه بالامتثال</td>
+                                <td class="p-2.5 text-rose-700 font-bold">غرامة مالية تصل إلى 5,000 ريال</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5">عدم تضمين رمز الاستجابة السريعة (QR Code) أو الرقم الضريبي</td>
+                                <td class="p-2.5 text-amber-700 font-medium">إنذار / غرامة تبدأ من 1,000 ريال</td>
+                                <td class="p-2.5 text-rose-700 font-bold">تصل إلى 50,000 ريال بحسب جسامة المخالفة</td>
+                            </tr>
+                            <tr>
+                                <td class="p-2.5">العبث في برمجيات الفوترة أو حذف الفواتير والمستندات</td>
+                                <td class="p-2.5 text-rose-700 font-bold">تبدأ من 10,000 ريال</td>
+                                <td class="p-2.5 text-rose-700 font-bold">تصل إلى 50,000 ريال مع الإحالة للنيابة في حالات التهرب</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Section 4: ZATCA Amnesty Explained -->
+            <div class="space-y-4 text-sm leading-relaxed">
+                <h3 class="text-base font-bold text-slate-900" data-i18n="guide_s4_title">4. شروط الاستفادة من مبادرة التجاوز والإعفاء من الغرامات (Amnesty Initiative)</h3>
+                <p data-i18n="guide_s4_p1">
+                    أطلقت هيئة الزكاة والضريبة والجمارك مبادرة الإعفاء من الغرامات المالية لتخفيف الأعباء الاقتصادية على المنشآت. تشمل المبادرة الغرامات الناتجة عن:
+                </p>
+                <ol class="list-decimal list-inside space-y-1 pr-2 text-slate-600">
+                    <li>التأخر في التسجيل في الأنظمة الضريبية.</li>
+                    <li>التأخر في تقديم الإقرارات الضريبية غير المقدمة سابقاً.</li>
+                    <li>التأخر في سداد أصل دين الضريبة المترتب على تلك الإقرارات.</li>
+                    <li>غرامات تعديل الإقرارات الناتجة عن الإفصاح الطوعي للمكلف.</li>
+                </ol>
+                <p class="text-xs bg-slate-100 p-3 rounded-lg text-slate-700 font-medium" data-i18n="guide_s4_cond">
+                    ⚠️ <strong>شرط الإعفاء الأساسي:</strong> أن يقوم المكلف بالتسجيل (إن لم يكن مسجلاً)، وتقديم كافة الإقرارات غير المقدمة، وسداد كامل أصل دين الضريبة المستحق أو الحصول على خطة تقسيط معتمدة رسمياً من الهيئة خلال الفترة المحددة للمبادرة. لا يشمل الإعفاء غرامات التهرب الضريبي المكتشفة من قبل لجان التفتيش.
+                </p>
+            </div>
+
+            <!-- Section 5: FAQs -->
+            <div class="space-y-4 pt-4 border-t border-slate-200">
+                <h3 class="text-base font-bold text-slate-900" data-i18n="faq_title">الأسئلة الشائعة حول غرامات الضرائب في السعودية (FAQ)</h3>
+                
+                <div class="space-y-3">
+                    <details class="p-4 rounded-xl bg-slate-50 border border-slate-200 group">
+                        <summary class="font-bold text-slate-800 text-sm cursor-pointer list-none flex justify-between items-center">
+                            <span data-i18n="faq_q1">هل تحتسب غرامة تأخير السداد (5%) على المبلغ الإجمالي أم على الشهر الكامل؟</span>
+                            <span class="text-emerald-600 transition group-open:rotate-180">▼</span>
+                        </summary>
+                        <p class="mt-2 text-xs text-slate-600 leading-relaxed" data-i18n="faq_a1">تحتسب غرامة تأخير السداد بنسبة 5% عن كل شهر أو "أي جزء من الشهر". هذا يعني أنه حتى لو تأخر السداد لمدة يوم واحد فقط بعد بداية الشهر الجديد، تُفرض نسبة 5% إضافية كاملة عن ذلك الجزء، وبحد أقصى تراكمي يبلغ 100%.</p>
+                    </details>
+
+                    <details class="p-4 rounded-xl bg-slate-50 border border-slate-200 group">
+                        <summary class="font-bold text-slate-800 text-sm cursor-pointer list-none flex justify-between items-center">
+                            <span data-i18n="faq_q2">متى يعتبر المكلف مرتكباً لمخالفة تهرب ضريبي بدلاً من خطأ إقرار؟</span>
+                            <span class="text-emerald-600 transition group-open:rotate-180">▼</span>
+                        </summary>
+                        <p class="mt-2 text-xs text-slate-600 leading-relaxed" data-i18n="faq_a2">يُعد التهرب الضريبي جريمة عمدية عند تقديم مستندات أو فواتير وهمية أو تزوير الدفاتر أو عدم التسجيل في الضريبة عمداً مع تجاوز حد التسجيل الإلزامي (375,000 ريال)، وتصل عقوبتها إلى 300% من قيمة الضريبة مع إمكانية إحالة القضية للقضاء الجزائي.</p>
+                    </details>
+
+                    <details class="p-4 rounded-xl bg-slate-50 border border-slate-200 group">
+                        <summary class="font-bold text-slate-800 text-sm cursor-pointer list-none flex justify-between items-center">
+                            <span data-i18n="faq_q3">كيف يمكن تقديم اعتراض على الغرامات المفروضة من زاتكا؟</span>
+                            <span class="text-emerald-600 transition group-open:rotate-180">▼</span>
+                        </summary>
+                        <p class="mt-2 text-xs text-slate-600 leading-relaxed" data-i18n="faq_a3">يحق للمكلف الاعتراض عبر بوابة زاتكا الإلكترونية خلال 60 يوماً من تاريخ الإشعار بالربط أو المخالفة. وفي حال الرفض، يمكن تصعيد النزاع إلى لجان الفصل في المخالفات والمنازعات الضريبية (GSTC) ثم الاستئناف.</p>
+                    </details>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12 no-print text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p>© <span id="year"></span> Saudi Tax & ZATCA Penalty Calculator. All rights reserved.</p>
+            <p class="text-slate-400">Saudi VAT Regulation Compliant • KSA Tax Framework</p>
+        </div>
+    </footer>
+
+    <!-- Interactive Script -->
+    <script>
+        // Internationalization Dictionary
+        const i18n = {
+            ar: {
+                banner_text: "احصل على النموذج الاحترافي لإكسيل الشامل للفحص الضريبي واعتراضات زاتكا (VBA Automated).",
+                banner_cta: "تحميل القالب ($29)",
+                app_heading: "حاسبة غرامات زاتكا للتأخير ومخالفات الإقرارات الضريبية",
+                app_subheading: "وفقاً للائحة التنفيذية لضريبة القيمة المضافة ونظام ضريبة الدخل في المملكة العربية السعودية",
+                sec_parameters: "بيانات الإقرار والالتزام الضريبي (Tax Parameters)",
+                btn_reset: "إعادة تعيين",
+                lbl_tax_type: "نوع الضريبة / الالتزام",
+                lbl_tax_due: "مبلغ الضريبة المستحق السداد (ريال سعودي)",
+                lbl_tax_due_hint: "(صافي الضريبة الواجب سدادها للهيئة)",
+                lbl_einv_violation: "نوع مخالفة الفوترة الإلكترونية",
+                lbl_due_date: "تاريخ الاستحقاق النظامي للإقرار والسداد",
+                lbl_due_date_tip: "نهاية الشهر التالي للفترة الضريبية لـ VAT",
+                lbl_filing_date: "تاريخ تقديم الإقرار الفعلي",
+                lbl_payment_date: "تاريخ سداد أصل الضريبة الفعلي",
+                lbl_amendment: "هل الإقرار ناتج عن تعديل فحص ذاتي؟",
+                opt_unfiled: "تأخر تقديم أولي / عدم إقرار أصلي",
+                opt_amended: "تعديل إقرار سابق طوعياً (تخفيض الغرامة أو إعفاء)",
+                lbl_amnesty_title: "مبادرة الإعفاء من الغرامات والتنازل عن العقوبات المالية (ZATCA Amnesty)",
+                lbl_amnesty_desc: "تطبيق الإعفاء بنسبة 100% من غرامات التأخير وغرامات تعديل الإقرار في حال سداد أصل الضريبة كاملاً والتسجيل في المبادرة قبل موعد انتهائها الرسمي.",
+                card_rules_title: "الملخص النظامي لنسب الغرامات المقررة (Saudi Tax Laws)",
+                rule_1_title: "تأخر تقديم الإقرار (VAT)",
+                rule_1_desc: "5% كحد أدنى وحتى 25% من قيمة الضريبة غير المصرح بها بحسب مدة التأخير (مادة 39).",
+                rule_2_title: "تأخر سداد الضريبة (VAT)",
+                rule_2_desc: "5% من قيمة الضريبة غير المسددة عن كل شهر أو جزء منه يبدأ من تاريخ الاستحقاق (مادة 40).",
+                rule_3_title: "غرامات ضريبة الدخل (CIT)",
+                rule_3_desc: "1% عن كل 30 يوم تأخير في السداد، وغرامة إقرار من 5% حتى 25% من الضريبة أو 1% من الإيراد.",
+                res_header: "تقرير احتساب المستحقات والغرامات",
+                lbl_total_with_penalties: "إجمالي المبلغ المستحق (أصل الضريبة + الغرامات)",
+                amnesty_saved_txt: "تم خصم الغرامات بموجب مبادرة الإعفاء!",
+                row_principal_tax: "أصل مبلغ الضريبة:",
+                row_filing_penalty: "غرامة التأخر في تقديم الإقرار:",
+                row_delay_penalty: "غرامة التأخر في سداد الضريبة:",
+                row_einv_penalty: "غرامة مخالفة الفوترة الإلكترونية:",
+                row_total_fines: "إجمالي الغرامات القانونية المستحقة:",
+                row_waiver_discount: "وفر الإعفاء التقديري (Amnesty Waiver):",
+                btn_print: "طباعة التقرير",
+                btn_csv: "تصدير CSV",
+                gumroad_box_title: "نموذج إكسيل الشامل للفحص والاعتراض الضريبي",
+                gumroad_box_desc: "يتضمن معادلات ZATCA وحاسبة اعتراضات ومطابقة الإقرارات الشهرية والربع سنوية الآلية.",
+                gumroad_box_btn: "تحميل القالب الآلي (Automated Excel & VBA) - $29",
+                disclaimer_title: "إخلاء مسؤولية نظامي / Legal Disclaimer:",
+                disclaimer_body: "هذه الحاسبة أداة تقديرية وتوجيهية فقط. تخضع العقوبات النهائية لتقدير هيئة الزكاة والضريبة والجمارك (ZATCA) بناءً على الفحص الميداني، السجلات، وتطابق الشروط الخاصة بمبادرات الإعفاء. يوصى بمراجعة البوابة الرسمية أو مستشار زكوي وضريبي مرخص قبل السداد.",
+                guide_header: "الدليل الشامل لاحتساب غرامات زاتكا ومخالفات الإقرارات في السعودية",
+                guide_intro: "مرجع مهني لمحاسبي الشركات، المدراء الماليين، ومسؤولي الامتثال الضريبي لفهم آليات فرض الغرامات وكيفية الاستفادة من مبادرات الإعفاء الرسمية الصادرة عن هيئة الزكاة والضريبة والجمارك (ZATCA).",
+                guide_s1_title: "1. القواعد القانونية لغرامات ضريبة القيمة المضافة (KSA VAT Law)",
+                guide_s1_p1: "تخضع الغرامات الضريبية في المملكة لأحكام نظام ضريبة القيمة المضافة ولائحته التنفيذية الصادرة بالقرار الوزاري رقم (3839). تتوزع الغرامات على محاور رئيسية:",
+                guide_s1_li1_title: "غرامة عدم تقديم الإقرار في موعده (المادة 39):",
+                guide_s1_li1_text: "تفرض غرامة لا تقل عن 5% ولا تزيد على 25% من قيمة الضريبة التي كان يتعين على المكلف الإقرار بها. تتدرج النسبة تِبعاً لمدة التأخير (مثلاً: 5% عن التأخير لشهر واحد، ترتفع بنسبة 5% عن كل شهر تأخير إضافي حتى تصل إلى الحد الأقصى 25%).",
+                guide_s1_li2_title: "غرامة التأخر في سداد الضريبة المستحقة (المادة 40):",
+                guide_s1_li2_text: "تفرض غرامة قدرها 5% من قيمة الضريبة غير المسددة عن كل شهر أو جزء منه لم تسدد عنه الضريبة. يبدأ احتساب الشهر من اليوم التالي لتاريخ الاستحقاق النظامي (اليوم الأخير من الشهر التالي للفترة الضريبية).",
+                guide_s1_li3_title: "غرامة تعديل الإقرار أو تقديم بيانات غير دقيقة (المادة 42):",
+                guide_s1_li3_text: "تصل إلى 50% من قيمة الفرق بين الضريبة المحتسبة والضريبة المستحقة فعلاً، إلا إذا بادر المكلف بالتعديل الطوعي قبل فحص الهيئة واكتشاف الخطأ.",
+                guide_s2_title: "2. غرامات ضريبة الدخل وضريبة الاستقطاع (CIT & Withholding Tax)",
+                guide_s2_p1: "بموجب المادتين (76) و(77) من نظام ضريبة الدخل الصادر بالمرسوم الملكي رقم (م/1):",
+                guide_s2_li1: "تأخر تقديم الإقرار السنوي لضريبة الدخل: يفرض غرامة بنسبة 1% من إجمالي الإيرادات على ألا تتجاوز 20,000 ريال، أو نسب تتراوح بين 5% إلى 25% من الضريبة غير المسددة إن كانت الغرامة النسبية أعلى.",
+                guide_s2_li2: "تأخر سداد ضريبة الدخل أو الاستقطاع: يفرض غرامة تأخير قدرها 1% عن كل ثلاثين (30) يوماً من التأخير في السداد من تاريخ الاستحقاق.",
+                guide_s3_title: "3. جدول مخالفات الفوترة الإلكترونية (مشروع فاتورة - المرحلة 1 والمرحلة 2)",
+                guide_s3_p1: "حددت الهيئة لائحة جزاءات خاصة بضوابط الفوترة الإلكترونية لحماية نزاهة السجلات الرقمية وضمان الربط المباشر مع منصة (فاتورة):",
+                th_violation: "نوع المخالفة",
+                th_first_action: "الجزاء في المرة الأولى",
+                th_repeat_penalty: "العقوبة عند التكرار",
+                guide_s4_title: "4. شروط الاستفادة من مبادرة التجاوز والإعفاء من الغرامات (Amnesty Initiative)",
+                guide_s4_p1: "أطلقت هيئة الزكاة والضريبة والجمارك مبادرة الإعفاء من الغرامات المالية لتخفيف الأعباء الاقتصادية على المنشآت. تشمل المبادرة الغرامات الناتجة عن:",
+                guide_s4_cond: "⚠️ شرط الإعفاء الأساسي: أن يقوم المكلف بالتسجيل (إن لم يكن مسجلاً)، وتقديم كافة الإقرارات غير المقدمة، وسداد كامل أصل دين الضريبة المستحق أو الحصول على خطة تقسيط معتمدة رسمياً من الهيئة خلال الفترة المحددة للمبادرة. لا يشمل الإعفاء غرامات التهرب الضريبي المكتشفة من قبل لجان التفتيش.",
+                faq_title: "الأسئلة الشائعة حول غرامات الضرائب في السعودية (FAQ)",
+                faq_q1: "هل تحتسب غرامة تأخير السداد (5%) على المبلغ الإجمالي أم على الشهر الكامل؟",
+                faq_a1: "تحتسب غرامة تأخير السداد بنسبة 5% عن كل شهر أو جزء من الشهر. هذا يعني أنه حتى لو تأخر السداد لمدة يوم واحد فقط بعد بداية الشهر الجديد، تُفرض نسبة 5% إضافية كاملة عن ذلك الجزء، وبحد أقصى تراكمي يبلغ 100%.",
+                faq_q2: "متى يعتبر المكلف مرتكباً لمخالفة تهرب ضريبي بدلاً من خطأ إقرار؟",
+                faq_a2: "يُعد التهرب الضريبي جريمة عمدية عند تقديم مستندات أو فواتير وهمية أو تزوير الدفاتر أو عدم التسجيل في الضريبة عمداً مع تجاوز حد التسجيل الإلزامي (375,000 ريال)، وتصل عقوبتها إلى 300% من قيمة الضريبة مع إمكانية إحالة القضية للقضاء الجزائي.",
+                faq_q3: "كيف يمكن تقديم اعتراض على الغرامات المفروضة من زاتكا؟",
+                faq_a3: "يحق للمكلف الاعتراض عبر بوابة زاتكا الإلكترونية خلال 60 يوماً من تاريخ الإشعار بالربط أو المخالفة. وفي حال الرفض، يمكن تصعيد النزاع إلى لجان الفصل في المخالفات والمنازعات الضريبية (GSTC) ثم الاستئناف."
+            },
+            en: {
+                banner_text: "Get the Complete Saudi Tax Audit, ZATCA Late Penalty & Voluntary Disclosure Excel Tool (VBA Automated).",
+                banner_cta: "Download Excel Master ($29)",
+                app_heading: "Saudi ZATCA Tax Penalty & Late Filing Fine Calculator",
+                app_subheading: "In accordance with the Saudi VAT Executive Regulations and Corporate Income Tax Laws",
+                sec_parameters: "Tax Return & Compliance Parameters",
+                btn_reset: "Reset Values",
+                lbl_tax_type: "Tax Type / Compliance Regime",
+                lbl_tax_due: "Tax Amount Payable (SAR)",
+                lbl_tax_due_hint: "(Net tax liability owed to ZATCA)",
+                lbl_einv_violation: "E-Invoicing Violation Category",
+                lbl_due_date: "Statutory Due Date for Filing & Payment",
+                lbl_due_date_tip: "End of month following tax period for VAT",
+                lbl_filing_date: "Actual Return Filing Date",
+                lbl_payment_date: "Actual Tax Payment Date",
+                lbl_amendment: "Is Return Self-Amended / Voluntary?",
+                opt_unfiled: "Unfiled Return / Original Default",
+                opt_amended: "Voluntary Self-Correction (Lower fines / relief)",
+                lbl_amnesty_title: "ZATCA Penalty Amnesty / Cancellation Initiative",
+                lbl_amnesty_desc: "100% waiver of late filing, delayed payment, and self-amendment penalties upon paying principal tax in full.",
+                card_rules_title: "Statutory Penalty Rules Overview (Saudi Tax Framework)",
+                rule_1_title: "Late Filing Penalty (VAT)",
+                rule_1_desc: "5% minimum up to 25% max based on delay months under Article 39.",
+                rule_2_title: "Late Payment Penalty (VAT)",
+                rule_2_desc: "5% of unpaid tax for each month or fraction of a month under Article 40.",
+                rule_3_title: "Income Tax Penalties (CIT)",
+                rule_3_desc: "1% for every 30 days of payment delay, plus 5%-25% for late declaration.",
+                res_header: "Tax Liability & Penalty Audit Report",
+                lbl_total_with_penalties: "Total Amount Payable (Principal + Fines)",
+                amnesty_saved_txt: "Penalties waived under the ZATCA Amnesty Initiative!",
+                row_principal_tax: "Principal Tax Liability:",
+                row_filing_penalty: "Late Filing Penalty:",
+                row_delay_penalty: "Late Payment Penalty:",
+                row_einv_penalty: "E-Invoicing Violation Fine:",
+                row_total_fines: "Total Statutory Fines Accrued:",
+                row_waiver_discount: "Estimated Amnesty Waiver Relief:",
+                btn_print: "Print Report",
+                btn_csv: "Export CSV",
+                gumroad_box_title: "Complete Tax Audit & ZATCA Appeal Master Excel",
+                gumroad_box_desc: "Automated formulas for penalty calculation, return reconciliation & formal appeal drafts.",
+                gumroad_box_btn: "Download Automated Excel Template ($29)",
+                disclaimer_title: "Legal Disclaimer:",
+                disclaimer_body: "This tool provides estimates for guidance only. Final penalties are determined strictly by ZATCA based on audit examinations and qualification under specific relief schemes. Always consult licensed SOCPA tax advisors prior to settlement.",
+                guide_header: "Comprehensive Guide to Saudi ZATCA Penalties & Tax Relief",
+                guide_intro: "A definitive practitioner guide for accountants, CFOs, and tax compliance managers navigating penalty calculations and ZATCA amnesty exemptions.",
+                guide_s1_title: "1. Legal Framework for VAT Penalties in Saudi Arabia",
+                guide_s1_p1: "VAT penalties in KSA are governed by Royal Decree No. (M/113) and Ministerial Resolution (3839):",
+                guide_s1_li1_title: "Failure to File Return (Article 39):",
+                guide_s1_li1_text: "Between 5% and 25% of the unpaid tax amount, tiered based on the number of months the return remains unsubmitted.",
+                guide_s1_li2_title: "Delay in Tax Settlement (Article 40):",
+                guide_s1_li2_text: "5% of the unpaid tax amount for every month or part of a month elapsed from the statutory due date.",
+                guide_s1_li3_title: "Incorrect Return / Inaccurate Data (Article 42):",
+                guide_s1_li3_text: "Up to 50% of the understatement value, unless voluntarily disclosed prior to tax authority inspection.",
+                guide_s2_title: "2. Corporate Income Tax & Withholding Tax Fines (CIT & WHT)",
+                guide_s2_p1: "Under Articles 76 and 77 of the Income Tax Law (Royal Decree M/1):",
+                guide_s2_li1: "Late Income Tax Declaration: 1% of total enterprise revenue (capped at SAR 20,000) or 5%-25% of unpaid tax, whichever is higher.",
+                guide_s2_li2: "Late Payment of CIT or WHT: A delay fine of 1% for every 30 days of delay starting from the statutory due date.",
+                guide_s3_title: "3. E-Invoicing Non-Compliance Schedule (Fatoorah Platform)",
+                guide_s3_p1: "ZATCA imposes strict penalties on electronic billing non-conformities:",
+                th_violation: "Violation Category",
+                th_first_action: "First Occurrence",
+                th_repeat_penalty: "Subsequent Infractions",
+                guide_s4_title: "4. Terms of the ZATCA Penalty Cancellation Initiative",
+                guide_s4_p1: "ZATCA periodically executes penalty waiver schemes covering:",
+                guide_s4_cond: "⚠️ Prerequisite for Relief: Full settlement of principal tax liabilities, submission of all overdue returns, and maintaining compliance without any active tax evasion charges.",
+                faq_title: "Frequently Asked Questions (FAQ)",
+                faq_q1: "Does the 5% payment penalty apply to partial months?",
+                faq_a1: "Yes. The law explicitly states 5% for each month or 'part thereof'. Exceeding the due date by even one day triggers the full 5% fine for that month.",
+                faq_q2: "When is an irregularity classified as Tax Evasion?",
+                faq_a2: "Intentional forging of books, issuing fake invoices, or deliberately concealing registration triggers tax evasion penalties up to 300% plus criminal referrals.",
+                faq_q3: "How do I contest a penalty assessment from ZATCA?",
+                faq_a3: "Taxpayers may submit an electronic objection within 60 days of the assessment notice. Unresolved disputes escalate to the Tax Committees (GSTC)."
+            }
+        };
+
+        let currentLang = 'ar';
+
+        // Helper: Format Currency
+        function formatSAR(num) {
+            return (Number(num) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Helper: Calculate Months Difference (Month or part thereof)
+        function calculateMonthsOrPart(start, end) {
+            if (!start || !end || end <= start) return 0;
+            
+            let months = (end.getFullYear() - start.getFullYear()) * 12 + (end.getMonth() - start.getMonth());
+            if (end.getDate() > start.getDate()) {
+                months += 1;
+            } else if (end.getDate() < start.getDate() && months === 0) {
+                months = 1;
+            }
+            return Math.max(1, months);
+        }
+
+        // Helper: Calculate 30-day blocks for CIT
+        function calculate30DayBlocks(start, end) {
+            if (!start || !end || end <= start) return 0;
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return Math.ceil(diffDays / 30);
+        }
+
+        // Main Calculation Engine
+        function calculate() {
+            const taxType = document.getElementById('taxType').value;
+            const taxAmount = parseFloat(document.getElementById('taxAmount').value) || 0;
+            const dueDateStr = document.getElementById('dueDate').value;
+            const filingDateStr = document.getElementById('filingDate').value;
+            const paymentDateStr = document.getElementById('paymentDate').value;
+            const isSelfCorrection = document.getElementById('isSelfCorrection').value === 'yes';
+            const amnestyActive = document.getElementById('amnestyActive').checked;
+            const einvViolation = document.getElementById('einvViolation').value;
+
+            const dueDate = dueDateStr ? new Date(dueDateStr) : null;
+            const filingDate = filingDateStr ? new Date(filingDateStr) : null;
+            const paymentDate = paymentDateStr ? new Date(paymentDateStr) : null;
+
+            let filingPenalty = 0;
+            let filingPenaltyRateText = '(0%)';
+            let delayPenalty = 0;
+            let delayMonthsCount = 0;
+            let einvPenalty = 0;
+
+            // 1. E-Invoicing Mode
+            if (taxType === 'einv') {
+                document.getElementById('taxAmountContainer').classList.add('hidden');
+                document.getElementById('dateSection').classList.add('hidden');
+                document.getElementById('paymentSection').classList.add('hidden');
+                document.getElementById('einvTypeContainer').classList.remove('hidden');
+                document.getElementById('einvRow').classList.remove('hidden');
+
+                switch(einvViolation) {
+                    case 'not_issuing': einvPenalty = 1000; break;
+                    case 'no_qr': einvPenalty = 5000; break;
+                    case 'not_notifying': einvPenalty = 2500; break;
+                    case 'tampering': einvPenalty = 10000; break;
+                }
+            } else {
+                document.getElementById('taxAmountContainer').classList.remove('hidden');
+                document.getElementById('dateSection').classList.remove('hidden');
+                document.getElementById('paymentSection').classList.remove('hidden');
+                document.getElementById('einvTypeContainer').classList.add('hidden');
+                document.getElementById('einvRow').classList.add('hidden');
+
+                // 2. VAT Calculation
+                if (taxType === 'vat') {
+                    // Filing penalty (5% to 25% max based on months overdue)
+                    if (dueDate && filingDate && filingDate > dueDate) {
+                        let filingDelayMonths = calculateMonthsOrPart(dueDate, filingDate);
+                        let rate = Math.min(25, Math.max(5, filingDelayMonths * 5));
+                        filingPenaltyRateText = `(${rate}%)`;
+                        filingPenalty = taxAmount * (rate / 100);
+                    }
+
+                    // Payment penalty (5% per month or part of month, max 100%)
+                    if (dueDate && paymentDate && paymentDate > dueDate) {
+                        delayMonthsCount = calculateMonthsOrPart(dueDate, paymentDate);
+                        let paymentRate = Math.min(100, delayMonthsCount * 5);
+                        delayPenalty = taxAmount * (paymentRate / 100);
+                    }
+                } 
+                // 3. CIT Calculation
+                else if (taxType === 'cit') {
+                    // Filing penalty: 5% - 25%
+                    if (dueDate && filingDate && filingDate > dueDate) {
+                        let months = calculateMonthsOrPart(dueDate, filingDate);
+                        let rate = Math.min(25, Math.max(5, months * 5));
+                        filingPenaltyRateText = `(${rate}%)`;
+                        filingPenalty = taxAmount * (rate / 100);
+                    }
+                    // Payment penalty: 1% for each 30 days
+                    if (dueDate && paymentDate && paymentDate > dueDate) {
+                        let blocks = calculate30DayBlocks(dueDate, paymentDate);
+                        delayMonthsCount = blocks;
+                        delayPenalty = taxAmount * (blocks * 0.01);
+                    }
+                }
+                // 4. WHT Calculation
+                else if (taxType === 'wht') {
+                    filingPenalty = 0; // WHT relies mainly on delay fines
+                    filingPenaltyRateText = '(0%)';
+                    if (dueDate && paymentDate && paymentDate > dueDate) {
+                        let blocks = calculate30DayBlocks(dueDate, paymentDate);
+                        delayMonthsCount = blocks;
+                        delayPenalty = taxAmount * (blocks * 0.01);
+                    }
+                }
+
+                if (isSelfCorrection) {
+                    filingPenalty = filingPenalty * 0.5; // Voluntary correction penalty discount
+                }
+            }
+
+            const totalFines = filingPenalty + delayPenalty + einvPenalty;
+            let waiverAmount = 0;
+
+            if (amnestyActive) {
+                // Under Amnesty, 100% of late filing and delay penalties are waived
+                waiverAmount = totalFines;
+            }
+
+            const netPayableFines = Math.max(0, totalFines - waiverAmount);
+            const principalToPay = (taxType === 'einv') ? 0 : taxAmount;
+            const grandTotal = principalToPay + netPayableFines;
+
+            // UI Updates
+            document.getElementById('dispPrincipal').innerText = formatSAR(principalToPay) + ' SAR';
+            document.getElementById('dispFilingPenalty').innerText = formatSAR(filingPenalty) + ' SAR';
+            document.getElementById('filingPenaltyRate').innerText = filingPenaltyRateText;
+            document.getElementById('dispDelayPenalty').innerText = formatSAR(delayPenalty) + ' SAR';
+            document.getElementById('delayPenaltyMonths').innerText = (taxType === 'cit' || taxType === 'wht') 
+                ? `(${delayMonthsCount} × 30 days)` 
+                : `(${delayMonthsCount} ${currentLang === 'ar' ? 'أشهر' : 'months'})`;
+            document.getElementById('dispEinvPenalty').innerText = formatSAR(einvPenalty) + ' SAR';
+            document.getElementById('dispTotalFines').innerText = formatSAR(totalFines) + ' SAR';
+            document.getElementById('dispWaiver').innerText = '-' + formatSAR(waiverAmount) + ' SAR';
+            document.getElementById('totalPayableDisplay').innerText = formatSAR(grandTotal);
+
+            const savingsNotice = document.getElementById('amnestySavingsNotice');
+            const statusBadge = document.getElementById('statusBadge');
+
+            if (amnestyActive && totalFines > 0) {
+                savingsNotice.classList.remove('hidden');
+                statusBadge.className = 'text-[11px] px-2 py-0.5 rounded font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                statusBadge.innerText = currentLang === 'ar' ? 'مشمول بالإعفاء (Amnesty Applied)' : 'Amnesty Applied';
+            } else if (totalFines > 0) {
+                savingsNotice.classList.add('hidden');
+                statusBadge.className = 'text-[11px] px-2 py-0.5 rounded font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30';
+                statusBadge.innerText = currentLang === 'ar' ? 'مترتب عليه غرامات (Penalties Due)' : 'Penalties Due';
+            } else {
+                savingsNotice.classList.add('hidden');
+                statusBadge.className = 'text-[11px] px-2 py-0.5 rounded font-bold bg-slate-500/20 text-slate-300 border border-slate-500/30';
+                statusBadge.innerText = currentLang === 'ar' ? 'منتظم / بدون غرامات (Compliant)' : 'Compliant';
+            }
+        }
+
+        // Language Switcher
+        function setLanguage(lang) {
+            currentLang = lang;
+            const html = document.documentElement;
+            const langBtn = document.getElementById('langLabel');
+            
+            if (lang === 'en') {
+                html.setAttribute('lang', 'en');
+                html.setAttribute('dir', 'ltr');
+                document.body.classList.add('en-mode');
+                langBtn.innerText = 'العربية';
+            } else {
+                html.setAttribute('lang', 'ar');
+                html.setAttribute('dir', 'rtl');
+                document.body.classList.remove('en-mode');
+                langBtn.innerText = 'English';
+            }
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) {
+                    el.innerHTML = i18n[lang][key];
+                }
+            });
+
+            calculate();
+        }
+
+        // Export CSV Functionality
+        function exportCSV() {
+            const principal = document.getElementById('dispPrincipal').innerText;
+            const filingFine = document.getElementById('dispFilingPenalty').innerText;
+            const delayFine = document.getElementById('dispDelayPenalty').innerText;
+            const einvFine = document.getElementById('dispEinvPenalty').innerText;
+            const totalFines = document.getElementById('dispTotalFines').innerText;
+            const waiver = document.getElementById('dispWaiver').innerText;
+            const total = document.getElementById('totalPayableDisplay').innerText + ' SAR';
+
+            const csvContent = "data:text/csv;charset=utf-8,"
+                + "Description,Amount\n"
+                + `"Principal Tax Liability","${principal}"\n`
+                + `"Late Filing Penalty","${filingFine}"\n`
+                + `"Late Payment Penalty","${delayFine}"\n`
+                + `"E-Invoicing Fine","${einvFine}"\n`
+                + `"Total Statutory Penalties","${totalFines}"\n`
+                + `"ZATCA Amnesty Waiver Discount","${waiver}"\n`
+                + `"Net Payable Balance","${total}"\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `ZATCA_Penalty_Audit_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initialize Default Dates
+        function initDates() {
+            const today = new Date();
+            const paymentDate = new Date(today);
+            
+            // Default Due Date: 3 months ago (end of that month)
+            const dueDate = new Date(today.getFullYear(), today.getMonth() - 3, 28);
+            const filingDate = new Date(today.getFullYear(), today.getMonth() - 1, 15);
+
+            const formatDate = d => d.toISOString().split('T')[0];
+            
+            document.getElementById('dueDate').value = formatDate(dueDate);
+            document.getElementById('filingDate').value = formatDate(filingDate);
+            document.getElementById('paymentDate').value = formatDate(paymentDate);
+            document.getElementById('year').innerText = today.getFullYear();
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            initDates();
+            
+            const inputs = ['taxType', 'taxAmount', 'einvViolation', 'dueDate', 'filingDate', 'paymentDate', 'isSelfCorrection', 'amnestyActive'];
+            inputs.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', calculate);
+                    el.addEventListener('change', calculate);
+                }
+            });
+
+            document.getElementById('langToggleBtn').addEventListener('click', () => {
+                setLanguage(currentLang === 'ar' ? 'en' : 'ar');
+            });
+
+            document.getElementById('exportCsvBtn').addEventListener('click', exportCSV);
+            
+            document.getElementById('resetBtn').addEventListener('click', () => {
+                document.getElementById('taxType').value = 'vat';
+                document.getElementById('taxAmount').value = '150000';
+                document.getElementById('isSelfCorrection').value = 'no';
+                document.getElementById('amnestyActive').checked = true;
+                initDates();
+                calculate();
+            });
+
+            calculate();
+        });
+    </script>
+</body>
+</html>

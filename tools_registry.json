@@ -299,5 +299,12 @@
     "title_ar": "حاسبة المتأخرات الرجعية وتصحيح الأجور في التأمينات الاجتماعية السعودية",
     "description_en": "Calculate retroactive GOSI contribution arrears, occupational hazards, and wage correction fines for Saudi and non-Saudi employees under GOSI regulations.",
     "date": "2026-11-20"
+  },
+  {
+    "slug": "saudi-zatca-penalty-and-late-filing-calculator",
+    "title_en": "Saudi ZATCA Tax Penalty & Late Filing Fine Calculator",
+    "title_ar": "حاسبة غرامات زاتكا للتأخير ومخالفات الإقرارات الضريبية",
+    "description_en": "Calculate Saudi ZATCA penalties for late VAT & income tax filing, unpaid tax delay fines, e-invoicing infractions, and tax amnesty waiver relief.",
+    "date": "2026-11-21"
   }
 ]
