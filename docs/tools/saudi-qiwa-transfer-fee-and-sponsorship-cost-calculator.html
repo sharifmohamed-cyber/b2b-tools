@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi Qiwa Employee Transfer Fee & Sponsorship Cost Calculator</title>
+    <meta name="description" content="Calculate total Saudi Qiwa employee transfer fees, government sponsorship charges, and employer costs accurately under Saudi Labor Law and MLSD rules.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', 'Cairo', sans-serif; }
+        .rtl { direction: rtl; }
+        .ltr { direction: ltr; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Header & Language Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-brand-600 text-white p-2 rounded-lg font-bold text-xl">
+                    🇸🇦
+                </div>
+                <div>
+                    <h1 id="app-title" class="text-lg font-bold text-slate-900">Qiwa Transfer Cost Pro</h1>
+                    <p id="app-subtitle" class="text-xs text-slate-500">Official Qiwa & Jawazat Fee Estimation Engine</p>
+                </div>
+            </div>
+            <div>
+                <button onclick="toggleLanguage()" id="lang-btn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-semibold transition">
+                    العربية (Arabic)
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sticky Conversion Banner -->
+    <div class="bg-gradient-to-r from-emerald-900 to-slate-900 text-white px-4 py-3 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-center sm:text-left gap-2">
+            <div class="text-sm">
+                <span id="banner-text-1" class="font-semibold">Need automated batch processing for multi-employee transfers & payroll integration?</span>
+            </div>
+            <a href="https://gumroad.com" target="_blank" id="banner-cta" class="bg-emerald-500 hover:bg-emerald-400 text-white px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider transition shadow">
+                Get Complete Excel/VBA Master Template ($29)
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Calculator Inputs Section -->
+        <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200">
+            <h2 id="sec-input-title" class="text-xl font-bold text-slate-900 mb-6 pb-2 border-b border-slate-100">Transfer Parameter Configuration</h2>
+            
+            <form id="transfer-form" class="space-y-5" onsubmit="return false;">
+                
+                <!-- Transfer Sequence -->
+                <div>
+                    <label id="lbl-transfer-count" class="block text-sm font-semibold text-slate-700 mb-1.5">Transfer Number (Times Sponsored Before)</label>
+                    <select id="transfer_count" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-slate-800 focus:ring-2 focus:ring-brand-600 focus:outline-none">
+                        <option value="1" id="opt-trans-1">1st Transfer (SAR 2,000)</option>
+                        <option value="2" id="opt-trans-2">2nd Transfer (SAR 4,000)</option>
+                        <option value="3" id="opt-trans-3">3rd Transfer or More (SAR 6,000)</option>
+                    </select>
+                </div>
+
+                <!-- Iqama Renewal Duration -->
+                <div>
+                    <label id="lbl-iqama-duration" class="block text-sm font-semibold text-slate-700 mb-1.5">Iqama Renewal Period Upon Transfer</label>
+                    <select id="iqama_duration" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-slate-800 focus:ring-2 focus:ring-brand-600 focus:outline-none">
+                        <option value="1" id="opt-iqama-1">1 Year</option>
+                        <option value="2" id="opt-iqama-2">2 Years</option>
+                    </select>
+                    <p id="note-iqama-dur" class="text-xs text-slate-500 mt-1">Jawazat requires valid Iqama at transfer. Duration affects residence fee calculation.</p>
+                </div>
+
+                <!-- Expat Levy / Dependents -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label id="lbl-dependents" class="block text-sm font-semibold text-slate-700 mb-1.5">Accompanying Dependents</label>
+                        <input type="number" id="dependents_count" min="0" value="0" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-slate-800 focus:ring-2 focus:ring-brand-600 focus:outline-none">
+                        <p id="note-dep" class="text-xs text-slate-500 mt-1">SAR 400/month per dependent.</p>
+                    </div>
+                    <div>
+                        <label id="lbl-nitaqat-tier" class="block text-sm font-semibold text-slate-700 mb-1.5">Company Nitaqat Tier</label>
+                        <select id="nitaqat_tier" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-slate-800 focus:ring-2 focus:ring-brand-600 focus:outline-none">
+                            <option value="platinum" id="opt-nit-plat">Platinum / High Green</option>
+                            <option value="mid" id="opt-nit-mid" selected>Mid / Low Green</option>
+                            <option value="yellow" id="opt-nit-yell">Yellow / Red</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Additional Costs Setup -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label id="lbl-medical" class="block text-sm font-semibold text-slate-700 mb-1.5">Medical Checkup / Insurance (SAR)</label>
+                        <input type="number" id="medical_cost" min="0" value="1500" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-slate-800 focus:ring-2 focus:ring-brand-600 focus:outline-none">
+                    </div>
+                    <div>
+                        <label id="lbl-exit-reentry" class="block text-sm font-semibold text-slate-700 mb-1.5">Exit/Re-entry or Other Setup (SAR)</label>
+                        <input type="number" id="other_cost" min="0" value="500" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3.5 py-2.5 text-slate-800 focus:ring-2 focus:ring-brand-600 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Cost Burden Allocation -->
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                    <label id="lbl-burden" class="block text-sm font-bold text-slate-800 mb-2">Negotiated Cost Allocation Rule</label>
+                    <div class="flex space-x-6 rtl:space-x-reverse">
+                        <label class="flex items-center space-x-2 rtl:space-x-reverse cursor-pointer">
+                            <input type="radio" name="burden" value="employer" checked class="text-brand-600 focus:ring-brand-600">
+                            <span id="radio-emp" class="text-sm text-slate-700 font-medium">New Employer Pays All</span>
+                        </label>
+                        <label class="flex items-center space-x-2 rtl:space-x-reverse cursor-pointer">
+                            <input type="radio" name="burden" value="shared" class="text-brand-600 focus:ring-brand-600">
+                            <span id="radio-share" class="text-sm text-slate-700 font-medium">Standard Transfer Fee by Employer</span>
+                        </label>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Results Summary Section -->
+        <div class="lg:col-span-5 flex flex-col space-y-6">
+            <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 sticky top-24">
+                <h2 id="sec-res-title" class="text-xl font-bold text-slate-900 mb-4 pb-2 border-b border-slate-100">Estimated Financial Breakdown</h2>
+                
+                <div class="space-y-3.5 text-sm">
+                    <div class="flex justify-between items-center text-slate-600">
+                        <span id="res-lbl-qiwa">Qiwa Transfer Fee:</span>
+                        <span id="out-qiwa-fee" class="font-semibold text-slate-900">SAR 2,000</span>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-600">
+                        <span id="res-lbl-iqama">Iqama Renewal Fee:</span>
+                        <span id="out-iqama-fee" class="font-semibold text-slate-900">SAR 650</span>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-600">
+                        <span id="res-lbl-levy">Expat Levy (Annualized):</span>
+                        <span id="out-levy-fee" class="font-semibold text-slate-900">SAR 9,600</span>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-600">
+                        <span id="res-lbl-dep">Dependents Levy:</span>
+                        <span id="out-dep-fee" class="font-semibold text-slate-900">SAR 0</span>
+                    </div>
+                    <div class="flex justify-between items-center text-slate-600">
+                        <span id="res-lbl-misc">Medical & Administrative:</span>
+                        <span id="out-misc-fee" class="font-semibold text-slate-900">SAR 2,000</span>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-slate-200 flex justify-between items-center">
+                        <span id="res-lbl-total" class="font-bold text-base text-slate-900">Total Onboarding Investment:</span>
+                        <span id="out-total-cost" class="font-extrabold text-xl text-brand-600">SAR 14,250</span>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-6 space-y-3">
+                    <button onclick="exportCSV()" id="btn-export" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-2.5 rounded-xl text-sm font-semibold transition shadow-sm">
+                        Export Financial Summary (CSV)
+                    </button>
+                    <a href="https://gumroad.com" target="_blank" class="block text-center bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl text-sm font-bold transition shadow">
+                        <span id="cta-btn-text">Download Complete HR & Payroll Suite ($29)</span>
+                    </a>
+                </div>
+
+                <!-- Legal Disclaimer -->
+                <div class="mt-5 p-3 bg-amber-50 rounded-lg border border-amber-200 text-xs text-amber-800 leading-relaxed">
+                    <span id="disclaimer-text" class="font-medium">
+                        Disclaimer: Estimates are based on current Qiwa, Jawazat, and GOSI guidelines. Official fees are subject to change by Saudi Ministry of Human Resources and Social Development (MHRSD).
+                    </span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- SEO Content Section -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-slate-200 mt-12 bg-white rounded-2xl shadow-sm mb-12">
+        <article class="prose max-w-none text-slate-700">
+            <h2 id="guide-title-1" class="text-2xl font-bold text-slate-900 mb-4">Understanding Saudi Qiwa Employee Transfer & Sponsorship Fees</h2>
+            <p id="guide-p-1" class="mb-4">
+                Transferring an employee under the Saudi Ministry of Human Resources and Social Development (MHRSD) via the Qiwa platform involves multiple structured statutory fees. These include the official Qiwa transfer fee, Jawazat (Passport Directorate) Iqama renewal or transfer stamping fees, expatriate levies (Muqeem / Lavies), and dependent fees. Managing these expenses accurately is critical for human resources budgets and onboarding planning in Saudi Arabia.
+            </p>
+
+            <h3 id="guide-title-2" class="text-xl font-bold text-slate-900 mt-6 mb-3">How Qiwa Transfer Fees Are Calculated</h3>
+            <p id="guide-p-2" class="mb-4">
+                Under current regulations, the Qiwa transfer fee escalates depending on how many times the employee has previously transferred sponsors within the Kingdom:
+            </p>
+            <ul class="list-disc pl-5 mb-4 space-y-1">
+                <li id="guide-li-1"><strong>First Transfer:</strong> SAR 2,000 payable by the new employer.</li>
+                <li id="guide-li-2"><strong>Second Transfer:</strong> SAR 4,000 payable by the new employer.</li>
+                <li id="guide-li-3"><strong>Third Transfer or More:</strong> SAR 6,000 payable by the new employer.</li>
+            </ul>
+
+            <h3 id="guide-title-3" class="text-xl font-bold text-slate-900 mt-6 mb-3">Frequently Asked Questions (FAQ)</h3>
+            <div class="space-y-4">
+                <div>
+                    <h4 id="faq-q-1" class="font-semibold text-slate-900">Who is legally responsible for paying the Qiwa transfer fee?</h4>
+                    <p id="faq-a-1" class="text-sm text-slate-600">By law and standard practice, the hiring (new) employer bears the official Qiwa transfer and government sponsorship fees. Deducting these fees from the employee's salary is strictly prohibited under Saudi Labor Law.</p>
+                </div>
+                <div>
+                    <h4 id="faq-q-2" class="font-semibold text-slate-900">Can an employee transfer without the current employer's approval?</h4>
+                    <p id="faq-a-2" class="text-sm text-slate-600">Under the Labor Reform Initiative (LRI), employees can transfer upon contract expiration, during the notice period, or if specific conditions like unpaid wages or absence of a documented contract are met without requiring explicit consent via Qiwa.</p>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        <p>© 2025 Saudi Qiwa Transfer Cost Pro. Built for HR Professionals & Business Owners in KSA.</p>
+    </footer>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                title: "Qiwa Transfer Cost Pro",
+                subtitle: "Official Qiwa & Jawazat Fee Estimation Engine",
+                langBtn: "العربية (Arabic)",
+                bannerText: "Need automated batch processing for multi-employee transfers & payroll integration?",
+                bannerCta: "Get Complete Excel/VBA Master Template ($29)",
+                secInput: "Transfer Parameter Configuration",
+                lblTransferCount: "Transfer Number (Times Sponsored Before)",
+                optTrans1: "1st Transfer (SAR 2,000)",
+                optTrans2: "2nd Transfer (SAR 4,000)",
+                optTrans3: "3rd Transfer or More (SAR 6,000)",
+                lblIqamaDuration: "Iqama Renewal Period Upon Transfer",
+                optIqama1: "1 Year",
+                optIqama2: "2 Years",
+                noteIqama: "Jawazat requires valid Iqama at transfer. Duration affects residence fee calculation.",
+                lblDependents: "Accompanying Dependents",
+                noteDep: "SAR 400/month per dependent.",
+                lblNitaqat: "Company Nitaqat Tier",
+                optNitPlat: "Platinum / High Green",
+                optNitMid: "Mid / Low Green",
+                optNitYell: "Yellow / Red",
+                lblMedical: "Medical Checkup / Insurance (SAR)",
+                lblOther: "Exit/Re-entry or Other Setup (SAR)",
+                lblBurden: "Negotiated Cost Allocation Rule",
+                radioEmp: "New Employer Pays All",
+                radioShare: "Standard Transfer Fee by Employer",
+                secRes: "Estimated Financial Breakdown",
+                resQiwa: "Qiwa Transfer Fee:",
+                resIqama: "Iqama Renewal Fee:",
+                resLevy: "Expat Levy (Annualized):",
+                resDep: "Dependents Levy:",
+                resMisc: "Medical & Administrative:",
+                resTotal: "Total Onboarding Investment:",
+                btnExport: "Export Financial Summary (CSV)",
+                ctaBtn: "Download Complete HR & Payroll Suite ($29)",
+                disclaimer: "Disclaimer: Estimates are based on current Qiwa, Jawazat, and GOSI guidelines. Official fees are subject to change by Saudi Ministry of Human Resources and Social Development (MHRSD).",
+                guideTitle1: "Understanding Saudi Qiwa Employee Transfer & Sponsorship Fees",
+                guideP1: "Transferring an employee under the Saudi Ministry of Human Resources and Social Development (MHRSD) via the Qiwa platform involves multiple structured statutory fees. These include the official Qiwa transfer fee, Jawazat (Passport Directorate) Iqama renewal or transfer stamping fees, expatriate levies (Muqeem / Lavies), and dependent fees. Managing these expenses accurately is critical for human resources budgets and onboarding planning in Saudi Arabia.",
+                guideTitle2: "How Qiwa Transfer Fees Are Calculated",
+                guideP2: "Under current regulations, the Qiwa transfer fee escalates depending on how many times the employee has previously transferred sponsors within the Kingdom:",
+                guideLi1: "1st Transfer: SAR 2,000 payable by the new employer.",
+                guideLi2: "2nd Transfer: SAR 4,000 payable by the new employer.",
+                guideLi3: "3rd Transfer or More: SAR 6,000 payable by the new employer.",
+                guideTitle3: "Frequently Asked Questions (FAQ)",
+                faqQ1: "Who is legally responsible for paying the Qiwa transfer fee?",
+                faqA1: "By law and standard practice, the hiring (new) employer bears the official Qiwa transfer and government sponsorship fees. Deducting these fees from the employee's salary is strictly prohibited under Saudi Labor Law.",
+                faqQ2: "Can an employee transfer without the current employer's approval?",
+                faqA2: "Under the Labor Reform Initiative (LRI), employees can transfer upon contract expiration, during the notice period, or if specific conditions like unpaid wages or absence of a documented contract are met without requiring explicit consent via Qiwa."
+            },
+            ar: {
+                title: "حاسبة تكاليف نقل قوى",
+                subtitle: "محرك تقدير رسوم منصة قوى والجوازات الرسمي",
+                langBtn: "English (الإنجليزية)",
+                bannerText: "هل تحتاج معالجة دفعات متعددة لعمليات النقل وتكامل الرواتب؟",
+                bannerCta: "احصل على نموذج إكسل الشامل ($29)",
+                secInput: "إعدادات معاملات النقل",
+                lblTransferCount: "رقم النقل (عدد مرات الكفالة السابقة)",
+                optTrans1: "النقل الأول (2,000 ريال)",
+                optTrans2: "النقل الثاني (4,000 ريال)",
+                optTrans3: "النقل الثالث فأكثر (6,000 ريال)",
+                lblIqamaDuration: "فترة تجديد الإقامة عند النقل",
+                optIqama1: "سنة واحدة",
+                optIqama2: "سنتان",
+                noteIqama: "تشترط الجوازات إقامة سارية. تؤثر المدة على احتساب رسوم رخصة العمل.",
+                lblDependents: "التابعون المرافقون",
+                noteDep: "400 ريال شهرياً لكل تابع.",
+                lblNitaqat: "نطاق المنشأة في نطاقات",
+                optNitPlat: "الممتاز / الأخضر المرتفع",
+                optNitMid: "الأخضر المتوسط / المنخفض",
+                optNitYell: "الأصفر / الأحمر",
+                lblMedical: "الفحص الطبي والتأمين (ريال)",
+                lblOther: "رسوم خروج وعودة أو إعدادات أخرى (ريال)",
+                lblBurden: "قاعدة توزيع تكاليف النقل المتفق عليها",
+                radioEmp: "صاحب العمل الجديد يدفع بالكامل",
+                radioShare: "رسوم النقل الرسمية على صاحب العمل",
+                secRes: "تفصيل التكاليف المالية التقديرية",
+                resQiwa: "رسوم نقل الخدمات (قوى):",
+                resIqama: "رسوم تجديد الإقامة والرخصة:",
+                resLevy: "رسوم المرافقين والعمالة الوافدة:",
+                resDep: "رسوم التابعين:",
+                resMisc: "الفحص الطبي والإداريات:",
+                resTotal: "إجمالي استثمار التوظيف:",
+                btnExport: "تصدير الملخص المالي (CSV)",
+                ctaBtn: "تحميل حزمة الموارد البشرية والرواتب الكاملة ($29)",
+                disclaimer: "تنبيه: التكاليف تقديرية بناءً على تعليمات قوى والجوازات والگوسي الحالية. قد تطرأ تعديلات من وزارة الموارد البشرية والتنمية الاجتماعية.",
+                guideTitle1: "فهم رسوم نقل خدمات العمالة والكفالة في منصة قوى السعودية",
+                guideP1: "يتضمن نقل موظف عبر منصة قوى التابعة لوزارة الموارد البشرية والتنمية الاجتماعية عدة رسوم نظامية. تشمل رسوم النقل الرسمية، رسوم الجوازات، المقابل المالي للعمالة الوافدة، ورسوم التابعين. تعتبر إدارة هذه التكاليف بدقة أمراً حيوياً لتخطيط الميزانيات.",
+                guideTitle2: "كيف يتم احتساب رسوم نقل الخدمات في قوى؟",
+                guideP2: "حسب الأنظمة الحالية، تتصاعد رسوم النقل بناءً على عدد مرات انتقال الموظف بين الكفلاء داخل المملكة:",
+                guideLi1: "النقل الأول: 2,000 ريال يتحملها صاحب العمل الجديد.",
+                guideLi2: "النقل الثاني: 4,000 ريال يتحملها صاحب العمل الجديد.",
+                guideLi3: "النقل الثالث فأكثر: 6,000 ريال يتحملها صاحب العمل الجديد.",
+                guideTitle3: "الأسئلة الشائعة (FAQ)",
+                faqQ1: "من يتحمل قانونياً رسوم نقل الخدمات في منصة قوى؟",
+                faqA1: "وفقاً لنظام العمل والممارسات المعتمدة، يتحمل صاحب العمل الجديد (المستقطب) رسوم النقل الرسمية والرسوم الحكومية المتعلقة بإتمام النقل، ويُحظر خصمها من أجر الموظف.",
+                faqQ2: "هل يمكن للموظف الانتقال دون موافقة صاحب العمل الحالي؟",
+                faqA2: "نعم، في ظل مبادرة تحسين العلاقة التعاقدية (LRI)، يمكن للموظف الانتقال عند انتهاء العقد، أو خلال فترة الإnotice، أو في حال توفر حالات محددة كعدم توثيق العقد أو عدم استلام الأجور."
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            const htmlTag = document.documentElement;
+            const t = translations[currentLang];
+
+            if (currentLang === 'ar') {
+                htmlTag.setAttribute('dir', 'rtl');
+                htmlTag.setAttribute('lang', 'ar');
+            } else {
+                htmlTag.setAttribute('dir', 'ltr');
+                htmlTag.setAttribute('lang', 'en');
+            }
+
+            document.getElementById('app-title').innerText = t.title;
+            document.getElementById('app-subtitle').innerText = t.subtitle;
+            document.getElementById('lang-btn').innerText = t.langBtn;
+            document.getElementById('banner-text-1').innerText = t.bannerText;
+            document.getElementById('banner-cta').innerText = t.bannerCta;
+            document.getElementById('sec-input-title').innerText = t.secInput;
+            document.getElementById('lbl-transfer-count').innerText = t.lblTransferCount;
+            document.getElementById('opt-trans-1').innerText = t.optTrans1;
+            document.getElementById('opt-trans-2').innerText = t.optTrans2;
+            document.getElementById('opt-trans-3').innerText = t.optTrans3;
+            document.getElementById('lbl-iqama-duration').innerText = t.lblIqamaDuration;
+            document.getElementById('opt-iqama-1').innerText = t.optIqama1;
+            document.getElementById('opt-iqama-2').innerText = t.optIqama2;
+            document.getElementById('note-iqama-dur').innerText = t.noteIqama;
+            document.getElementById('lbl-dependents').innerText = t.lblDependents;
+            document.getElementById('note-dep').innerText = t.noteDep;
+            document.getElementById('lbl-nitaqat-tier').innerText = t.lblNitaqat;
+            document.getElementById('opt-nit-plat').innerText = t.optNitPlat;
+            document.getElementById('opt-nit-mid').innerText = t.optNitMid;
+            document.getElementById('opt-nit-yell').innerText = t.optNitYell;
+            document.getElementById('lbl-medical').innerText = t.lblMedical;
+            document.getElementById('lbl-exit-reentry').innerText = t.lblOther;
+            document.getElementById('lbl-burden').innerText = t.lblBurden;
+            document.getElementById('radio-emp').innerText = t.radioEmp;
+            document.getElementById('radio-share').innerText = t.radioShare;
+            document.getElementById('sec-res-title').innerText = t.secRes;
+            document.getElementById('res-lbl-qiwa').innerText = t.resQiwa;
+            document.getElementById('res-lbl-iqama').innerText = t.resIqama;
+            document.getElementById('res-lbl-levy').innerText = t.resLevy;
+            document.getElementById('res-lbl-dep').innerText = t.resDep;
+            document.getElementById('res-lbl-misc').innerText = t.resMisc;
+            document.getElementById('res-lbl-total').innerText = t.resTotal;
+            document.getElementById('btn-export').innerText = t.btnExport;
+            document.getElementById('cta-btn-text').innerText = t.ctaBtn;
+            document.getElementById('disclaimer-text').innerText = t.disclaimer;
+            
+            document.getElementById('guide-title-1').innerText = t.guideTitle1;
+            document.getElementById('guide-p-1').innerText = t.guideP1;
+            document.getElementById('guide-title-2').innerText = t.guideTitle2;
+            document.getElementById('guide-p-2').innerText = t.guideP2;
+            document.getElementById('guide-li-1').innerHTML = t.guideLi1;
+            document.getElementById('guide-li-2').innerHTML = t.guideLi2;
+            document.getElementById('guide-li-3').innerHTML = t.guideLi3;
+            document.getElementById('guide-title-3').innerText = t.guideTitle3;
+            document.getElementById('faq-q-1').innerText = t.faqQ1;
+            document.getElementById('faq-a-1').innerText = t.faqA1;
+            document.getElementById('faq-q-2').innerText = t.faqQ2;
+            document.getElementById('faq-a-2').innerText = t.faqA2;
+
+            calculateCosts();
+        }
+
+        function calculateCosts() {
+            const transferCount = parseInt(document.getElementById('transfer_count').value);
+            const iqamaDuration = parseInt(document.getElementById('iqama_duration').value);
+            const dependents = parseInt(document.getElementById('dependents_count').value) || 0;
+            const nitaqatTier = document.getElementById('nitaqat_tier').value;
+            const medicalCost = parseFloat(document.getElementById('medical_cost').value) || 0;
+            const otherCost = parseFloat(document.getElementById('other_cost').value) || 0;
+
+            // Qiwa Fee Rules
+            let qiwaFee = 2000;
+            if (transferCount === 2) qiwaFee = 4000;
+            if (transferCount >= 3) qiwaFee = 6000;
+
+            // Iqama & Work Permit Fee (Approx base 650 SAR/year for work permit + residency)
+            let iqamaFee = 650 * iqamaDuration;
+
+            // Expat Levy calculation based on Nitaqat
+            let annualLevyPerWorker = 9600; // SAR 800/month standard
+            if (nitaqatTier === 'platinum') annualLevyPerWorker = 7800; // SAR 650/mo
+            let totalExpatLevy = annualLevyPerWorker * iqamaDuration;
+
+            // Dependents levy: SAR 400/month per dependent = SAR 4,800/year
+            let totalDepLevy = dependents * 4800 * iqamaDuration;
+
+            let totalMisc = medicalCost + otherCost;
+
+            let grandTotal = qiwaFee + iqamaFee + totalExpatLevy + totalDepLevy + totalMisc;
+
+            // Update DOM
+            document.getElementById('out-qiwa-fee').innerText = `SAR ${qiwaFee.toLocaleString()}`;
+            document.getElementById('out-iqama-fee').innerText = `SAR ${iqamaFee.toLocaleString()}`;
+            document.getElementById('out-levy-fee').innerText = `SAR ${totalExpatLevy.toLocaleString()}`;
+            document.getElementById('out-dep-fee').innerText = `SAR ${totalDepLevy.toLocaleString()}`;
+            document.getElementById('out-misc-fee').innerText = `SAR ${totalMisc.toLocaleString()}`;
+            document.getElementById('out-total-cost').innerText = `SAR ${grandTotal.toLocaleString()}`;
+        }
+
+        // Attach listeners
+        document.querySelectorAll('input, select').forEach(el => {
+            el.addEventListener('input', calculateCosts);
+            el.addEventListener('change', calculateCosts);
+        });
+
+        function exportCSV() {
+            const qiwa = document.getElementById('out-qiwa-fee').innerText;
+            const iqama = document.getElementById('out-iqama-fee').innerText;
+            const levy = document.getElementById('out-levy-fee').innerText;
+            const dep = document.getElementById('out-dep-fee').innerText;
+            const misc = document.getElementById('out-misc-fee').innerText;
+            const total = document.getElementById('out-total-cost').innerText;
+
+            const csvContent = "data:text/csv;charset=utf-8," +
+                "Cost Category,Amount\n" +
+                `Qiwa Transfer Fee,${qiwa}\n` +
+                `Iqama Renewal Fee,${iqama}\n` +
+                `Expat Levy,${levy}\n` +
+                `Dependents Levy,${dep}\n` +
+                `Medical & Misc,${misc}\n` +
+                `Total Onboarding Investment,${total}\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "qiwa_transfer_cost_summary.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initial calculation
+        calculateCosts();
+    </script>
+</body>
+</html>

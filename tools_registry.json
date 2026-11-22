@@ -306,5 +306,12 @@
     "title_ar": "حاسبة غرامات زاتكا للتأخير ومخالفات الإقرارات الضريبية",
     "description_en": "Calculate Saudi ZATCA penalties for late VAT & income tax filing, unpaid tax delay fines, e-invoicing infractions, and tax amnesty waiver relief.",
     "date": "2026-11-21"
+  },
+  {
+    "slug": "saudi-qiwa-transfer-fee-and-sponsorship-cost-calculator",
+    "title_en": "Saudi Qiwa Employee Transfer Fee & Sponsorship Cost Calculator",
+    "title_ar": "حاسبة رسوم نقل الخدمات وتنازل الكقالة في منصة قوى السعودية",
+    "description_en": "Calculate total Saudi Qiwa employee transfer fees, government sponsorship charges, and employer costs accurately under Saudi Labor Law and MLSD rules.",
+    "date": "2026-11-22"
   }
 ]
