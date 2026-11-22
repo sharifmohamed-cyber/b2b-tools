@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi Building Code (SBC) Construction Permit & Municipal Fee Calculator</title>
+    <meta name="description" content="Calculate Saudi municipal construction permit fees, Balady licensing costs, and Saudi Building Code (SBC) compliance requirements instantly.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Cairo', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', 'Cairo', sans-serif; }
+        [dir="rtl"] { font-family: 'Cairo', 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+    <!-- Header & Lang Toggle -->
+    <header class="bg-emerald-900 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3 rtl:space-x-reverse">
+                <div class="bg-emerald-700 p-2 rounded-lg">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold" id="app-title">SBC Permit & Municipal Fee Calculator</h1>
+                    <p class="text-xs text-emerald-300" id="app-subtitle">Balady & Saudi Building Code Estimator</p>
+                </div>
+            </div>
+            <button onclick="toggleLanguage()" id="lang-btn" class="bg-emerald-800 hover:bg-emerald-700 text-white px-3 py-1.5 rounded text-sm font-medium transition">
+                العربية
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Calculator Inputs -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-xl font-bold text-slate-900 mb-4" id="sec-inputs-title">Project & Property Parameters</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Property Type -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1" id="lbl-prop-type">Property / Building Use</label>
+                        <select id="propType" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                            <option value="residential">Residential (سكني)</option>
+                            <option value="commercial">Commercial (تجاري)</option>
+                            <option value="industrial">Industrial / Warehouse (صناعي / مستودعات)</option>
+                            <option value="mixed">Mixed Use (متعدد الاستخدام)</option>
+                        </select>
+                    </div>
+
+                    <!-- City Tier -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1" id="lbl-city-tier">Municipality Category (City)</label>
+                        <select id="cityTier" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                            <option value="1">Category A (Riyadh, Jeddah, Dammam)</option>
+                            <option value="2">Category B (Mecca, Madinah, Khobar, Tabuk)</option>
+                            <option value="3">Category C (Other Governorates & Regions)</option>
+                        </select>
+                    </div>
+
+                    <!-- Total Built-up Area -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1" id="lbl-bua">Total Built-Up Area (BUA in m²)</label>
+                        <input type="number" id="bua" value="500" min="50" max="100000" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+
+                    <!-- Number of Floors -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1" id="lbl-floors">Number of Floors (Stories)</label>
+                        <input type="number" id="floors" value="3" min="1" max="50" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+
+                    <!-- Engineering Office Supervision Fee -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1" id="lbl-eng-rate">Estimated Construction Cost per m² (SAR)</label>
+                        <input type="number" id="costPerSqm" value="1800" min="800" max="5000" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                    </div>
+
+                    <!-- Balady License Type -->
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1" id="lbl-service">Permit Application Type</label>
+                        <select id="permitType" class="w-full rounded-lg border-slate-300 border p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                            <option value="new">New Construction (رخصة بناء جديدة)</option>
+                            <option value="addition">Vertical/Horizontal Addition (تعديل وإضافة)</option>
+                            <option value="fence">Fence & Retaining Wall (سور وأسوار)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results & Breakdown -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-slate-900" id="sec-results-title">Fee Breakdown & Estimates</h2>
+                    <button onclick="exportSummary()" id="btn-export" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded text-sm font-medium transition flex items-center space-x-1 rtl:space-x-reverse">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                        <span id="txt-export">Export CSV</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+                        <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wider" id="lbl-res-permit">Balady Permit Fees</p>
+                        <p class="text-2xl font-black text-emerald-900 mt-1" id="resBaladyFees">SAR 0</p>
+                    </div>
+                    <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl">
+                        <p class="text-xs font-semibold text-blue-600 uppercase tracking-wider" id="lbl-res-sbc">SBC Review & Inspection</p>
+                        <p class="text-2xl font-black text-blue-900 mt-1" id="resSbcFees">SAR 0</p>
+                    </div>
+                    <div class="bg-amber-50 border border-amber-100 p-4 rounded-xl">
+                        <p class="text-xs font-semibold text-amber-600 uppercase tracking-wider" id="lbl-res-insurance">Structural Insurance / Guarantee</p>
+                        <p class="text-2xl font-black text-amber-900 mt-1" id="resInsurance">SAR 0</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 text-white p-5 rounded-xl flex flex-col sm:flex-row justify-between items-center">
+                    <div>
+                        <p class="text-xs text-slate-400 uppercase tracking-wider" id="lbl-total-est">Estimated Total Official Fees</p>
+                        <p class="text-3xl font-extrabold text-emerald-400 mt-1" id="resTotalFees">SAR 0</p>
+                    </div>
+                    <div class="mt-4 sm:mt-0 text-right rtl:text-left">
+                        <p class="text-xs text-slate-400" id="lbl-est-cost">Estimated Est. Construction Value</p>
+                        <p class="text-xl font-bold text-white mt-1" id="resEstValue">SAR 0</p>
+                    </div>
+                </div>
+
+                <!-- Disclaimer -->
+                <div class="mt-6 p-4 bg-amber-50 border-l-4 border-amber-400 text-amber-800 text-xs rounded-r-lg">
+                    <p class="font-semibold" id="disc-title">Official Disclaimer / إخلاء مسؤولية</p>
+                    <p id="disc-text" class="mt-1">Calculations are estimates based on standard Balady portal formulas and general Saudi Building Code (SBC) guidelines. Exact figures are subject to municipal assessment, soil tests, accredited engineering office quotes, and Zakat, Tax and Customs Authority (ZATCA) VAT application.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar CTA & Gumroad Banner -->
+        <div class="space-y-6">
+            <div class="bg-gradient-to-br from-slate-900 to-emerald-950 text-white rounded-2xl shadow-xl p-6 relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                <span class="bg-emerald-500 text-slate-950 text-xs font-bold px-2.5 py-1 rounded uppercase tracking-wider" id="badge-pro">PRO TEMPLATE</span>
+                <h3 class="text-xl font-bold mt-4" id="cta-title">Complete Saudi Construction & Tender Estimator Pro</h3>
+                <p class="text-sm text-slate-300 mt-2" id="cta-desc">Download the full Excel & VBA master sheet for BOQ estimation, contractor payment certificates (IPCs), Balady fee schedules, and SBC compliance checklists.</p>
+                <ul class="mt-4 space-y-2 text-xs text-slate-300">
+                    <li class="flex items-center space-x-2 rtl:space-x-reverse">
+                        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span id="cta-bullet-1">Full Bill of Quantities (BOQ) Excel Sheet</span>
+                    </li>
+                    <li class="flex items-center space-x-2 rtl:space-x-reverse">
+                        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span id="cta-bullet-2">Balady & Municipal Fee Schedule Matrix</span>
+                    </li>
+                    <li class="flex items-center space-x-2 rtl:space-x-reverse">
+                        <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        <span id="cta-bullet-3">Automated IPC & Retention Calculator</span>
+                    </li>
+                </ul>
+                <div class="mt-6">
+                    <a href="https://gumroad.com" target="_blank" class="block w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-center font-bold py-3 px-4 rounded-xl transition shadow-lg" id="cta-btn">
+                        Get Excel Master Template ($29)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Guide Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h4 class="font-bold text-slate-900 mb-2" id="sidebar-guide-title">Key Requirements for Balady Permits</h4>
+                <p class="text-xs text-slate-600 leading-relaxed" id="sidebar-guide-desc">
+                    To secure a building permit in Saudi Arabia, property owners must contract with an accredited engineering office (مكتب هندسي معتمد), obtain soil investigation reports, ensure full compliance with the Saudi Building Code (SBC 2018/2021), and clear all Balady portal electronic review steps.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- SEO & Guide Section -->
+    <section class="max-w-7xl mx-auto px-4 py-12 border-t border-slate-200 mt-12">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
+            <article class="prose max-w-none text-slate-700">
+                <h2 class="text-2xl font-bold text-slate-900 mb-4" id="guide-h2-1">Understanding Saudi Building Code (SBC) & Balady Permit Fees</h2>
+                <p id="guide-p-1" class="mb-4">
+                    Navigating real estate development and construction in the Kingdom of Saudi Arabia requires strict adherence to the Saudi Building Code (SBC) and municipal regulations managed through the Balady platform (بلدي). Whether you are constructing a private residential villa, a commercial retail complex, or an industrial warehouse, estimating fees accurately is critical for capital budgeting.
+                </p>
+
+                <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3" id="guide-h3-1">How Balady Municipal Permit Fees are Calculated</h3>
+                <p id="guide-p-2" class="mb-4">
+                    Balady permit fees depend heavily on the property classification, total built-up area (BUA in square meters), and the municipality category of the city. Major metropolitan areas such as Riyadh, Jeddah, and Dammam fall under Category A, where service standards and application workflows are fully digitized through accredited engineering offices.
+                </p>
+
+                <h3 class="text-xl font-bold text-slate-900 mt-6 mb-3" id="guide-h3-2">Frequently Asked Questions (FAQ)</h3>
+                <div class="space-y-4 mt-4">
+                    <div>
+                        <h4 class="font-bold text-slate-900" id="faq-q1">1. What is included in the Saudi Building Code (SBC) compliance?</h4>
+                        <p class="text-sm text-slate-600 mt-1" id="faq-a1">SBC covers structural integrity, electrical wiring, mechanical ventilation, fire safety, energy conservation (SBC 601/602), and green building standards.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900" id="faq-q2">2. Do I need an engineering office for a building permit?</h4>
+                        <p class="text-sm text-slate-600 mt-1" id="faq-a2">Yes, all construction, addition, and major renovation permits in Saudi Arabia must be submitted through an approved engineering consulting office registered on the Balady portal.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-900" id="faq-q3">3. Are VAT and municipal taxes applied to construction permits?</h4>
+                        <p class="text-sm text-slate-600 mt-1" id="faq-a3">Official government permit fees are generally exempt from VAT, but services provided by engineering offices, contractors, and material suppliers are subject to the standard 15% ZATCA VAT rate.</p>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 text-center text-xs">
+        <p>&copy; 2025 Saudi Building Code & Balady Fee Calculator. All rights reserved.</p>
+    </footer>
+
+    <!-- Script & Logic -->
+    <script>
+        let currentLang = 'en';
+
+        const translations = {
+            en: {
+                appTitle: "SBC Permit & Municipal Fee Calculator",
+                appSubtitle: "Balady & Saudi Building Code Estimator",
+                langBtn: "العربية",
+                secInputsTitle: "Project & Property Parameters",
+                lblPropType: "Property / Building Use",
+                lblCityTier: "Municipality Category (City)",
+                lblBua: "Total Built-Up Area (BUA in m²)",
+                lblFloors: "Number of Floors (Stories)",
+                lblEngRate: "Estimated Construction Cost per m² (SAR)",
+                lblService: "Permit Application Type",
+                secResultsTitle: "Fee Breakdown & Estimates",
+                lblResPermit: "Balady Permit Fees",
+                lblResSbc: "SBC Review & Inspection",
+                lblResInsurance: "Structural Insurance / Guarantee",
+                lblTotalEst: "Estimated Total Official Fees",
+                lblEstCost: "Estimated Est. Construction Value",
+                btnExport: "Export CSV",
+                discTitle: "Official Disclaimer / إخلاء مسؤولية",
+                discText: "Calculations are estimates based on standard Balady portal formulas and general Saudi Building Code (SBC) guidelines. Exact figures are subject to municipal assessment, soil tests, accredited engineering office quotes, and Zakat, Tax and Customs Authority (ZATCA) VAT application.",
+                badgePro: "PRO TEMPLATE",
+                ctaTitle: "Complete Saudi Construction & Tender Estimator Pro",
+                ctaDesc: "Download the full Excel & VBA master sheet for BOQ estimation, contractor payment certificates (IPCs), Balady fee schedules, and SBC compliance checklists.",
+                ctaBullet1: "Full Bill of Quantities (BOQ) Excel Sheet",
+                ctaBullet2: "Balady & Municipal Fee Schedule Matrix",
+                ctaBullet3: "Automated IPC & Retention Calculator",
+                ctaBtn: "Get Excel Master Template ($29)",
+                sidebarGuideTitle: "Key Requirements for Balady Permits",
+                sidebarGuideDesc: "To secure a building permit in Saudi Arabia, property owners must contract with an accredited engineering office (مكتب هندسي معتمد), obtain soil investigation reports, ensure full compliance with the Saudi Building Code (SBC 2018/2021), and clear all Balady portal electronic review steps.",
+                guideH2_1: "Understanding Saudi Building Code (SBC) & Balady Permit Fees",
+                guideP_1: "Navigating real estate development and construction in the Kingdom of Saudi Arabia requires strict adherence to the Saudi Building Code (SBC) and municipal regulations managed through the Balady platform (بلدي). Whether you are constructing a private residential villa, a commercial retail complex, or an industrial warehouse, estimating fees accurately is critical for capital budgeting.",
+                guideH3_1: "How Balady Municipal Permit Fees are Calculated",
+                guideP_2: "Balady permit fees depend heavily on the property classification, total built-up area (BUA in square meters), and the municipality category of the city. Major metropolitan areas such as Riyadh, Jeddah, and Dammam fall under Category A, where service standards and application workflows are fully digitized through accredited engineering offices.",
+                guideH3_2: "Frequently Asked Questions (FAQ)",
+                faqQ1: "1. What is included in the Saudi Building Code (SBC) compliance?",
+                faqA1: "SBC covers structural integrity, electrical wiring, mechanical ventilation, fire safety, energy conservation (SBC 601/602), and green building standards.",
+                faqQ2: "2. Do I need an engineering office for a building permit?",
+                faqA2: "Yes, all construction, addition, and major renovation permits in Saudi Arabia must be submitted through an approved engineering consulting office registered on the Balady portal.",
+                faqQ3: "3. Are VAT and municipal taxes applied to construction permits?",
+                faqA3: "Official government permit fees are generally exempt from VAT, but services provided by engineering offices, contractors, and material suppliers are subject to the standard 15% ZATCA VAT rate."
+            },
+            ar: {
+                appTitle: "حاسبة رخص البناء والرسوم البلدية وفق كود البناء السعودي",
+                appSubtitle: "تقدير رسوم بلدي وكود البناء السعودي",
+                langBtn: "English",
+                secInputsTitle: "بيانات المشروع والعقار",
+                lblPropType: "نوع العقار / الاستخدام",
+                lblCityTier: "تصنيف البلديات (المدينة)",
+                lblBua: "إجمالي مسطحات البناء (متر مربع)",
+                lblFloors: "عدد الطوابق",
+                lblEngRate: "تكلفة البناء التقديرية للمتر المربع (ريال)",
+                lblService: "نوع طلب الرخصة",
+                secResultsTitle: "تفصيل الرسوم والتقديرات",
+                lblResPermit: "رسوم رخصة بلدي",
+                lblResSbc: "مراجعة وفحص كود البناء",
+                lblResInsurance: "التأمين الإنشائي / الضمان",
+                lblTotalEst: "إجمالي الرسوم الحكومية التقديرية",
+                lblEstCost: "القيمة الإنشائية التقديرية للمشروع",
+                btnExport: "تصدير CSV",
+                discTitle: "إخلاء مسؤولية رسمي",
+                discText: "الحسابات هي تقديرات مبنية على معادلات بوابة بلدي الإرشادية وإرشادات كود البناء السعودي (SBC). الأرقام الدقيقة تخضع للتقييم البلدي، فحص التربة، عروض المكاتب الهندسية المعتمدة، وتطبيق ضريبة القيمة المضافة لهيئة الزكاة والضريبة والجمارك (ZATCA).",
+                badgePro: "قالب احترافي برو",
+                ctaTitle: "قالب تقدير الإنشاءات والمناقصات الشامل في السعودية",
+                ctaDesc: "قم بتنزيل ملف Excel و VBA المتكامل لتقديرات جدول الكميات (BOQ)، مستخلصات المقاولين (IPCs)، جداول رسوم بلدي، وقوائم تدقيق الامتثال لكود البناء السعودي.",
+                ctaBullet1: "ملف إكسل شامل لجدول الكميات (BOQ)",
+                ctaBullet2: "مصفوفة جداول رسوم بلدي والبلديات",
+                ctaBullet3: "حاسبة المستخلصات وفترات الحجز التلقائية",
+                ctaBtn: "الحصول على القالب الاحترافي ($29)",
+                sidebarGuideTitle: "المتطلبات الأساسية لرخص بلدي",
+                sidebarGuideDesc: "للحصول على رخصة بناء في المملكة العربية السعودية، يجب التعاقد مع مكتب هندسي معتمد، الحصول على تقارير فحص التربة، ضمان الامتثال التام لكود البناء السعودي (SBC 2018/2021)، واستكمال خطوات المراجعة الإلكترونية عبر منصة بلدي.",
+                guideH2_1: "فهم كود البناء السعودي (SBC) ورسوم رخص بلدي",
+                guideP_1: "تتطلب التنمية العقارية والإنشاءات في المملكة العربية السعودية الالتزام التام بكود البناء السعودي واللوائح البلدية عبر منصة بلدي. سواء كنت تنشئ فيلا سكنية خاصة، مجمعاً تجارياً، أو مستودعاً صناعياً، فإن التقدير الدقيق للرسوم أمر بالغ الأهمية للميزانية الرأسمالية.",
+                guideH3_1: "كيف يتم احتساب رسوم رخص البناء البلدية",
+                guideP_2: "تعتمد رسوم رخص بلدي بشكل كبير على تصنيف العقار، إجمالي مسطحات البناء (بالمتر المربع)، وتصنيف المدينة. تقع المدن الكبرى مثل الرياض، جدة، والدمام ضمن الفئة أ، حيث تكون معايير الخدمات وسير العمل مؤتمتة بالكامل عبر المكاتب الهندسية المعتمدة.",
+                guideH3_2: "الأسئلة الشائعة (FAQ)",
+                faqQ1: "1. ماذا يتضمن الالتزام بكود البناء السعودي (SBC)؟",
+                faqA1: "يغطي الكود السلامة الإنشائية، التمديدات الكهربائية، التهوية الميكانيكية، السلامة من الحريق، الحفظ على الطاقة (SBC 601/602)، ومعايير البناء الأخضر.",
+                faqQ2: "2. هل أحتاج إلى مكتب هندسي لاستخراج رخصة البناء؟",
+                faqA2: "نعم، يجب تقديم جميع رخص البناء، التعديلات، والإصلاحات الكبرى في المملكة عبر مكتب هندسي استشاري معتمد مسجل على منصة بلدي.",
+                faqQ3: "3. هل تُفرض ضريبة القيمة المضافة على رخص البناء؟",
+                faqA3: "رسوم التراخيص الحكومية الرسمية معفاة عموماً من ضريبة القيمة المضافة، لكن الخدمات المقدمة من المكاتب الهندسية، المقاولين، وموردي المواد تخضع لنسبة 15% المعمول بها في هيئة الزكاة والضريبة والجمارك."
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+            document.documentElement.setAttribute('lang', currentLang);
+            document.getElementById('lang-btn').innerText = translations[currentLang].langBtn;
+            
+            // Update static text elements
+            document.getElementById('app-title').innerText = translations[currentLang].appTitle;
+            document.getElementById('app-subtitle').innerText = translations[currentLang].appSubtitle;
+            document.getElementById('sec-inputs-title').innerText = translations[currentLang].secInputsTitle;
+            document.getElementById('lbl-prop-type').innerText = translations[currentLang].lblPropType;
+            document.getElementById('lbl-city-tier').innerText = translations[currentLang].lblCityTier;
+            document.getElementById('lbl-bua').innerText = translations[currentLang].lblBua;
+            document.getElementById('lbl-floors').innerText = translations[currentLang].lblFloors;
+            document.getElementById('lbl-eng-rate').innerText = translations[currentLang].lblEngRate;
+            document.getElementById('lbl-service').innerText = translations[currentLang].lblService;
+            document.getElementById('sec-results-title').innerText = translations[currentLang].secResultsTitle;
+            document.getElementById('lbl-res-permit').innerText = translations[currentLang].lblResPermit;
+            document.getElementById('lbl-res-sbc').innerText = translations[currentLang].lblResSbc;
+            document.getElementById('lbl-res-insurance').innerText = translations[currentLang].lblResInsurance;
+            document.getElementById('lbl-total-est').innerText = translations[currentLang].lblTotalEst;
+            document.getElementById('lbl-est-cost').innerText = translations[currentLang].lblEstCost;
+            document.getElementById('txt-export').innerText = translations[currentLang].btnExport;
+            document.getElementById('disc-title').innerText = translations[currentLang].discTitle;
+            document.getElementById('disc-text').innerText = translations[currentLang].discText;
+            document.getElementById('badge-pro').innerText = translations[currentLang].badgePro;
+            document.getElementById('cta-title').innerText = translations[currentLang].ctaTitle;
+            document.getElementById('cta-desc').innerText = translations[currentLang].ctaDesc;
+            document.getElementById('cta-bullet-1').innerText = translations[currentLang].ctaBullet1;
+            document.getElementById('cta-bullet-2').innerText = translations[currentLang].ctaBullet2;
+            document.getElementById('cta-bullet-3').innerText = translations[currentLang].ctaBullet3;
+            document.getElementById('cta-btn').innerText = translations[currentLang].ctaBtn;
+            document.getElementById('sidebar-guide-title').innerText = translations[currentLang].sidebarGuideTitle;
+            document.getElementById('sidebar-guide-desc').innerText = translations[currentLang].sidebarGuideDesc;
+            document.getElementById('guide-h2-1').innerText = translations[currentLang].guideH2_1;
+            document.getElementById('guide-p-1').innerText = translations[currentLang].guideP_1;
+            document.getElementById('guide-h3-1').innerText = translations[currentLang].guideH3_1;
+            document.getElementById('guide-p-2').innerText = translations[currentLang].guideP_2;
+            document.getElementById('guide-h3-2').innerText = translations[currentLang].guideH3_2;
+            document.getElementById('faq-q1').innerText = translations[currentLang].faqQ1;
+            document.getElementById('faq-a1').innerText = translations[currentLang].faqA1;
+            document.getElementById('faq-q2').innerText = translations[currentLang].faqQ2;
+            document.getElementById('faq-a2').innerText = translations[currentLang].faqA2;
+            document.getElementById('faq-q3').innerText = translations[currentLang].faqQ3;
+            document.getElementById('faq-a3').innerText = translations[currentLang].faqA3;
+
+            calculateFees();
+        }
+
+        function calculateFees() {
+            const propType = document.getElementById('propType').value;
+            const cityTier = parseInt(document.getElementById('cityTier').value);
+            const bua = parseFloat(document.getElementById('bua').value) || 0;
+            const floors = parseInt(document.getElementById('floors').value) || 1;
+            const costPerSqm = parseFloat(document.getElementById('costPerSqm').value) || 1500;
+            const permitType = document.getElementById('permitType').value;
+
+            // Base rate per sqm for municipal fees
+            let baseRatePerSqm = 2.0; // SAR per sqm residential
+            if (propType === 'commercial') baseRatePerSqm = 5.0;
+            if (propType === 'industrial') baseRatePerSqm = 3.0;
+            if (propType === 'mixed') baseRatePerSqm = 4.0;
+
+            // City tier multiplier
+            let cityMultiplier = 1.0;
+            if (cityTier === 2) cityMultiplier = 0.8;
+            if (cityTier === 3) cityMultiplier = 0.6;
+
+            // Permit type multiplier
+            let permitMultiplier = 1.0;
+            if (permitType === 'addition') permitMultiplier = 0.5;
+            if (permitType === 'fence') permitMultiplier = 0.2;
+
+            let baladyFees = bua * baseRatePerSqm * cityMultiplier * permitMultiplier;
+            
+            // SBC Review & Engineering Inspection Fees (proportional to BUA and floors)
+            let sbcFees = (bua * 1.5) + (floors * 300);
+
+            // Structural Insurance / Guarantee (approx 0.15% of construction value)
+            let estConstructionValue = bua * costPerSqm;
+            let insuranceFees = estConstructionValue * 0.0015;
+
+            let totalFees = baladyFees + sbcFees + insuranceFees;
+
+            // Format numbers
+            const currency = currentLang === 'ar' ? 'ريال' : 'SAR';
+            document.getElementById('resBaladyFees').innerText = `${currency} ${Math.round(baladyFees).toLocaleString()}`;
+            document.getElementById('resSbcFees').innerText = `${currency} ${Math.round(sbcFees).toLocaleString()}`;
+            document.getElementById('resInsurance').innerText = `${currency} ${Math.round(insuranceFees).toLocaleString()}`;
+            document.getElementById('resTotalFees').innerText = `${currency} ${Math.round(totalFees).toLocaleString()}`;
+            document.getElementById('resEstValue').innerText = `${currency} ${Math.round(estConstructionValue).toLocaleString()}`;
+        }
+
+        function exportSummary() {
+            const propType = document.getElementById('propType').value;
+            const cityTier = document.getElementById('cityTier').value;
+            const bua = document.getElementById('bua').value;
+            const floors = document.getElementById('floors').value;
+            const totalFees = document.getElementById('resTotalFees').innerText;
+            const estValue = document.getElementById('resEstValue').innerText;
+
+            const csvContent = "data:text/csv;charset=utf-8,"
+                + "Parameter,Value\n"
+                + `Property Type,${propType}\n`
+                + `City Tier,${cityTier}\n`
+                + `Built-up Area (m2),${bua}\n`
+                + `Floors,${floors}\n`
+                + `Estimated Total Fees,${totalFees}\n`
+                + `Estimated Construction Value,${estValue}\n`;
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "sbc_permit_fee_estimate.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Event Listeners for instant calculation
+        document.querySelectorAll('input, select').forEach(element => {
+            element.addEventListener('input', calculateFees);
+        });
+
+        // Initial calc
+        calculateFees();
+    </script>
+</body>
+</html>
