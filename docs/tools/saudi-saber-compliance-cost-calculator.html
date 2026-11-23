@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saudi SABER & SASO Compliance Certification Cost Estimator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Cairo', 'sans-serif'],
+            arabic: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            saudi: {
+              green: '#006C35',
+              gold: '#C5A059',
+              dark: '#111827',
+              light: '#F3F4F6'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', 'Cairo', sans-serif;
+    }
+    [lang="ar"] {
+      font-family: 'Cairo', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Top Banner -->
+  <div class="bg-saudi-dark text-white text-xs sm:text-sm py-2 px-4 text-center border-b border-saudi-gold/30 flex justify-between items-center max-w-7xl mx-auto w-full">
+    <div class="flex items-center gap-2 mx-auto sm:mx-0">
+      <span class="bg-saudi-gold text-slate-900 font-bold px-2 py-0.5 rounded text-[10px] uppercase tracking-wider">PRO</span>
+      <span data-en="SABER & SASO Automated Excel & VBA Master Template Available" data-ar="نموذج إكسل وماكرو الاحترافي لحساب تكاليف سابر متوفر الآن">SABER & SASO Automated Excel & VBA Master Template Available</span>
+    </div>
+    <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="hidden sm:inline-flex items-center gap-1 font-semibold text-saudi-gold hover:underline">
+      <span data-en="Get Master Template ($29)" data-ar="احصل على النموذج الكامل ($29)">Get Master Template ($29)</span> &rarr;
+    </a>
+  </div>
+
+  <!-- Navbar -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <div class="bg-saudi-green text-white p-2 rounded-lg font-bold text-lg leading-none">
+          SASO
+        </div>
+        <div>
+          <h1 class="font-bold text-slate-900 text-sm sm:text-base leading-tight" data-en="SABER Certification Cost Estimator" data-ar="حاسبة تكاليف شهادات منصة سابر">SABER Certification Cost Estimator</h1>
+          <p class="text-xs text-slate-500 hidden sm:block" data-en="Saudi Product Safety Program (SASO / SABER)" data-ar="البرنامج السعودي لسلامة المنتجات (سابر / الهيئة السعودية للمواصفات)">Saudi Product Safety Program (SASO / SABER)</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <button id="langToggleBtn" onclick="toggleLanguage()" class="px-3 py-1.5 border border-slate-300 rounded-md text-xs font-semibold text-slate-700 hover:bg-slate-100 transition flex items-center gap-1.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+          <span id="langText">العربية</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Intro & Disclaimer Alert -->
+    <div class="mb-6 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm flex flex-col md:flex-row gap-3 justify-between items-start md:items-center">
+      <div class="flex items-start gap-2.5">
+        <svg class="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+        <div>
+          <strong class="font-bold" data-en="Official Regulatory Compliance Disclaimer:" data-ar="إخلاء مسؤولية تنظيمي:">Official Regulatory Compliance Disclaimer:</strong>
+          <span data-en=" This tool calculates estimated official SASO SABER platform fees, Conformity Body (CB) charges, and 15% KSA VAT based on official guidelines. Actual Certification Body audit and laboratory testing fees may vary depending on accredited bodies and product risk sub-classifications." data-ar=" تقوم هذه أداة بحساب التكاليف التقديرية لرسوم منصة سابر والهيئة السعودية للمواصفات ومكاتب تقويم المطابقة وضريبة القيمة المضافة 15%. قد تختلف رسوم الفحص المخبري وتدقيق جهات المطابقة بناءً على طبيعة المنتج وتصنيفه."> This tool calculates estimated official SASO SABER platform fees, Conformity Body (CB) charges, and 15% KSA VAT based on official guidelines. Actual Certification Body audit and laboratory testing fees may vary depending on accredited bodies and product risk sub-classifications.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calculator Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Form Side -->
+      <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+        <div class="border-b border-slate-100 pb-4">
+          <h2 class="text-lg font-bold text-slate-900" data-en="Product & Import Parameters" data-ar="مدخلات الشحنة والمنتجات">Product & Import Parameters</h2>
+          <p class="text-xs text-slate-500 mt-1" data-en="Specify your product risk category, certificate requirements, and annual shipment volumes." data-ar="حدد مستوى خطورة المنتجات، متطلبات الشهادات، وحجم الشحنات السنوية.">Specify your product risk category, certificate requirements, and annual shipment volumes.</p>
+        </div>
+
+        <!-- Risk Category Selection -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2" data-en="Product Risk Classification (SABER Regulated Level)" data-ar="تصنيف خطورة المنتج (مستوى التنظيم في سابر)">Product Risk Classification (SABER Regulated Level)</label>
+          <select id="riskLevel" onchange="calculateSaber()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-saudi-green focus:outline-none transition">
+            <option value="low" data-en="Low Risk (Non-Regulated / Self-Declaration)" data-ar="منخفض الخطورة (غير الخاضع لللوائح / الإقرار الذاتي)">Low Risk (Non-Regulated / Self-Declaration)</option>
+            <option value="medium" selected data-en="Medium Risk (Technical Regulation - Standard CB Audit)" data-ar="متوسط الخطورة (خاضع للائحة فنية - مطابقة قياسية)">Medium Risk (Technical Regulation - Standard CB Audit)</option>
+            <option value="high" data-en="High Risk (Technical Regulation - Factory Audit & Testing Required)" data-ar="عالي الخطورة (خاضع للائحة فنية - يتطلب فحص مخبري وتفتيش مصنع)">High Risk (Technical Regulation - Factory Audit & Testing Required)</option>
+          </select>
+        </div>
+
+        <!-- Number of Products (PCoC) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1" data-en="Number of Regulated Products / Models (PCoC)" data-ar="عدد المنتجات / الطرازات المستقلة (PCoC)">Number of Regulated Products / Models (PCoC)</label>
+            <span class="text-[11px] text-slate-400 block mb-1.5" data-en="Each PCoC is valid for 1 year" data-ar="شهادة المنتج PCoC صالحة لمدة سنة">Each PCoC is valid for 1 year</span>
+            <input type="number" id="pcocCount" value="5" min="1" oninput="calculateSaber()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-saudi-green focus:outline-none transition">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1" data-en="Total Shipments Per Year (SCoC)" data-ar="إجمالي الشحنات المستوردة سنوياً (SCoC)">Total Shipments Per Year (SCoC)</label>
+            <span class="text-[11px] text-slate-400 block mb-1.5" data-en="Each shipment requires an SCoC" data-ar="كل شحنة تتطلب شهادة إرسالية SCoC">Each shipment requires an SCoC</span>
+            <input type="number" id="scocCount" value="12" min="1" oninput="calculateSaber()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-saudi-green focus:outline-none transition">
+          </div>
+        </div>
+
+        <!-- Conformity Body (CB) Service Fee -->
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <label class="text-xs font-semibold text-slate-700 uppercase tracking-wider" data-en="Est. Conformity Body (CB) Fee Per Product (SAR)" data-ar="رسوم مكتب تقويم المطابقة التقديرية للمنتج (ر.س)">Est. Conformity Body (CB) Fee Per Product (SAR)</label>
+            <span class="text-[11px] text-slate-400" data-en="Excl. SASO platform fee" data-ar="باستثناء رسوم منصة سابر">Excl. SASO platform fee</span>
+          </div>
+          <input type="number" id="cbFeePerProduct" value="1800" step="100" oninput="calculateSaber()" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-saudi-green focus:outline-none transition">
+          <p class="text-[11px] text-slate-500 mt-1" data-en="Market average: Low = 0 SAR | Medium = 1,200 - 2,500 SAR | High = 3,000 - 6,000 SAR" data-ar="متوسط السوق: منخفض = 0 ر.س | متوسط = 1,200 - 2,500 ر.س | عالي = 3,000 - 6,000 ر.س">Market average: Low = 0 SAR | Medium = 1,200 - 2,500 SAR | High = 3,000 - 6,000 SAR</p>
+        </div>
+
+        <!-- Testing & Factory Audit Add-ons -->
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+          <div class="flex items-center justify-between">
+            <label for="includeTesting" class="text-xs font-semibold text-slate-700 uppercase tracking-wider cursor-pointer" data-en="Include External Lab Testing / Factory Audit Cost?" data-ar="إضافة تكاليف الفحص المخبري / تفتيش المصنع؟">Include External Lab Testing / Factory Audit Cost?</label>
+            <input type="checkbox" id="includeTesting" onchange="toggleTestingInput()" class="w-4 h-4 text-saudi-green focus:ring-saudi-green rounded border-slate-300">
+          </div>
+          
+          <div id="testingFeeWrapper" class="hidden pt-2 border-t border-slate-200 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1" data-en="Lab Testing Fee Per Product (SAR)" data-ar="تكلفة الفحص المخبري للمنتج (ر.س)">Lab Testing Fee Per Product (SAR)</label>
+              <input type="number" id="labTestFee" value="2500" oninput="calculateSaber()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-saudi-green focus:outline-none">
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1" data-en="Factory Inspection Fee (Annual SAR)" data-ar="تكلفة تفتيش المصنع (سنوياً ر.س)">Factory Inspection Fee (Annual SAR)</label>
+              <input type="number" id="factoryAuditFee" value="4000" oninput="calculateSaber()" class="w-full bg-white border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-saudi-green focus:outline-none">
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Results Side -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-slate-900 text-white p-6 sm:p-8 rounded-2xl shadow-lg border border-slate-800 space-y-6 relative overflow-hidden">
+          <!-- Decorative accent -->
+          <div class="absolute -top-12 -right-12 w-32 h-32 bg-saudi-green/30 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="flex justify-between items-start border-b border-slate-800 pb-4">
+            <div>
+              <span class="text-xs font-semibold text-saudi-gold uppercase tracking-widest" data-en="Annual Estimated Total" data-ar="إجمالي التكلفة السنوية التقديرية">Annual Estimated Total</span>
+              <h3 class="text-3xl sm:text-4xl font-extrabold text-white mt-1 tracking-tight" id="grandTotalSAR">0.00 <span class="text-sm font-normal text-slate-400">SAR</span></h3>
+            </div>
+            <span class="bg-saudi-green/20 text-saudi-green border border-saudi-green/30 text-xs px-2.5 py-1 rounded-full font-medium" id="riskBadge">Medium Risk</span>
+          </div>
+
+          <!-- Cost Breakdown List -->
+          <div class="space-y-3 text-xs sm:text-sm text-slate-300">
+            <div class="flex justify-between items-center">
+              <span data-en="SASO PCoC Platform Fees (SAR 500/cert)" data-ar="رسوم منصة سابر لشهادات المنتج (500 ر.س/شهادة)">SASO PCoC Platform Fees (SAR 500/cert)</span>
+              <span class="font-mono font-medium text-white" id="sasoPcocFee">0.00 SAR</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span data-en="Conformity Body (CB) Service Fees" data-ar="أجور مكاتب تقويم المطابقة (CB)">Conformity Body (CB) Service Fees</span>
+              <span class="font-mono font-medium text-white" id="cbTotalFee">0.00 SAR</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span data-en="SASO SCoC Shipment Fees (SAR 350/shipment)" data-ar="رسوم منصة سابر لشهادات الإرسالية (350 ر.س/شحنة)">SASO SCoC Shipment Fees (SAR 350/shipment)</span>
+              <span class="font-mono font-medium text-white" id="sasoScocFee">0.00 SAR</span>
+            </div>
+            <div id="testingBreakdownRow" class="flex justify-between items-center text-slate-400 hidden">
+              <span data-en="Lab Testing & Factory Audits" data-ar="الفحوصات المخبرية وتفتيش المصنع">Lab Testing & Factory Audits</span>
+              <span class="font-mono font-medium text-white" id="testingTotalFee">0.00 SAR</span>
+            </div>
+            <div class="border-t border-slate-800 pt-2 flex justify-between items-center">
+              <span data-en="Subtotal (Excl. VAT)" data-ar="المجموع (قبل الضريبة)">Subtotal (Excl. VAT)</span>
+              <span class="font-mono font-semibold text-white" id="subtotalSAR">0.00 SAR</span>
+            </div>
+            <div class="flex justify-between items-center text-saudi-gold">
+              <span data-en="Saudi VAT (15%)" data-ar="ضريبة القيمة المضافة (15%)">Saudi VAT (15%)</span>
+              <span class="font-mono font-semibold" id="vatAmountSAR">0.00 SAR</span>
+            </div>
+          </div>
+
+          <!-- Unit Cost Metrics -->
+          <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700/60 grid grid-cols-2 gap-3 text-center">
+            <div>
+              <span class="text-[11px] text-slate-400 block" data-en="Avg. Cost Per Product (PCoC)" data-ar="متوسط التكلفة للمنتج">Avg. Cost Per Product (PCoC)</span>
+              <span class="text-sm font-bold text-white font-mono mt-0.5 block" id="costPerProduct">0.00 SAR</span>
+            </div>
+            <div>
+              <span class="text-[11px] text-slate-400 block" data-en="Avg. Compliance Cost / Shipment" data-ar="تكلفة الشهادات للشحنة الواحدة">Avg. Compliance Cost / Shipment</span>
+              <span class="text-sm font-bold text-white font-mono mt-0.5 block" id="costPerShipment">0.00 SAR</span>
+            </div>
+          </div>
+
+          <!-- Export Buttons -->
+          <div class="pt-2 flex flex-col sm:flex-row gap-2">
+            <button onclick="exportToCSV()" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-medium text-white transition flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span data-en="Export CSV Summary" data-ar="تصدير ملخص CSV">Export CSV Summary</span>
+            </button>
+            <button onclick="window.print()" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-lg text-xs font-medium text-white transition flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <span data-en="Print Report" data-ar="طباعة التقرير">Print Report</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- CTA Box -->
+        <div class="bg-gradient-to-br from-saudi-green/10 via-slate-50 to-amber-50 p-6 rounded-2xl border border-saudi-green/20 space-y-3">
+          <div class="flex items-center gap-2 text-saudi-green font-bold text-sm">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span data-en="Need Bulk Compliance Automation?" data-ar="هل تحتاج أتمتة لجميع منتجات الشركة؟">Need Bulk Compliance Automation?</span>
+          </div>
+          <p class="text-xs text-slate-600 leading-relaxed" data-en="Download our Master SABER & SASO Import Cost Planner Excel template. Includes multi-HS code lookup, conformity body cost comparison, and automated VAT forecasting for custom brokers & trade managers." data-ar="حمل نموذج إكسل الاحترافي لحساب تخطيط شهادات سابر والتكاليف الجمركية والضريبية لشحنات الاستيراد الكبيرة.">Download our Master SABER & SASO Import Cost Planner Excel template. Includes multi-HS code lookup, conformity body cost comparison, and automated VAT forecasting for custom brokers & trade managers.</p>
+          <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="block text-center py-3 px-4 bg-saudi-green hover:bg-emerald-800 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md transition">
+            <span data-en="Get Master Excel & VBA Suite ($29)" data-ar="احصل على حزمة الإكسل المتقدمة ($29)">Get Master Excel & VBA Suite ($29)</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Educational Content & SEO Guide -->
+    <section class="mt-16 bg-white p-8 sm:p-12 rounded-2xl border border-slate-200 space-y-10">
+      
+      <div>
+        <h2 class="text-2xl font-bold text-slate-900 border-b border-slate-200 pb-3 mb-4" data-en="Comprehensive Guide to SABER & SASO Certification in Saudi Arabia" data-ar="الدليل الشامل لشهادات منصة سابر والهيئة السعودية للمواصفات والمقاييس (SASO)">Comprehensive Guide to SABER & SASO Certification in Saudi Arabia</h2>
+        <p class="text-sm text-slate-600 leading-relaxed mb-4" data-en="The SABER system is an electronic platform launched by the Saudi Standards, Metrology and Quality Organization (SASO) in partnership with THIQAH Business Services. It is designed to facilitate the online issuance of Certificate of Conformity (CoC) for products imported into Saudi Arabia under the Saudi Product Safety Program (SALEEM). Understanding the fee structures, risk categories, and certificate requirements is critical for supply chain managers, customs brokers, and enterprise trade operations in the Kingdom." data-ar="منصة سابر (SABER) هي منصة إلكترونية طورتها الهيئة السعودية للمواصفات والمقاييس والجودة بالتعاون مع شركة ثقة، بهدف تسهيل تسجيل شهادات المطابقة إلكترونياً للمنتجات الاستهلاكية الموجهة للسوق السعودي ضمن برنامج سلامة المنتجات (SALEEM). تهدف هذه الأداة لمساعدة المستوردين والتجار على حساب تكاليف الشهادات بدقة ورصد ضريبة القيمة المضافة لضمان التخطيط المالي السليم.">The SABER system is an electronic platform launched by the Saudi Standards, Metrology and Quality Organization (SASO) in partnership with THIQAH Business Services. It is designed to facilitate the online issuance of Certificate of Conformity (CoC) for products imported into Saudi Arabia under the Saudi Product Safety Program (SALEEM). Understanding the fee structures, risk categories, and certificate requirements is critical for supply chain managers, customs brokers, and enterprise trade operations in the Kingdom.</p>
+      </div>
+
+      <!-- Structure & Breakdown -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="space-y-4">
+          <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-3 h-3 bg-saudi-green rounded-full"></span>
+            <span data-en="1. Product Certificate of Conformity (PCoC)" data-ar="1. شهادة مطابقة المنتج (PCoC)">1. Product Certificate of Conformity (PCoC)</span>
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed" data-en="Every regulated product imported into Saudi Arabia requires a Product Certificate of Conformity (PCoC). Issued online via accredited Conformity Assessment Bodies (CBs), the PCoC verifies that the design and specifications conform to applicable SASO Technical Regulations." data-ar="شهادة أصالة وإقرار بتطابق المنتج مع اللوائح الفنية السعودية. تُصدر شهادة PCoC عبر جهات تقويم المطابقة المقبولة لدى سابر وتكون صالحة لمدة سنة كاملة من تاريخ الإصدار."></p>
+          <ul class="text-xs text-slate-600 space-y-2 list-disc font-sans pl-4 rtl:pr-4">
+            <li data-en="Official SASO Platform Fee: SAR 500 (+ 15% VAT) per model/product line." data-ar="رسوم منصة سابر الحكومية: 500 ريال (+ 15% ضريبة) لكل نموذج/طراز.">Official SASO Platform Fee: SAR 500 (+ 15% VAT) per model/product line.</li>
+            <li data-en="Validity: 1 Calendar Year from issuance date." data-ar="الصلاحية: سنة ميلادية واحدة من تاريخ الإصدار.">Validity: 1 Calendar Year from issuance date.</li>
+            <li data-en="CB Service Fee: Negotiated with private accredited audit bodies (typically SAR 1,200 to SAR 4,500 based on complexity)." data-ar="رسوم جهة المطابقة (CB): مبالغ متفق عليها مع جهة الفحص المعتمدة وتعتمد على مدى تعقيد المنتج.">CB Service Fee: Negotiated with private accredited audit bodies (typically SAR 1,200 to SAR 4,500 based on complexity).</li>
+          </ul>
+        </div>
+
+        <div class="space-y-4">
+          <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <span class="w-3 h-3 bg-saudi-gold rounded-full"></span>
+            <span data-en="2. Shipment Certificate of Conformity (SCoC)" data-ar="2. شهادة مطابقة الإرسالية (SCoC)">2. Shipment Certificate of Conformity (SCoC)</span>
+          </h3>
+          <p class="text-xs sm:text-sm text-slate-600 leading-relaxed" data-en="Before a shipment leaves the foreign port of loading or reaches Saudi customs ports, an SCoC must be generated on SABER linked directly to the valid PCoC. Custom authorities at ZATCA will not clear goods without an active SCoC." data-ar="شهادة مطلوبة لكل شحنة استيراد تدخل الموانئ أو المنافذ الجمركية السعودية. ترتبط هذه الشهادة مباشرة بشهادة المنتج PCoC السارية، وبدونها لا يمكن فسح البضائع من قبل هيئة الزكاة والضريبة والجمارك (ZATCA)."></p>
+          <ul class="text-xs text-slate-600 space-y-2 list-disc font-sans pl-4 rtl:pr-4">
+            <li data-en="Official SASO Platform Fee: SAR 350 (+ 15% VAT) per shipment batch." data-ar="رسوم منصة سابر الحكومية: 350 ريال (+ 15% ضريبة) لكل شحنة جمركية.">Official SASO Platform Fee: SAR 350 (+ 15% VAT) per shipment batch.</li>
+            <li data-en="Validity: Specific to the bill of lading / single consignment." data-ar="الصلاحية: مرتبطة برقم بوليصة الشحن ولشحنة واحدة فقط.">Validity: Specific to the bill of lading / single consignment.</li>
+            <li data-en="Low Risk Products: Require Self-Declaration PCoC (SAR 500) and SCoC (SAR 350)." data-ar="المنتجات غير الخاضعة (منخفضة الخطورة): تتطلب إقرار ذاتي PCoC بقيمة 500 ريال وشهادة شحنة SCoC بقيمة 350 ريال.">Low Risk Products: Require Self-Declaration PCoC (SAR 500) and SCoC (SAR 350).</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Mathematical Formula Section -->
+      <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-4">
+        <h3 class="text-md font-bold text-slate-900 uppercase tracking-wider" data-en="SABER Annual Budget Calculation Formula" data-ar="المعادلة الرياضية لحساب ميزانية شهادات سابر">SABER Annual Budget Calculation Formula</h3>
+        <div class="bg-white p-4 rounded-lg border border-slate-200 font-mono text-xs sm:text-sm text-slate-800 space-y-2 overflow-x-auto">
+          <p><strong>Total Annual Net Cost</strong> = [ N<sub>PCoC</sub> &times; ( Fee<sub>SASO_PCoC</sub> + Fee<sub>CB</sub> + Fee<sub>Testing</sub> ) ] + [ N<sub>SCoC</sub> &times; Fee<sub>SASO_SCoC</sub> ] + Fee<sub>Audit</sub></p>
+          <p><strong>VAT (15%)</strong> = Total Annual Net Cost &times; 0.15</p>
+          <p><strong>Grand Total Gross Cost</strong> = Total Annual Net Cost + VAT (15%)</p>
+        </div>
+        <p class="text-xs text-slate-500" data-en="Where: Fee<sub>SASO_PCoC</sub> = 500 SAR, Fee<sub>SASO_SCoC</sub> = 350 SAR, and N represents the counts of unique regulated products and annual shipment volume." data-ar="حيث: رسوم شهادة المنتج = 500 ريال، ورسوم شهادة الإرسالية = 350 ريال، و N تمثل عدد المنتجات المستقلة وعدد الشحنات السنوية.">Where: Fee<sub>SASO_PCoC</sub> = 500 SAR, Fee<sub>SASO_SCoC</sub> = 350 SAR, and N represents the counts of unique regulated products and annual shipment volume.</p>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="space-y-6">
+        <h3 class="text-xl font-bold text-slate-900 border-b border-slate-200 pb-2" data-en="Frequently Asked Questions (FAQ)" data-ar="الأسئلة الشائعة">Frequently Asked Questions (FAQ)</h3>
+        
+        <div class="space-y-4 text-xs sm:text-sm">
+          <div>
+            <h4 class="font-bold text-slate-900 mb-1" data-en="What is the difference between PCoC and SCoC on SABER?" data-ar="ما الفرق بين شهادة PCoC وشهادة SCoC في سابر؟">What is the difference between PCoC and SCoC on SABER?</h4>
+            <p class="text-slate-600" data-en="PCoC (Product Certificate of Conformity) is issued per product model line and is valid for 1 year. SCoC (Shipment Certificate of Conformity) is issued for every individual shipment or bill of lading arriving at Saudi customs ports." data-ar="شهادة PCoC هي شهادة مطابقة المنتج وتصدر لكل طراز وتستمر لمدة سنة. أما شهادة SCoC فهي شهادة شحنة تصدر مع كل بوليصة شحن قادمة للمملكة لارتباطها بالكميات المستوردة."></p>
+          </div>
+
+          <div>
+            <h4 class="font-bold text-slate-900 mb-1" data-en="Are all products required to be registered on SABER?" data-ar="هل جميع المنتجات المستوردة ملزمة بالتسجيل في منصة سابر؟">Are all products required to be registered on SABER?</h4>
+            <p class="text-slate-600" data-en="Yes. Both regulated and non-regulated products imported into Saudi Arabia for commercial use must be registered on SABER. Non-regulated (low risk) items require a Self-Declaration PCoC, whereas regulated items require accredited Conformity Body approval." data-ar="نعم، جميع المنتجات سواء الخاضعة للوائح الفنية أو غير الخاضعة يجب تسجيلها عبر سابر. المنتجات غير الخاضعة تتطلب إقرار ذاتي، بينما المنتجات الخاضعة تتطلب شهادة مطابقة صادرة عن جهة معتمدة."></p>
+          </div>
+
+          <div>
+            <h4 class="font-bold text-slate-900 mb-1" data-en="Is KSA Value Added Tax (VAT) applicable to SABER platform fees?" data-ar="هل تفرض ضريبة القيمة المضافة (15%) على رسوم سابر؟">Is KSA Value Added Tax (VAT) applicable to SABER platform fees?</h4>
+            <p class="text-slate-600" data-en="Yes, 15% Saudi VAT is applied to all official SASO SABER platform fees as well as local Conformity Body (CB) inspection and testing services." data-ar="نعم، تضاف ضريبة القيمة المضافة بنسبة 15% على كافة رسوم منصة سابر الحكومية وأجور مكاتب وفحوصات جهات المطابقة."></p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 text-xs py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3">
+      <p data-en="© 2025 Saudi SABER & SASO Compliance Cost Estimator. Built for Importers, Logistics Managers & Trade Specialists in KSA." data-ar="© 2025 حاسبة تكاليف شهادات سابر والمواصفات السعودية. صُممت للمستوردين وخبراء سلاسل الإمداد والتخليص الجمركي.">© 2025 Saudi SABER & SASO Compliance Cost Estimator. Built for Importers, Logistics Managers & Trade Specialists in KSA.</p>
+      <p class="text-slate-500 text-[11px]" data-en="Disclaimer: This online estimator is an independent tool for budget planning and is not directly affiliated with SASO, ZATCA, or the official SABER platform." data-ar="تنويه: هذه الأداة مستقلة وتستهدف التخطيط المالي والميزانيات ولا تتبع بشكل مباشر للهيئة السعودية للمواصفات أو منصة سابر.">Disclaimer: This online estimator is an independent tool for budget planning and is not directly affiliated with SASO, ZATCA, or the official SABER platform.</p>
+    </div>
+  </footer>
+
+  <!-- Javascript Engine -->
+  <script>
+    let currentLang = 'en';
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      document.documentElement.lang = currentLang;
+      document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+      
+      // Update button text
+      document.getElementById('langText').innerText = currentLang === 'en' ? 'العربية' : 'English';
+      
+      // Translate marked elements
+      document.querySelectorAll('[data-en]').forEach(el => {
+        const text = el.getAttribute(`data-${currentLang}`);
+        if (text) el.innerText = text;
+      });
+
+      // Recalculate to update dynamic risk badge text
+      calculateSaber();
+    }
+
+    function toggleTestingInput() {
+      const isChecked = document.getElementById('includeTesting').checked;
+      const wrapper = document.getElementById('testingFeeWrapper');
+      const breakdownRow = document.getElementById('testingBreakdownRow');
+      
+      if (isChecked) {
+        wrapper.classList.remove('hidden');
+        breakdownRow.classList.remove('hidden');
+      } else {
+        wrapper.classList.add('hidden');
+        breakdownRow.classList.add('hidden');
+      }
+      calculateSaber();
+    }
+
+    function calculateSaber() {
+      const risk = document.getElementById('riskLevel').value;
+      const pcocCount = Math.max(0, parseInt(document.getElementById('pcocCount').value) || 0);
+      const scocCount = Math.max(0, parseInt(document.getElementById('scocCount').value) || 0);
+      const cbFeeInput = Math.max(0, parseFloat(document.getElementById('cbFeePerProduct').value) || 0);
+      const includeTesting = document.getElementById('includeTesting').checked;
+      
+      let labFee = 0;
+      let factoryFee = 0;
+      if (includeTesting) {
+        labFee = Math.max(0, parseFloat(document.getElementById('labTestFee').value) || 0);
+        factoryFee = Math.max(0, parseFloat(document.getElementById('factoryAuditFee').value) || 0);
+      }
+
+      // Official SASO fees (SAR)
+      let sasoPcocUnit = 500; // Low, Med, High all SAR 500 platform fee per product
+      let sasoScocUnit = 350; // SAR 350 per SCoC
+      let cbFeePerUnit = cbFeeInput;
+
+      if (risk === 'low') {
+        cbFeePerUnit = 0; // Low risk does not require accredited CB audit
+      }
+
+      // Calculations
+      const sasoPcocTotal = pcocCount * sasoPcocUnit;
+      const cbTotal = pcocCount * cbFeePerUnit;
+      const sasoScocTotal = scocCount * sasoScocUnit;
+      const testingTotal = (pcocCount * labFee) + factoryFee;
+
+      const subtotal = sasoPcocTotal + cbTotal + sasoScocTotal + (includeTesting ? testingTotal : 0);
+      const vatAmount = subtotal * 0.15;
+      const grandTotal = subtotal + vatAmount;
+
+      const avgCostPerProduct = pcocCount > 0 ? (sasoPcocTotal + cbTotal + (includeTesting ? pcocCount * labFee : 0)) * 1.15 / pcocCount : 0;
+      const avgCostPerShipment = scocCount > 0 ? grandTotal / scocCount : 0;
+
+      // Render outputs
+      document.getElementById('sasoPcocFee').innerText = sasoPcocTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' SAR';
+      document.getElementById('cbTotalFee').innerText = cbTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' SAR';
+      document.getElementById('sasoScocFee').innerText = sasoScocTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' SAR';
+      document.getElementById('testingTotalFee').innerText = testingTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' SAR';
+      
+      document.getElementById('subtotalSAR').innerText = subtotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' SAR';
+      document.getElementById('vatAmountSAR').innerText = vatAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' SAR';
+      document.getElementById('grandTotalSAR').innerHTML = grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' <span class="text-sm font-normal text-slate-400">SAR</span>';
+      
+      document.getElementById('costPerProduct').innerText = avgCostPerProduct.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' SAR';
+      document.getElementById('costPerShipment').innerText = avgCostPerShipment.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' SAR';
+
+      // Update Badge
+      const badge = document.getElementById('riskBadge');
+      if (risk === 'low') {
+        badge.innerText = currentLang === 'ar' ? 'منخفض الخطورة' : 'Low Risk';
+        badge.className = 'bg-blue-500/20 text-blue-400 border border-blue-500/30 text-xs px-2.5 py-1 rounded-full font-medium';
+      } else if (risk === 'medium') {
+        badge.innerText = currentLang === 'ar' ? 'متوسط الخطورة' : 'Medium Risk';
+        badge.className = 'bg-saudi-green/20 text-saudi-green border border-saudi-green/30 text-xs px-2.5 py-1 rounded-full font-medium';
+      } else {
+        badge.innerText = currentLang === 'ar' ? 'عالي الخطورة' : 'High Risk';
+        badge.className = 'bg-amber-500/20 text-amber-400 border border-amber-500/30 text-xs px-2.5 py-1 rounded-full font-medium';
+      }
+    }
+
+    function exportToCSV() {
+      const risk = document.getElementById('riskLevel').value;
+      const pcocCount = document.getElementById('pcocCount').value;
+      const scocCount = document.getElementById('scocCount').value;
+      const subtotal = document.getElementById('subtotalSAR').innerText;
+      const vat = document.getElementById('vatAmountSAR').innerText;
+      const grandTotal = document.getElementById('grandTotalSAR').innerText;
+
+      const csvRows = [
+        ['Saudi SABER Certification Cost Summary'],
+        ['Risk Level', risk],
+        ['Regulated Products (PCoC)', pcocCount],
+        ['Annual Shipments (SCoC)', scocCount],
+        ['Subtotal (Excl VAT)', subtotal],
+        ['Saudi VAT (15%)', vat],
+        ['Grand Total (Inc VAT)', grandTotal],
+        ['Generated On', new Date().toLocaleDateString()]
+      ];
+
+      let csvContent = 'data:text/csv;charset=utf-8,' + csvRows.map(e => e.join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `SABER_Cost_Estimate_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initial run
+    window.onload = function() {
+      calculateSaber();
+    };
+  </script>
+</body>
+</html>

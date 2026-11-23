@@ -320,5 +320,12 @@
     "title_ar": "حاسبة رخص البناء والرسوم البلدية وفق كود البناء السعودي",
     "description_en": "Calculate Saudi municipal construction permit fees, Balady licensing costs, and Saudi Building Code (SBC) compliance requirements instantly.",
     "date": "2026-11-22"
+  },
+  {
+    "slug": "saudi-saber-compliance-cost-calculator",
+    "title_en": "Saudi SABER & SASO Compliance Certification Cost Estimator",
+    "title_ar": "حاسبة تكاليف شهادات منصة سابر والمواصفات السعودية (SASO)",
+    "description_en": "Calculate SABER platform certification costs in Saudi Arabia, including PCoC, SCoC fees, Conformity Body charges, and 15% VAT for smooth imports.",
+    "date": "2026-11-23"
   }
 ]
