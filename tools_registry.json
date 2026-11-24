@@ -341,5 +341,12 @@
     "title_ar": "حاسبة بدل السفر وانتداب الموظفين في السعودية",
     "description_en": "Calculate domestic and international business trip per diems, travel allowances, lodging deductions, and net payouts under Saudi Labor Law.",
     "date": "2026-11-24"
+  },
+  {
+    "slug": "saudi-chi-corporate-health-insurance-cost-calculator",
+    "title_en": "Saudi CHI Corporate Health Insurance Premium Estimator",
+    "title_ar": "حاسبة تكاليف التأمين الطبي للشركات في السعودية",
+    "description_en": "Calculate corporate health insurance costs in Saudi Arabia compliant with CHI regulations. Estimate premiums by class, age group, dependents, and VAT.",
+    "date": "2026-11-24"
   }
 ]

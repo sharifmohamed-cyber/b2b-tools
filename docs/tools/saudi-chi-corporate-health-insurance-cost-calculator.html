@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saudi CHI Corporate Health Insurance Premium Estimator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    [dir="rtl"] body {
+      font-family: 'Cairo', sans-serif;
+    }
+    .no-print {
+      @media print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- Top Banner / Sticky Offer -->
+  <div class="bg-emerald-900 text-emerald-100 text-xs sm:text-sm py-2 px-4 text-center font-medium sticky top-0 z-50 shadow-md flex justify-between items-center no-print">
+    <div class="max-w-7xl mx-auto flex items-center justify-between w-full">
+      <span class="hidden md:inline" data-en="🚀 Need bulk employee insurance upload & annual budget forecasting?" data-ar="🚀 هل تحتاج لتوقعات ميزانية التأمين الطبي السنوية لجميع الموظفين؟">🚀 Need bulk employee insurance upload & annual budget forecasting?</span>
+      <span class="md:hidden font-semibold" data-en="📊 Master Health Insurance Excel Template ($29)" data-ar="📊 قالب إكسل حساب التأمين الطبي الشامل (29$)">📊 Master Health Insurance Excel Template ($29)</span>
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <a href="https://gumroad.com" target="_blank" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3 py-1 rounded transition text-xs flex items-center gap-1 shadow">
+          <span data-en="Get Excel Template ($29)" data-ar="احصل على قالب الإكسل ($29)">Get Excel Template ($29)</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+        </a>
+        <button onclick="toggleLanguage()" class="bg-emerald-800 hover:bg-emerald-700 text-white font-semibold px-2.5 py-1 rounded border border-emerald-600 text-xs transition">
+          <span id="langToggleBtn">العربية</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 py-6 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded border border-emerald-200 uppercase tracking-wide" data-en="CHI / CCHI Compliant" data-ar="معتمد حسب متطلبات مجلس الضمان الصحي">CHI / CCHI Compliant</span>
+          <span class="bg-slate-100 text-slate-600 text-xs font-medium px-2 py-0.5 rounded" data-en="KSA SME Tool" data-ar="أداة الشركات المنشآت الصغيرة والمتوسطة">KSA SME Tool</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight" data-en="Saudi Corporate Health Insurance Cost Estimator" data-ar="حاسبة تكاليف التأمين الطبي للشركات في السعودية">Saudi Corporate Health Insurance Cost Estimator</h1>
+        <p class="text-slate-500 text-sm mt-1" data-en="Estimate annual mandatory health insurance premiums for employees and dependents under Saudi Council of Health Insurance rules." data-ar="احسب التكاليف التقديرية السنوية للتأمين الطبي الإلزامية للموظفين والتابعين وفق قواعد مجلس الضمان الصحي KSA.">Estimate annual mandatory health insurance premiums for employees and dependents under Saudi Council of Health Insurance rules.</p>
+      </div>
+      <div class="flex gap-2 no-print self-end md:self-auto">
+        <button onclick="window.print()" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg transition">
+          <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          <span data-en="Print Report" data-ar="طباعة التقرير">Print Report</span>
+        </button>
+        <button onclick="exportCSV()" class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-lg transition">
+          <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+          <span data-en="Export CSV" data-ar="تصدير CSV">Export CSV</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Input Section (Left 7 Cols) -->
+      <div class="lg:col-span-7 bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-6">
+        <div class="border-b border-slate-100 pb-4">
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 00-2-2h2a2 2 0 002 2"></path></svg>
+            <span data-en="Company & Policy Parameters" data-ar="بيانات الشركة ومعايير الوثيقة">Company & Policy Parameters</span>
+          </h2>
+          <p class="text-xs text-slate-500 mt-1" data-en="Select your workforce structure and insurance coverage tiers." data-ar="حدد هيكل العمالة ومستويات التغطية التأمينية المطلوبة.">Select your workforce structure and insurance coverage tiers.</p>
+        </div>
+
+        <!-- General Company Size Risk Pool -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" data-en="Company Size Pool Tier" data-ar="فئة حجم الشركة (مستوى المخاطر)">Company Size Pool Tier</label>
+            <select id="companySize" onchange="calculateInsurance()" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-slate-50">
+              <option value="micro" data-en="Micro (1 - 9 Employees) [Highest Base Rate]" data-ar="متناهية الصغر (1 - 9 موظفين) [المعدل الأعلى]">Micro (1 - 9 Employees)</option>
+              <option value="small" selected data-en="Small (10 - 49 Employees)" data-ar="صغيرة (10 - 49 موظف)">Small (10 - 49 Employees)</option>
+              <option value="medium" data-en="Medium (50 - 249 Employees) [Volume Discount]" data-ar="متوسطة (50 - 249 موظف) [خصم الحجم]">Medium (50 - 249 Employees)</option>
+              <option value="large" data-en="Large (250+ Employees) [Corporate Rates]" data-ar="كبيرة (+250 موظف) [أسعار خاصة]">Large (250+ Employees)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" data-en="Pre-existing Medical Condition Risk Loading" data-ar="نسبة التحميل للموافقات والأمراض المزمنة">Pre-existing Risk Loading</label>
+            <select id="riskLoading" onchange="calculateInsurance()" class="w-full border border-slate-300 rounded-lg p-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none bg-slate-50">
+              <option value="0" data-en="Standard Group (0% Loading)" data-ar="اعتيادي (بدون تحميل 0%)">Standard Group (0% Loading)</option>
+              <option value="0.10" data-en="Moderate Risk (+10% Loading)" data-ar="مخاطر متوسطة (+10%)">Moderate Risk (+10% Loading)</option>
+              <option value="0.20" data-en="High Medical Risk (+20% Loading)" data-ar="مخاطر عالية/مزمنة (+20%)">High Medical Risk (+20% Loading)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Employee Tier Breakdown Header -->
+        <div class="pt-2">
+          <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+            <span data-en="Employee Tiers & Average Age Group" data-ar="فئات الموظفين ومتوسط الأعمار">Employee Tiers & Average Age Group</span>
+          </h3>
+          
+          <!-- Executive / VIP Class -->
+          <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 mb-3 space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-emerald-900 uppercase tracking-wide" data-en="Class VIP / Executive (VIP Hospitals Network)" data-ar="فئة كبار الشخصيات / التنفيذيين (شبكة VIP)">Class VIP / Executive (VIP Network)</span>
+              <span class="text-xs text-slate-500 font-medium" data-en="High Coverage Limit (~SAR 500k)" data-ar="سقف تغطية مرتفع (حوالي 500 ألف ريال)">High Coverage Limit</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-slate-600 mb-1" data-en="Number of Employees" data-ar="عدد الموظفين">No. of Employees</label>
+                <input type="number" id="vipCount" min="0" value="2" oninput="calculateInsurance()" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-emerald-500 bg-white">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-600 mb-1" data-en="Avg Age Bracket" data-ar="متوسط الفئة العمرية">Avg Age Bracket</label>
+                <select id="vipAge" onchange="calculateInsurance()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
+                  <option value="age18_30" data-en="18 - 30 Yrs" data-ar="18 - 30 سنة">18 - 30 Yrs</option>
+                  <option value="age31_45" selected data-en="31 - 45 Yrs" data-ar="31 - 45 سنة">31 - 45 Yrs</option>
+                  <option value="age46_60" data-en="46 - 60 Yrs" data-ar="46 - 60 سنة">46 - 60 Yrs</option>
+                  <option value="age60plus" data-en="60+ Yrs" data-ar="أكبر من 60 سنة">60+ Yrs</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Class A / Senior Management -->
+          <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 mb-3 space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-slate-800 uppercase tracking-wide" data-en="Class A (Mid-Management & Senior Staff)" data-ar="الفئة أ (الإدارة الوسطى وكبار الموظفين)">Class A (Mid-Management & Seniors)</span>
+              <span class="text-xs text-slate-500 font-medium" data-en="Limit (~SAR 250k - Standard CHI)" data-ar="تغطية (250 ألف ريال)">Limit (~SAR 250k)</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-slate-600 mb-1" data-en="Number of Employees" data-ar="عدد الموظفين">No. of Employees</label>
+                <input type="number" id="classACount" min="0" value="8" oninput="calculateInsurance()" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-emerald-500 bg-white">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-600 mb-1" data-en="Avg Age Bracket" data-ar="متوسط الفئة العمرية">Avg Age Bracket</label>
+                <select id="classAAge" onchange="calculateInsurance()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
+                  <option value="age18_30" data-en="18 - 30 Yrs" data-ar="18 - 30 سنة">18 - 30 Yrs</option>
+                  <option value="age31_45" selected data-en="31 - 45 Yrs" data-ar="31 - 45 سنة">31 - 45 Yrs</option>
+                  <option value="age46_60" data-en="46 - 60 Yrs" data-ar="46 - 60 سنة">46 - 60 Yrs</option>
+                  <option value="age60plus" data-en="60+ Yrs" data-ar="أكبر من 60 سنة">60+ Yrs</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Class B / Basic Operational Staff -->
+          <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 mb-3 space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-slate-700 uppercase tracking-wide" data-en="Class B & C (Operational / Field Staff / Basic CHI)" data-ar="الفئة ب / ج (الموظفون التشغيليون/الفنيون)">Class B & C (Operational / Basic CHI)</span>
+              <span class="text-xs text-slate-500 font-medium" data-en="CHI Mandatory Unified Benefit Limit" data-ar="حد التغطية الموحد الإلزامي">Unified CHI Limit</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-slate-600 mb-1" data-en="Number of Employees" data-ar="عدد الموظفين">No. of Employees</label>
+                <input type="number" id="classBCount" min="0" value="15" oninput="calculateInsurance()" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-emerald-500 bg-white">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-600 mb-1" data-en="Avg Age Bracket" data-ar="متوسط الفئة العمرية">Avg Age Bracket</label>
+                <select id="classBAge" onchange="calculateInsurance()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-white">
+                  <option value="age18_30" selected data-en="18 - 30 Yrs" data-ar="18 - 30 سنة">18 - 30 Yrs</option>
+                  <option value="age31_45" data-en="31 - 45 Yrs" data-ar="31 - 45 سنة">31 - 45 Yrs</option>
+                  <option value="age46_60" data-en="46 - 60 Yrs" data-ar="46 - 60 سنة">46 - 60 Yrs</option>
+                  <option value="age60plus" data-en="60+ Yrs" data-ar="أكبر من 60 سنة">60+ Yrs</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dependents Breakdown -->
+        <div class="pt-2 border-t border-slate-100">
+          <h3 class="text-sm font-bold text-slate-800 mb-3 flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            <span data-en="Mandatory Dependents Coverage (Spouses & Children)" data-ar="تغطية التابعين الإلزامية (الزوجات والأبناء)">Mandatory Dependents Coverage (Spouses & Children)</span>
+          </h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-emerald-50/50 p-3.5 rounded-xl border border-emerald-100">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" data-en="Total Spouses Count" data-ar="عدد الزوجات الإجمالي">Total Spouses Count</label>
+              <input type="number" id="spousesCount" min="0" value="10" oninput="calculateInsurance()" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-emerald-500 bg-white">
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1" data-en="Total Children Count (Under 25 Yrs)" data-ar="عدد الأبناء الإجمالي (أقل من 25 سنة)">Total Children Count (< 25 yrs)</label>
+              <input type="number" id="childrenCount" min="0" value="18" oninput="calculateInsurance()" class="w-full border border-slate-300 rounded-lg p-2 text-sm focus:ring-emerald-500 bg-white">
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Fees & VAT -->
+        <div class="pt-2 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" data-en="CCHI Platform / Policy Fee per Head (SAR)" data-ar="رسوم منصة الضمان الصحي لكل فرد (ريال)">CHI Platform Fee / Head</label>
+            <input type="number" id="chiFeePerHead" min="0" value="15" oninput="calculateInsurance()" class="w-full border border-slate-300 rounded-lg p-2 text-sm bg-slate-50">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1" data-en="KSA VAT Rate (%)" data-ar="نسبة ضريبة القيمة المضافة (%)">KSA VAT Rate (%)</label>
+            <input type="number" id="vatRate" value="15" readonly class="w-full border border-slate-200 bg-slate-100 text-slate-500 rounded-lg p-2 text-sm font-semibold cursor-not-allowed">
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Output / Summary Cards (Right 5 Cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        
+        <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl space-y-6 relative overflow-hidden">
+          <!-- Background Decorative Circle -->
+          <div class="absolute -right-10 -top-10 w-40 h-40 bg-emerald-500 opacity-10 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="flex justify-between items-center border-b border-slate-800 pb-4">
+            <div>
+              <span class="text-xs text-emerald-400 font-semibold tracking-wider uppercase" data-en="Annual Estimate Summary" data-ar="ملخص التقدير السنوي">Annual Estimate Summary</span>
+              <h3 class="text-xl font-bold mt-0.5" data-en="Total Premium Budget" data-ar="إجمالي ميزانية التأمين">Total Premium Budget</h3>
+            </div>
+            <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs px-2.5 py-1 rounded-full font-semibold" id="totalLivesBadge">53 Lives</span>
+          </div>
+
+          <!-- Big Number -->
+          <div>
+            <div class="text-xs text-slate-400 mb-1" data-en="Estimated Total Cost (Inc. VAT & Fees)" data-ar="إجمالي التكلفة التقديرية (شاملة الضريبة والرسوم)">Estimated Total Cost (Inc. VAT & Fees)</div>
+            <div class="text-3xl sm:text-4xl font-extrabold text-emerald-400 tracking-tight">
+              <span id="totalCostDisplay">0.00</span> <span class="text-lg font-bold text-slate-300">SAR</span>
+            </div>
+          </div>
+
+          <!-- Summary Key Metrics Grid -->
+          <div class="grid grid-cols-2 gap-3 pt-2 border-t border-slate-800/80">
+            <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700/50">
+              <div class="text-[11px] text-slate-400" data-en="Avg Cost / Employee" data-ar="متوسط التكلفة / موظف">Avg Cost / Employee</div>
+              <div class="text-base font-bold text-slate-100 mt-0.5"><span id="costPerEmp">0.00</span> <span class="text-xs text-slate-400">SAR</span></div>
+            </div>
+            <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700/50">
+              <div class="text-[11px] text-slate-400" data-en="Avg Premium / Insured Life" data-ar="متوسط التكلفة / فرد مؤمن">Avg Cost / Insured Life</div>
+              <div class="text-base font-bold text-slate-100 mt-0.5"><span id="costPerLife">0.00</span> <span class="text-xs text-slate-400">SAR</span></div>
+            </div>
+          </div>
+
+          <!-- Cost Breakdown List -->
+          <div class="space-y-2 text-xs border-t border-slate-800 pt-4 text-slate-300">
+            <div class="flex justify-between">
+              <span data-en="Base Employees Premium:" data-ar="قسط الموظفين الأساسي:">Base Employees Premium:</span>
+              <span class="font-medium text-white" id="empBasePremium">0.00 SAR</span>
+            </div>
+            <div class="flex justify-between">
+              <span data-en="Base Dependents Premium:" data-ar="قسط التابعين الأساسي:">Base Dependents Premium:</span>
+              <span class="font-medium text-white" id="depBasePremium">0.00 SAR</span>
+            </div>
+            <div class="flex justify-between text-amber-400/90" id="riskLoadingRow">
+              <span data-en="Risk / Pre-existing Loading:" data-ar="تحميل المخاطر والأمراض:">Risk / Pre-existing Loading:</span>
+              <span class="font-medium" id="riskLoadingVal">0.00 SAR</span>
+            </div>
+            <div class="flex justify-between">
+              <span data-en="CHI Platform / Council Fees:" data-ar="رسوم منصة مجلس الضمان الصحى:">CHI Platform Fees:</span>
+              <span class="font-medium text-white" id="chiTotalFees">0.00 SAR</span>
+            </div>
+            <div class="flex justify-between text-emerald-400 font-semibold pt-1 border-t border-slate-800">
+              <span data-en="KSA VAT (15%):" data-ar="ضريبة القيمة المضافة (15%):">KSA VAT (15%):</span>
+              <span id="vatAmountDisplay">0.00 SAR</span>
+            </div>
+          </div>
+
+          <!-- Gumroad Product Upgrade CTA Box inside Results Card -->
+          <div class="mt-6 bg-gradient-to-br from-emerald-950 to-slate-900 border border-emerald-500/40 p-4 rounded-xl text-center space-y-2.5 shadow-inner">
+            <div class="text-xs font-bold text-emerald-300 uppercase tracking-wide" data-en="⚡ Looking for Ready HR Excel Model?" data-ar="⚡ هل تبحث عن نموذج الإكسل الجاهز لإدارة الموارد البشرية؟">⚡ Looking for Ready HR Excel Model?</div>
+            <p class="text-[11px] text-slate-300 leading-relaxed" data-en="Download the Complete KSA Corporate Insurance & Employee Budgeting Master Template with automated age-bracket dynamic quoting." data-ar="حمل القالب الاحترافي الشامل لحساب ميزانية التأمين الطبي وتوزيع الفئات والتغطيات بحسب فئات الإعمار.">Download the Complete KSA Corporate Insurance & Employee Budgeting Master Template with automated age-bracket dynamic quoting.</p>
+            <a href="https://gumroad.com" target="_blank" class="inline-block w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2.5 px-4 rounded-lg transition text-xs shadow-md">
+              <span data-en="Download Master Excel Template ($29)" data-ar="تنزيل نموذج الإكسل الشامل ($29)">Download Master Excel Template ($29)</span>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Mandatory Disclaimer -->
+        <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-xs leading-relaxed">
+          <div class="font-bold flex items-center gap-1.5 mb-1">
+            <svg class="w-4 h-4 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <span data-en="Regulatory Disclaimer & Compliance Note" data-ar="إخلاء مسؤولية وتنبيّه تنظيمي">Regulatory Disclaimer & Compliance Note</span>
+          </div>
+          <p data-en="Note: The insurance rates generated by this calculator are statistical market estimates based on Saudi CHI unified policy standards. Actual binding insurance quotes depend on official underwriter medical disclosures, loss history, and licensed insurance carrier underwriting. Always confirm quotes with a SAMA-regulated insurance broker." data-ar="ملاحظة: تكاليف التأمين المحسوبة هي تقديرات إحصائية مبنية على معايير وثيقة الضمان الصحي الموحدة. التسعير النهائي يعتمد على الإفصاح الطبي، التاريخ المرضي للشركة، وعروض أسعار شركات التأمين المرخصة من البنك المركزي السعودي (SAMA). يُرجى التحقق دائماً مع وسيط تأمين معتمد.">Note: The insurance rates generated by this calculator are statistical market estimates based on Saudi CHI unified policy standards. Actual binding insurance quotes depend on official underwriter medical disclosures, loss history, and licensed insurance carrier underwriting. Always confirm quotes with a SAMA-regulated insurance broker.</p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- SEO & Detailed Knowledge Base Section -->
+    <section class="bg-white rounded-2xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-8 mt-12 text-slate-700 leading-relaxed">
+      
+      <!-- Article Header -->
+      <div class="border-b border-slate-200 pb-6">
+        <h2 class="text-2xl font-bold text-slate-900 mb-2" data-en="Comprehensive Guide to Saudi CHI Corporate Health Insurance Rules & Costs" data-ar="الدليل الشامل للضمان الصحي التعاوني للشركات في السعودية والتكاليف المتوقعة">Comprehensive Guide to Saudi CHI Corporate Health Insurance Rules & Costs</h2>
+        <p class="text-sm text-slate-500" data-en="Learn how employee health insurance works under the Saudi Council of Health Insurance (CHI) regulations, mandatory benefits, dynamic underwriting factors, and VAT application." data-ar="تعرف على كيفية حساب التكاليف والتغطيات التأمينية وفق لوائح مجلس الضمان الصحي (CHI)، والالتزامات النظامية على أصحاب العمل.">Learn how employee health insurance works under the Saudi Council of Health Insurance regulations.</p>
+      </div>
+
+      <!-- Section 1: CHI Regulatory Framework -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+          <span data-en="1. Mandatory CHI Health Insurance Rules in Saudi Arabia" data-ar="1. القواعد الإلزامية للتأمين الطبي وفق مجلس الضمان الصحي">1. Mandatory CHI Health Insurance Rules in Saudi Arabia</span>
+        </h3>
+        <p class="text-sm" data-en="Under the Saudi Cooperative Health Insurance Law, all private sector companies operating in Saudi Arabia are legally required to provide continuous medical insurance coverage for all non-Saudi and Saudi employees, as well as their eligible dependents residing in the Kingdom. The Council of Health Insurance (CHI) strictly enforces compliance through automated linkage with Qiwa, Muqeem, and GOSI platforms." data-ar="بموجب نظام الضمان الصحي التعاوني في المملكة العربية السعودية، يلتزم جميع أصحاب العمل في القطاع الخاص بتوفير التغطية التأمينية الطبية المستمرة لجميع العاملين (السعوديين وغير السعوديين) وأفراد أسرهم المقيمين. يتم الربط والتحقق التلقائي من التغطية التأمينية عبر منصات قوى، مقيم، والمؤسسة العامة للتأمينات الاجتماعية.">Under the Saudi Cooperative Health Insurance Law, all private sector companies operating in Saudi Arabia are legally required to provide continuous medical insurance coverage for all non-Saudi and Saudi employees, as well as their eligible dependents residing in the Kingdom.</p>
+        <ul class="list-disc list-inside text-sm space-y-1.5 pl-2 text-slate-600">
+          <li data-en="Eligible Dependents: Employee's spouse(s), male children up to the age of 25, and unmarried/unemployed female children without age limit." data-ar="التابعين المستحقين: التابعون يشملون الزوجات، والأبناء الذكور حتى سن 25 عاماً، والبنات غير المتزوجات دون حد للأعلى للعمر.">Eligible Dependents: Employee's spouse(s), male children up to the age of 25, and unmarried female children.</li>
+          <li data-en="Unified Benefit Policy Limit: Minimum SAR 500,000 maximum annual coverage per insured person under the updated CHI Essential Benefit Package." data-ar="حد التغطية الموحد: التغطية التأمينية الأساسية حدها الأدنى يصل إلى 500,000 ريال لكل شخص سنوياً وفق حد التغطية المحدث.">Unified Benefit Policy Limit: Minimum SAR 500,000 annual maximum per insured.</li>
+          <li data-en="Employer Liability: Employers cannot deduct health insurance costs or premiums from the employee's basic salary or allowances." data-ar="مسؤولية صاحب العمل: لا يحق لصاحب العمل خصم تكاليف أو أقساط التأمين الطبي من راتب الموظف أياً كانت الظروف.">Employer Liability: Employers cannot deduct health insurance costs from employee salary.</li>
+        </ul>
+      </div>
+
+      <!-- Section 2: Pricing Mechanics & Factors -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+          <span data-en="2. Key Factors Affecting Corporate Health Insurance Premiums" data-ar="2. العوامل الرئيسية المؤثرة في احتساب أقساط التأمين الطبي">2. Key Factors Affecting Corporate Health Insurance Premiums</span>
+        </h3>
+        <p class="text-sm" data-en="Insurance companies regulated by the Saudi Central Bank (SAMA) apply actuarial risk formulas based on dynamic parameters to calculate group policy premiums:" data-ar="تطبق شركات التأمين المعتمدة من البنك المركزي السعودي (ساما) معادلات إكتوارية تعتمد على عدة عوامل لحساب التكلفة السنوية:">Insurance companies apply actuarial risk formulas based on dynamic parameters:</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs pt-2">
+          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+            <div class="font-bold text-slate-900 mb-1" data-en="Age Bracket Distribution" data-ar="التوزيع العمري للمجموعات">Age Bracket Distribution</div>
+            <p class="text-slate-600" data-en="Older workforce age brackets (46-60 and 60+) carry significantly higher risk loading due to chronic condition prevalence compared to the 18-30 bracket." data-ar="الفئات العمرية الأكبر سناً (من 46 إلى 60 وأكثر) تتطلب تحميلاً أعلى للتكلفة نظراً لارتفاع معدل الإصابة بالأمراض المزمنة.">Older age brackets carry higher premium rates.</p>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+            <div class="font-bold text-slate-900 mb-1" data-en="Network Tier Class" data-ar="درجة شبكة المستشفيات">Network Tier Class</div>
+            <p class="text-slate-600" data-en="VIP and Class A plans include top tier private hospital networks (e.g., Habib, Dallah, Hammadi), driving up baseline premium per life." data-ar="الفئات الممتازة (VIP) والفئة (أ) تمنح الدخول لمستشفيات النخبة مما يرفع التكلفة الفردية للوثيقة.">VIP & Class A plans include top tier hospital networks.</p>
+          </div>
+          <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+            <div class="font-bold text-slate-900 mb-1" data-en="Group Size Discount Pool" data-ar="حجم المجموعة الخاضعة للتأمين">Group Size Discount Pool</div>
+            <p class="text-slate-600" data-en="Larger SMEs (50+ to 250+ lives) benefit from volume discounts and spread-out actuarial risk compared to micro enterprises (1-9 lives)." data-ar="تستفيد الشركات ذات الأعداد الكبيرة (+50 موظف) من خصومات الحجم وتوزيع المخاطر مقارنة بالشركات متناهية الصغر.">Larger group sizes benefit from volume discounts.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Calculation Formula Breakdown -->
+      <div class="space-y-3">
+        <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-600"></span>
+          <span data-en="3. Premium Estimation Formula Breakdown" data-ar="3. المعادلة الرياضية لاحتساب الميزانية التقديرية">3. Premium Estimation Formula Breakdown</span>
+        </h3>
+        <div class="bg-slate-900 text-slate-100 p-4 rounded-xl text-xs font-mono overflow-x-auto space-y-2">
+          <div>Base Premium = Σ (Class Employee Count × Age Bracket Rate) + (Dependents Count × Dependent Avg Rate)</div>
+          <div>Subtotal Premium = Base Premium × (1 + Risk/Pre-existing Loading %) × (1 - Group Size Discount %)</div>
+          <div>Total Regulatory Fees = Total Insured Lives × CHI Platform Fee (SAR 15)</div>
+          <div>KSA VAT Amount = (Subtotal Premium + Total Regulatory Fees) × 15%</div>
+          <div class="text-emerald-400 font-bold">Final Total Cost = Subtotal Premium + Total Regulatory Fees + KSA VAT Amount</div>
+        </div>
+      </div>
+
+      <!-- Section 4: Frequently Asked Questions (FAQ) -->
+      <div class="space-y-4 pt-4 border-t border-slate-200">
+        <h3 class="text-lg font-bold text-slate-900" data-en="Frequently Asked Questions (FAQs)" data-ar="الأسئلة الشائعة حول التأمين الطبي للشركات">Frequently Asked Questions (FAQs)</h3>
+        
+        <div class="space-y-3 text-sm">
+          <div class="border border-slate-200 rounded-xl p-4">
+            <h4 class="font-bold text-slate-900 mb-1" data-en="Is VAT applicable to corporate health insurance in Saudi Arabia?" data-ar="هل تخضع وثائق التأمين الطبي لضريبة القيمة المضافة في السعودية؟">Is VAT applicable to corporate health insurance in Saudi Arabia?</h4>
+            <p class="text-slate-600" data-en="Yes. Pursuant to ZATCA (Zakat, Tax and Customs Authority) regulations, standard 15% VAT is applied to all commercial insurance policy premiums and associated regulatory transaction fees." data-ar="نعم، تفرض هيئة الزكاة والضريبة والجمارك (ZATCA) ضريبة القيمة المضافة بنسبة 15% على إجمالي أقساط وثائق التأمين التجاري والرسوم الإدارية التابعة لها.">Yes. Standard 15% VAT is applied to all commercial insurance policies per ZATCA rules.</p>
+          </div>
+          
+          <div class="border border-slate-200 rounded-xl p-4">
+            <h4 class="font-bold text-slate-900 mb-1" data-en="What happens if an employee's insurance is not renewed in time?" data-ar="ما هي العقوبة المالية في حال تأخير تجديد التأمين الطبي للموظف؟">What happens if an employee's insurance is not renewed in time?</h4>
+            <p class="text-slate-600" data-en="Failure to maintain active CHI insurance compliance results in financial penalties up to the annual cost of coverage per employee, block on iqama renewal/transfers, and potential suspension of commercial services on Qiwa and Muqeem." data-ar="عدم توفير أو تجديد التأمين الطبي يعرض الشركة لغرامات مالية تصل لتكلفة تغطية التأمين السنوية لكل فرد، بالإضافة إلى إيقاف خدمات تجديد الإقامة ونقل الخدمات في منصات قوى ومقيم.">Failure to maintain coverage leads to heavy fines and Qiwa/Muqeem service blocks.</p>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl p-4">
+            <h4 class="font-bold text-slate-900 mb-1" data-en="Can an SME mix different classes for different employee seniority levels?" data-ar="هل يمكن للشركة توزيع الموظفين على فئات تأمينية مختلفة (VIP، أ، ب)؟">Can an SME mix different classes for different employee seniority levels?</h4>
+            <p class="text-slate-600" data-en="Yes, employers are permitted to select higher policy tiers (such as Class VIP or Class A) for managerial roles, provided that the lowest tier (Class C/Basic) still satisfies all minimum mandatory standards set by the CHI Essential Benefit Package." data-ar="نعم، يُسمح لصاحب العمل بتحديد درجات تغطية أعلى (مثل VIP أو فئة أ) للإدارة العليا، بشرط ألا تقل أدنى فئة (فئة ب أو ج) عن الحد الأدنى الإلزامي المعتمد في الوثيقة الموحدة لمجلس الضمان الصحي.">Yes, employers can assign different coverage tiers based on job roles, provided all tiers meet CHI minimums.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-slate-400 text-xs py-8 px-4 border-t border-slate-800 mt-12 no-print">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+      <div>
+        <p class="font-semibold text-slate-200" data-en="Saudi CHI Corporate Health Insurance Cost Estimator" data-ar="حاسبة تكاليف التأمين الطبي للشركات في السعودية">Saudi CHI Corporate Health Insurance Cost Estimator</p>
+        <p class="mt-1 text-slate-500" data-en="Designed for HR Leaders, Finance Managers, & Operations Teams in KSA." data-ar="مخصصة لمدراء الموارد البشرية، والمدراء الماليين، وفرق العمليات في السعودية.">Designed for HR Leaders & Finance Managers in KSA.</p>
+      </div>
+      <div class="text-slate-500">
+        <p data-en="© 2025 KSA B2B SaaS Tools. All rights reserved." data-ar="© 2025 جميع الحقوق محفوظة لـ أدوات B2B السعودية.">© 2025 KSA B2B SaaS Tools. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript Engine -->
+  <script>
+    let currentLang = 'en';
+
+    // Base estimated annual rates per head based on market statistics in KSA
+    const ageRates = {
+      vip:     { age18_30: 3800, age31_45: 4600, age46_60: 6200, age60plus: 9500 },
+      classA:  { age18_30: 2200, age31_45: 2900, age46_60: 4100, age60plus: 6800 },
+      classB:  { age18_30: 950,  age31_45: 1350, age46_60: 2100, age60plus: 3900 }
+    };
+
+    const depRates = {
+      spouse: 2100,
+      child: 1100
+    };
+
+    const poolDiscountMultiplier = {
+      micro: 1.15,   // Micro company loading +15%
+      small: 1.00,   // Standard baseline rate
+      medium: 0.88,  // -12% discount
+      large: 0.78    // -22% corporate discount
+    };
+
+    function calculateInsurance() {
+      const companySize = document.getElementById('companySize').value;
+      const riskLoading = parseFloat(document.getElementById('riskLoading').value) || 0;
+      
+      // Counts
+      const vipCount = parseInt(document.getElementById('vipCount').value) || 0;
+      const vipAge = document.getElementById('vipAge').value;
+      
+      const classACount = parseInt(document.getElementById('classACount').value) || 0;
+      const classAAge = document.getElementById('classAAge').value;
+      
+      const classBCount = parseInt(document.getElementById('classBCount').value) || 0;
+      const classBAge = document.getElementById('classBAge').value;
+      
+      const spousesCount = parseInt(document.getElementById('spousesCount').value) || 0;
+      const childrenCount = parseInt(document.getElementById('childrenCount').value) || 0;
+      const chiFeePerHead = parseFloat(document.getElementById('chiFeePerHead').value) || 0;
+
+      const poolMultiplier = poolDiscountMultiplier[companySize] || 1.0;
+
+      // Base Employee Calculations
+      const vipBaseCost = vipCount * (ageRates.vip[vipAge] || 4000) * poolMultiplier;
+      const classABaseCost = classACount * (ageRates.classA[classAAge] || 2500) * poolMultiplier;
+      const classBBaseCost = classBCount * (ageRates.classB[classBAge] || 1200) * poolMultiplier;
+      
+      const totalEmpBase = vipBaseCost + classABaseCost + classBBaseCost;
+      
+      // Base Dependents Calculations
+      const spousesBaseCost = spousesCount * depRates.spouse * poolMultiplier;
+      const childrenBaseCost = childrenCount * depRates.child * poolMultiplier;
+      const totalDepBase = spousesBaseCost + childrenBaseCost;
+
+      const rawBaseTotal = totalEmpBase + totalDepBase;
+      const riskLoadingAmount = rawBaseTotal * riskLoading;
+      const netInsurancePremium = rawBaseTotal + riskLoadingAmount;
+
+      const totalEmployees = vipCount + classACount + classBCount;
+      const totalInsuredLives = totalEmployees + spousesCount + childrenCount;
+      
+      const totalChiFees = totalInsuredLives * chiFeePerHead;
+      const taxableSubtotal = netInsurancePremium + totalChiFees;
+      const vatAmount = taxableSubtotal * 0.15;
+      const finalTotalCost = taxableSubtotal + vatAmount;
+
+      // Per Employee & Per Life Averages
+      const avgCostPerEmp = totalEmployees > 0 ? (finalTotalCost / totalEmployees) : 0;
+      const avgCostPerLife = totalInsuredLives > 0 ? (finalTotalCost / totalInsuredLives) : 0;
+
+      // Update DOM
+      document.getElementById('totalLivesBadge').innerText = totalInsuredLives + (currentLang === 'ar' ? ' فرد مؤمن' : ' Lives');
+      document.getElementById('totalCostDisplay').innerText = formatCurrency(finalTotalCost);
+      document.getElementById('costPerEmp').innerText = formatCurrency(avgCostPerEmp);
+      document.getElementById('costPerLife').innerText = formatCurrency(avgCostPerLife);
+      
+      document.getElementById('empBasePremium').innerText = formatCurrency(totalEmpBase) + ' SAR';
+      document.getElementById('depBasePremium').innerText = formatCurrency(totalDepBase) + ' SAR';
+      document.getElementById('riskLoadingVal').innerText = formatCurrency(riskLoadingAmount) + ' SAR';
+      document.getElementById('chiTotalFees').innerText = formatCurrency(totalChiFees) + ' SAR';
+      document.getElementById('vatAmountDisplay').innerText = formatCurrency(vatAmount) + ' SAR';
+    }
+
+    function formatCurrency(num) {
+      return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      const htmlEl = document.documentElement;
+      htmlEl.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+      htmlEl.setAttribute('lang', currentLang);
+      
+      document.getElementById('langToggleBtn').innerText = currentLang === 'ar' ? 'English' : 'العربية';
+
+      document.querySelectorAll('[data-en]').forEach(el => {
+        const txt = el.getAttribute(`data-${currentLang}`);
+        if (txt) {
+          if (el.tagName === 'INPUT' && el.type === 'placeholder') {
+            el.placeholder = txt;
+          } else {
+            el.innerText = txt;
+          }
+        }
+      });
+
+      // Re-trigger calculation to update language-dependent strings
+      calculateInsurance();
+    }
+
+    function exportCSV() {
+      const totalLives = document.getElementById('totalLivesBadge').innerText;
+      const totalCost = document.getElementById('totalCostDisplay').innerText;
+      const costPerEmp = document.getElementById('costPerEmp').innerText;
+      const empBase = document.getElementById('empBasePremium').innerText;
+      const depBase = document.getElementById('depBasePremium').innerText;
+      const riskVal = document.getElementById('riskLoadingVal').innerText;
+      const chiFees = document.getElementById('chiTotalFees').innerText;
+      const vatVal = document.getElementById('vatAmountDisplay').innerText;
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "Saudi Corporate Health Insurance Summary Report\n";
+      csvContent += "Parameter,Value (SAR)\n";
+      csvContent += `Total Insured Lives,${totalLives}\n`;
+      csvContent += `Base Employees Premium,${empBase.replace(/,/g, '')}\n`;
+      csvContent += `Base Dependents Premium,${depBase.replace(/,/g, '')}\n`;
+      csvContent += `Pre-existing Risk Loading,${riskVal.replace(/,/g, '')}\n`;
+      csvContent += `CHI Platform Regulatory Fees,${chiFees.replace(/,/g, '')}\n`;
+      csvContent += `VAT (15%),${vatVal.replace(/,/g, '')}\n`;
+      csvContent += `ESTIMATED TOTAL ANNUAL PREMIUM,${totalCost.replace(/,/g, '')}\n`;
+      csvContent += `AVERAGE COST PER EMPLOYEE,${costPerEmp.replace(/,/g, '')}\n`;
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "Saudi_Corporate_Health_Insurance_Estimate.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initial calculation on page load
+    window.onload = function() {
+      calculateInsurance();
+    };
+  </script>
+</body>
+</html>
