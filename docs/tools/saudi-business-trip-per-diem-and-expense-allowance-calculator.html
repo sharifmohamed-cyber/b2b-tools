@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang='ar' dir='rtl'>
+<head>
+  <meta charset='UTF-8'>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>حاسبة بدل السفر وانتداب الموظفين | Saudi Business Trip & Per Diem Calculator</title>
+  <script src='https://cdn.tailwindcss.com'></script>
+  <link href='https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap' rel='stylesheet'>
+  <style>
+    body { font-family: 'Cairo', 'Inter', sans-serif; }
+    .font-en { font-family: 'Inter', sans-serif; }
+  </style>
+</head>
+<body class='bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between'>
+
+  <!-- Sticky Top Promotional Header -->
+  <div class='bg-emerald-900 text-white text-xs sm:text-sm font-semibold py-2.5 px-4 shadow-md sticky top-0 z-50'>
+    <div class='max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-right'>
+      <div class='flex items-center gap-2'>
+        <span class='bg-amber-400 text-emerald-950 text-xs px-2 py-0.5 rounded-full font-bold uppercase tracking-wider'>جديد / NEW</span>
+        <span data-ar='قالب الإكسل الاحترافي لإدارة انتداب ومصاريف السفر وفق نظام العمل السعودي' data-en='Professional Saudi HR Travel & Per Diem Automated Master Template ($29)'>قالب الإكسل الاحترافي لإدارة انتداب ومصاريف السفر وفق نظام العمل السعودي</span>
+      </div>
+      <a href='https://gumroad.com' target='_blank' rel='noopener' class='bg-amber-400 hover:bg-amber-300 text-emerald-950 font-bold px-4 py-1 rounded shadow transition text-xs flex items-center justify-center gap-1'>
+        <span data-ar='تحميل القالب الكامل ($29)' data-en='Get Master Template ($29)'>تحميل القالب الكامل ($29)</span>
+        <svg class='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M14 5l7 7m0 0l-7 7m7-7H3'></path></svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content Wrapper -->
+  <div class='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full'>
+    
+    <!-- Header Controls & Title -->
+    <div class='flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-6 border-b border-slate-200 gap-4'>
+      <div>
+        <h1 class='text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight' data-ar='حاسبة بدل السفر وانتداب الموظفين (السعودية)' data-en='Saudi Business Trip & Per Diem Calculator'>حاسبة بدل السفر وانتداب الموظفين (السعودية)</h1>
+        <p class='text-sm text-slate-500 mt-1' data-ar='حساب تكاليف الانتداب الداخلي والخارجي، الاستقطاعات، والبدلات المستحقة وفق سياسات نظام العمل السعودي' data-en='Calculate domestic & international per diems, lodging deductions, and net payouts under KSA regulations.'>حساب تكاليف الانتداب الداخلي والخارجي، الاستقطاعات، والبدلات المستحقة وفق سياسات نظام العمل السعودي</p>
+      </div>
+      <div class='flex items-center gap-3'>
+        <button id='langToggleBtn' onclick='toggleLanguage()' class='bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 font-semibold px-4 py-2 rounded-lg text-sm shadow-sm transition flex items-center gap-2'>
+          <svg class='w-4 h-4 text-emerald-600' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129'></path></svg>
+          <span id='langLabel'>English</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Grid Container -->
+    <div class='grid grid-cols-1 lg:grid-cols-12 gap-8'>
+      
+      <!-- Form Column -->
+      <div class='lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 space-y-6'>
+        <h2 class='text-lg font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3'>
+          <svg class='w-5 h-5 text-emerald-600' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'></path></svg>
+          <span data-ar='بيانات رحلة الانتداب' data-en='Trip & Allowance Parameters'>بيانات رحلة الانتداب</span>
+        </h2>
+
+        <div class='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+          <!-- Trip Type -->
+          <div>
+            <label class='block text-xs font-semibold text-slate-700 uppercase mb-1' data-ar='نوع الانتداب' data-en='Trip Type'>نوع الانتداب</label>
+            <select id='tripType' onchange='handlePresetChange()' class='w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none'>
+              <option value='domestic' data-ar='داخلي (داخل المملكة)' data-en='Domestic (Inside KSA)'>داخلي (داخل المملكة)</option>
+              <option value='international' data-ar='خارجي (دول الخليج / دولي)' data-en='International (GCC / Global)'>خارجي (دول الخليج / دولي)</option>
+            </select>
+          </div>
+
+          <!-- Employee Grade -->
+          <div>
+            <label class='block text-xs font-semibold text-slate-700 uppercase mb-1' data-ar='المستوى الوظيفي' data-en='Employee Grade'>المستوى الوظيفي</label>
+            <select id='empGrade' onchange='handlePresetChange()' class='w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-500 focus:outline-none'>
+              <option value='exec' data-ar='إدارة العليا / تنفيذي' data-en='Executive / C-Level'>إدارة العليا / تنفيذي</option>
+              <option value='senior' selected data-ar='إدارة متوسطة / كبار الموظفين' data-en='Senior / Management'>إدارة متوسطة / كبار الموظفين</option>
+              <option value='junior' data-ar='الموظفين العموميين / تشغيلي' data-en='Junior / Operational Staff'>الموظفين العموميين / تشغيلي</option>
+              <option value='custom' data-ar='مخصص (إدخال يدوي)' data-en='Custom Standard Rate'>مخصص (إدخال يدوي)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+          <!-- Daily Base Per Diem Rate -->
+          <div>
+            <label class='block text-xs font-semibold text-slate-700 uppercase mb-1' data-ar='المعدل اليومي الشامل (ر.س)' data-en='Base Daily Per Diem (SAR)'>المعدل اليومي الشامل (ر.س)</label>
+            <input type='number' id='dailyRate' value='800' min='0' step='10' oninput='calculate()' class='w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none'>
+          </div>
+
+          <!-- Duration (Days) -->
+          <div>
+            <label class='block text-xs font-semibold text-slate-700 uppercase mb-1' data-ar='مدة الانتداب (أيام)' data-en='Trip Duration (Days)'>مدة الانتداب (أيام)</label>
+            <input type='number' id='tripDays' value='5' min='1' step='1' oninput='calculate()' class='w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-bold text-slate-900 focus:ring-2 focus:ring-emerald-500 focus:outline-none'>
+          </div>
+        </div>
+
+        <!-- Company Provided Benefits / Deductions -->
+        <div class='border-t border-slate-100 pt-4'>
+          <label class='block text-xs font-semibold text-slate-700 uppercase mb-2' data-ar='المنافع الموفرة من الشركة (استقطاعات الانتداب)' data-en='Company Provided Benefits (Deductions)'>المنافع الموفرة من الشركة (استقطاعات الانتداب)</label>
+          <div class='grid grid-cols-1 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200'>
+            <label class='flex items-center gap-2 cursor-pointer text-xs font-medium text-slate-700'>
+              <input type='checkbox' id='chkHotel' onchange='calculate()' class='w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 border-slate-300'>
+              <span data-ar='السكن موفر (خصم 50%)' data-en='Lodging Provided (-50%)'>السكن موفر (خصم 50%)</span>
+            </label>
+            <label class='flex items-center gap-2 cursor-pointer text-xs font-medium text-slate-700'>
+              <input type='checkbox' id='chkMeals' onchange='calculate()' class='w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 border-slate-300'>
+              <span data-ar='الوجبات موفرة (خصم 25%)' data-en='Meals Provided (-25%)'>الوجبات موفرة (خصم 25%)</span>
+            </label>
+            <label class='flex items-center gap-2 cursor-pointer text-xs font-medium text-slate-700'>
+              <input type='checkbox' id='chkTransport' onchange='calculate()' class='w-4 h-4 text-emerald-600 rounded focus:ring-emerald-500 border-slate-300'>
+              <span data-ar='المواصلات موفرة (خصم 15%)' data-en='Transport Provided (-15%)'>المواصلات موفرة (خصم 15%)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Additional Expenses Reimbursable -->
+        <div class='border-t border-slate-100 pt-4 space-y-3'>
+          <label class='block text-xs font-semibold text-slate-700 uppercase mb-1' data-ar='مصاريف مباشرة مستردة (بالفواتير)' data-en='Direct Expenses Reimbursable (Receipts)'>مصاريف مباشرة مستردة (بالفواتير)</label>
+          <div class='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+            <div>
+              <label class='block text-xs text-slate-500 mb-1' data-ar='تذاكر الطيران / مواصلات رئيسية' data-en='Flight Tickets / Transit'>تذاكر الطيران / مواصلات رئيسية</label>
+              <input type='number' id='expFlight' value='1200' min='0' oninput='calculate()' class='w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none'>
+            </div>
+            <div>
+              <label class='block text-xs text-slate-500 mb-1' data-ar='تأشيرات / فحص / مصاريف رسمية' data-en='Visas / Official Fees'>تأشيرات / فحص / مصاريف رسمية</label>
+              <input type='number' id='expVisa' value='150' min='0' oninput='calculate()' class='w-full bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none'>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Results Column -->
+      <div class='lg:col-span-5 flex flex-col justify-between space-y-6'>
+        
+        <div class='bg-emerald-950 text-white rounded-2xl p-6 sm:p-8 shadow-xl relative overflow-hidden flex-grow flex flex-col justify-between'>
+          <!-- Background Decorative Circle -->
+          <div class='absolute -left-10 -bottom-10 w-40 h-40 bg-emerald-800 rounded-full blur-2xl opacity-40 pointer-events-none'></div>
+
+          <div>
+            <div class='flex justify-between items-center mb-6'>
+              <span class='text-xs uppercase tracking-widest text-emerald-400 font-bold' data-ar='ملخص المستحقات المالية' data-en='Payout Summary'>ملخص المستحقات المالية</span>
+              <span class='bg-emerald-800 text-emerald-200 text-xs px-2.5 py-1 rounded-full font-medium' id='summaryBadge' data-ar='انتداب محلي' data-en='Domestic Trip'>انتداب محلي</span>
+            </div>
+
+            <!-- Grand Total Display -->
+            <div class='mb-6'>
+              <div class='text-xs text-slate-300 mb-1' data-ar='إجمالي المبلغ المستحق للموظف' data-en='Total Allowance Payable to Employee'>إجمالي المبلغ المستحق للموظف</div>
+              <div class='text-4xl sm:text-5xl font-black text-amber-400 tracking-tight flex items-baseline gap-2'>
+                <span id='netTotalDisplay'>0</span>
+                <span class='text-lg font-bold text-emerald-300' data-ar='ر.س' data-en='SAR'>ر.س</span>
+              </div>
+            </div>
+
+            <!-- Detailed Breakdown -->
+            <div class='space-y-3 border-t border-emerald-800/80 pt-4 text-sm'>
+              <div class='flex justify-between items-center'>
+                <span class='text-emerald-200' data-ar='إجمالي البدل اليومي الخام:' data-en='Gross Per Diem Total:'>إجمالي البدل اليومي الخام:</span>
+                <span class='font-semibold text-white' id='grossPerDiemDisplay'>0 SAR</span>
+              </div>
+              <div class='flex justify-between items-center text-rose-300'>
+                <span data-ar='خصم الخدمات الموفرة:' data-en='Provided Services Deductions:'>خصم الخدمات الموفرة:</span>
+                <span class='font-semibold' id='deductionsDisplay'>-0 SAR</span>
+              </div>
+              <div class='flex justify-between items-center text-emerald-300 font-medium border-t border-emerald-900 pt-2'>
+                <span data-ar='صافي بدل الانتداب اليومي:' data-en='Net Daily Per Diem Rate:'>صافي بدل الانتداب اليومي:</span>
+                <span id='netDailyRateDisplay'>0 SAR</span>
+              </div>
+              <div class='flex justify-between items-center'>
+                <span class='text-emerald-200' data-ar='المصاريف المباشرة المستردة:' data-en='Direct Expense Reimbursement:'>المصاريف المباشرة المستردة:</span>
+                <span class='font-semibold text-white' id='reimbursablesDisplay'>0 SAR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class='mt-8 pt-4 border-t border-emerald-800/60 flex flex-wrap gap-2'>
+            <button onclick='exportCSV()' class='flex-1 bg-emerald-800 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-lg text-xs transition flex items-center justify-center gap-1.5'>
+              <svg class='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'></path></svg>
+              <span data-ar='تصدير CSV' data-en='Export CSV'>تصدير CSV</span>
+            </button>
+            <button onclick='window.print()' class='flex-1 bg-emerald-800 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-lg text-xs transition flex items-center justify-center gap-1.5'>
+              <svg class='w-4 h-4' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z'></path></svg>
+              <span data-ar='طباعة التقرير' data-en='Print Summary'>طباعة التقرير</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- High-converting Banner CTA Card -->
+        <div class='bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl p-6 text-emerald-950 shadow-md relative overflow-hidden'>
+          <h3 class='font-extrabold text-base mb-1' data-ar='هل تحتاج نظاماً شاملاً لإدارة الانتداب والسفريات؟' data-en='Need a Complete Automated HR Travel System?'>هل تحتاج نظاماً شاملاً لإدارة الانتداب والسفريات؟</h3>
+          <p class='text-xs text-amber-950 font-medium mb-4' data-ar='حمل نموذج الإكسل الاحترافي الجاهز المؤتمت لمعالجة مطالبات الانتداب والتأشيرات والربط المحاسبي.' data-en='Download our fully automated Excel Master Template with workflow approvals, ZATCA tax rules, and receipt claim sheets.'>حمل نموذج الإكسل الاحترافي الجاهز المؤتمت لمعالجة مطالبات الانتداب والتأشيرات والربط المحاسبي.</p>
+          <a href='https://gumroad.com' target='_blank' rel='noopener' class='block w-full text-center bg-emerald-950 hover:bg-emerald-900 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow'>
+            <span data-ar='شراء القالب الكامل الآن ($29)' data-en='Buy Excel Master Template ($29)'>شراء القالب الكامل الآن ($29)</span>
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Legal Disclaimer Bar -->
+    <div class='mt-8 bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-xl text-xs text-amber-900 leading-relaxed flex items-start gap-3'>
+      <svg class='w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'></path></svg>
+      <div>
+        <strong data-ar='تنبيه قانوني وملاحظة إخلال مسؤولية:' data-en='Legal Disclaimer & Notice:'>تنبيه قانوني وملاحظة إخلال مسؤولية:</strong>
+        <span data-ar='هذه الحاسبة مصممة للأغراض الاسترشادية وحساب التكاليف التقديرية لبدلات ومصاريف سفر الأعمال وفق الممارسات الشائعة ولائحة العمل السعودية. قد تختلف اللوائح الداخلية للشركات والجهات الحكومية أو المزايا الخاصة بكل عقد. يلزم مراجعة الإدارة المالية واللوائح الداخلية المعتمدة لدى المنشأة قبل السداد النهائي.' data-en='This tool provides estimated calculations for business trip per diems based on standard Saudi Labor practices. Actual payouts depend on company internal travel policies and contract terms. Verify calculations with your HR and finance department prior to processing disbursements.'>هذه الحاسبة مصممة للأغراض الاسترشادية وحساب التكاليف التقديرية لبدلات ومصاريف سفر الأعمال وفق الممارسات الشائعة ولائحة العمل السعودية. قد تختلف اللوائح الداخلية للشركات والجهات الحكومية أو المزايا الخاصة بكل عقد. يلزم مراجعة الإدارة المالية واللوائح الداخلية المعتمدة لدى المنشأة قبل السداد النهائي.</span>
+      </div>
+    </div>
+
+    <!-- Comprehensive SEO & Educational Article Section -->
+    <div class='mt-12 bg-white rounded-2xl border border-slate-200 p-6 sm:p-10 text-slate-700 space-y-8 shadow-sm'>
+      
+      <div>
+        <h2 class='text-xl sm:text-2xl font-bold text-slate-900 mb-4' data-ar='دليل أحكام الانتداب وسفر الأعمال في نظام العمل السعودي' data-en='Comprehensive Guide to Business Trip Allowances under Saudi Labor Law'>دليل أحكام الانتداب وسفر الأعمال في نظام العمل السعودي</h2>
+        <p class='leading-relaxed text-sm sm:text-base' data-ar='يعد انتداب الموظفين (Business Trips) لتأدية مهام خارج مقر عملهم الأساسي جزءاً حيوياً من العمليات التجارية للشركات والمؤسسات في المملكة العربية السعودية. يُلزم نظام العمل السعودي واللوائح التنفيذية التابعة لوزارة الموارد البشرية والتنمية الاجتماعية المنشآت بتعويض العامل عن جميع التكاليف والمصاريف التي يتكبدها أثناء أدائه لمهام وصلاحيات العمل خارج مقر عمله المعتاد.' data-en='Employee business trips (Intidab) are a critical operational requirement for enterprises in Saudi Arabia. Under Saudi Labor Law guidelines and Ministry of Human Resources policies, employers are required to cover all necessary expenses and provide fair daily allowances for staff assigned to temporary duties outside their primary workstation.'>يعد انتداب الموظفين (Business Trips) لتأدية مهام خارج مقر عملهم الأساسي جزءاً حيوياً من العمليات التجارية للشركات والمؤسسات في المملكة العربية السعودية. يُلزم نظام العمل السعودي واللوائح التنفيذية التابعة لوزارة الموارد البشرية والتنمية الاجتماعية المنشآت بتعويض العامل عن جميع التكاليف والمصاريف التي يتكبدها أثناء أدائه لمهام وصلاحيات العمل خارج مقر عمله المعتاد.</p>
+      </div>
+
+      <div class='grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-slate-100 pt-6'>
+        <div>
+          <h3 class='text-lg font-bold text-slate-900 mb-2' data-ar='ما الفرق بين بدل الانتداب اليومي والمصاريف المباشرة؟' data-en='Per Diem vs. Direct Expense Reimbursements'>ما الفرق بين بدل الانتداب اليومي والمصاريف المباشرة؟</h3>
+          <ul class='list-disc list-inside text-sm space-y-2 text-slate-600'>
+            <li><strong class='text-slate-800' data-ar='بدل الانتداب اليومي (Per Diem):' data-en='Daily Per Diem:'>بدل الانتداب اليومي (Per Diem):</strong> مبلغ مقطوع يُصرف للموظف لتغطية مصاريف المعيشة الشخصية، الوجبات، والإقامة والمواصلات الداخلية في مكان الانتداب.</li>
+            <li><strong class='text-slate-800' data-ar='المصاريف المباشرة (Direct Reimbursables):' data-en='Direct Reimbursables:'>المصاريف المباشرة (Direct Reimbursables):</strong> مصاريف يتم تعويضها بناءً على تقديم الفواتير والمستندات المؤيدة الأصلية، مثل تذاكر الطيران، رسوم التأشيرات، ورسوم المؤتمرات.</li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 class='text-lg font-bold text-slate-900 mb-2' data-ar='معادلة وقواعد استقطاع الخدمات الموفرة' data-en='Deduction Rules for Company-Provided Benefits'>معادلة وقواعد استقطاع الخدمات الموفرة</h3>
+          <p class='text-sm text-slate-600 leading-relaxed' data-ar='في حال قامت الشركة بحجز ودفع تكاليف الفندق أو السكن مباشرة، أو توفير وجبات الطعام أو وسيلة النقل، يتم إجراء الاستقطاعات التالية من البدل اليومي المعتمد وفق السياسة المالية القياسية:' data-en='When employers directly cover accommodation, meals, or transportation, the gross daily per diem rate is subject to standard percentage deductions:'>في حال قامت الشركة بحجز ودفع تكاليف الفندق أو السكن مباشرة، أو توفير وجبات الطعام أو وسيلة النقل، يتم إجراء الاستقطاعات التالية من البدل اليومي المعتمد وفق السياسة المالية القياسية:</p>
+          <div class='mt-2 text-xs font-mono bg-slate-100 p-3 rounded-lg border border-slate-200 text-slate-800'>
+            Net Per Diem = Base Rate × (100% - Accommodation% - Meals% - Transport%)
+          </div>
+        </div>
+      </div>
+
+      <!-- Tax / ZATCA Treatment -->
+      <div class='border-t border-slate-100 pt-6'>
+        <h3 class='text-lg font-bold text-slate-900 mb-3' data-ar='المعاملة الضريبية والزكوية لبدل السفر (هيئة الزكاة والضريبة والجمارك - ZATCA)' data-en='Tax & ZATCA Implications of Travel Allowances'>المعاملة الضريبية والزكوية لبدل السفر (هيئة الزكاة والضريبة والجمارك - ZATCA)</h3>
+        <p class='text-sm leading-relaxed text-slate-600 mb-3' data-ar='وفقاً لتشريعات هيئة الزكاة والضريبة والجمارك في السعودية:' data-en='According to ZATCA directives in Saudi Arabia:'>وفقاً لتشريعات هيئة الزكاة والضريبة والجمارك في السعودية:</p>
+        <div class='grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm'>
+          <div class='bg-emerald-50 border border-emerald-200 p-4 rounded-xl'>
+            <h4 class='font-bold text-emerald-900 mb-1' data-ar='ضريبة القيمة المضافة (VAT)' data-en='Value Added Tax (VAT)'>ضريبة القيمة المضافة (VAT)</h4>
+            <p class='text-emerald-800' data-ar='بدل الانتداب النقدي المقطوع لا يخضع لضريبة القيمة المضافة. ولكن الفواتير المستردة (مثل الفنادق والملاحة الداخلية) تحمل ضريبة 15% ويمكن للمنشأة استرداد ضريبة المدخلات بشرط صدور الفاتورة الضريبية باسم المنشأة وتضمين رقمها الضريبي.' data-en='Cash per diem allowances are exempt from VAT. However, directly reimbursed expenses (hotels, local transport) with tax invoices issued to the enterprise allow input VAT recovery (15%).'>بدل الانتداب النقدي المقطوع لا يخضع لضريبة القيمة المضافة. ولكن الفواتير المستردة (مثل الفنادق والملاحة الداخلية) تحمل ضريبة 15% ويمكن للمنشأة استرداد ضريبة المدخلات بشرط صدور الفاتورة الضريبية باسم المنشأة وتضمين رقمها الضريبي.</p>
+          </div>
+          <div class='bg-slate-100 border border-slate-200 p-4 rounded-xl'>
+            <h4 class='font-bold text-slate-900 mb-1' data-ar='ضريبة الدخل والزكاة' data-en='Corporate Tax & Zakat'>ضريبة الدخل والزكاة</h4>
+            <p class='text-slate-700' data-ar='تُعد مصاريف الانتداب وبدلات السفر مصاريف جائزة الخصم من الوعاء الزكوي أو الضريبي للمنشأة بشرط أن تكون مرتبطة ارتباطاً مباشراً بنشاط العمل ومؤيدة بالمستندات اللازمة.' data-en='Travel allowances and reimbursable business expenses are deductible expenses for Zakat and Corporate Income Tax calculations provided they are strictly business-related.'>تُعد مصاريف الانتداب وبدلات السفر مصاريف جائزة الخصم من الوعاء الزكوي أو الضريبي للمنشأة بشرط أن تكون مرتبطة ارتباطاً مباشراً بنشاط العمل ومؤيدة بالمستندات اللازمة.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class='border-t border-slate-100 pt-6'>
+        <h3 class='text-lg font-bold text-slate-900 mb-4' data-ar='الأسئلة الشائعة حول بدل السفر والانتداب (FAQ)' data-en='Frequently Asked Questions (FAQ)'>الأسئلة الشائعة حول بدل السفر والانتداب (FAQ)</h3>
+        <div class='space-y-4 text-sm'>
+          <div class='border-b border-slate-100 pb-3'>
+            <h4 class='font-bold text-slate-800 mb-1' data-ar='س: هل يحسب يوم السفر ويوم العودة ضمن أيام الانتداب؟' data-en='Q: Are departure and return days fully counted in the per diem?'>س: هل يحسب يوم السفر ويوم العودة ضمن أيام الانتداب؟</h4>
+            <p class='text-slate-600' data-ar='ج: نعم، تُحسب أيام الذهاب والعودة كأيام انتداب كاملة أو بنسبة 50% لكل يوم بناءً على توقيت المغادرة والوصول وفق لائحة تنظيم العمل الداخلية المعتمدة للمنشأة.' data-en='A: Yes, travel days are typically counted as full days or 50% partial days depending on departure/arrival times specified in the approved company policy.'>ج: نعم، تُحسب أيام الذهاب والعودة كأيام انتداب كاملة أو بنسبة 50% لكل يوم بناءً على توقيت المغادرة والوصول وفق لائحة تنظيم العمل الداخلية المعتمدة للمنشأة.</p>
+          </div>
+          <div class='border-b border-slate-100 pb-3'>
+            <h4 class='font-bold text-slate-800 mb-1' data-ar='س: هل يحق للشركة عدم صرف بدل انتداب إذا وفرت السكن والطعام؟' data-en='Q: Can a company omit daily allowance if all expenses are covered?'>س: هل يحق للشركة عدم صرف بدل انتداب إذا وفرت السكن والطعام؟</h4>
+            <p class='text-slate-600' data-ar='ج: في حال توفير كافة الخدمات (السكن، الوجبات الثلاث، والمواصلات)، يُصرف للموظف بدل جيب أو بدل مصاريف نثرية طفيفة (عادة 10% إلى 15% من البدل الأساسي) لتغطية أي مصاريف طارئة.' data-en='A: If room, all meals, and transport are provided, companies usually issue a smaller pocket/incidental allowance (10-15%) to cover micro expenses.'>ج: في حال توفير كافة الخدمات (السكن، الوجبات الثلاث، والمواصلات)، يُصرف للموظف بدل جيب أو بدل مصاريف نثرية طفيفة (عادة 10% إلى 15% من البدل الأساسي) لتغطية أي مصاريف طارئة.</p>
+          </div>
+          <div>
+            <h4 class='font-bold text-slate-800 mb-1' data-ar='س: ما هي المستويات المعتمدة لشرائح بدلات السفر؟' data-en='Q: What are standard corporate per diem rates in Saudi Arabia?'>س: ما هي المستويات المعتمدة لشرائح بدلات السفر؟</h4>
+            <p class='text-slate-600' data-ar='ج: تختلف الشرائح، ولكن يتراوح الانتداب الداخلي في السعودية عادة بين 400 إلى 1500 ريال يومياً حسب الدرجة الوظيفية، بينما يتراوح الانتداب الخارجي بين 800 إلى 3000 ريال يومياً.' data-en='A: Standard domestic per diems range from 400 to 1,500 SAR/day based on seniority, while international per diems range from 800 to 3,000+ SAR/day.'>ج: تختلف الشرائح، ولكن يتراوح الانتداب الداخلي في السعودية عادة بين 400 إلى 1500 ريال يومياً حسب الدرجة الوظيفية، بينما يتراوح الانتداب الخارجي بين 800 إلى 3000 ريال يومياً.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class='bg-slate-900 text-slate-400 text-xs py-6 border-t border-slate-800 mt-12'>
+    <div class='max-w-7xl mx-auto px-4 text-center space-y-2'>
+      <p data-ar='جميع الحقوق محفوظة © 2025 - حاسبة بدل السفر وانتداب الموظفين (السعودية)' data-en='All Rights Reserved © 2025 - Saudi Business Trip Per Diem & Travel Allowance Calculator'>جميع الحقوق محفوظة © 2025 - حاسبة بدل السفر وانتداب الموظفين (السعودية)</p>
+      <p class='text-slate-500' data-ar='أداة احترافية مخصصة لأقسام الموارد البشرية والمالية والأعمال في المملكة العربية السعودية' data-en='A specialized B2B HR & Finance operational tool for companies in the Kingdom of Saudi Arabia.'>أداة احترافية مخصصة لأقسام الموارد البشرية والمالية والأعمال في المملكة العربية السعودية</p>
+    </div>
+  </footer>
+
+  <!-- Calculation Logic JavaScript -->
+  <script>
+    let currentLang = 'ar';
+
+    // Benchmark Preset Rates
+    const presetRates = {
+      domestic: {
+        exec: 1500,
+        senior: 800,
+        junior: 500
+      },
+      international: {
+        exec: 3000,
+        senior: 1600,
+        junior: 1000
+      }
+    };
+
+    function handlePresetChange() {
+      const tripType = document.getElementById('tripType').value;
+      const empGrade = document.getElementById('empGrade').value;
+      const dailyRateInput = document.getElementById('dailyRate');
+
+      if (empGrade !== 'custom') {
+        dailyRateInput.value = presetRates[tripType][empGrade];
+      }
+      calculate();
+    }
+
+    function calculate() {
+      const tripType = document.getElementById('tripType').value;
+      const dailyRate = parseFloat(document.getElementById('dailyRate').value) || 0;
+      const tripDays = parseFloat(document.getElementById('tripDays').value) || 0;
+      
+      const chkHotel = document.getElementById('chkHotel').checked;
+      const chkMeals = document.getElementById('chkMeals').checked;
+      const chkTransport = document.getElementById('chkTransport').checked;
+
+      const expFlight = parseFloat(document.getElementById('expFlight').value) || 0;
+      const expVisa = parseFloat(document.getElementById('expVisa').value) || 0;
+
+      // Calculate Deduction Percentage
+      let deductionPercent = 0;
+      if (chkHotel) deductionPercent += 0.50;
+      if (chkMeals) deductionPercent += 0.25;
+      if (chkTransport) deductionPercent += 0.15;
+
+      // Cap deduction at 90% to leave at least 10% incidental allowance
+      if (deductionPercent > 0.90) deductionPercent = 0.90;
+
+      const grossPerDiemTotal = dailyRate * tripDays;
+      const totalDeductionAmount = grossPerDiemTotal * deductionPercent;
+      const netDailyRate = dailyRate * (1 - deductionPercent);
+      const netPerDiemTotal = grossPerDiemTotal - totalDeductionAmount;
+      
+      const directExpensesTotal = expFlight + expVisa;
+      const grandTotalPayout = netPerDiemTotal + directExpensesTotal;
+
+      // Render Results
+      document.getElementById('netTotalDisplay').innerText = grandTotalPayout.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('grossPerDiemDisplay').innerText = grossPerDiemTotal.toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' SAR';
+      document.getElementById('deductionsDisplay').innerText = '-' + totalDeductionAmount.toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' SAR';
+      document.getElementById('netDailyRateDisplay').innerText = netDailyRate.toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' SAR / day';
+      document.getElementById('reimbursablesDisplay').innerText = directExpensesTotal.toLocaleString('en-US', { minimumFractionDigits: 2 }) + ' SAR';
+
+      // Update Badge
+      const badge = document.getElementById('summaryBadge');
+      if (tripType === 'domestic') {
+        badge.innerText = currentLang === 'ar' ? 'انتداب محلي' : 'Domestic Trip';
+      } else {
+        badge.innerText = currentLang === 'ar' ? 'انتداب خارجي' : 'International Trip';
+      }
+    }
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'ar' ? 'en' : 'ar';
+      const htmlTag = document.documentElement;
+      
+      if (currentLang === 'en') {
+        htmlTag.setAttribute('dir', 'ltr');
+        htmlTag.setAttribute('lang', 'en');
+        document.getElementById('langLabel').innerText = 'عربي';
+      } else {
+        htmlTag.setAttribute('dir', 'rtl');
+        htmlTag.setAttribute('lang', 'ar');
+        document.getElementById('langLabel').innerText = 'English';
+      }
+
+      // Toggle all data-ar and data-en elements
+      const elements = document.querySelectorAll('[data-ar]');
+      elements.forEach(el => {
+        if (currentLang === 'en') {
+          if (el.getAttribute('data-en')) el.innerText = el.getAttribute('data-en');
+        } else {
+          if (el.getAttribute('data-ar')) el.innerText = el.getAttribute('data-ar');
+        }
+      });
+
+      calculate();
+    }
+
+    function exportCSV() {
+      const tripType = document.getElementById('tripType').value;
+      const empGrade = document.getElementById('empGrade').value;
+      const dailyRate = document.getElementById('dailyRate').value;
+      const tripDays = document.getElementById('tripDays').value;
+      const grandTotal = document.getElementById('netTotalDisplay').innerText.replace(/,/g, '');
+
+      const csvRows = [
+        ['Field', 'Value'],
+        ['Trip Type', tripType],
+        ['Employee Grade', empGrade],
+        ['Base Daily Rate (SAR)', dailyRate],
+        ['Duration (Days)', tripDays],
+        ['Lodging Provided', document.getElementById('chkHotel').checked ? 'Yes' : 'No'],
+        ['Meals Provided', document.getElementById('chkMeals').checked ? 'Yes' : 'No'],
+        ['Transport Provided', document.getElementById('chkTransport').checked ? 'Yes' : 'No'],
+        ['Flight Expense (SAR)', document.getElementById('expFlight').value],
+        ['Visa Expense (SAR)', document.getElementById('expVisa').value],
+        ['Total Payout (SAR)', grandTotal]
+      ];
+
+      let csvContent = 'data:text/csv;charset=utf-8,' + csvRows.map(e => e.join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `saudi_per_diem_summary_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initial calculation on load
+    window.onload = function() {
+      calculate();
+    };
+  </script>
+</body>
+</html>

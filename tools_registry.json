@@ -334,5 +334,12 @@
     "title_ar": "حاسبة الزكاة وضريبة الدخل للشركات ذات الملكية المختلطة (زكاة وضريبة)",
     "description_en": "Calculate ZATCA dual-filing Zakat and 20% Corporate Income Tax for Saudi & foreign joint-venture entities with exact Gregorian/Hijri calendar ratios.",
     "date": "2026-11-24"
+  },
+  {
+    "slug": "saudi-business-trip-per-diem-and-expense-allowance-calculator",
+    "title_en": "Saudi Business Trip Per Diem & Travel Allowance Calculator",
+    "title_ar": "حاسبة بدل السفر وانتداب الموظفين في السعودية",
+    "description_en": "Calculate domestic and international business trip per diems, travel allowances, lodging deductions, and net payouts under Saudi Labor Law.",
+    "date": "2026-11-24"
   }
 ]
