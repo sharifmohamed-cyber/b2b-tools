@@ -355,5 +355,12 @@
     "title_ar": "حاسبة تعويضات إصابات العمل والعجز وفق نظام العمل وتأمينات الأخطار المهنية",
     "description_en": "Calculate Saudi work injury compensation, temporary daily allowances, GOSI disability lump sums, and death benefits under Saudi Labor Law & GOSI rules.",
     "date": "2026-11-25"
+  },
+  {
+    "slug": "saudi-vat-import-customs-clearing-reconciliation-calculator",
+    "title_en": "Saudi VAT & Customs Import Clearing Reconciliation Calculator",
+    "title_ar": "حاسبة مطابقة ضريبة القيمة المضافة الجمركية وتكاليف التخليص والاستيراد",
+    "description_en": "Reconcile Saudi import customs duties, ZATCA import VAT Box 7/8 adjustments, clearing charges, and port tariffs with instant exportable statements.",
+    "date": "2026-11-25"
   }
 ]

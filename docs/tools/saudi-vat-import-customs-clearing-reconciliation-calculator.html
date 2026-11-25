@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saudi VAT & Customs Import Reconciliation Calculator | ZATCA & Zakat Tax Authority</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'Cairo', 'sans-serif'],
+            arabic: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            zatca: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            },
+            navy: {
+              800: '#111827',
+              900: '#0b0f17',
+              950: '#030712',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .font-ar { font-family: 'Cairo', sans-serif; }
+    .tab-active { border-color: #059669; color: #059669; font-weight: 700; }
+    @media print {
+      .no-print { display: none !important; }
+      body { background: white !important; color: black !important; }
+      .print-shadow-none { box-shadow: none !important; border: 1px solid #ccc !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased selection:bg-emerald-200 selection:text-emerald-900">
+
+  <!-- Top Banner / Sticky Gumroad Pitch -->
+  <div class="sticky top-0 z-50 bg-gradient-to-r from-emerald-800 via-emerald-700 to-teal-800 text-white shadow-md border-b border-emerald-500/30 no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse font-medium">
+        <span class="bg-emerald-400/20 text-emerald-200 text-xs px-2 py-0.5 rounded-full border border-emerald-400/30 font-semibold">NEW</span>
+        <span>Automate your import clearance, Fasah declarations, & ZATCA Box 7/8 audit worksheets in Excel.</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3.5 py-1.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold tracking-tight shadow-sm transition transform hover:-translate-y-0.5 text-xs">
+          <span>Get Master Template ($29)</span>
+          <svg class="w-3.5 h-3.5 ml-1 rtl:mr-1 rtl:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </a>
+        <button id="langToggleBtn" onclick="toggleLanguage()" class="border border-white/30 hover:bg-white/10 px-2.5 py-1 rounded text-xs font-semibold uppercase tracking-wider transition">
+          العربية
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="bg-white border-b border-slate-200 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center space-x-3 rtl:space-x-reverse">
+          <div class="p-2.5 bg-emerald-600 rounded-xl text-white shadow-md shadow-emerald-500/20">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z"/></svg>
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+              <span class="en-text">Saudi Import VAT & Customs Reconciliation Calculator</span>
+              <span class="ar-text hidden font-ar">حاسبة مطابقة ضريبة القيمة المضافة والجمارك للاستيراد السعودي</span>
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+              <span class="en-text">ZATCA Bayan Declaration, Customs Tariff, Reverse Charge Mechanism & Landed Cost Engine</span>
+              <span class="ar-text hidden font-ar">محرك حساب بيان الاستيراد الجمركي، التعرفة، الاحتساب العكسي وتكلفة الوصول الكلية</span>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 self-start md:self-auto">
+        <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+          ZATCA & KSA Customs 2025-compliant
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Body Content -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Form Inputs Panel -->
+      <div class="lg:col-span-7 space-y-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden print-shadow-none">
+          <div class="border-b border-slate-100 bg-slate-50/75 px-6 py-4 flex items-center justify-between">
+            <h2 class="font-bold text-slate-800 flex items-center gap-2">
+              <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              <span class="en-text">Import Declaration & CIF Inputs</span>
+              <span class="ar-text hidden font-ar">بيانات البيان الجمركي وقيمة الشحنة (CIF)</span>
+            </h2>
+            <button type="button" onclick="resetDefaults()" class="text-xs text-slate-500 hover:text-emerald-700 font-semibold underline">
+              <span class="en-text">Reset defaults</span>
+              <span class="ar-text hidden font-ar">إعادة تعيين</span>
+            </button>
+          </div>
+
+          <form id="calcForm" class="p-6 space-y-5">
+            <!-- Section 1: Valuation -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  <span class="en-text">Invoice Value (FOB / Base)</span>
+                  <span class="ar-text hidden font-ar">قيمة الفاتورة (FOB / الأساس)</span>
+                </label>
+                <div class="relative rounded-lg shadow-sm">
+                  <input type="number" step="any" id="fobValue" value="120000" min="0" class="w-full rounded-lg border-slate-300 pl-3 pr-16 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold text-slate-900 border">
+                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-xs text-slate-500 font-bold">SAR</div>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-1 en-text">Supplier commercial invoice value</p>
+                <p class="text-[11px] text-slate-400 mt-1 ar-text hidden font-ar">قيمة فاتورة المورد التجارية بدون شحن</p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  <span class="en-text">International Freight Charges</span>
+                  <span class="ar-text hidden font-ar">أجور الشحن الدولي</span>
+                </label>
+                <div class="relative rounded-lg shadow-sm">
+                  <input type="number" step="any" id="freightValue" value="14500" min="0" class="w-full rounded-lg border-slate-300 pl-3 pr-16 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold text-slate-900 border">
+                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-xs text-slate-500 font-bold">SAR</div>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-1 en-text">Ocean / Air / Road cross-border freight</p>
+                <p class="text-[11px] text-slate-400 mt-1 ar-text hidden font-ar">تكلفة الشحن البحري أو الجوي للوصول للمملكة</p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  <span class="en-text">Transit Marine Insurance</span>
+                  <span class="ar-text hidden font-ar">التأمين على البضاعة أثناء النقل</span>
+                </label>
+                <div class="relative rounded-lg shadow-sm">
+                  <input type="number" step="any" id="insuranceValue" value="1200" min="0" class="w-full rounded-lg border-slate-300 pl-3 pr-16 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold text-slate-900 border">
+                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-xs text-slate-500 font-bold">SAR</div>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-1 en-text">If not insured, customs may estimate standard %</p>
+                <p class="text-[11px] text-slate-400 mt-1 ar-text hidden font-ar">في حال عدم وجود بوليصة يتم احتسابها تقديريا</p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">
+                  <span class="en-text">Customs Duty Rate (%)</span>
+                  <span class="ar-text hidden font-ar">نسبة الرسوم الجمركية (%)</span>
+                </label>
+                <div class="relative rounded-lg shadow-sm">
+                  <input type="number" step="0.25" id="customsDutyRate" value="5.0" min="0" max="100" class="w-full rounded-lg border-slate-300 pl-3 pr-12 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 font-semibold text-slate-900 border">
+                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-xs text-slate-500 font-bold">%</div>
+                </div>
+                <p class="text-[11px] text-slate-400 mt-1 en-text">Harmonized Tariff (Commonly 0%, 5%, 12%, 15%)</p>
+                <p class="text-[11px] text-slate-400 mt-1 ar-text hidden font-ar">وفق جدول التعريفة الجمركية المتكاملة لنظام سابر</p>
+              </div>
+            </div>
+
+            <!-- Section 2: Port Fees & Brokerage -->
+            <div class="pt-4 border-t border-slate-100">
+              <h3 class="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="en-text">Port Dues, Fasah Platform & Clearing Charges</span>
+                <span class="ar-text hidden font-ar">رسوم الميناء، منصة فسح، وأجور التخليص الجمركي</span>
+              </h3>
+
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">
+                    <span class="en-text">Fasah & Port Handover Fee</span>
+                    <span class="ar-text hidden font-ar">رسوم منصة فسح والمناولة</span>
+                  </label>
+                  <input type="number" step="any" id="fasahFee" value="450" min="0" class="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 font-semibold border">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">
+                    <span class="en-text">Customs Broker Fee (excl VAT)</span>
+                    <span class="ar-text hidden font-ar">أتعاب المخلص الجمركي</span>
+                  </label>
+                  <input type="number" step="any" id="brokerFee" value="1250" min="0" class="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 font-semibold border">
+                </div>
+                <div>
+                  <label class="block text-[11px] font-semibold text-slate-600 mb-1">
+                    <span class="en-text">Demurrage / Storage (if any)</span>
+                    <span class="ar-text hidden font-ar">أرضيات وغرامات تأخير الحاوية</span>
+                  </label>
+                  <input type="number" step="any" id="storageFee" value="0" min="0" class="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 font-semibold border">
+                </div>
+              </div>
+            </div>
+
+            <!-- Section 3: VAT Settlement Method -->
+            <div class="pt-4 border-t border-slate-100 bg-slate-50/50 -mx-6 px-6 py-4 rounded-b-xl">
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                <span class="en-text">ZATCA Import VAT Payment Mechanism</span>
+                <span class="ar-text hidden font-ar">آلية تسوية ضريبة الاستيراد مع هيئة الزكاة والضريبة</span>
+              </label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <label class="relative flex items-start p-3 bg-white border rounded-xl cursor-pointer hover:border-emerald-400 transition-all border-slate-200">
+                  <input type="radio" name="vatPaymentMethod" value="customs" checked class="mt-1 text-emerald-600 focus:ring-emerald-500">
+                  <div class="ml-3 rtl:mr-3">
+                    <span class="block text-xs font-bold text-slate-900 en-text">Paid at Customs Border (Bayan)</span>
+                    <span class="block text-xs font-bold text-slate-900 ar-text hidden font-ar">مسددة بالجمارك (البيان الجمركي)</span>
+                    <span class="block text-[11px] text-slate-500 mt-0.5 en-text">Reported under Box 7 on VAT Return</span>
+                    <span class="block text-[11px] text-slate-500 mt-0.5 ar-text hidden font-ar">تدرج في الحقل رقم 7 بالإقرار الضريبي</span>
+                  </div>
+                </label>
+
+                <label class="relative flex items-start p-3 bg-white border rounded-xl cursor-pointer hover:border-emerald-400 transition-all border-slate-200">
+                  <input type="radio" name="vatPaymentMethod" value="postponed" class="mt-1 text-emerald-600 focus:ring-emerald-500">
+                  <div class="ml-3 rtl:mr-3">
+                    <span class="block text-xs font-bold text-slate-900 en-text">Postponed / RCM Accounting (Box 8)</span>
+                    <span class="block text-xs font-bold text-slate-900 ar-text hidden font-ar">مؤجلة / احتساب عكسي (الحقل 8)</span>
+                    <span class="block text-[11px] text-slate-500 mt-0.5 en-text">Approved qualifying taxpayers only</span>
+                    <span class="block text-[11px] text-slate-500 mt-0.5 ar-text hidden font-ar">للمنشآت المؤهلة لتأجيل سداد الضريبة</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Units / Quantity for Unit Landed Cost -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">
+                  <span class="en-text">Batch Quantity (Units)</span>
+                  <span class="ar-text hidden font-ar">عدد الوحدات بالشحنة (الكمية)</span>
+                </label>
+                <input type="number" step="1" id="batchQuantity" value="500" min="1" class="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 font-semibold border">
+              </div>
+              <div>
+                <label class="block text-xs font-semibold text-slate-700 mb-1">
+                  <span class="en-text">Recoverable Input VAT %</span>
+                  <span class="ar-text hidden font-ar">نسبة استرداد ضريبة المدخلات %</span>
+                </label>
+                <input type="number" step="1" id="recoverableVatPercent" value="100" min="0" max="100" class="w-full rounded-lg border-slate-300 px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 font-semibold border">
+                <p class="text-[11px] text-slate-400 mt-1 en-text">100% for normal fully-taxable commercial trade</p>
+                <p class="text-[11px] text-slate-400 mt-1 ar-text hidden font-ar">100% للأنشطة الخاضعة بالكامل للضريبة</p>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Summary & Reconciliation Results Card -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden print-shadow-none">
+          <div class="bg-slate-900 text-white p-5">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400 en-text">Total Landed Cost & Clearances</span>
+              <span class="text-xs font-semibold uppercase tracking-wider text-emerald-400 ar-text hidden font-ar">تكلفة الوصول الإجمالية والتخليص</span>
+              <span class="px-2 py-0.5 rounded text-[11px] bg-slate-800 text-slate-300 border border-slate-700">SAR Currency</span>
+            </div>
+            <div class="mt-3 flex items-baseline justify-between">
+              <div class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white" id="totalLandedCostDisplay">0.00</div>
+              <div class="text-right">
+                <span class="text-xs text-slate-400 block en-text">Per Unit Cost (Net)</span>
+                <span class="text-xs text-slate-400 block ar-text hidden font-ar">تكلفة الوحدة (صافي)</span>
+                <span class="text-sm font-bold text-emerald-300" id="unitCostDisplay">0.00 SAR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Line Item Breakdown -->
+          <div class="p-6 space-y-3.5 text-xs sm:text-sm border-b border-slate-100">
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600 en-text">Customs Value (CIF Base)</span>
+              <span class="text-slate-600 ar-text hidden font-ar">القيمة الجمركية (أساس CIF)</span>
+              <span class="font-semibold text-slate-900" id="resCifValue">0.00 SAR</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600 en-text">Customs Duty Payed</span>
+              <span class="text-slate-600 ar-text hidden font-ar">الرسوم الجمركية المستحقة</span>
+              <span class="font-semibold text-slate-900 text-amber-700" id="resCustomsDuty">0.00 SAR</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100 bg-emerald-50/60 -mx-3 px-3 py-1.5 rounded">
+              <div class="flex flex-col">
+                <span class="font-bold text-emerald-950 en-text">VAT Assessment Base</span>
+                <span class="font-bold text-emerald-950 ar-text hidden font-ar">وعاء ضريبة القيمة المضافة</span>
+                <span class="text-[10px] text-emerald-700">(CIF + Duty)</span>
+              </div>
+              <span class="font-bold text-emerald-900 text-right" id="resVatBase">0.00 SAR</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <div>
+                <span class="text-slate-600 font-semibold en-text">Import VAT (15%)</span>
+                <span class="text-slate-600 font-semibold ar-text hidden font-ar">ضريبة القيمة المضافة للاستيراد (15%)</span>
+                <span class="block text-[10px] text-slate-400" id="resVatBoxLabel">Reported in ZATCA Box 7</span>
+              </div>
+              <span class="font-bold text-emerald-600" id="resImportVat">0.00 SAR</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-slate-100">
+              <span class="text-slate-600 en-text">Broker & Local Handling (incl. VAT)</span>
+              <span class="text-slate-600 ar-text hidden font-ar">أجور التخليص والخدمات المحلية (شاملة الضريبة)</span>
+              <span class="font-semibold text-slate-900" id="resLocalPortCosts">0.00 SAR</span>
+            </div>
+            <div class="flex justify-between py-1.5 font-bold text-slate-900 bg-slate-50 -mx-2 px-2 rounded">
+              <span class="en-text">Immediate Cash Outflow at Port</span>
+              <span class="ar-text hidden font-ar">إجمالي السيولة النقدية المطلوبة للفسح</span>
+              <span class="text-emerald-700" id="resTotalPortCash">0.00 SAR</span>
+            </div>
+          </div>
+
+          <!-- ZATCA VAT Return Audit Helper -->
+          <div class="p-5 bg-slate-50 border-t border-slate-200">
+            <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center justify-between">
+              <span class="en-text">ZATCA VAT Return Mapping</span>
+              <span class="ar-text hidden font-ar">توجيه إقرار هيئة الزكاة والضريبة</span>
+              <span class="text-[10px] text-slate-500 font-normal">Form 2025</span>
+            </h4>
+            <div class="space-y-2 text-xs">
+              <div class="p-2.5 bg-white rounded border border-slate-200 flex justify-between items-center">
+                <div>
+                  <span class="font-semibold text-slate-800 block" id="boxName">Box 7: Imports Subject to VAT at Customs</span>
+                  <span class="text-[10px] text-slate-400">Adjustment / Net Input Deduction claim</span>
+                </div>
+                <span class="font-mono font-bold text-slate-900" id="boxVatValue">0.00 SAR</span>
+              </div>
+              <div class="p-2.5 bg-white rounded border border-slate-200 flex justify-between items-center">
+                <div>
+                  <span class="font-semibold text-slate-800 block">Claimable Input VAT in Box 14</span>
+                  <span class="text-[10px] text-slate-400">Recoverable from ZATCA</span>
+                </div>
+                <span class="font-mono font-bold text-emerald-600" id="boxRecoverableValue">0.00 SAR</span>
+              </div>
+            </div>
+
+            <!-- Actions & Export -->
+            <div class="mt-4 pt-3 border-t border-slate-200 flex flex-col sm:flex-row gap-2 no-print">
+              <button type="button" onclick="window.print()" class="w-full sm:w-1/2 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 font-bold py-2 px-3 rounded-lg text-xs flex items-center justify-center gap-1.5 transition shadow-sm">
+                <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                <span class="en-text">Print Worksheet</span>
+                <span class="ar-text hidden font-ar">طباعة المحضر</span>
+              </button>
+              <button type="button" onclick="exportCSV()" class="w-full sm:w-1/2 bg-slate-800 hover:bg-slate-700 text-white font-bold py-2 px-3 rounded-lg text-xs flex items-center justify-center gap-1.5 transition shadow-sm">
+                <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="en-text">Export CSV Audit</span>
+                <span class="ar-text hidden font-ar">تصدير ملف CSV</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- High-converting Gumroad Sales Card -->
+        <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5 shadow-sm text-amber-950 no-print">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xs font-black uppercase tracking-wider bg-amber-400 text-slate-950 px-2 py-0.5 rounded-full">CFO & Auditor Toolkit</span>
+          </div>
+          <h3 class="text-sm sm:text-base font-extrabold text-slate-900 mb-1">
+            <span class="en-text">Complete Offline Automated Excel & VBA Master Template</span>
+            <span class="ar-text hidden font-ar">نموذج الإكسل المتقدم المؤتمت للمطابقة الجمركية وضريبة القيمة المضافة ($29)</span>
+          </h3>
+          <p class="text-xs text-slate-600 mb-4">
+            Pre-built automated reconciliation model featuring multi-container landed cost apportionment, HS Code tariff lookup tables, ZATCA audit trail cross-referencing, and automatic journal voucher batching.
+          </p>
+          <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="w-full block text-center bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-bold py-2.5 px-4 rounded-xl shadow-md transition transform active:scale-98 text-xs sm:text-sm tracking-wide">
+            Download Master Model ($29) &rarr;
+          </a>
+        </div>
+
+        <!-- Mandatory Bilingual Disclaimer -->
+        <div class="p-4 rounded-xl border border-amber-200 bg-amber-50/50 text-[11px] leading-relaxed text-amber-900">
+          <div class="font-bold flex items-center gap-1.5 mb-1">
+            <svg class="w-4 h-4 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+            <span class="en-text">Statutory Verification Disclaimer</span>
+            <span class="ar-text hidden font-ar">إخلاء مسؤولية نظامي</span>
+          </div>
+          <p class="en-text">
+            Outputs generated by this calculator are mathematical estimates intended strictly for operational reconciliation and budgeting. In accordance with ZATCA regulations and the GCC Unified Customs Law, statutory liabilities are determined solely by official Customs Declarations (Bayan) and authenticated shipping invoices. All results must be verified against current laws and official authorities prior to filing tax returns or making commercial payments.
+          </p>
+          <p class="ar-text hidden font-ar">
+            المخرجات الناتجة عن هذه الحاسبة هي تقديرات حسابية مخصصة لأغراض المطابقة التشغيلية والتخطيط المالي فقط. وفقاً للأنظمة واللوائح الصادرة عن هيئة الزكاة والضريبة والجمارك ونظام الجمارك الموحد لدول مجلس التعاون، فإن الالتزامات النظامية تعتمد حصراً على البيانات الجمركية الرسمية (بيان) والفواتير المعتمدة. يجب تدقيق جميع النتائج ومطابقتها مع الأنظمة السارية والمصادر الرسمية قبل تقديم الإقرارات أو سداد المستحقات.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO & Comprehensive Technical Guide (800+ Words) -->
+    <section class="mt-16 bg-white border border-slate-200 rounded-3xl p-6 sm:p-10 shadow-sm">
+      <div class="max-w-4xl mx-auto space-y-10">
+        
+        <div class="border-b border-slate-100 pb-6">
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Complete Operational Guide to Saudi Import VAT, Customs Duties & Fasah Reconciliation
+          </h2>
+          <p class="mt-2 text-slate-500 text-sm leading-relaxed">
+            A technical handbook for Saudi CFOs, tax compliance officers, supply chain directors, and chartered accountants navigating ZATCA import declaration Box 7/Box 8 rules and landed cost valuation.
+          </p>
+        </div>
+
+        <!-- Guide Section 1 -->
+        <div class="space-y-4">
+          <h3 class="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-black">1</span>
+            Understanding the Valuation Formula for Saudi Import Duties and VAT
+          </h3>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            In the Kingdom of Saudi Arabia, customs duties and import Value Added Tax (VAT) are calculated hierarchically under the unified framework of the GCC Common Customs Law and Saudi ZATCA (Zakat, Tax and Customs Authority) statutes. A frequent error encountered by procurement teams is calculating the standard 15% VAT exclusively on the commercial supplier invoice value. Under Saudi law, import VAT is charged on the <strong>total landed valuation at customs entry</strong>, which incorporates the Cost, Insurance, and Freight (CIF) value, plus statutory customs duty, plus any applicable excise or port surcharges.
+          </p>
+          
+          <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 font-mono text-xs text-slate-800 space-y-2">
+            <div><strong>Step 1 (CIF Customs Valuation):</strong> CIF Value = FOB Commercial Invoice + Cross-border Freight + Marine Insurance</div>
+            <div><strong>Step 2 (Customs Duty Assessment):</strong> Customs Duty (SAR) = CIF Value &times; HS Tariff Rate (%)</div>
+            <div><strong>Step 3 (ZATCA Import VAT Base):</strong> VAT Assessment Base = CIF Value + Customs Duty + Any Excise/Tariff Surcharges</div>
+            <div><strong>Step 4 (Total Import VAT Payable):</strong> Import VAT (SAR) = VAT Assessment Base &times; 15%</div>
+            <div><strong>Step 5 (Total Landed Inventory Cost):</strong> Inventory Landed Cost = CIF + Duty + Fasah Port Fees + Broker Fees + Non-recoverable VAT</div>
+          </div>
+        </div>
+
+        <!-- Guide Section 2 -->
+        <div class="space-y-4">
+          <h3 class="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-black">2</span>
+            ZATCA VAT Return Architecture: Box 7 vs. Box 8 Reconciliation
+          </h3>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            Taxpayers registered for VAT in Saudi Arabia file quarterly or monthly returns via the ERCA/ZATCA portal. When clearing imported goods through Saudi seaports (e.g., King Abdulaziz Port in Dammam, Jeddah Islamic Port) or land borders (e.g., King Fahd Causeway, Batha border), companies generally fall under one of two operational filing streams:
+          </p>
+          <ul class="list-disc list-inside text-sm text-slate-600 space-y-2 ml-2">
+            <li>
+              <strong>Box 7 (Imports subject to VAT paid at Customs):</strong> This is the default mechanism for most businesses. The importer or their customs broker settles the 15% VAT and customs duty prior to container release via SADAD. On the subsequent ZATCA VAT Return, the net tax is pre-populated in Box 7, allowing the registrant to reclaim 100% of the tax paid as an input tax deduction in Box 14, provided the goods are utilized in taxable economic activity.
+            </li>
+            <li>
+              <strong>Box 8 (Imports subject to VAT accounted for through reverse charge / Postponement):</strong> Qualified large enterprises holding formal postponement authorization from ZATCA are permitted to defer VAT settlement at port gates to optimize working capital. Under this system, VAT is accounted for via the Reverse Charge Mechanism (RCM) directly within Box 8, generating an offsetting input/output entry without cash outflow at port customs.
+            </li>
+          </ul>
+        </div>
+
+        <!-- Guide Section 3 -->
+        <div class="space-y-4">
+          <h3 class="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
+            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center text-xs font-black">3</span>
+            Treatment of Customs Brokerage Fees, Demurrage, and Port Logistics
+          </h3>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            A critical distinction must be maintained between border-level customs taxes (collected directly by ZATCA Customs) and ancillary clearing services provided by freight forwarders, terminal operators (Mawani), and Fasah digital platforms. Domestic clearing services are standard-rated domestic transactions. The customs broker will issue a local e-Invoice (Fatoora) containing their professional service fee plus 15% domestic VAT.
+          </p>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            However, any disbursements paid by the customs broker on the importer's behalf (such as government duty receipts or port inspection charges) represent pure principal-agent balance-sheet disbursements. Under ZATCA e-Invoicing guidelines, customs agents cannot add duplicate VAT to governmental duty amounts already settled on the Bayan.
+          </p>
+        </div>
+
+        <!-- Guide Section 4: FAQ Accordion -->
+        <div class="space-y-4 pt-4 border-t border-slate-100">
+          <h3 class="text-xl font-bold text-slate-900 mb-4">Frequently Asked Questions (FAQ)</h3>
+          
+          <div class="space-y-3">
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-sm text-slate-800">What documents are required to support an input VAT deduction for imports in Saudi Arabia?</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                Importers must archive three mandatory records for at least six years: (1) The official Customs Declaration document (Bayan) issued by ZATCA displaying the importer’s 15-digit VAT number, (2) The SADAD payment receipt or customs settlement voucher verifying payment, and (3) The commercial invoice and international Bill of Lading (B/L) confirming supplier details.
+              </p>
+            </div>
+
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-sm text-slate-800">Why does ZATCA Box 7 occasionally differ from internal ERP accounting ledgers?</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                Discrepancies typically occur due to foreign exchange differences between the supplier invoice booking date and the official Saudi Central Bank (SAMA) exchange rate applied by customs on the date the Bayan is processed, or when clearing agents group multiple invoices under a single unified declaration without line-level itemization.
+              </p>
+            </div>
+
+            <div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-sm text-slate-800">Is demurrage and port container storage subject to VAT in Saudi Arabia?</h4>
+              <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+                Yes. Terminal storage, container detention, and handling fees invoiced by shipping lines or Saudi port authorities within the Kingdom are classified as taxable domestic services subject to the standard 15% VAT rate, which can be claimed as input tax subject to regular compliance rules.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-xs text-slate-400 py-6 border-t border-slate-200 no-print">
+      <p>Saudi VAT & Customs Clearing Reconciliation Engine &bull; Designed for Kingdom of Saudi Arabia ZATCA compliance.</p>
+      <p class="mt-1">All figures subject to verification against the Unified GCC Customs Tariff and ZATCA VAT Implementing Regulations.</p>
+    </footer>
+  </main>
+
+  <!-- Javascript Calculation Engine -->
+  <script>
+    let currentLang = 'en';
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      const htmlTag = document.documentElement;
+      const toggleBtn = document.getElementById('langToggleBtn');
+      
+      if (currentLang === 'ar') {
+        htmlTag.setAttribute('dir', 'rtl');
+        htmlTag.setAttribute('lang', 'ar');
+        toggleBtn.textContent = 'English';
+        document.querySelectorAll('.en-text').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.ar-text').forEach(el => el.classList.remove('hidden'));
+      } else {
+        htmlTag.setAttribute('dir', 'ltr');
+        htmlTag.setAttribute('lang', 'en');
+        toggleBtn.textContent = 'العربية';
+        document.querySelectorAll('.ar-text').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.en-text').forEach(el => el.classList.remove('hidden'));
+      }
+      calculate();
+    }
+
+    function formatSAR(val) {
+      return new Intl.NumberFormat('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }).format(val) + ' SAR';
+    }
+
+    function calculate() {
+      const fob = parseFloat(document.getElementById('fobValue').value) || 0;
+      const freight = parseFloat(document.getElementById('freightValue').value) || 0;
+      const insurance = parseFloat(document.getElementById('insuranceValue').value) || 0;
+      const dutyRate = (parseFloat(document.getElementById('customsDutyRate').value) || 0) / 100;
+      
+      const fasah = parseFloat(document.getElementById('fasahFee').value) || 0;
+      const broker = parseFloat(document.getElementById('brokerFee').value) || 0;
+      const storage = parseFloat(document.getElementById('storageFee').value) || 0;
+      const qty = Math.max(1, parseFloat(document.getElementById('batchQuantity').value) || 1);
+      const recoverablePct = (parseFloat(document.getElementById('recoverableVatPercent').value) || 100) / 100;
+      
+      const methodRadios = document.getElementsByName('vatPaymentMethod');
+      let isPostponed = false;
+      for (let r of methodRadios) {
+        if (r.checked && r.value === 'postponed') {
+          isPostponed = true;
+          break;
+        }
+      }
+
+      // Calculations
+      const cif = fob + freight + insurance;
+      const customsDuty = cif * dutyRate;
+      const vatAssessmentBase = cif + customsDuty;
+      const importVat = vatAssessmentBase * 0.15;
+      
+      // Broker & Local domestic VAT (15% applied to domestic services: fasah + broker + storage)
+      const localDomesticTaxable = fasah + broker + storage;
+      const localVat = localDomesticTaxable * 0.15;
+      const totalLocalWithVat = localDomesticTaxable + localVat;
+      
+      // Total port cash requirement right now
+      // If postponed, import VAT is not paid at port gate
+      const immediatePortCash = customsDuty + (isPostponed ? 0 : importVat) + totalLocalWithVat;
+      
+      // Net Landed Cost accounting calculation (IF input VAT is recoverable, inventory does not absorb recoverable VAT)
+      const unrecoverableImportVat = importVat * (1 - recoverablePct);
+      const unrecoverableLocalVat = localVat * (1 - recoverablePct);
+      const totalLandedCostNet = cif + customsDuty + localDomesticTaxable + unrecoverableImportVat + unrecoverableLocalVat;
+      const perUnitCostNet = totalLandedCostNet / qty;
+
+      const totalRecoverableVat = (importVat + localVat) * recoverablePct;
+
+      // Update DOM
+      document.getElementById('totalLandedCostDisplay').innerText = formatSAR(totalLandedCostNet);
+      document.getElementById('unitCostDisplay').innerText = formatSAR(perUnitCostNet);
+      document.getElementById('resCifValue').innerText = formatSAR(cif);
+      document.getElementById('resCustomsDuty').innerText = formatSAR(customsDuty);
+      document.getElementById('resVatBase').innerText = formatSAR(vatAssessmentBase);
+      document.getElementById('resImportVat').innerText = formatSAR(importVat);
+      document.getElementById('resLocalPortCosts').innerText = formatSAR(totalLocalWithVat);
+      document.getElementById('resTotalPortCash').innerText = formatSAR(immediatePortCash);
+
+      // ZATCA Return mapping card
+      const boxNameEl = document.getElementById('boxName');
+      const boxLabelEl = document.getElementById('resVatBoxLabel');
+      
+      if (isPostponed) {
+        boxNameEl.innerText = currentLang === 'ar' ? 'الحقل 8: استيرادات خاضعة للضريبة بموجب آلية الاحتساب العكسي' : 'Box 8: Imports subject to VAT through Reverse Charge (Postponed)';
+        boxLabelEl.innerText = currentLang === 'ar' ? 'مؤجلة للإقرار - الحقل 8' : 'Deferred to Return - Box 8';
+      } else {
+        boxNameEl.innerText = currentLang === 'ar' ? 'الحقل 7: استيرادات خاضعة للضريبة سددت بالجمارك' : 'Box 7: Imports subject to VAT paid at Customs (Bayan)';
+        boxLabelEl.innerText = currentLang === 'ar' ? 'مسددة بالجمارك - الحقل 7' : 'Reported in ZATCA Box 7';
+      }
+
+      document.getElementById('boxVatValue').innerText = formatSAR(importVat);
+      document.getElementById('boxRecoverableValue').innerText = formatSAR(totalRecoverableVat);
+    }
+
+    function resetDefaults() {
+      document.getElementById('fobValue').value = '120000';
+      document.getElementById('freightValue').value = '14500';
+      document.getElementById('insuranceValue').value = '1200';
+      document.getElementById('customsDutyRate').value = '5.0';
+      document.getElementById('fasahFee').value = '450';
+      document.getElementById('brokerFee').value = '1250';
+      document.getElementById('storageFee').value = '0';
+      document.getElementById('batchQuantity').value = '500';
+      document.getElementById('recoverableVatPercent').value = '100';
+      document.getElementsByName('vatPaymentMethod')[0].checked = true;
+      calculate();
+    }
+
+    function exportCSV() {
+      const fob = document.getElementById('fobValue').value;
+      const freight = document.getElementById('freightValue').value;
+      const insurance = document.getElementById('insuranceValue').value;
+      const cif = document.getElementById('resCifValue').innerText;
+      const duty = document.getElementById('resCustomsDuty').innerText;
+      const vatBase = document.getElementById('resVatBase').innerText;
+      const importVat = document.getElementById('resImportVat').innerText;
+      const totalLanded = document.getElementById('totalLandedCostDisplay').innerText;
+      const unitCost = document.getElementById('unitCostDisplay').innerText;
+      const cashAtPort = document.getElementById('resTotalPortCash').innerText;
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += "KSA Import Customs and ZATCA VAT Reconciliation Report\r\n";
+      csvContent += "Date," + new Date().toISOString().slice(0, 10) + "\r\n\r\n";
+      csvContent += "Metric,Value\r\n";
+      csvContent += "FOB Value (SAR)," + fob + "\r\n";
+      csvContent += "Freight (SAR)," + freight + "\r\n";
+      csvContent += "Insurance (SAR)," + insurance + "\r\n";
+      csvContent += "Customs Valuation CIF," + cif.replace(/,/g, '') + "\r\n";
+      csvContent += "Customs Duty Paid," + duty.replace(/,/g, '') + "\r\n";
+      csvContent += "ZATCA VAT Base," + vatBase.replace(/,/g, '') + "\r\n";
+      csvContent += "Import VAT (15%)," + importVat.replace(/,/g, '') + "\r\n";
+      csvContent += "Total Cash Required at Border," + cashAtPort.replace(/,/g, '') + "\r\n";
+      csvContent += "Total Net Landed Inventory Cost," + totalLanded.replace(/,/g, '') + "\r\n";
+      csvContent += "Unit Net Cost," + unitCost.replace(/,/g, '') + "\r\n";
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "saudi_import_customs_vat_reconciliation.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Attach events
+    document.querySelectorAll('#calcForm input').forEach(input => {
+      input.addEventListener('input', calculate);
+      input.addEventListener('change', calculate);
+    });
+
+    // Initialize on load
+    window.addEventListener('DOMContentLoaded', calculate);
+  </script>
+</body>
+</html>
