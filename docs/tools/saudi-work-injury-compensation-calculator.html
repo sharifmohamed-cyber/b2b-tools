@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saudi Work Injury Compensation & GOSI Disability Calculator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', 'Cairo', sans-serif;
+    }
+    .rtl {
+      direction: rtl;
+      font-family: 'Cairo', 'Inter', sans-serif;
+    }
+    .ltr {
+      direction: ltr;
+      font-family: 'Inter', 'Cairo', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 ltr transition-all duration-200">
+
+  <!-- Top Sticky Banner -->
+  <div class="bg-slate-900 text-white text-xs sm:text-sm py-2.5 px-4 text-center sticky top-0 z-50 shadow-md flex items-center justify-between max-w-full">
+    <div class="container mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <span class="font-medium flex items-center gap-2">
+        <span class="bg-emerald-500 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-full">Enterprise Tool</span>
+        <span id="bannerTextEn">Saudi Labor Law & GOSI Work Injury Audit Template Available</span>
+        <span id="bannerTextAr" class="hidden">يتوفر نموذج إكسل المحترف لحساب إصابات العمل والأخطار المهنية وفق نظام العمل</span>
+      </span>
+      <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-4 py-1.5 rounded-lg text-xs transition duration-150 shadow inline-block whitespace-nowrap">
+        <span id="bannerCtaEn">Get Master Excel Template ($29)</span>
+        <span id="bannerCtaAr" class="hidden">تحميل قالب الإكسل الشامل ($29)</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-3 space-x-reverse">
+        <div class="w-10 h-10 bg-emerald-700 text-white font-bold rounded-xl flex items-center justify-center text-xl shadow-inner">
+          🛡️
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight" id="appTitleEn">Saudi Work Injury & GOSI Compensation Calculator</h1>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight hidden" id="appTitleAr">حاسبة تعويضات إصابات العمل والعجز الأخطار المهنية</h1>
+          <p class="text-xs text-slate-500" id="appSubtitleEn">Articles 133–139 Saudi Labor Law & GOSI Occupational Hazard Regulations</p>
+          <p class="text-xs text-slate-500 hidden" id="appSubtitleAr">وفق المواد 133-139 من نظام العمل ولائحة فرع الأخطار المهنية بالتأمينات</p>
+        </div>
+      </div>
+      
+      <!-- Language Switcher Button -->
+      <button id="langToggleBtn" onclick="toggleLanguage()" class="flex items-center gap-2 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition">
+        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg>
+        <span id="langToggleText">العربية</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content Wrapper -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+    <!-- Intro Badge & Header -->
+    <div class="mb-8 text-center max-w-3xl mx-auto">
+      <span class="inline-block bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full mb-2">
+        <span id="tagEn">Updated for KSA Labor Regulations 2025</span>
+        <span id="tagAr" class="hidden">محدث وفق أنظمة العمل والتأمينات الاجتماعية 2025</span>
+      </span>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight" id="headerHeadingEn">Accurate Work Injury & Disability Compensation Estimator</h2>
+      <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight hidden" id="headerHeadingAr">الحاسبة المعتمدة لتعويضات وتأمين الأخطار المهنية وإصابات العمل</h2>
+      <p class="text-sm text-slate-600 mt-2" id="headerDescEn">Compute daily medical allowances, total/partial permanent disability lump-sums, death compensation, and employer GOSI hazard contributions (2%).</p>
+      <p class="text-sm text-slate-600 mt-2 hidden" id="headerDescAr">احسب البدل اليومي للإجازة المرضية، تعويضات العجز الكلي والجزئي، تعويض الوفاة، واشتراك الأخطار المهنية (2%) على المنشأة.</p>
+    </div>
+
+    <!-- Interactive Calculator Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Left Column: Input Form (7 cols) -->
+      <div class="lg:col-span-7 bg-white p-6 sm:p-8 rounded-2xl shadow-sm border border-slate-200">
+        <div class="border-b border-slate-100 pb-4 mb-6 flex justify-between items-center">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+            <span id="formTitleEn">Worker & Injury Parameters</span>
+            <span id="formTitleAr" class="hidden">بيانات العامل والإصابة المهنية</span>
+          </h3>
+          <button type="button" onclick="resetForm()" class="text-xs text-slate-500 hover:text-emerald-700 underline">
+            <span id="resetEn">Reset Form</span>
+            <span id="resetAr" class="hidden">إعادة ضبط</span>
+          </button>
+        </div>
+
+        <form id="injuryForm" onsubmit="return false;" class="space-y-5">
+          
+          <!-- Employee Name / Reference -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">
+              <span id="labelEmpRefEn">Employee Name / File Ref (Optional)</span>
+              <span id="labelEmpRefAr" class="hidden">اسم الموظف / رقم الملف (اختياري)</span>
+            </label>
+            <input type="text" id="empRef" placeholder="e.g. Ahmed Mansoor / EMP-9021" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition">
+          </div>
+
+          <!-- Grid Row: Wage & Nationality -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                <span id="labelWageEn">GOSI Wage (Basic + Housing) (SAR) *</span>
+                <span id="labelWageAr" class="hidden">الأجر الخاضع للتأمينات (الأساسي + السكن) (ريال) *</span>
+              </label>
+              <div class="relative">
+                <input type="number" id="monthlyWage" value="8000" min="0" step="100" oninput="calculateCompensation()" class="w-full pl-3 pr-12 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none font-semibold text-slate-900">
+                <span class="absolute right-3 top-2.5 text-xs text-slate-400 font-bold pointer-events-none">SAR</span>
+              </div>
+              <p class="text-[11px] text-slate-500 mt-1" id="wageHelpEn">Subject to GOSI limit: Max 45,000 SAR/month</p>
+              <p class="text-[11px] text-slate-500 mt-1 hidden" id="wageHelpAr">الحد الأقصى للأجر الخاضع للاشتراك 45,000 ريال</p>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                <span id="labelNatEn">Worker Nationality *</span>
+                <span id="labelNatAr" class="hidden">جنسية العامل *</span>
+              </label>
+              <select id="nationality" onchange="calculateCompensation()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white font-medium">
+                <option value="saudi">Saudi National (سعودي)</option>
+                <option value="non_saudi" selected>Non-Saudi Expat (غير سعودي)</option>
+              </select>
+              <p class="text-[11px] text-slate-500 mt-1" id="natHelpEn">GOSI benefits differ for Saudis vs Non-Saudis</p>
+              <p class="text-[11px] text-slate-500 mt-1 hidden" id="natHelpAr">تختلف تعويضات العجز والوفاة للسعودي عن غير السعودي</p>
+            </div>
+          </div>
+
+          <!-- Injury Type Selection -->
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">
+              <span id="labelInjuryTypeEn">Injury Outcome / Medical Status *</span>
+              <span id="labelInjuryTypeAr" class="hidden">تصنيف الإصابة / الحالة الطبية *</span>
+            </label>
+            <select id="injuryType" onchange="toggleInjuryFields(); calculateCompensation();" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white font-semibold text-emerald-900">
+              <option value="temporary">1. Temporary Disability (إجازة مرضية وتوقف مؤقت)</option>
+              <option value="partial">2. Permanent Partial Disability (عجز جزئي دائم 1% - 99%)</option>
+              <option value="total">3. Permanent Total Disability (عجز كلي دائم 100%)</option>
+              <option value="fatal">4. Fatal Injury / Death (وفاة ناتجة عن إصابة عمل)</option>
+            </select>
+          </div>
+
+          <!-- Conditional Fields Container -->
+          <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+            
+            <!-- Field 1: Temporary Days Off -->
+            <div id="fieldTempDays">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                <span id="labelDaysEn">Temporary Disability Duration (Days Off)</span>
+                <span id="labelDaysAr" class="hidden">مدة التعطل الإجازة المرضية (بالأيام)</span>
+              </label>
+              <input type="number" id="tempDays" value="30" min="1" max="365" oninput="calculateCompensation()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
+            </div>
+
+            <!-- Field 2: Daily Allowance Rate -->
+            <div id="fieldAllowanceRate">
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                <span id="labelRateEn">Medical Treatment Coverage / Daily Rate</span>
+                <span id="labelRateAr" class="hidden">نسبة البدل اليومي المعين</span>
+              </label>
+              <select id="allowanceRate" onchange="calculateCompensation()" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none bg-white">
+                <option value="1.00">100% Wage (Standard GOSI Daily Allowance / بدل 100%)</option>
+                <option value="0.75">75% Wage (If receiving full hospital care on GOSI / بدل 75%)</option>
+              </select>
+              <p class="text-[11px] text-slate-500 mt-1" id="rateHelpEn">Article 137: 100% daily wage during treatment, reduced to 75% if under full GOSI medical board care.</p>
+              <p class="text-[11px] text-slate-500 mt-1 hidden" id="rateHelpAr">المادة 137: بدل يومي 100% من الأجر، ويخفض إلى 75% إذا كان المريض تحت الرعاية الكاملة بالتأمين</p>
+            </div>
+
+            <!-- Field 3: Disability Percentage (for Partial) -->
+            <div id="fieldDisabilityPct" class="hidden">
+              <div class="flex justify-between items-center mb-1">
+                <label class="block text-xs font-semibold text-slate-700">
+                  <span id="labelPctEn">Assessed Disability Percentage (Medical Board)</span>
+                  <span id="labelPctAr" class="hidden">نسبة العجز المحددة من اللجنة الطبية</span>
+                </label>
+                <span id="disabilityVal" class="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">35%</span>
+              </div>
+              <input type="range" id="disabilityPct" min="1" max="99" value="35" oninput="document.getElementById('disabilityVal').innerText = this.value + '%'; calculateCompensation();" class="w-full accent-emerald-600 cursor-pointer">
+              <div class="flex justify-between text-[10px] text-slate-400 font-medium mt-1">
+                <span>1% (Minor)</span>
+                <span>49% (Lump Sum threshold)</span>
+                <span>50%+ (Monthly Pension for Saudis)</span>
+                <span>99%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Employer Hazard Cost Check -->
+          <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-lg flex items-center justify-between">
+            <div>
+              <p class="text-xs font-bold text-emerald-900" id="hazardCostTitleEn">Employer GOSI Occupational Hazard Premium</p>
+              <p class="text-xs font-bold text-emerald-900 hidden" id="hazardCostTitleAr">اشتراك فرع الأخطار المهنية (على صاحب العمل)</p>
+              <p class="text-[11px] text-emerald-700" id="hazardCostDescEn">2% of total basic + housing wage paid monthly by employer</p>
+              <p class="text-[11px] text-emerald-700 hidden" id="hazardCostDescAr">نسبة 2% مقطوعة من الأجر الخاضع للتأمينات يدفعها المنشأة شهرياً</p>
+            </div>
+            <span id="monthlyHazardFee" class="text-sm font-extrabold text-emerald-800">160 SAR/mo</span>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Right Column: Results & Actions (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        
+        <!-- Primary Results Card -->
+        <div class="bg-slate-900 text-white p-6 rounded-2xl shadow-xl relative overflow-hidden border border-slate-800">
+          <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="flex justify-between items-center border-b border-slate-800 pb-3 mb-4">
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400" id="resHeaderEn">Estimated Compensation Breakdown</span>
+            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 hidden" id="resHeaderAr">تفاصيل التعويضات التقديرية</span>
+            <span class="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-0.5 rounded border border-emerald-500/30">GOSI / Labor Law</span>
+          </div>
+
+          <div class="mb-6">
+            <span class="text-xs text-slate-400 block mb-1" id="lblTotalCompensationEn">Total Estimated Compensation Benefit</span>
+            <span class="text-xs text-slate-400 block mb-1 hidden" id="lblTotalCompensationAr">إجمالي التعويض المستحق التقديري</span>
+            <div class="flex items-baseline gap-2">
+              <span id="resTotalAmount" class="text-3xl sm:text-4xl font-extrabold text-emerald-400 tracking-tight">8,000</span>
+              <span class="text-sm font-semibold text-slate-300">SAR</span>
+            </div>
+          </div>
+
+          <!-- Itemized Breakdown -->
+          <div class="space-y-3 border-t border-slate-800 pt-4 text-xs">
+            <div class="flex justify-between items-center text-slate-300">
+              <span id="lblDailyWageEn">Calculated Daily Wage:</span>
+              <span id="lblDailyWageAr" class="hidden">الأجر اليومي المحسوب:</span>
+              <span id="resDailyWage" class="font-mono font-bold text-white">266.67 SAR</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-300">
+              <span id="lblTempBenefitEn">Temporary Allowance Total:</span>
+              <span id="lblTempBenefitAr" class="hidden">إجمالي البدل اليومي للمؤقت:</span>
+              <span id="resTempBenefit" class="font-mono font-bold text-white">8,000 SAR</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-300">
+              <span id="lblDisabilityBenefitEn">Disability Lump Sum / Benefit:</span>
+              <span id="lblDisabilityBenefitAr" class="hidden">تعويض/مقطوعة العجز الدائم:</span>
+              <span id="resDisabilityBenefit" class="font-mono font-bold text-emerald-300">0 SAR</span>
+            </div>
+            <div class="flex justify-between items-center text-slate-300">
+              <span id="lblFuneralEn">Funeral Grant Allowance:</span>
+              <span id="lblFuneralAr" class="hidden">منحة نفقات الجنازة (عند الوفاة):</span>
+              <span id="resFuneralBenefit" class="font-mono font-bold text-white">0 SAR</span>
+            </div>
+          </div>
+
+          <!-- Actions: Export CSV / Print -->
+          <div class="mt-6 pt-4 border-t border-slate-800 flex gap-2">
+            <button onclick="exportCSV()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-2 px-3 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 border border-slate-700">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+              <span id="btnCsvEn">Export CSV</span>
+              <span id="btnCsvAr" class="hidden">تصدير CSV</span>
+            </button>
+            <button onclick="window.print()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2 px-3 rounded-lg text-xs font-semibold transition flex items-center justify-center gap-1.5 shadow">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+              <span id="btnPrintEn">Print Summary</span>
+              <span id="btnPrintAr" class="hidden">طباعة التقرير</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Gumroad Master Excel Banner Card -->
+        <div class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 p-5 rounded-2xl shadow-sm text-slate-800">
+          <div class="flex items-start gap-3 mb-3">
+            <div class="p-2 bg-emerald-600 text-white rounded-lg text-lg font-bold shadow">📊</div>
+            <div>
+              <h4 class="text-sm font-bold text-slate-900" id="excelCardTitleEn">Saudi HR & Payroll Excel Master Suite</h4>
+              <h4 class="text-sm font-bold text-slate-900 hidden" id="excelCardTitleAr">حقيبة إكسل الموارد البشرية والأجور المعتمدة في السعودية</h4>
+              <p class="text-xs text-slate-600 mt-0.5" id="excelCardDescEn">Includes automated formulas for GOSI hazard, EOSB, Article 77, and injury settlement audits.</p>
+              <p class="text-xs text-slate-600 mt-0.5 hidden" id="excelCardDescAr">تتضمن معادلات أوتوماتيكية للأخطار المهنية، مكافأة نهاية الخدمة، والمادة 77 بالتأمينات.</p>
+            </div>
+          </div>
+          <div class="space-y-1.5 text-[11px] text-slate-700 mb-4 bg-white/70 p-2.5 rounded-lg border border-emerald-100">
+            <div class="flex items-center gap-1.5">✅ <span>Automatic GOSI & Labor Law Article 137 daily allowance calculator</span></div>
+            <div class="flex items-center gap-1.5">✅ <span>Pre-configured printable PDF report template for HSE & HR</span></div>
+            <div class="flex items-center gap-1.5">✅ <span>Lifetime updates & compliant with ZATCA / GOSI 2025</span></div>
+          </div>
+          <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow hover:shadow-md">
+            <span id="excelCtaEn">Download Master Template ($29)</span>
+            <span id="excelCtaAr" class="hidden">تحميل النماذج الجاهزة الآن ($29)</span>
+          </a>
+        </div>
+
+        <!-- Mandatory Legal Disclaimer Card -->
+        <div class="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-900 text-[11px] leading-relaxed">
+          <p class="font-bold mb-1 flex items-center gap-1">
+            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <span id="discTitleEn">Regulatory Disclaimer</span>
+            <span id="discTitleAr" class="hidden">إخلاء مسؤولية قانوني وتنظيمي</span>
+          </p>
+          <p id="discTextEn">
+            This calculator provides estimates based on Saudi Labor Law (Articles 133–139) and GOSI Occupational Hazards Branch regulations. Official disability percentages and final payout figures are subject to medical board evaluation and formal decision by the General Organization for Social Insurance (GOSI).
+          </p>
+          <p id="discTextAr" class="hidden">
+            هذه الحاسبة تعطي نتائج تقديرية بناءً على مواد نظام العمل السعودي (المواد 133-139) ولائحة الأخطار المهنية بالتأمينات الاجتماعية. يتم تحديد نسبة العجز النهائية ومبالغ التعويض المعتمدة حتمياً بعد العرض على اللجان الطبية المختصة في المؤسسة العامة للتأمينات الاجتماعية.
+          </p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SEO & Educational Guide Section (800+ Words) -->
+    <section class="mt-16 border-t border-slate-200 pt-10 text-slate-700 space-y-8">
+      
+      <!-- Article Introduction -->
+      <div class="max-w-4xl mx-auto space-y-4">
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-900" id="seoTitleEn">
+          Comprehensive Guide to Work Injury Compensation & GOSI Occupational Hazard Rules in Saudi Arabia
+        </h2>
+        <h2 class="text-xl sm:text-2xl font-bold text-slate-900 hidden" id="seoTitleAr">
+          الدليل الشامل لتعويضات إصابات العمل ونظام الأخطار المهنية في المملكة العربية السعودية
+        </h2>
+        
+        <p class="text-sm leading-relaxed" id="seoP1En">
+          In the Kingdom of Saudi Arabia, workplace safety, occupational health, and financial security for injured employees are governed strictly by two primary frameworks: the <strong>Saudi Labor Law (Articles 133 through 139)</strong> and the <strong>GOSI Occupational Hazards Branch (فرع الأخطار المهنية)</strong>. Every registered company operating in Saudi Arabia must comply with mandatory employer-paid contributions and proper reporting procedures whenever a work-related accident, commute injury, or occupational disease occurs.
+        </p>
+        <p class="text-sm leading-relaxed hidden" id="seoP1Ar">
+          في المملكة العربية السعودية، تُحكم سلامة بيئة العمل وتوفير الحماية المالية والمادية للموظفين المصابين بموجب نظامين أساسيين: <strong>نظام العمل السعودي (المواد من 133 إلى 139)</strong> و<strong>فرع الأخطار المهنية بالمؤسسة العامة للتأمينات الاجتماعية</strong>. يلتزم جميع أصحاب العمل بتسديد الاشتراكات الإلزامية والإبلاغ الدقيق عن أي حادث عمل أو إصابة طريق أو مرض مهني.
+        </p>
+      </div>
+
+      <!-- Key Legal Provisions & Formulas Table/Grid -->
+      <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <!-- Labor Law Articles Summary -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="text-emerald-600">📜</span>
+            <span id="legalTitleEn">Key Saudi Labor Law Articles</span>
+            <span id="legalTitleAr" class="hidden">أهم مواد نظام العمل الخاصة بالإصابات</span>
+          </h3>
+          <ul class="text-xs space-y-2.5 text-slate-600 leading-relaxed">
+            <li>
+              <strong>Article 133 (المادة 133):</strong> Mandatory provision of immediate medical care, transport, and treatment expenses by the employer or GOSI.
+            </li>
+            <li>
+              <strong>Article 137 (المادة 137):</strong> Daily allowance equal to <strong>100% of full wage</strong> during temporary disability. If treatment exceeds 30 days or is provided under GOSI hospital care, it may adjust to 75%.
+            </li>
+            <li>
+              <strong>Article 138 (المادة 138):</strong> Evaluation of permanent total or partial disability must be certified by accredited GOSI medical committees.
+            </li>
+            <li>
+              <strong>Article 139 (المادة 139):</strong> Employer non-compliance or failure to register employees under GOSI makes the employer directly liable for compensation payments.
+            </li>
+          </ul>
+        </div>
+
+        <!-- GOSI Benefit Formulations -->
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-3">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <span class="text-emerald-600">🧮</span>
+            <span id="formulaTitleEn">Compensation Formulas & Rules</span>
+            <span id="formulaTitleAr" class="hidden">معادلات وقواعد التعويضات المعتمدة</span>
+          </h3>
+          <ul class="text-xs space-y-2.5 text-slate-600 leading-relaxed">
+            <li>
+              <strong>Temporary Allowance:</strong> <code class="bg-slate-100 px-1 py-0.5 rounded text-slate-800">(Wage / 30) × Days × Rate (100% or 75%)</code>
+            </li>
+            <li>
+              <strong>Non-Saudi Permanent Disability (Lump Sum):</strong>
+              <br>• Total Disability / Death = <strong>84 months wage</strong> (Cap: SAR 330,000) + Funeral grant (SAR 10,000).
+              <br>• Partial (&lt;50%) = <strong>60 months wage × Disability %</strong> (Cap: SAR 165,000).
+            </li>
+            <li>
+              <strong>Saudi National Benefits:</strong>
+              <br>• Total Disability = <strong>100% Monthly Pension</strong> (Min SAR 1,750/mo).
+              <br>• Partial (≥50%) = Monthly pension proportional to disability percentage.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Process Checklist for HR / HSE -->
+      <div class="max-w-4xl mx-auto bg-slate-100 p-6 rounded-2xl border border-slate-200 space-y-4">
+        <h3 class="text-base font-bold text-slate-900" id="processTitleEn">Standard Operating Procedure (SOP) for Work Injury Incidents</h3>
+        <h3 class="text-base font-bold text-slate-900 hidden" id="processTitleAr">خطوات الإجراءات التشغيلية عند وقوع إصابة عمل</h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+          <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+            <span class="font-bold text-emerald-700 block mb-1">Step 1: Emergency Care (0-3 hrs)</span>
+            <p class="text-slate-600">Provide immediate first aid and transfer the worker to a GOSI-accredited medical facility or hospital.</p>
+          </div>
+          <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+            <span class="font-bold text-emerald-700 block mb-1">Step 2: Formal Reporting (&lt;72 hrs)</span>
+            <p class="text-slate-600">Report the injury electronically via Qiwa / GOSI portal within 72 hours of occurrence to preserve insurance rights.</p>
+          </div>
+          <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+            <span class="font-bold text-emerald-700 block mb-1">Step 3: Medical Board & Settlement</span>
+            <p class="text-slate-600">Submit medical reports to the GOSI Medical Committee for final assessment of disability percentage and payout execution.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="max-w-4xl mx-auto space-y-4">
+        <h3 class="text-lg font-bold text-slate-900" id="faqTitleEn">Frequently Asked Questions (FAQ)</h3>
+        <h3 class="text-lg font-bold text-slate-900 hidden" id="faqTitleAr">الأسئلة الشائعة حول إصابات العمل والأخطار المهنية</h3>
+        
+        <div class="space-y-3 text-xs sm:text-sm">
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <p class="font-bold text-slate-900 mb-1">Q1: Who pays for the GOSI Occupational Hazard contribution rate?</p>
+            <p class="text-slate-600">The 2% Occupational Hazard contribution is paid <strong>100% by the employer</strong> for both Saudi and non-Saudi employees. No portion of this fee is deducted from the worker's salary.</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <p class="font-bold text-slate-900 mb-1">Q2: Are traffic accidents during commutes covered as work injuries?</p>
+            <p class="text-slate-600">Yes. Accidents occurring while commuting directly to or from the workplace, or while traveling on official business trips, are recognized as official work injuries under GOSI rules.</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <p class="font-bold text-slate-900 mb-1">Q3: What happens if an employer fails to report an injury within 72 hours?</p>
+            <p class="text-slate-600">Late reporting may lead to administrative fines under Labor Inspection rules and requires the employer to bear full medical expenses out-of-pocket until GOSI accepts the late report.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 mt-12 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4">
+      <p>© 2025 Saudi B2B Operational & Compliance Tools. Designed for HR, Finance & HSE Professionals.</p>
+    </div>
+  </footer>
+
+  <!-- Calculation Engine Script -->
+  <script>
+    let currentLang = 'en';
+
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      const body = document.body;
+      const btnText = document.getElementById('langToggleText');
+      
+      if (currentLang === 'ar') {
+        body.classList.remove('ltr');
+        body.classList.add('rtl');
+        body.setAttribute('dir', 'rtl');
+        btnText.innerText = 'English';
+      } else {
+        body.classList.remove('rtl');
+        body.classList.add('ltr');
+        body.setAttribute('dir', 'ltr');
+        btnText.innerText = 'العربية';
+      }
+
+      // Toggle all EN and AR visibility
+      const enElements = document.querySelectorAll('[id$="En"]');
+      const arElements = document.querySelectorAll('[id$="Ar"]');
+
+      enElements.forEach(el => {
+        if (currentLang === 'ar') el.classList.add('hidden');
+        else el.classList.remove('hidden');
+      });
+
+      arElements.forEach(el => {
+        if (currentLang === 'ar') el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      });
+
+      calculateCompensation();
+    }
+
+    function toggleInjuryFields() {
+      const type = document.getElementById('injuryType').value;
+      const fieldTempDays = document.getElementById('fieldTempDays');
+      const fieldAllowanceRate = document.getElementById('fieldAllowanceRate');
+      const fieldDisabilityPct = document.getElementById('fieldDisabilityPct');
+
+      if (type === 'temporary') {
+        fieldTempDays.classList.remove('hidden');
+        fieldAllowanceRate.classList.remove('hidden');
+        fieldDisabilityPct.classList.add('hidden');
+      } else if (type === 'partial') {
+        fieldTempDays.classList.add('hidden');
+        fieldAllowanceRate.classList.add('hidden');
+        fieldDisabilityPct.classList.remove('hidden');
+      } else if (type === 'total' || type === 'fatal') {
+        fieldTempDays.classList.add('hidden');
+        fieldAllowanceRate.classList.add('hidden');
+        fieldDisabilityPct.classList.add('hidden');
+      }
+    }
+
+    function calculateCompensation() {
+      const wageInput = parseFloat(document.getElementById('monthlyWage').value) || 0;
+      const wage = Math.min(wageInput, 45000); // GOSI ceiling 45k
+      const nationality = document.getElementById('nationality').value;
+      const type = document.getElementById('injuryType').value;
+      const days = parseFloat(document.getElementById('tempDays').value) || 0;
+      const rate = parseFloat(document.getElementById('allowanceRate').value) || 1.0;
+      const disabilityPct = parseFloat(document.getElementById('disabilityPct').value) || 35;
+
+      const dailyWage = wage / 30;
+      let tempBenefit = 0;
+      let disabilityBenefit = 0;
+      let funeralBenefit = 0;
+
+      // Monthly GOSI Hazard Premium (2%)
+      const hazardFee = wage * 0.02;
+      document.getElementById('monthlyHazardFee').innerText = hazardFee.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' SAR/mo';
+
+      if (type === 'temporary') {
+        tempBenefit = dailyWage * days * rate;
+      } 
+      else if (type === 'partial') {
+        if (nationality === 'non_saudi') {
+          if (disabilityPct < 50) {
+            // Lump sum: 60 months wage * disability % (Max SAR 165,000)
+            disabilityBenefit = Math.min(60 * wage * (disabilityPct / 100), 165000);
+          } else {
+            // Lump sum: 84 months wage * disability % (Max SAR 330,000)
+            disabilityBenefit = Math.min(84 * wage * (disabilityPct / 100), 330000);
+          }
+        } else {
+          // Saudi national: pension or proportional payout
+          disabilityBenefit = wage * (disabilityPct / 100);
+        }
+      } 
+      else if (type === 'total') {
+        if (nationality === 'non_saudi') {
+          // Lump sum 84 months wage (Max 330,000 SAR)
+          disabilityBenefit = Math.min(84 * wage, 330000);
+        } else {
+          // Saudi National: 100% Monthly annuity pension (Min 1,750 SAR)
+          disabilityBenefit = Math.max(wage, 1750);
+        }
+      } 
+      else if (type === 'fatal') {
+        funeralBenefit = 10000; // Funeral grant allowance
+        if (nationality === 'non_saudi') {
+          // Lump sum 84 months wage (Max 330,000 SAR)
+          disabilityBenefit = Math.min(84 * wage, 330000);
+        } else {
+          // Saudi National: Family pension (100% wage)
+          disabilityBenefit = Math.max(wage, 1750);
+        }
+      }
+
+      const totalAmount = tempBenefit + disabilityBenefit + funeralBenefit;
+
+      document.getElementById('resDailyWage').innerText = dailyWage.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' SAR';
+      document.getElementById('resTempBenefit').innerText = tempBenefit.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' SAR';
+      document.getElementById('resDisabilityBenefit').innerText = disabilityBenefit.toLocaleString('en-US', {maximumFractionDigits: 2}) + (nationality === 'saudi' && (type === 'total' || (type === 'partial' && disabilityPct >= 50)) ? ' SAR/mo (Pension)' : ' SAR');
+      document.getElementById('resFuneralBenefit').innerText = funeralBenefit.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' SAR';
+      document.getElementById('resTotalAmount').innerText = totalAmount.toLocaleString('en-US', {maximumFractionDigits: 2});
+    }
+
+    function resetForm() {
+      document.getElementById('injuryForm').reset();
+      document.getElementById('disabilityVal').innerText = '35%';
+      toggleInjuryFields();
+      calculateCompensation();
+    }
+
+    function exportCSV() {
+      const empRef = document.getElementById('empRef').value || 'Employee';
+      const wage = document.getElementById('monthlyWage').value;
+      const nat = document.getElementById('nationality').value;
+      const type = document.getElementById('injuryType').value;
+      const total = document.getElementById('resTotalAmount').innerText.replace(/,/g, '');
+
+      const csvContent = "data:text/csv;charset=utf-8,"
+        + "Field,Value\n"
+        + `Employee Ref,"${empRef}"\n`
+        + `Monthly GOSI Wage,${wage} SAR\n`
+        + `Nationality,${nat}\n`
+        + `Injury Type,${type}\n`
+        + `Calculated Total Compensation,${total} SAR\n`;
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `Work_Injury_Compensation_${empRef.replace(/\s+/g, '_')}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Initial setup on load
+    window.onload = function() {
+      toggleInjuryFields();
+      calculateCompensation();
+    };
+  </script>
+</body>
+</html>
