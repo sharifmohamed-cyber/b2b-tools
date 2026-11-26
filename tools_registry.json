@@ -362,5 +362,12 @@
     "title_ar": "حاسبة مطابقة ضريبة القيمة المضافة الجمركية وتكاليف التخليص والاستيراد",
     "description_en": "Reconcile Saudi import customs duties, ZATCA import VAT Box 7/8 adjustments, clearing charges, and port tariffs with instant exportable statements.",
     "date": "2026-11-25"
+  },
+  {
+    "slug": "saudi-rega-brokerage-commission-and-tax-calculator",
+    "title_en": "Saudi REGA Real Estate Brokerage Commission & Tax Calculator",
+    "title_ar": "حاسبة عمولة الوساطة العقارية وضريبة التصرفات والقيمة المضافة - الهيئة العامة للعقار",
+    "description_en": "Calculate Saudi REGA real estate brokerage commissions, 15% VAT, 5% RETT property tax, and buyer-seller splits compliant with Real Estate Brokerage Law.",
+    "date": "2026-11-26"
   }
 ]

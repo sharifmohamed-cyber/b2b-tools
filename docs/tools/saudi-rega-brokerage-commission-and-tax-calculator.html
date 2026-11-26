@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>حاسبة عمولة الوساطة العقارية وضريبة التصرفات - REGA Commission Calculator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Cairo', 'Inter', 'sans-serif'],
+          },
+          colors: {
+            emerald: {
+              850: '#065339',
+              950: '#022c1e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .font-latin { font-family: 'Inter', sans-serif; }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
+  <!-- Top Banner -->
+  <div class="bg-emerald-900 text-white text-xs md:text-sm py-2 px-4 shadow-sm border-b border-emerald-800">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center gap-2 text-center sm:text-right">
+        <span class="bg-emerald-500 text-slate-950 text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">نظام الوساطة العقارية</span>
+        <span id="topBannerText">متوافق مع اللائحة التنفيذية لنظام الوساطة العقارية السعودي الصادر بالمرسوم الملكي م/130 وضوابط الهيئة العامة للعقار (REGA).</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <button id="langToggleBtn" class="text-xs bg-emerald-800 hover:bg-emerald-700 text-emerald-100 px-3 py-1 rounded transition border border-emerald-600 flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/></svg>
+          <span id="langToggleLabel">English</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-700 to-teal-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
+          ع
+        </div>
+        <div>
+          <h1 class="text-lg md:text-xl font-extrabold text-slate-900 tracking-tight leading-tight" id="headerTitle">
+            حاسبة عمولة الوساطة وضريبة العقار (REGA)
+          </h1>
+          <p class="text-xs text-slate-500 hidden sm:block" id="headerSubtitle">
+            احتساب سقف السعي، ضريبة التصرفات (RETT 5%)، وضريبة القيمة المضافة (15%)
+          </p>
+        </div>
+      </div>
+      <a href="https://gumroad.com" target="_blank" rel="noopener" class="hidden sm:inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs md:text-sm px-4 py-2 rounded-lg shadow transition duration-200">
+        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/></svg>
+        <span id="ctaNavBtn">تحميل ملف Excel المعتمد (29$)</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+
+    <!-- Main Grid: Controls + Summary -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Form Inputs Column (7 Cols) -->
+      <div class="lg:col-span-7 bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 space-y-6">
+        
+        <div class="border-b border-slate-100 pb-4 flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900" id="secTitleParameters">بيانات العملية العقارية</h2>
+            <p class="text-xs text-slate-500" id="secDescParameters">حدد نوع العقد والقيمة الإجمالية وتوزيع سعي الوسيط العقاري المرخص.</p>
+          </div>
+          <button type="button" id="btnReset" class="text-xs font-semibold text-emerald-700 hover:text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-md transition">
+            إعادة ضبط
+          </button>
+        </div>
+
+        <!-- Deal Nature: Sale vs Lease -->
+        <div class="space-y-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-600 block" id="lblDealType">طبيعة الصفقة العقارية</label>
+          <div class="grid grid-cols-2 gap-3">
+            <button type="button" id="btnTypeSale" class="py-3 px-4 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-900 font-bold text-sm flex items-center justify-center gap-2 transition">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+              <span id="txtTypeSale">صفقة بيع / شراء عقار</span>
+            </button>
+            <button type="button" id="btnTypeLease" class="py-3 px-4 rounded-xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-sm flex items-center justify-center gap-2 hover:border-slate-300 transition">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              <span id="txtTypeLease">عقد إيجار عقاري</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Transaction Value -->
+        <div class="space-y-1.5">
+          <label for="propertyValue" class="text-xs font-bold uppercase tracking-wider text-slate-700 flex justify-between items-center">
+            <span id="lblPropertyValue">قيمة الصفقة الإجمالية (ريال سعودي)</span>
+            <span class="text-emerald-700 font-medium text-xs font-latin" id="propertyValueFormatted">1,500,000 SAR</span>
+          </label>
+          <div class="relative rounded-xl shadow-sm">
+            <input type="number" id="propertyValue" value="1500000" step="1000" min="1" class="w-full rounded-xl border border-slate-300 px-4 py-3 text-base md:text-lg font-bold text-slate-900 focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/20 outline-none transition pl-16" />
+            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 font-semibold text-sm">
+              ر.س
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-500" id="descPropertyValue">سعر البيع الإجمالي المتفق عليه أو قيمة الإيجار السنوي للعقد.</p>
+        </div>
+
+        <!-- Broker Commission Rate Setting -->
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-700 uppercase tracking-wider" id="lblCommissionRate">نسبة سعي الوساطة العقارية</label>
+            <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded" id="badgeMaxRate">الحد النظامي: 2.5%</span>
+          </div>
+          
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" id="btnRate25" class="py-2 px-3 text-xs font-bold rounded-lg border border-emerald-600 bg-white text-emerald-700 shadow-sm">2.5% (نظامي REGA)</button>
+            <button type="button" id="btnRate20" class="py-2 px-3 text-xs font-bold rounded-lg border border-slate-300 bg-white text-slate-700 hover:border-slate-400">2.0%</button>
+            <button type="button" id="btnRateCustom" class="py-2 px-3 text-xs font-bold rounded-lg border border-slate-300 bg-white text-slate-700 hover:border-slate-400">نسبة مخصصة</button>
+          </div>
+
+          <div id="customRateWrapper" class="hidden pt-2">
+            <div class="relative rounded-lg shadow-sm max-w-xs">
+              <input type="number" id="customCommissionRate" value="2.5" step="0.1" min="0" max="100" class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm font-bold text-slate-800 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-500 outline-none pl-8" />
+              <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 font-bold text-xs">%</div>
+            </div>
+            <p class="text-[11px] text-amber-700 mt-1" id="customRateWarning">تنص المادة (13) على ألا تتجاوز العمولة 2.5% إلا بموجب اتفاق كتابي صريح ومسبق بين الأطراف.</p>
+          </div>
+        </div>
+
+        <!-- Commission Bearing Split -->
+        <div class="space-y-2">
+          <label class="text-xs font-bold uppercase tracking-wider text-slate-600 block" id="lblSplitParty">الطرف المتحمل لعمولة السعي</label>
+          <div class="grid grid-cols-3 gap-2">
+            <button type="button" id="btnSplitBuyer" class="py-2.5 px-3 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:border-emerald-500 transition text-center">
+              <span id="txtSplitBuyer">المشتري / المستأجر بالكامل</span>
+            </button>
+            <button type="button" id="btnSplitHalf" class="py-2.5 px-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-xs font-bold text-emerald-900 transition text-center">
+              <span id="txtSplitHalf">مناصفة (50% / 50%)</span>
+            </button>
+            <button type="button" id="btnSplitSeller" class="py-2.5 px-3 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:border-emerald-500 transition text-center">
+              <span id="txtSplitSeller">البائع / المؤجر بالكامل</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Broker VAT Status -->
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+          <div>
+            <label for="applyVat" class="text-sm font-bold text-slate-800 cursor-pointer block" id="lblApplyVat">إخضاع عمولة السعي لضريبة القيمة المضافة (15% VAT)</label>
+            <p class="text-xs text-slate-500" id="descApplyVat">تُطبق إذا كان الوسيط أو المكتب العقاري مسجلاً لدى هيئة الزكاة والضريبة والجمارك (ZATCA).</p>
+          </div>
+          <input type="checkbox" id="applyVat" checked class="w-5 h-5 accent-emerald-600 rounded cursor-pointer" />
+        </div>
+
+        <!-- RETT Real Estate Transaction Tax (Applies to Sales) -->
+        <div id="rettSection" class="bg-emerald-50/50 border border-emerald-200/60 rounded-xl p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <div>
+              <span class="text-xs font-bold text-emerald-900 uppercase block tracking-wider" id="lblRettTitle">ضريبة التصرفات العقارية (5% RETT)</span>
+              <p class="text-[11px] text-emerald-800" id="descRett">واجبة السداد للدولة قبل الإفراغ العقاري والتوثيق لدى وزارة العدل.</p>
+            </div>
+            <span class="text-xs font-extrabold bg-emerald-200 text-emerald-950 px-2 py-0.5 rounded font-latin">5.0%</span>
+          </div>
+
+          <!-- First Home Exemption Check -->
+          <div class="flex items-start gap-2.5 pt-1">
+            <input type="checkbox" id="firstHomeExemption" class="w-4 h-4 mt-0.5 accent-emerald-600 rounded cursor-pointer" />
+            <label for="firstHomeExemption" class="text-xs text-slate-700 font-medium cursor-pointer leading-relaxed" id="lblFirstHomeExemption">
+              تطبيق إعفاء المسكن الأول للمواطن (تتحمل الدولة الضريبة لما يصل إلى 1,000,000 ر.س من قيمة العقار).
+            </label>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Summary & Results Column (5 Cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-slate-900 text-white rounded-2xl shadow-xl p-6 md:p-7 border border-slate-800 relative overflow-hidden">
+          
+          <!-- Visual badge -->
+          <div class="absolute -left-12 -bottom-12 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none"></div>
+          
+          <div class="flex items-center justify-between border-b border-slate-800 pb-4 mb-5">
+            <h3 class="text-base font-bold text-slate-100 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span id="cardTitleSummary">ملخص الحسبة والالتزامات</span>
+            </h3>
+            <span id="dealBadge" class="text-xs px-2.5 py-0.5 rounded bg-emerald-900 text-emerald-300 font-bold border border-emerald-700">
+              صفقة بيع
+            </span>
+          </div>
+
+          <!-- Big Highlight: Total Broker Commission -->
+          <div class="bg-slate-800/80 rounded-xl p-4 border border-slate-700/60 mb-5">
+            <div class="text-xs text-slate-400 font-medium mb-1" id="lblCardCommissionTotal">إجمالي سعي الوساطة (شامل ضريبة 15% VAT)</div>
+            <div class="text-2xl md:text-3xl font-extrabold text-emerald-400 font-latin tracking-tight flex items-baseline gap-1">
+              <span id="resTotalCommissionWithVat">43,125.00</span>
+              <span class="text-sm text-slate-400 font-sans">ر.س</span>
+            </div>
+            <div class="text-[11px] text-slate-400 mt-2 flex justify-between border-t border-slate-700/50 pt-2">
+              <span id="lblNetBrokerFee">السعي الصافي (بدون ضريبة):</span>
+              <span id="resNetBrokerFee" class="font-bold font-latin text-slate-200">37,500.00 ر.س</span>
+            </div>
+            <div class="text-[11px] text-slate-400 flex justify-between mt-1">
+              <span id="lblCommissionVatAmount">ضريبة القيمة المضافة (15%):</span>
+              <span id="resCommissionVatAmount" class="font-bold font-latin text-amber-300">5,625.00 ر.س</span>
+            </div>
+          </div>
+
+          <!-- Financial Breakdown by Party -->
+          <div class="space-y-3.5 text-xs">
+            
+            <!-- RETT Tax (if Sale) -->
+            <div id="rettResultRow" class="flex items-center justify-between pb-2 border-b border-slate-800">
+              <div>
+                <span class="text-slate-300 font-medium block" id="lblResRett">ضريبة التصرفات العقارية (RETT 5%):</span>
+                <span id="resRettExemptionNote" class="text-[10px] text-emerald-400 hidden">تم تطبيق دعم الدولة للمسكن الأول</span>
+              </div>
+              <span id="resRettAmount" class="font-bold font-latin text-sm text-slate-100">75,000.00 ر.س</span>
+            </div>
+
+            <!-- Split Allocation -->
+            <div class="bg-slate-800/40 rounded-lg p-3 space-y-2 border border-slate-800">
+              <div class="flex justify-between items-center text-slate-300 font-semibold">
+                <span id="lblResBuyerShare">حصة المشتري من السعي + الضريبة:</span>
+                <span id="resBuyerShare" class="font-latin text-emerald-300 font-bold">21,562.50 ر.س</span>
+              </div>
+              <div class="flex justify-between items-center text-slate-300 font-semibold">
+                <span id="lblResSellerShare">حصة البائع من السعي + الضريبة:</span>
+                <span id="resSellerShare" class="font-latin text-amber-200 font-bold">21,562.50 ر.س</span>
+              </div>
+            </div>
+
+            <!-- Net Proceeds & Outlay -->
+            <div class="pt-2 space-y-2">
+              <div class="flex justify-between text-slate-300 font-bold">
+                <span id="lblResTotalBuyerOutlay">إجمالي السيولة المطلوبة من المشتري:</span>
+                <span id="resTotalBuyerOutlay" class="font-latin text-sm text-white font-black">1,596,562.50 ر.س</span>
+              </div>
+              <p class="text-[10px] text-slate-400" id="descTotalBuyerOutlay">(قيمة العقار + حصة السعي + ضريبة التصرفات العقارية إن وجبت عليه)</p>
+
+              <div class="flex justify-between text-slate-300 font-bold pt-1">
+                <span id="lblResSellerNet">صافي متحصلات البائع بعد السعي:</span>
+                <span id="resSellerNet" class="font-latin text-sm text-emerald-300 font-black">1,478,437.50 ر.س</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Action Buttons: Print Voucher & Export CSV -->
+          <div class="mt-6 pt-5 border-t border-slate-800 grid grid-cols-2 gap-2">
+            <button type="button" id="btnExportCsv" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs py-2.5 px-3 rounded-lg border border-slate-700 flex items-center justify-center gap-1.5 transition">
+              <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+              <span id="btnCsvText">تصدير كملف CSV</span>
+            </button>
+            <button type="button" id="btnPrintVoucher" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs py-2.5 px-3 rounded-lg border border-slate-700 flex items-center justify-center gap-1.5 transition">
+              <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              <span id="btnPrintText">طباعة سند الحسبة</span>
+            </button>
+          </div>
+
+          <!-- Legal Notice in Card -->
+          <div class="mt-4 text-[10px] text-slate-400 bg-slate-800/50 p-2.5 rounded-lg border border-slate-700/50 flex items-start gap-2">
+            <svg class="w-4 h-4 text-amber-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <p id="cardDisclaimer">تنبيه نظامي: مخرجات هذه الأداة لأغراض التقدير والحساب المبدئي، ويجب توثيق عقد الوساطة العقارية حصراً عبر المنصة الإلكترونية للهيئة العامة للعقار (REGA) وسداد الرسوم والضرائب عبر القنوات الرسمية.</p>
+          </div>
+
+        </div>
+
+        <!-- High-Converting CTA Box -->
+        <div class="bg-gradient-to-br from-amber-50 to-amber-100/70 border-2 border-amber-300/80 rounded-2xl p-6 shadow-sm text-center relative overflow-hidden">
+          <div class="inline-flex items-center gap-1.5 bg-amber-500 text-slate-950 font-black text-[10px] uppercase tracking-wider px-2.5 py-0.5 rounded-full mb-2">
+            OFFLINE PRO TOOLKIT
+          </div>
+          <h4 class="text-base font-bold text-slate-900 mb-1" id="ctaCardTitle">قالب إكسل الوساطة والصفقات العقارية المتقدم (VBA)</h4>
+          <p class="text-xs text-slate-600 mb-4 leading-relaxed" id="ctaCardDesc">احصل على النموذج الاحترافي الأوتوماتيكي لإعداد عروض الشراء، إصدار سندات قبض السعي المتوافقة مع الفوترة الإلكترونية، وسجل الصفقات الشامل.</p>
+          <a href="https://gumroad.com" target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm py-3 px-6 rounded-xl shadow-lg transition duration-200 transform hover:-translate-y-0.5">
+            <span id="ctaCardBtnText">امتلك قالب الإكسل الشامل - $29 دولار</span>
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+          </a>
+          <p class="text-[10px] text-slate-500 mt-2">ترخيص دائم مدى الحياة • تحديثات مجانية لمطابقة لوائح هيئة العقار وهيئة الزكاة</p>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Mandatory Bilingual Regulatory Disclaimer -->
+    <div class="mt-10 p-4 rounded-xl bg-slate-100 border border-slate-200 text-slate-600 text-xs leading-relaxed">
+      <div class="flex items-start gap-3">
+        <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <div>
+          <p class="font-bold text-slate-800" id="disclaimerHeading">إخلاء المسؤولية القانونية والتنظيمية (Legal & Compliance Disclaimer):</p>
+          <p class="mt-1" id="disclaimerFull">
+            هذه الحاسبة مصممة لتقديم نماذج تقديرية استرشادية بناءً على نظام الوساطة العقارية ولائحته التنفيذية وقواعد ضريبة التصرفات العقارية وضريبة القيمة المضافة في المملكة العربية السعودية. لا تشكل هذه النتائج مشورة ضريبية أو قانونية معتمدة، ويجب دائماً التحقق من مطابقة العقود والالتزامات للأنظمة الصادرة عن الهيئة العامة للعقار (REGA) وهيئة الزكاة والضريبة والجمارك (ZATCA) قبل توقيع الاتفاقيات أو الإفراغ العقاري.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comprehensive 800+ Words Guide and FAQ Section -->
+    <section class="mt-12 bg-white rounded-2xl border border-slate-200 p-6 md:p-10 text-slate-700 leading-relaxed space-y-8 shadow-sm">
+      
+      <div>
+        <h2 class="text-2xl font-extrabold text-slate-900 mb-3" id="guideTitle">الدليل الشامل لاحتساب عمولة الوساطة العقارية والضرائب في المملكة العربية السعودية</h2>
+        <p class="text-sm text-slate-600 leading-relaxed" id="guideIntro">
+          مع دخول نظام الوساطة العقارية حيز النفاذ الصادر بالمرسوم الملكي رقم (م/130)، وضعت الهيئة العامة للعقار (REGA) أطراً صارمة لتنظيم مهنة الوساطة العقارية وحماية حقوق البائع والمشتري والوسيط المرخص. يهدف هذا الدليل إلى توضيح كيفية احتساب سقف السعي القانوني، وتطبيق ضريبة التصرفات العقارية (RETT 5%)، وضريبة القيمة المضافة (VAT 15%) وتوزيع الالتزامات بين أطراف الصفقة.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="p-5 rounded-xl bg-slate-50 border border-slate-200">
+          <h3 class="text-base font-bold text-emerald-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span id="cardGuide1Title">أحكام عمولة الوساطة وسقف 2.5%</span>
+          </h3>
+          <ul class="text-xs text-slate-600 space-y-2 list-disc list-inside leading-relaxed" id="cardGuide1List">
+            <li>تحدد اللائحة التنفيذية لصفقات البيع سقف العمولة بما لا يتجاوز <strong>2.5% من قيمة الصفقة</strong>، ما لم يتفق أطراف العقد كتابةً وصراحةً على خلاف ذلك.</li>
+            <li>في عقود الإيجار، تحدد نسبة السعي بحد أقصى 2.5% من إيجار السنة الأولى فقط إذا كان العقد لعدة سنوات، مالم يتم الاتفاق على خلاف ذلك خطياً.</li>
+            <li>لا يجوز لأكثر من وسيط عقاري مشترك في الصفقة مطالبة العميل بأكثر من النسبة النظامية المحددة، ويتم اقتسام السعي بينهم بموجب اتفاقهم.</li>
+          </ul>
+        </div>
+
+        <div class="p-5 rounded-xl bg-slate-50 border border-slate-200">
+          <h3 class="text-base font-bold text-emerald-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span id="cardGuide2Title">ضريبة التصرفات العقارية (RETT) مقابل VAT</span>
+          </h3>
+          <ul class="text-xs text-slate-600 space-y-2 list-disc list-inside leading-relaxed" id="cardGuide2List">
+            <li><strong>ضريبة التصرفات العقارية (5%):</strong> تُفرض مباشرة على قيمة نقل الملكية أو البيع العقاري وتُسدد لهيئة الزكاة قبل إتمام الإفراغ الإلكتروني.</li>
+            <li><strong>إعفاء المسكن الأول:</strong> تتحمل الدولة ضريبة التصرفات العقارية عما لا يتجاوز 1,000,000 ريال من قيمة المسكن الأول للمواطن السعودي المستحق.</li>
+            <li><strong>ضريبة القيمة المضافة (15%):</strong> لا تُطبق على بيع العقار نفسه لخضوعه لـ RETT، ولكنها <em>تُطبق وجوباً على أتعاب وسعي الوسيط العقاري</em> إذا كان مسجلاً في ضريبة القيمة المضافة.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Detailed Formula Breakdown Section -->
+      <div class="border-t border-slate-200 pt-6">
+        <h3 class="text-lg font-bold text-slate-900 mb-4" id="secFormulaTitle">المعادلات الرياضية والمالية لحساب السعي والضرائب</h3>
+        <div class="bg-slate-900 text-slate-200 rounded-xl p-5 font-mono text-xs overflow-x-auto space-y-3 leading-relaxed">
+          <div>
+            <span class="text-emerald-400 font-bold"># 1. حساب السعي الصافي للوسيط (Net Broker Commission):</span><br>
+            السعي الصافي = قيمة الصفقة × (نسبة السعي ÷ 100)
+          </div>
+          <div>
+            <span class="text-amber-300 font-bold"># 2. حساب ضريبة القيمة المضافة على السعي (15% Commission VAT):</span><br>
+            ضريبة السعي = السعي الصافي × 0.15 (إذا كان الوسيط خاضعاً لضريبة VAT)
+          </div>
+          <div>
+            <span class="text-cyan-400 font-bold"># 3. حساب ضريبة التصرفات العقارية (RETT 5%):</span><br>
+            ضريبة التصرفات = (قيمة البيع - قيمة الإعفاء المعتمدة للمسكن الأول) × 0.05
+          </div>
+          <div>
+            <span class="text-rose-400 font-bold"># 4. إجمالي الالتزام النقدي على المشتري (Total Buyer Cash Outlay):</span><br>
+            المبلغ الكلي = قيمة الصفقة + حصة المشتري من السعي والضريبة + ضريبة التصرفات العقارية (ما لم يتفق على غير ذلك)
+          </div>
+        </div>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="border-t border-slate-200 pt-6 space-y-4">
+        <h3 class="text-lg font-bold text-slate-900 mb-2" id="secFaqTitle">الأسئلة الشائعة حول نظام الوساطة وعمولة السعي (FAQ)</h3>
+        
+        <div class="space-y-3">
+          <details class="group bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer">
+            <summary class="font-bold text-sm text-slate-800 list-none flex justify-between items-center">
+              <span id="faqQ1">من يتحمل دفع عمولة السعي في البيع والإيجار نظاماً؟</span>
+              <span class="text-slate-400 group-open:rotate-180 transition">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed" id="faqA1">
+              وفقاً لنظام الوساطة العقارية ولائحته التنفيذية، يتم تحديد الطرف المتحمل للعمولة بموجب عقد الوساطة المبرم. وفي حال عدم النص الصريح في العقد، فإن الأصل في العرف النظامي أن يتحمل كل طرف تكلفة الوسيط الذي كلفه، أو مناصفة السعي بين البائع والمشتري في حال كان الوسيط مشتركاً ومفوضاً من الطرفين.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer">
+            <summary class="font-bold text-sm text-slate-800 list-none flex justify-between items-center">
+              <span id="faqQ2">هل يحق للمكتب العقاري أخذ عمولة أكثر من 2.5% في الصفقات العقارية؟</span>
+              <span class="text-slate-400 group-open:rotate-180 transition">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed" id="faqA2">
+              تنص المادة (13) من نظام الوساطة على أن سقف العمولة هو 2.5% من قيمة الصفقة كحد أعلى في حال عدم وجود اتفاق كتابي مسبق. ويجوز نظاماً الاتفاق على نسبة أعلى أو أقل بشرط النص على ذلك كتابةً في عقد وساطة رسمي وموثق في منصة هيئة العقار قبل إتمام الصفقة.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer">
+            <summary class="font-bold text-sm text-slate-800 list-none flex justify-between items-center">
+              <span id="faqQ3">هل يشترط ترخيص (فال) لاستحقاق عمولة الوساطة؟</span>
+              <span class="text-slate-400 group-open:rotate-180 transition">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed" id="faqA3">
+              نعم، يُحظر بموجب النظام ممارسة نشاط الوساطة أو تحصيل أي عمولة مالية ما لم يكن الوسيط حاصلاً على رخصة "فال" سارية المفعول من الهيئة العامة للعقار ومسجلاً لعقد الوساطة على المنصة الإلكترونية الرسمية، وتُعد ممارسة النشاط بدون رخصة مخالفة تستوجب الغرامات المالية.
+            </p>
+          </details>
+
+          <details class="group bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer">
+            <summary class="font-bold text-sm text-slate-800 list-none flex justify-between items-center">
+              <span id="faqQ4">كيف يتم التعامل مع ضريبة القيمة المضافة (VAT) في فواتير السعي؟</span>
+              <span class="text-slate-400 group-open:rotate-180 transition">▼</span>
+            </summary>
+            <p class="text-xs text-slate-600 mt-3 leading-relaxed" id="faqA4">
+              إذا كان الوسيط العقاري (فرداً أو شركة) مسجلاً في ضريبة القيمة المضافة لدى هيئة الزكاة (تجاوزت إيراداته حد التسجيل الإلزامي 375,000 ريال)، فإنه يلزم بإصدار فاتورة ضريبية تحتوي على عمولة السعي مضافاً إليها 15% VAT مع رمز الاستجابة السريع (QR Code) المتوافق مع الفوترة الإلكترونية المرحلة الثانية.
+            </p>
+          </details>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p>© <span id="yearSpan">2025</span> حاسبة الوساطة وضريبة العقار السعودية • متوافق مع لوائح REGA & ZATCA.</p>
+      <p class="text-[11px] text-slate-400">أداة مخصصة للمطورين العقاريين، المكاتب العقارية المعتمدة، والمشترين الأفراد.</p>
+    </div>
+  </footer>
+
+  <!-- Vanilla Calculation Script & Logic -->
+  <script>
+    // Translations dictionary
+    const i18n = {
+      ar: {
+        langToggleLabel: 'English',
+        topBannerText: 'متوافق مع اللائحة التنفيذية لنظام الوساطة العقارية السعودي الصادر بالمرسوم الملكي م/130 وضوابط الهيئة العامة للعقار (REGA).',
+        headerTitle: 'حاسبة عمولة الوساطة وضريبة العقار (REGA)',
+        headerSubtitle: 'احتساب سقف السعي، ضريبة التصرفات (RETT 5%)، وضريبة القيمة المضافة (15%)',
+        ctaNavBtn: 'تحميل ملف Excel المعتمد (29$)',
+        secTitleParameters: 'بيانات العملية العقارية',
+        secDescParameters: 'حدد نوع العقد والقيمة الإجمالية وتوزيع سعي الوسيط العقاري المرخص.',
+        lblDealType: 'طبيعة الصفقة العقارية',
+        txtTypeSale: 'صفقة بيع / شراء عقار',
+        txtTypeLease: 'عقد إيجار عقاري',
+        lblPropertyValue: 'قيمة الصفقة الإجمالية (ريال سعودي)',
+        descPropertyValue: 'سعر البيع الإجمالي المتفق عليه أو قيمة الإيجار السنوي للعقد.',
+        lblCommissionRate: 'نسبة سعي الوساطة العقارية',
+        badgeMaxRate: 'الحد النظامي: 2.5%',
+        customRateWarning: 'تنص المادة (13) على ألا تتجاوز العمولة 2.5% إلا بموجب اتفاق كتابي صريح ومسبق بين الأطراف.',
+        lblSplitParty: 'الطرف المتحمل لعمولة السعي',
+        txtSplitBuyer: 'المشتري / المستأجر بالكامل',
+        txtSplitHalf: 'مناصفة (50% / 50%)',
+        txtSplitSeller: 'البائع / المؤجر بالكامل',
+        lblApplyVat: 'إخضاع عمولة السعي لضريبة القيمة المضافة (15% VAT)',
+        descApplyVat: 'تُطبق إذا كان الوسيط أو المكتب العقاري مسجلاً لدى هيئة الزكاة والضريبة والجمارك (ZATCA).',
+        lblRettTitle: 'ضريبة التصرفات العقارية (5% RETT)',
+        descRett: 'واجبة السداد للدولة قبل الإفراغ العقاري والتوثيق لدى وزارة العدل.',
+        lblFirstHomeExemption: 'تطبيق إعفاء المسكن الأول للمواطن (تتحمل الدولة الضريبة لما يصل إلى 1,000,000 ر.س من قيمة العقار).',
+        cardTitleSummary: 'ملخص الحسبة والالتزامات',
+        lblCardCommissionTotal: 'إجمالي سعي الوساطة (شامل ضريبة 15% VAT)',
+        lblNetBrokerFee: 'السعي الصافي (بدون ضريبة):',
+        lblCommissionVatAmount: 'ضريبة القيمة المضافة (15%):',
+        lblResRett: 'ضريبة التصرفات العقارية (RETT 5%):',
+        resRettExemptionNote: 'تم تطبيق دعم الدولة للمسكن الأول (خصم ضريبة 1 مليون)',
+        lblResBuyerShare: 'حصة المشتري من السعي + الضريبة:',
+        lblResSellerShare: 'حصة البائع من السعي + الضريبة:',
+        lblResTotalBuyerOutlay: 'إجمالي السيولة المطلوبة من المشتري:',
+        descTotalBuyerOutlay: '(قيمة العقار + حصة السعي + ضريبة التصرفات العقارية إن وجبت عليه)',
+        lblResSellerNet: 'صافي متحصلات البائع بعد السعي:',
+        btnCsvText: 'تصدير كملف CSV',
+        btnPrintText: 'طباعة سند الحسبة',
+        cardDisclaimer: 'تنبيه نظامي: مخرجات هذه الأداة لأغراض التقدير والحساب المبدئي، ويجب توثيق عقد الوساطة العقارية حصراً عبر المنصة الإلكترونية للهيئة العامة للعقار (REGA) وسداد الرسوم والضرائب عبر القنوات الرسمية.',
+        ctaCardTitle: 'قالب إكسل الوساطة والصفقات العقارية المتقدم (VBA)',
+        ctaCardDesc: 'احصل على النموذج الاحترافي الأوتوماتيكي لإعداد عروض الشراء، إصدار سندات قبض السعي المتوافقة مع الفوترة الإلكترونية، وسجل الصفقات الشامل.',
+        ctaCardBtnText: 'امتلك قالب الإكسل الشامل - $29 دولار',
+        disclaimerHeading: 'إخلاء المسؤولية القانونية والتنظيمية (Legal & Compliance Disclaimer):',
+        disclaimerFull: 'هذه الحاسبة مصممة لتقديم نماذج تقديرية استرشادية بناءً على نظام الوساطة العقارية ولائحته التنفيذية وقواعد ضريبة التصرفات العقارية وضريبة القيمة المضافة في المملكة العربية السعودية. لا تشكل هذه النتائج مشورة ضريبية أو قانونية معتمدة، ويجب دائماً التحقق من مطابقة العقود والالتزامات للأنظمة الصادرة عن الهيئة العامة للعقار (REGA) وهيئة الزكاة والضريبة والجمارك (ZATCA) قبل توقيع الاتفاقيات أو الإفراغ العقاري.',
+        badgeSale: 'صفقة بيع',
+        badgeLease: 'عقد إيجار',
+        curr: 'ر.س'
+      },
+      en: {
+        langToggleLabel: 'العربية',
+        topBannerText: 'Compliant with the Saudi Real Estate Brokerage Law (Royal Decree M/130) & REGA regulatory standards.',
+        headerTitle: 'Saudi REGA Brokerage Commission & Tax Calculator',
+        headerSubtitle: 'Compute statutory 2.5% cap, RETT property tax (5%), and 15% broker VAT splits',
+        ctaNavBtn: 'Download Excel Template ($29)',
+        secTitleParameters: 'Transaction Parameters',
+        secDescParameters: 'Define deal contract nature, value, and licensed broker fee split structure.',
+        lblDealType: 'Transaction Type',
+        txtTypeSale: 'Property Sale / Purchase',
+        txtTypeLease: 'Rental / Lease Contract',
+        lblPropertyValue: 'Total Deal Value (SAR)',
+        descPropertyValue: 'Total agreed sales transaction price or annual lease rental value.',
+        lblCommissionRate: 'Brokerage Commission Rate',
+        badgeMaxRate: 'Statutory Cap: 2.5%',
+        customRateWarning: 'Article (13) caps brokerage fee at 2.5% unless expressly agreed in writing prior to execution.',
+        lblSplitParty: 'Party Bearing Brokerage Fee',
+        txtSplitBuyer: '100% Buyer / Tenant',
+        txtSplitHalf: '50% / 50% Equal Split',
+        txtSplitSeller: '100% Seller / Landlord',
+        lblApplyVat: 'Subject Broker Fee to 15% VAT',
+        descApplyVat: 'Applicable if the broker or real estate agency is VAT-registered with ZATCA.',
+        lblRettTitle: 'Real Estate Transaction Tax (5% RETT)',
+        descRett: 'Payable to ZATCA before title deed electronic conveyance and notarization.',
+        lblFirstHomeExemption: 'Apply Saudi Citizen First-Home Exemption (Government absorbs RETT up to SAR 1,000,000).',
+        cardTitleSummary: 'Summary & Liability Statement',
+        lblCardCommissionTotal: 'Total Brokerage Fee (Incl. 15% VAT)',
+        lblNetBrokerFee: 'Net Broker Fee (Excl. VAT):',
+        lblCommissionVatAmount: 'Broker Fee VAT (15%):',
+        lblResRett: 'RETT Tax (5%):',
+        resRettExemptionNote: 'First-home exemption applied (SAR 1M relief)',
+        lblResBuyerShare: 'Buyer Share (Fee + VAT):',
+        lblResSellerShare: 'Seller Share (Fee + VAT):',
+        lblResTotalBuyerOutlay: 'Total Estimated Cash Required from Buyer:',
+        descTotalBuyerOutlay: '(Deal value + buyer broker share + RETT tax if borne)',
+        lblResSellerNet: 'Net Seller Proceeds After Brokerage:',
+        btnCsvText: 'Export as CSV',
+        btnPrintText: 'Print Voucher',
+        cardDisclaimer: 'Regulatory Notice: Outputs are for estimation purposes only. Brokerage contracts must be registered via REGA official electronic portals and taxes settled via ZATCA.',
+        ctaCardTitle: 'REGA Automated Excel & Deal Ledger Template (VBA)',
+        ctaCardDesc: 'Get the automated offline financial model for real estate agencies, fee voucher generation, and ZATCA e-invoice recordkeeping.',
+        ctaCardBtnText: 'Get the Master Excel Sheet - $29 USD',
+        disclaimerHeading: 'Legal & Compliance Disclaimer:',
+        disclaimerFull: 'This tool is an estimation aid based on the Saudi Real Estate Brokerage Law, its executive regulations, RETT rules, and VAT guidelines. It does not constitute official tax, legal, or financial advice. Always verify contracts and tax liabilities directly through REGA and ZATCA official platforms prior to formal deed conveyance.',
+        badgeSale: 'Sale Deal',
+        badgeLease: 'Lease Contract',
+        curr: 'SAR'
+      }
+    };
+
+    let currentLang = 'ar';
+    let dealType = 'sale'; // 'sale' or 'lease'
+    let rateOption = '2.5'; // '2.5', '2.0', 'custom'
+    let splitOption = 'half'; // 'buyer', 'half', 'seller'
+
+    // Elements
+    const btnTypeSale = document.getElementById('btnTypeSale');
+    const btnTypeLease = document.getElementById('btnTypeLease');
+    const propertyValueInput = document.getElementById('propertyValue');
+    const propertyValueFormatted = document.getElementById('propertyValueFormatted');
+    const rettSection = document.getElementById('rettSection');
+    const rettResultRow = document.getElementById('rettResultRow');
+    const firstHomeExemption = document.getElementById('firstHomeExemption');
+    const applyVat = document.getElementById('applyVat');
+    const customRateWrapper = document.getElementById('customRateWrapper');
+    const customCommissionRate = document.getElementById('customCommissionRate');
+
+    const btnRate25 = document.getElementById('btnRate25');
+    const btnRate20 = document.getElementById('btnRate20');
+    const btnRateCustom = document.getElementById('btnRateCustom');
+
+    const btnSplitBuyer = document.getElementById('btnSplitBuyer');
+    const btnSplitHalf = document.getElementById('btnSplitHalf');
+    const btnSplitSeller = document.getElementById('btnSplitSeller');
+
+    // Results Elements
+    const dealBadge = document.getElementById('dealBadge');
+    const resTotalCommissionWithVat = document.getElementById('resTotalCommissionWithVat');
+    const resNetBrokerFee = document.getElementById('resNetBrokerFee');
+    const resCommissionVatAmount = document.getElementById('resCommissionVatAmount');
+    const resRettAmount = document.getElementById('resRettAmount');
+    const resRettExemptionNote = document.getElementById('resRettExemptionNote');
+    const resBuyerShare = document.getElementById('resBuyerShare');
+    const resSellerShare = document.getElementById('resSellerShare');
+    const resTotalBuyerOutlay = document.getElementById('resTotalBuyerOutlay');
+    const resSellerNet = document.getElementById('resSellerNet');
+
+    // Lang Toggle Button
+    const langToggleBtn = document.getElementById('langToggleBtn');
+
+    function formatSAR(num) {
+      return Number(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    function recalculate() {
+      const val = parseFloat(propertyValueInput.value) || 0;
+      const curr = i18n[currentLang].curr;
+      propertyValueFormatted.textContent = `${formatSAR(val)} ${curr}`;
+
+      // Commission Rate
+      let rate = 2.5;
+      if (rateOption === '2.5') rate = 2.5;
+      else if (rateOption === '2.0') rate = 2.0;
+      else if (rateOption === 'custom') rate = parseFloat(customCommissionRate.value) || 0;
+
+      // Net Broker Commission
+      const netCommission = val * (rate / 100);
+
+      // VAT 15%
+      const hasVat = applyVat.checked;
+      const commissionVat = hasVat ? netCommission * 0.15 : 0;
+      const totalCommission = netCommission + commissionVat;
+
+      // Split Calculation
+      let buyerCommission = 0;
+      let sellerCommission = 0;
+      if (splitOption === 'buyer') {
+        buyerCommission = totalCommission;
+        sellerCommission = 0;
+      } else if (splitOption === 'seller') {
+        buyerCommission = 0;
+        sellerCommission = totalCommission;
+      } else {
+        // Half
+        buyerCommission = totalCommission / 2;
+        sellerCommission = totalCommission / 2;
+      }
+
+      // RETT 5% Calculation (Only if sale)
+      let rettAmount = 0;
+      let hasExemptionApplied = false;
+      if (dealType === 'sale') {
+        rettSection.classList.remove('hidden');
+        rettResultRow.classList.remove('hidden');
+        dealBadge.textContent = i18n[currentLang].badgeSale;
+
+        if (firstHomeExemption.checked) {
+          const taxableBase = Math.max(0, val - 1000000);
+          rettAmount = taxableBase * 0.05;
+          hasExemptionApplied = true;
+        } else {
+          rettAmount = val * 0.05;
+        }
+      } else {
+        // Lease
+        rettSection.classList.add('hidden');
+        rettResultRow.classList.add('hidden');
+        dealBadge.textContent = i18n[currentLang].badgeLease;
+        rettAmount = 0;
+      }
+
+      // Update DOM
+      resTotalCommissionWithVat.textContent = formatSAR(totalCommission);
+      resNetBrokerFee.textContent = `${formatSAR(netCommission)} ${curr}`;
+      resCommissionVatAmount.textContent = `${formatSAR(commissionVat)} ${curr}`;
+      resRettAmount.textContent = `${formatSAR(rettAmount)} ${curr}`;
+
+      if (hasExemptionApplied && val > 0) {
+        resRettExemptionNote.classList.remove('hidden');
+      } else {
+        resRettExemptionNote.classList.add('hidden');
+      }
+
+      resBuyerShare.textContent = `${formatSAR(buyerCommission)} ${curr}`;
+      resSellerShare.textContent = `${formatSAR(sellerCommission)} ${curr}`;
+
+      // Total Buyer Outlay: Value + Buyer Share of Broker + RETT (if applicable to buyer by default/custom)
+      const totalBuyer = val + buyerCommission + rettAmount;
+      resTotalBuyerOutlay.textContent = `${formatSAR(totalBuyer)} ${curr}`;
+
+      // Seller Net Proceeds: Value - Seller Commission
+      const totalSellerNet = Math.max(0, val - sellerCommission);
+      resSellerNet.textContent = `${formatSAR(totalSellerNet)} ${curr}`;
+    }
+
+    // Event Listeners for inputs
+    propertyValueInput.addEventListener('input', recalculate);
+    customCommissionRate.addEventListener('input', recalculate);
+    applyVat.addEventListener('change', recalculate);
+    firstHomeExemption.addEventListener('change', recalculate);
+
+    // Deal Type Switch
+    btnTypeSale.addEventListener('click', () => {
+      dealType = 'sale';
+      btnTypeSale.className = 'py-3 px-4 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-900 font-bold text-sm flex items-center justify-center gap-2 transition';
+      btnTypeLease.className = 'py-3 px-4 rounded-xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-sm flex items-center justify-center gap-2 hover:border-slate-300 transition';
+      recalculate();
+    });
+
+    btnTypeLease.addEventListener('click', () => {
+      dealType = 'lease';
+      btnTypeLease.className = 'py-3 px-4 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-emerald-900 font-bold text-sm flex items-center justify-center gap-2 transition';
+      btnTypeSale.className = 'py-3 px-4 rounded-xl border-2 border-slate-200 bg-white text-slate-600 font-bold text-sm flex items-center justify-center gap-2 hover:border-slate-300 transition';
+      recalculate();
+    });
+
+    // Rate selector buttons
+    function updateRateButtons() {
+      [btnRate25, btnRate20, btnRateCustom].forEach(btn => {
+        btn.className = 'py-2 px-3 text-xs font-bold rounded-lg border border-slate-300 bg-white text-slate-700 hover:border-slate-400';
+      });
+      if (rateOption === '2.5') {
+        btnRate25.className = 'py-2 px-3 text-xs font-bold rounded-lg border-2 border-emerald-600 bg-emerald-50 text-emerald-800 shadow-sm';
+        customRateWrapper.classList.add('hidden');
+      } else if (rateOption === '2.0') {
+        btnRate20.className = 'py-2 px-3 text-xs font-bold rounded-lg border-2 border-emerald-600 bg-emerald-50 text-emerald-800 shadow-sm';
+        customRateWrapper.classList.add('hidden');
+      } else {
+        btnRateCustom.className = 'py-2 px-3 text-xs font-bold rounded-lg border-2 border-emerald-600 bg-emerald-50 text-emerald-800 shadow-sm';
+        customRateWrapper.classList.remove('hidden');
+      }
+      recalculate();
+    }
+
+    btnRate25.addEventListener('click', () => { rateOption = '2.5'; updateRateButtons(); });
+    btnRate20.addEventListener('click', () => { rateOption = '2.0'; updateRateButtons(); });
+    btnRateCustom.addEventListener('click', () => { rateOption = 'custom'; updateRateButtons(); });
+
+    // Split selector buttons
+    function updateSplitButtons() {
+      [btnSplitBuyer, btnSplitHalf, btnSplitSeller].forEach(btn => {
+        btn.className = 'py-2.5 px-3 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:border-emerald-500 transition text-center';
+      });
+      if (splitOption === 'buyer') {
+        btnSplitBuyer.className = 'py-2.5 px-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-xs font-bold text-emerald-900 transition text-center';
+      } else if (splitOption === 'seller') {
+        btnSplitSeller.className = 'py-2.5 px-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-xs font-bold text-emerald-900 transition text-center';
+      } else {
+        btnSplitHalf.className = 'py-2.5 px-3 rounded-xl border-2 border-emerald-600 bg-emerald-50 text-xs font-bold text-emerald-900 transition text-center';
+      }
+      recalculate();
+    }
+
+    btnSplitBuyer.addEventListener('click', () => { splitOption = 'buyer'; updateSplitButtons(); });
+    btnSplitHalf.addEventListener('click', () => { splitOption = 'half'; updateSplitButtons(); });
+    btnSplitSeller.addEventListener('click', () => { splitOption = 'seller'; updateSplitButtons(); });
+
+    // Reset Button
+    document.getElementById('btnReset').addEventListener('click', () => {
+      propertyValueInput.value = 1500000;
+      dealType = 'sale';
+      btnTypeSale.click();
+      rateOption = '2.5';
+      updateRateButtons();
+      splitOption = 'half';
+      updateSplitButtons();
+      applyVat.checked = true;
+      firstHomeExemption.checked = false;
+      recalculate();
+    });
+
+    // Print Voucher
+    document.getElementById('btnPrintVoucher').addEventListener('click', () => {
+      window.print();
+    });
+
+    // Export CSV
+    document.getElementById('btnExportCsv').addEventListener('click', () => {
+      const val = parseFloat(propertyValueInput.value) || 0;
+      const rows = [
+        ['Parameter / Key', 'Value (SAR)'],
+        ['Transaction Type', dealType === 'sale' ? 'Sale / Purchase' : 'Lease / Rental'],
+        ['Total Deal Value', val.toFixed(2)],
+        ['Commission Rate', rateOption === 'custom' ? customCommissionRate.value + '%' : rateOption + '%'],
+        ['Net Broker Fee', resNetBrokerFee.textContent],
+        ['VAT on Fee (15%)', resCommissionVatAmount.textContent],
+        ['Total Broker Fee (Gross)', resTotalCommissionWithVat.textContent],
+        ['RETT (5% Property Tax)', resRettAmount.textContent],
+        ['Buyer Total Outlay', resTotalBuyerOutlay.textContent],
+        ['Seller Net Proceeds', resSellerNet.textContent],
+        ['Date Generated', new Date().toISOString()]
+      ];
+      let csvContent = 'data:text/csv;charset=utf-8,﻿' + rows.map(e => e.join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `REGA_Commission_Summary_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    // Bilingual Toggle Handler
+    function setLanguage(lang) {
+      currentLang = lang;
+      const isAr = lang === 'ar';
+      document.documentElement.dir = isAr ? 'rtl' : 'ltr';
+      document.documentElement.lang = lang;
+
+      const dict = i18n[lang];
+      for (const key in dict) {
+        const el = document.getElementById(key);
+        if (el) {
+          el.textContent = dict[key];
+        }
+      }
+      recalculate();
+    }
+
+    langToggleBtn.addEventListener('click', () => {
+      setLanguage(currentLang === 'ar' ? 'en' : 'ar');
+    });
+
+    // Initial Execution
+    document.getElementById('yearSpan').textContent = new Date().getFullYear();
+    recalculate();
+  </script>
+</body>
+</html>
