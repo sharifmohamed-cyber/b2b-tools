@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saudi MISA Foreign Investment License & Investor Visa Cost Calculator | حاسبة تكاليف ترخيص ميزا</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            arabic: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            misa: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .lang-ar { font-family: 'Cairo', sans-serif; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-shadow-none { box-shadow: none !important; border: 1px solid #e2e8f0; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 transition-colors duration-200">
+
+  <!-- Top Sticky Commercial Banner -->
+  <div class="no-print sticky top-0 z-50 bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 text-white shadow-md border-b border-emerald-500/20 px-4 py-2.5">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3 text-sm">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse">
+        <span class="bg-amber-400 text-slate-950 text-xs font-black uppercase px-2 py-0.5 rounded tracking-wide">Pro Model</span>
+        <span id="topBannerText" class="font-medium">Complete MISA Investment Budgeting, Setup Fee Schedule &amp; Cash Flow Excel Master Model ($29)</span>
+      </div>
+      <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold px-3.5 py-1 rounded transition-colors text-xs whitespace-nowrap shadow">
+        <span id="topBannerCta">Get Spreadsheet ($29)</span> &rarr;
+      </a>
+    </div>
+  </div>
+
+  <!-- Header Navigation -->
+  <header class="border-b border-slate-200 bg-white/90 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-emerald-600/30">
+          🇸🇦
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight" id="headerTitle">Saudi MISA License &amp; Incorporation Cost Calculator</h1>
+          <p class="text-xs text-slate-500" id="headerSubtitle">Ministry of Investment (MISA / SAGIA) Budget Estimator 2024–2025</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <button id="langToggleBtn" class="inline-flex items-center text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-300 hover:bg-slate-100 transition shadow-sm">
+          🌐 <span id="langToggleLabel" class="ml-1">العربية</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      
+      <!-- Form Panel (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-5">
+            <div>
+              <h2 class="text-base font-bold text-slate-900" id="secTitleParameters">License Setup Parameters</h2>
+              <p class="text-xs text-slate-500" id="secDescParameters">Configure sector, legal entity type, and executive visa quota.</p>
+            </div>
+            <span class="text-xs bg-emerald-50 text-emerald-700 font-semibold px-2.5 py-1 rounded-full border border-emerald-200">Vision 2030 Ready</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <!-- License Category -->
+            <div class="col-span-1 md:col-span-2">
+              <label class="block font-semibold text-slate-700 mb-1.5" id="lblLicenseType">MISA License Activity Category</label>
+              <select id="licenseType" class="w-full rounded-lg border-slate-300 border p-2.5 text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                <option value="services">Services / IT / Engineering / Consulting (خدمي / استشاري)</option>
+                <option value="industrial">Industrial / Manufacturing (صناعي)</option>
+                <option value="trading_100">Trading - 100% Foreign Owned (تجارة تجزئة وجملة 100%)</option>
+                <option value="trading_joint">Trading - Joint Venture (تجاري بمشاركة سعودية min 25%)</option>
+                <option value="real_estate">Real Estate Development (تطوير عقاري)</option>
+                <option value="rhq">Regional Headquarters - RHQ (المقر الإقليمي)</option>
+                <option value="entrepreneur">Entrepreneur / Tech Startup Venture (رواد أعمال)</option>
+              </select>
+              <p class="text-xs text-slate-400 mt-1" id="licenseTypeDesc">Services license allows 100% foreign ownership with SAR 2,000 preliminary advisory service fee.</p>
+            </div>
+
+            <!-- License Duration -->
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1.5" id="lblDuration">Initial License Term</label>
+              <select id="licenseDuration" class="w-full rounded-lg border-slate-300 border p-2.5 text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                <option value="1">1 Year (سنة واحدة)</option>
+                <option value="2">2 Years (سنتان)</option>
+                <option value="3">3 Years (3 سنوات)</option>
+                <option value="5">5 Years (5 سنوات)</option>
+              </select>
+            </div>
+
+            <!-- Legal Structure -->
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1.5" id="lblEntity">Legal Entity Type</label>
+              <select id="legalEntity" class="w-full rounded-lg border-slate-300 border p-2.5 text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                <option value="llc">Limited Liability Company (LLC / ش.ذ.م.م)</option>
+                <option value="single_llc">Single-Person LLC (شركة الشخص الواحد)</option>
+                <option value="branch">Branch of Foreign Company (فرع شركة أجنبية)</option>
+                <option value="jsc">Joint Stock Company (شركة مساهمة مقفلة)</option>
+              </select>
+            </div>
+
+            <!-- Foreign Shareholding % -->
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1.5" id="lblForeignOwnership">Foreign Ownership %</label>
+              <div class="relative">
+                <input type="number" id="foreignOwnership" min="1" max="100" value="100" class="w-full rounded-lg border-slate-300 border p-2.5 pr-8 text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+                <span class="absolute right-3 top-2.5 text-slate-400 font-bold">%</span>
+              </div>
+            </div>
+
+            <!-- Share Capital (SAR) -->
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1.5" id="lblCapital">Declared Share Capital (SAR)</label>
+              <input type="number" id="shareCapital" min="0" step="50000" value="500000" class="w-full rounded-lg border-slate-300 border p-2.5 text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+              <p class="text-xs text-amber-600 font-medium mt-1" id="capitalNote">Suggested minimum: SAR 500,000 for standard LLC.</p>
+            </div>
+
+            <!-- Number of Investor / GM Visas -->
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1.5" id="lblInvestorVisas">Investor / GM Visas Required</label>
+              <input type="number" id="investorVisas" min="1" max="10" value="2" class="w-full rounded-lg border-slate-300 border p-2.5 text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+              <span class="text-xs text-slate-400" id="lblInvestorVisasHelp">MISA portal investor visa authorization (SAR 2,000/visa)</span>
+            </div>
+
+            <!-- Branch Registrations (CR Branches) -->
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1.5" id="lblBranches">Additional City Branches</label>
+              <input type="number" id="numBranches" min="0" max="20" value="0" class="w-full rounded-lg border-slate-300 border p-2.5 text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500">
+              <span class="text-xs text-slate-400" id="lblBranchesHelp">Riyadh, Jeddah, Khobar extra branches</span>
+            </div>
+
+            <!-- Chamber of Commerce Category -->
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1.5" id="lblChamberCat">Chamber of Commerce Tier</label>
+              <select id="chamberTier" class="w-full rounded-lg border-slate-300 border p-2.5 text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                <option value="first">First Class (درجة أولى) - SAR 5,000/yr</option>
+                <option value="second">Second Class (درجة ثانية) - SAR 2,000/yr</option>
+                <option value="third">Third Class (درجة ثالثة) - SAR 800/yr</option>
+                <option value="excellent">Special / Premium Class (درجة ممتازة) - SAR 10,000/yr</option>
+              </select>
+            </div>
+
+            <!-- Legal & Translation Assistance -->
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1.5" id="lblProfessionalServices">Legal &amp; Attestation Advisory</label>
+              <select id="professionalServices" class="w-full rounded-lg border-slate-300 border p-2.5 text-slate-800 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition">
+                <option value="diy">Self-Filing / Internal Team (SAR 0)</option>
+                <option value="assisted">Certified Translation &amp; MoFA Attestation (SAR 7,500)</option>
+                <option value="full_legal">Full Corporate Law Firm Retainer (SAR 35,000)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="mt-6 pt-5 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 no-print">
+            <button id="btnExportCsv" class="inline-flex items-center text-xs font-semibold px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-300 transition">
+              📊 <span class="ml-1.5" id="lblExportCsv">Export Itemized CSV</span>
+            </button>
+            <button id="btnPrintPdf" class="inline-flex items-center text-xs font-semibold px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg transition shadow">
+              🖨️ <span class="ml-1.5" id="lblPrintSummary">Print / Save Official PDF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Minimum Capital Requirement Notice Box -->
+        <div id="capitalGuidanceBox" class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-xs text-blue-900 leading-relaxed">
+          <p class="font-bold mb-1 flex items-center gap-1.5">
+            <span>ℹ️</span>
+            <span id="guidanceTitle">Statutory Minimum Capital Guidance</span>
+          </p>
+          <p id="guidanceBody">For 100% foreign-owned Trading licenses, MISA mandates SAR 30 Million commitment over 3 years or SAR 26.7 Million initial cash injection. Services entities have no official statutory capital minimum under the New Companies Law, but SAR 500,000 is strongly recommended for bank clearance and Iqama quotas.</p>
+        </div>
+      </div>
+
+      <!-- Summary & Output Panel (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 print-shadow-none">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+            <h3 class="text-base font-bold text-slate-900" id="resOverviewTitle">Cost Breakdown &amp; Cash Flow</h3>
+            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full">SAR (ريال سعودي)</span>
+          </div>
+
+          <div class="space-y-3.5 text-sm">
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <span class="text-slate-600" id="lblResMisaService">MISA Initial Service License Fee:</span>
+              <span class="font-semibold text-slate-900" id="valMisaService">SAR 2,000</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <span class="text-slate-600" id="lblResMisaAnnual">MISA Annual License Subscription:</span>
+              <span class="font-semibold text-slate-900" id="valMisaAnnual">SAR 60,000</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <span class="text-slate-600" id="lblResCrFee">Ministry of Commerce (CR) &amp; Articles:</span>
+              <span class="font-semibold text-slate-900" id="valCrFee">SAR 1,200</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <span class="text-slate-600" id="lblResChamber">Chamber of Commerce Membership:</span>
+              <span class="font-semibold text-slate-900" id="valChamber">SAR 5,000</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <span class="text-slate-600" id="lblResVisas">Investor / GM Visas &amp; Entry:</span>
+              <span class="font-semibold text-slate-900" id="valVisas">SAR 4,000</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <span class="text-slate-600" id="lblResBranches">Secondary Branch CR Fees:</span>
+              <span class="font-semibold text-slate-900" id="valBranches">SAR 0</span>
+            </div>
+            <div class="flex justify-between items-center py-1 border-b border-slate-100">
+              <span class="text-slate-600" id="lblResLegal">Legal Translation / Retainer:</span>
+              <span class="font-semibold text-slate-900" id="valLegal">SAR 0</span>
+            </div>
+
+            <!-- Grand Total First Year -->
+            <div class="bg-emerald-50 rounded-xl p-4 border border-emerald-200 mt-4">
+              <div class="flex justify-between items-baseline">
+                <div>
+                  <span class="block text-xs uppercase font-extrabold text-emerald-800 tracking-wider" id="lblGrandTotal">Total Gov &amp; Setup Outlay (Year 1)</span>
+                  <span class="text-xs text-emerald-600" id="lblExcludingCapital">Excluding pure share capital reserve</span>
+                </div>
+                <span class="text-2xl font-black text-emerald-950 tracking-tight" id="valGrandTotal">SAR 72,200</span>
+              </div>
+            </div>
+
+            <!-- Multi-year recurring preview -->
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-600 space-y-1">
+              <div class="flex justify-between">
+                <span id="lblFullTermCost">Total Setup Across Selected Term:</span>
+                <span class="font-bold text-slate-800" id="valFullTermCost">SAR 72,200</span>
+              </div>
+              <div class="flex justify-between">
+                <span id="lblSubsequentAnnualCost">Estimated Annual Renewal Cost (Yr 2+):</span>
+                <span class="font-bold text-slate-800" id="valSubsequentAnnualCost">SAR 66,200 / yr</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Gumroad Upsell Card -->
+          <div class="mt-6 bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-xl p-4 shadow-md text-left rtl:text-right">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="bg-amber-400 text-slate-950 font-bold text-[10px] px-2 py-0.5 rounded uppercase">Excel Financial Model</span>
+              <span class="text-xs text-emerald-400 font-semibold">Instant Download</span>
+            </div>
+            <h4 class="text-sm font-bold leading-tight mb-1" id="upsellCardTitle">Automated Saudi Foreign Investment Expansion Master Model ($29)</h4>
+            <p class="text-xs text-slate-300 mb-3 leading-relaxed" id="upsellCardDesc">Pre-configured with 5-year P&amp;L projections, Saudization Nitaqat tiers, corporate tax (20%) vs Zakat (2.5%), and MISA licensing amortization.</p>
+            <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="block w-full text-center bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold py-2 px-3 rounded-lg text-xs transition shadow-sm">
+              <span id="upsellCardCta">Download Excel &amp; VBA Model ($29) &rarr;</span>
+            </a>
+          </div>
+
+          <!-- Bilingual Legal Disclaimer -->
+          <div class="mt-4 border-t border-slate-200 pt-3 text-[11px] text-slate-500 leading-normal">
+            <p class="font-semibold text-slate-600 mb-0.5">⚠️ Legal &amp; Regulatory Disclaimer / إخلاء مسؤولية نظامي:</p>
+            <p id="disclaimerText">
+              Outputs provided by this calculator are unofficial estimates for budgeting purposes only. Official MISA license tariffs, Ministry of Commerce publication rates, and Balady municipal fees are subject to regulatory updates and case-by-case ministry approval under the Saudi Investment Law. Please verify with official portals (misa.gov.sa &amp; mc.gov.sa).
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- In-depth SEO Reference Guide & Formula Documentation -->
+    <section class="mt-12 bg-white border border-slate-200 rounded-2xl p-8 text-slate-800 shadow-sm leading-relaxed space-y-6">
+      <div>
+        <h2 class="text-2xl font-black text-slate-900 mb-2" id="guideTitle">Comprehensive Guide to Saudi MISA Licensing &amp; Foreign Investment Costs</h2>
+        <p class="text-sm text-slate-600" id="guideIntro">A complete operational breakdown for multinational corporations, regional ventures, and foreign entrepreneurs expanding into the Kingdom of Saudi Arabia under Vision 2030.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4 border-t border-slate-100 text-sm">
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+            <span class="text-emerald-600 font-extrabold">01.</span>
+            <span id="box1Title">MISA Statutory Fees</span>
+          </h3>
+          <p class="text-xs text-slate-600 leading-normal" id="box1Text">
+            For standard Services, Industrial, and Contracting licenses, MISA charges an initial SAR 2,000 for the first year licensing application, followed by an annual subscription fee of SAR 60,000 per year. Entrepreneurial tech ventures enjoy reduced rates during their incubation phases.
+          </p>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+            <span class="text-emerald-600 font-extrabold">02.</span>
+            <span id="box2Title">Commercial Registration (CR)</span>
+          </h3>
+          <p class="text-xs text-slate-600 leading-normal" id="box2Text">
+            Ministry of Commerce (MoC) standard LLC registration is SAR 1,200 for the primary establishment, with secondary city branches costing SAR 600 each. Chamber of Commerce membership is tiered based on legal capital and corporate activity, running between SAR 800 and SAR 10,000 annually.
+          </p>
+        </div>
+
+        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+          <h3 class="font-bold text-slate-900 mb-2 flex items-center gap-2">
+            <span class="text-emerald-600 font-extrabold">03.</span>
+            <span id="box3Title">Investor &amp; GM Visas</span>
+          </h3>
+          <p class="text-xs text-slate-600 leading-normal" id="box3Text">
+            Foreign shareholders and general managers receive accelerated investor visa allocation through the MISA portal. The MoFA entry visa fee is SAR 2,000 per key executive, excluding Muqeem residency Iqama issuance and corporate medical insurance policies.
+          </p>
+        </div>
+      </div>
+
+      <!-- Detailed Breakdown Section -->
+      <div class="space-y-4 pt-4 border-t border-slate-100 text-sm">
+        <h3 class="text-lg font-bold text-slate-900" id="formulaTitle">Calculation Formulas &amp; Cost Structures</h3>
+        <div class="bg-slate-900 text-slate-100 p-4 rounded-xl font-mono text-xs overflow-x-auto space-y-1.5 leading-relaxed">
+          <p><span class="text-emerald-400 font-bold">Year 1 Total Outlay</span> = MISA Initial Fee (SAR 2,000) + MISA Annual Fee (SAR 60,000) + MoC CR Fee (SAR 1,200) + Chamber Tier Fee + (Branches &times; SAR 600) + (Investor Visas &times; SAR 2,000) + Legal Advisory</p>
+          <p><span class="text-teal-400 font-bold">Multi-Year Term Cost</span> = MISA Initial + (MISA Annual &times; Term Years) + (MoC Primary CR &times; Term Years) + (Chamber &times; Term Years) + (Branches &times; SAR 600 &times; Term Years) + Visas + Legal</p>
+          <p><span class="text-amber-400 font-bold">Trading 100% Minimum Capital Commitment</span> = SAR 30,000,000 over 3 years (or SAR 26,700,000 upfront cash capitalization)</p>
+        </div>
+      </div>
+
+      <!-- FAQ Section -->
+      <div class="pt-4 border-t border-slate-100 space-y-4">
+        <h3 class="text-lg font-bold text-slate-900" id="faqSectionTitle">Frequently Asked Questions (FAQ)</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs leading-relaxed">
+          <div class="border border-slate-200 rounded-lg p-3.5 bg-slate-50/50">
+            <p class="font-bold text-slate-800 mb-1" id="faq1Q">Can a foreign national own 100% of a company in Saudi Arabia?</p>
+            <p class="text-slate-600" id="faq1A">Yes. Under current Saudi investment regulations, foreign investors can own 100% of companies across most services, consulting, industrial, and technology sectors without a local Saudi partner.</p>
+          </div>
+          <div class="border border-slate-200 rounded-lg p-3.5 bg-slate-50/50">
+            <p class="font-bold text-slate-800 mb-1" id="faq2Q">What are the capital requirements for a services company?</p>
+            <p class="text-slate-600" id="faq2A">The New Saudi Companies Law eliminated strict minimum capital figures for standard Limited Liability Companies (LLC). However, opening corporate bank accounts and obtaining initial investor visas generally requires at least SAR 10,000 to SAR 500,000.</p>
+          </div>
+          <div class="border border-slate-200 rounded-lg p-3.5 bg-slate-50/50">
+            <p class="font-bold text-slate-800 mb-1" id="faq3Q">What is the Regional Headquarters (RHQ) licensing regime?</p>
+            <p class="text-slate-600" id="faq3A">Multinationals managing MENA regional operations from Riyadh can secure an RHQ license, granting zero-rate corporate income tax for 30 years and exemptions from Saudization quotas for specific executive positions.</p>
+          </div>
+          <div class="border border-slate-200 rounded-lg p-3.5 bg-slate-50/50">
+            <p class="font-bold text-slate-800 mb-1" id="faq4Q">Are MISA fees subject to 15% VAT?</p>
+            <p class="text-slate-600" id="faq4A">Statutory sovereign government ministry licensing fees are typically outside the scope of VAT or exempt. However, professional attestation, consulting retainers, and translation services carry standard 15% ZATCA VAT.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-xs text-slate-400 pb-8">
+      <p>&copy; 2025 Saudi B2B Operational Calculators. Engineered for foreign investors, accountants, and CFOs.</p>
+    </footer>
+  </main>
+
+  <!-- Javascript Logic -->
+  <script>
+    const i18n = {
+      en: {
+        headerTitle: "Saudi MISA License & Incorporation Cost Calculator",
+        headerSubtitle: "Ministry of Investment (MISA / SAGIA) Budget Estimator 2024–2025",
+        topBannerText: "Complete MISA Investment Budgeting, Setup Fee Schedule & Cash Flow Excel Master Model ($29)",
+        topBannerCta: "Get Spreadsheet ($29)",
+        secTitleParameters: "License Setup Parameters",
+        secDescParameters: "Configure sector, legal entity type, and executive visa quota.",
+        lblLicenseType: "MISA License Activity Category",
+        lblDuration: "Initial License Term",
+        lblEntity: "Legal Entity Type",
+        lblForeignOwnership: "Foreign Ownership %",
+        lblCapital: "Declared Share Capital (SAR)",
+        lblInvestorVisas: "Investor / GM Visas Required",
+        lblInvestorVisasHelp: "MISA portal investor visa authorization (SAR 2,000/visa)",
+        lblBranches: "Additional City Branches",
+        lblBranchesHelp: "Riyadh, Jeddah, Khobar extra branches",
+        lblChamberCat: "Chamber of Commerce Tier",
+        lblProfessionalServices: "Legal & Attestation Advisory",
+        lblExportCsv: "Export Itemized CSV",
+        lblPrintSummary: "Print / Save Official PDF",
+        guidanceTitle: "Statutory Minimum Capital Guidance",
+        resOverviewTitle: "Cost Breakdown & Cash Flow",
+        lblResMisaService: "MISA Initial Service License Fee:",
+        lblResMisaAnnual: "MISA Annual License Subscription:",
+        lblResCrFee: "Ministry of Commerce (CR) & Articles:",
+        lblResChamber: "Chamber of Commerce Membership:",
+        lblResVisas: "Investor / GM Visas & Entry:",
+        lblResBranches: "Secondary Branch CR Fees:",
+        lblResLegal: "Legal Translation / Retainer:",
+        lblGrandTotal: "Total Gov & Setup Outlay (Year 1)",
+        lblExcludingCapital: "Excluding pure share capital reserve",
+        lblFullTermCost: "Total Setup Across Selected Term:",
+        lblSubsequentAnnualCost: "Estimated Annual Renewal Cost (Yr 2+):",
+        upsellCardTitle: "Automated Saudi Foreign Investment Expansion Master Model ($29)",
+        upsellCardDesc: "Pre-configured with 5-year P&L projections, Saudization Nitaqat tiers, corporate tax (20%) vs Zakat (2.5%), and MISA licensing amortization.",
+        upsellCardCta: "Download Excel & VBA Model ($29) →",
+        disclaimerText: "Outputs provided by this calculator are unofficial estimates for budgeting purposes only. Official MISA license tariffs, Ministry of Commerce publication rates, and Balady municipal fees are subject to regulatory updates and case-by-case ministry approval under the Saudi Investment Law. Please verify with official portals (misa.gov.sa & mc.gov.sa).",
+        guideTitle: "Comprehensive Guide to Saudi MISA Licensing & Foreign Investment Costs",
+        guideIntro: "A complete operational breakdown for multinational corporations, regional ventures, and foreign entrepreneurs expanding into the Kingdom of Saudi Arabia under Vision 2030.",
+        box1Title: "MISA Statutory Fees",
+        box1Text: "For standard Services, Industrial, and Contracting licenses, MISA charges an initial SAR 2,000 for the first year licensing application, followed by an annual subscription fee of SAR 60,000 per year. Entrepreneurial tech ventures enjoy reduced rates during their incubation phases.",
+        box2Title: "Commercial Registration (CR)",
+        box2Text: "Ministry of Commerce (MoC) standard LLC registration is SAR 1,200 for the primary establishment, with secondary city branches costing SAR 600 each. Chamber of Commerce membership is tiered based on legal capital and corporate activity, running between SAR 800 and SAR 10,000 annually.",
+        box3Title: "Investor & GM Visas",
+        box3Text: "Foreign shareholders and general managers receive accelerated investor visa allocation through the MISA portal. The MoFA entry visa fee is SAR 2,000 per key executive, excluding Muqeem residency Iqama issuance and corporate medical insurance policies.",
+        formulaTitle: "Calculation Formulas & Cost Structures",
+        faqSectionTitle: "Frequently Asked Questions (FAQ)",
+        faq1Q: "Can a foreign national own 100% of a company in Saudi Arabia?",
+        faq1A: "Yes. Under current Saudi investment regulations, foreign investors can own 100% of companies across most services, consulting, industrial, and technology sectors without a local Saudi partner.",
+        faq2Q: "What are the capital requirements for a services company?",
+        faq2A: "The New Saudi Companies Law eliminated strict minimum capital figures for standard Limited Liability Companies (LLC). However, opening corporate bank accounts and obtaining initial investor visas generally requires at least SAR 10,000 to SAR 500,000.",
+        faq3Q: "What is the Regional Headquarters (RHQ) licensing regime?",
+        faq3A: "Multinationals managing MENA regional operations from Riyadh can secure an RHQ license, granting zero-rate corporate income tax for 30 years and exemptions from Saudization quotas for specific executive positions.",
+        faq4Q: "Are MISA fees subject to 15% VAT?",
+        faq4A: "Statutory sovereign government ministry licensing fees are typically outside the scope of VAT or exempt. However, professional attestation, consulting retainers, and translation services carry standard 15% ZATCA VAT."
+      },
+      ar: {
+        headerTitle: "حاسبة تكاليف ترخيص الاستثمار الأجنبي (ميزا) وتأسيس الشركات",
+        headerSubtitle: "أداة تقدير ميزانية وزارة الاستثمار والتأسيس النظامي في السعودية 2024–2025",
+        topBannerText: "نموذج إكسل وماكرو شامل لحساب تكاليف التأسيس والتدفقات النقدية للتراخيص الأجنبية ($29)",
+        topBannerCta: "تحميل النموذج ($29)",
+        secTitleParameters: "محددات ومعايير الترخيص الأجنبي",
+        secDescParameters: "حدد النشاط التجاري، الشكل القانوني، وتأشيرات المستثمر والمدير التنفيذي.",
+        lblLicenseType: "نوع ترخيص وزارة الاستثمار (ميزا)",
+        lblDuration: "مدة سريان الترخيص المبدئية",
+        lblEntity: "الشكل القانوني للكيان",
+        lblForeignOwnership: "نسبة الملكية الأجنبية %",
+        lblCapital: "رأس المال المعلن (ريال سعودي)",
+        lblInvestorVisas: "عدد تأشيرات المستثمر / المدير العام",
+        lblInvestorVisasHelp: "تفويض تأشيرة مستثمر عبر بوابة وزارة الاستثمار (2,000 ريال/تأشيرة)",
+        lblBranches: "عدد الفروع الإضافية بالمدن",
+        lblBranchesHelp: "فروع إضافية في الرياض، جدة، الخبر...الخ",
+        lblChamberCat: "درجة اشتراك الغرفة التجارية",
+        lblProfessionalServices: "الخدمات القانونية والتصديقات والترجمة",
+        lblExportCsv: "تصدير جدول التكاليف CSV",
+        lblPrintSummary: "طباعة / حفظ التقرير PDF",
+        guidanceTitle: "إرشادات الحد الأدنى لرأس المال النظامي",
+        resOverviewTitle: "تفصيل المصاريف والتدفقات النقدية",
+        lblResMisaService: "رسم دراسة ترخيص الاستثمار المبدئي:",
+        lblResMisaAnnual: "الاشتراك السنوي لترخيص وزارة الاستثمار:",
+        lblResCrFee: "رسوم السجل التجاري وعقد التأسيس:",
+        lblResChamber: "اشتراك الغرفة التجارية السنوي:",
+        lblResVisas: "تأشيرات المستثمر والتفويض:",
+        lblResBranches: "رسوم السجلات التجارية للفروع:",
+        lblResLegal: "أتعاب المحاماة والترجمة المعتمدة:",
+        lblGrandTotal: "إجمالي المصاريف الحكومية والتأسيس (السنة الأولى)",
+        lblExcludingCapital: "لا تشمل قيمة رأس المال المحجوز في البنك",
+        lblFullTermCost: "إجمالي تكلفة الترخيص لكامل المدة المحددة:",
+        lblSubsequentAnnualCost: "التكلفة التقديرية للتجديد السنوي (بدءاً من السنة 2):",
+        upsellCardTitle: "نموذج إكسل المالي المتقدم للتوسع الاستثماري في المملكة ($29)",
+        upsellCardDesc: "مخطط مالي متكامل لمدة 5 سنوات، نطاقات التوطين، ضريبة الدخل (20%) مقابل الزكاة (2.5%)، وإطفاء تكاليف تراخيص ميزا.",
+        upsellCardCta: "شراء وتحميل النموذج المالي ($29) ←",
+        disclaimerText: "المخرجات التي تقدمها هذه الحاسبة هي تقديرات استرشادية غير رسمية مخصصة لأغراض التخطيط المالي والميزانيات. تخضع رسوم وزارة الاستثمار وتكاليف السجلات البلدية والتجارية للأنظمة والتحديثات الرسمية وموافقة الوزارة لكل ملف وفقاً لنظام الاستثمار السعودي الجديد. يرجى المراجعة الرسمية عبر المنصات (misa.gov.sa و mc.gov.sa).",
+        guideTitle: "الدليل الشامل لتكاليف تراخيص الاستثمار الأجنبي وتأسيس الشركات في السعودية",
+        guideIntro: "شرح تشغيلي وتنظيمي مفصل للشركات متعددة الجنسيات ورواد الأعمال الراغبين في دخول السوق السعودي ضمن مستهدفات رؤية 2030.",
+        box1Title: "الرسوم النظامية لوزارة الاستثمار",
+        box1Text: "للتراخيص الخدمية والصناعية، تُحصل وزارة الاستثمار 2,000 ريال رسم ترخيص للسنة الأولى، يتبعه رسم اشتراك سنوي قدره 60,000 ريال لكل سنة. تحصل المنشآت التقنية والناشئة على أسعار تحفيزية مخفضة.",
+        box2Title: "السجل التجاري والغرفة التجارية",
+        box2Text: "تبلغ رسوم السجل التجاري لشركة ذات مسؤولية محدودة 1,200 ريال سنوياً، وللفروع 600 ريال. تتراوح اشتراكات الغرفة التجارية بين 800 و 10,000 ريال حسب رأس المال ودرجة التصنيف التجاري.",
+        box3Title: "تأشيرات المستثمر والمدير التنفيذي",
+        box3Text: "يُمنح الشركاء والمديرون التنفيذيون تأشيرات مستثمر فورية عبر بوابة ميزا برسوم خارجية تبلغ 2,000 ريال للتأشيرة عبر الخارجية، غير شاملة رسوم إصدار الإقامة (مقيم) والتأمين الصحي الإلزامي.",
+        formulaTitle: "المعادلات الحسابية وهيكلة التكاليف",
+        faqSectionTitle: "الأسئلة الشائعة حول الاستثمار الأجنبي",
+        faq1Q: "هل يحق للمستثمر الأجنبي تملك الشركة بنسبة 100%؟",
+        faq1A: "نعم، وفقاً للتنظيمات الحديثة في المملكة العربية السعودية، يسمح النظام بملكية أجنبية كاملة 100% في أغلب الأنشطة الخدمية والاستشارية والصناعية دون اشتراط شريك سعودي.",
+        faq2Q: "ما هو الحد الأدنى لرأس المال المطلوب للشركات الخدمية؟",
+        faq2A: "ألغى نظام الشركات السعودي الجديد القيود الصارمة على رأس المال للشركات ذات المسؤولية المحدودة، ومع ذلك يوصى بمبلغ بين 10,000 إلى 500,000 ريال لتمكين فتح الحساب البنكي وإصدار التأشيرات بسلاسة.",
+        faq3Q: "ما هي مميزات ترخيص المقر الإقليمي (RHQ)؟",
+        faq3A: "يوفر ترخيص المقرات الإقليمية حوافز استثنائية من بينها إعفاء ضريبي من ضريبة الدخل بنسبة 0% لمدة 30 سنة وتسهيلات واسعة في نسب التوطين للوظائف الإقليمية القيادية.",
+        faq4Q: "هل تطبق ضريبة القيمة المضافة 15% على رسوم التراخيص؟",
+        faq4A: "الرسوم الحكومية السيادية المفروضة من الوزارات معفاة أو خارج نطاق ضريبة القيمة المضافة، بينما تخضع خدمات الترجمة المعتمدة والاستشارات القانونية لضريبة 15% المقررة من هيئة الزكاة والضريبة والجمارك."
+      }
+    };
+
+    let currentLang = 'en';
+
+    // Tariff definitions
+    const TARIFFS = {
+      services: { initial: 2000, annual: 60000, minCapital: 500000, noteEn: 'Standard services license: SAR 2k initial + SAR 60k/year.', noteAr: 'الترخيص الخدمي: 2,000 ريال مبدئي + 60,000 ريال سنوياً.' },
+      industrial: { initial: 2000, annual: 60000, minCapital: 1000000, noteEn: 'Industrial license: Requires factory location & approval from Ministry of Industry.', noteAr: 'الترخيص الصناعي: يتطلب موقع مصنع وموافقة وزارة الصناعة.' },
+      trading_100: { initial: 2000, annual: 60000, minCapital: 30000000, noteEn: '100% foreign trading requires SAR 30M commitment over 3 years or SAR 26.7M cash capital.', noteAr: 'التجارة 100% أجنبية تتطلب التزام استثماري بـ 30 مليون ريال أو رأس مال نقدي 26.7 مليون.' },
+      trading_joint: { initial: 2000, annual: 60000, minCapital: 500000, noteEn: 'JV Trading (Min 25% Saudi): Lower capital threshold, standard licensing fees.', noteAr: 'التجارة بمشاركة سعودية (25% كحد أدنى): متطلبات رأسمالية ميسرة ورسوم قياسية.' },
+      real_estate: { initial: 2000, annual: 60000, minCapital: 30000000, noteEn: 'Real estate development: Minimum project cost SAR 30 Million required by law.', noteAr: 'التطوير العقاري: يتطلب مشروعاً لا يقل حجمه الاستثماري عن 30 مليون ريال.' },
+      rhq: { initial: 2000, annual: 60000, minCapital: 0, noteEn: 'RHQ License: 0% corporate tax for 30 years; must serve regional entities.', noteAr: 'المقر الإقليمي: إعفاء ضريبي 0% لمدة 30 عاماً، مخصص لإدارة الشركات التابعة بالمنطقة.' },
+      entrepreneur: { initial: 2000, annual: 2000, minCapital: 50000, noteEn: 'Entrepreneur Tech Startup: Subsidized rate of SAR 2,000/year for initial phase.', noteAr: 'رواد الأعمال والابتكار: رسوم مخفضة مدعومة تبلغ 2,000 ريال سنوياً للمرحلة الأولى.' }
+    };
+
+    const CHAMBER_FEES = {
+      first: 5000,
+      second: 2000,
+      third: 800,
+      excellent: 10000
+    };
+
+    const LEGAL_FEES = {
+      diy: 0,
+      assisted: 7500,
+      full_legal: 35000
+    };
+
+    function formatSAR(val) {
+      return 'SAR ' + Math.round(val).toLocaleString('en-US');
+    }
+
+    function calculate() {
+      const licenseKey = document.getElementById('licenseType').value;
+      const durationYears = parseInt(document.getElementById('licenseDuration').value) || 1;
+      const investorVisas = parseInt(document.getElementById('investorVisas').value) || 0;
+      const numBranches = parseInt(document.getElementById('numBranches').value) || 0;
+      const chamberTier = document.getElementById('chamberTier').value;
+      const legalType = document.getElementById('professionalServices').value;
+
+      const cfg = TARIFFS[licenseKey] || TARIFFS.services;
+
+      // Year 1 breakdown
+      const misaServiceFee = cfg.initial;
+      const misaAnnualFee = cfg.annual;
+      const crFee = 1200; // MoC initial standard LLC registration
+      const chamberFee = CHAMBER_FEES[chamberTier] || 5000;
+      const visaCost = investorVisas * 2000;
+      const branchCost = numBranches * 600;
+      const legalCost = LEGAL_FEES[legalType] || 0;
+
+      const year1Total = misaServiceFee + misaAnnualFee + crFee + chamberFee + visaCost + branchCost + legalCost;
+
+      // Multi-year calculation
+      // Initial service fee & legal & entry visas paid primarily in year 1
+      const totalFullTerm = misaServiceFee + (misaAnnualFee * durationYears) + (crFee * durationYears) + (chamberFee * durationYears) + (branchCost * durationYears) + visaCost + legalCost;
+      
+      // Subsequent annual renewal cost (Year 2+)
+      const annualRenewal = misaAnnualFee + crFee + chamberFee + branchCost;
+
+      // Update DOM
+      document.getElementById('valMisaService').innerText = formatSAR(misaServiceFee);
+      document.getElementById('valMisaAnnual').innerText = formatSAR(misaAnnualFee);
+      document.getElementById('valCrFee').innerText = formatSAR(crFee);
+      document.getElementById('valChamber').innerText = formatSAR(chamberFee);
+      document.getElementById('valVisas').innerText = formatSAR(visaCost);
+      document.getElementById('valBranches').innerText = formatSAR(branchCost);
+      document.getElementById('valLegal').innerText = formatSAR(legalCost);
+      document.getElementById('valGrandTotal').innerText = formatSAR(year1Total);
+      document.getElementById('valFullTermCost').innerText = formatSAR(totalFullTerm);
+      document.getElementById('valSubsequentAnnualCost').innerText = formatSAR(annualRenewal) + ' / yr';
+
+      // Dynamic Capital Guidance Note
+      const capitalHelp = document.getElementById('guidanceBody');
+      if (licenseKey === 'trading_100') {
+        capitalHelp.innerText = currentLang === 'en' 
+          ? 'For 100% foreign-owned Trading licenses, MISA mandates SAR 30 Million commitment over 3 years or SAR 26.7 Million initial cash injection.'
+          : 'لترخيص تجارة التجزئة والجملة بملكية أجنبية 100%، تشترط وزارة الاستثمار التزاماً استثمارياً بقيمة 30 مليون ريال خلال 3 سنوات أو رأس مال نقدي مودع قدره 26.7 مليون ريال.';
+      } else if (licenseKey === 'entrepreneur') {
+        capitalHelp.innerText = currentLang === 'en'
+          ? 'Entrepreneur licenses benefit from simplified capital requirements and heavily subsidized MISA administrative subscriptions (SAR 2,000/yr).'
+          : 'تستفيد تراخيص رواد الأعمال من متطلبات رأسمالية ميسرة ورسوم اشتراك سنوي مخفضة جداً (2,000 ريال سنوياً) لتحفيز الابتكار.';
+      } else if (licenseKey === 'rhq') {
+        capitalHelp.innerText = currentLang === 'en'
+          ? 'Regional Headquarters (RHQ) permits 0% corporate tax for 30 years and special employment quota waivers.'
+          : 'يمنح ترخيص المقر الإقليمي إعفاءً ضريبياً بنسبة 0% لـ 30 عاماً وتسهيلات غير مسبوقة في نسب السعودة للوظائف القيادية.';
+      } else {
+        capitalHelp.innerText = currentLang === 'en'
+          ? 'Under the New Companies Law, standard Services LLC entities do not have a mandatory statutory minimum capital, but SAR 500,000 is strongly recommended for bank account approval and executive Iqamas.'
+          : 'وفق نظام الشركات الجديد، لا يوجد حد أدنى إلزامي لرأس مال الشركات الخدمية ذات المسؤولية المحدودة، لكن ينصح بتحديد 500,000 ريال لضمان سرعة فتح الحسابات البنكية وإصدار الإقامات.';
+      }
+    }
+
+    function updateLanguage(lang) {
+      currentLang = lang;
+      const dict = i18n[lang];
+      const isAr = lang === 'ar';
+
+      document.documentElement.lang = lang;
+      document.documentElement.dir = isAr ? 'rtl' : 'ltr';
+      if (isAr) {
+        document.body.classList.add('lang-ar');
+      } else {
+        document.body.classList.remove('lang-ar');
+      }
+
+      // Text updates
+      document.getElementById('headerTitle').innerText = dict.headerTitle;
+      document.getElementById('headerSubtitle').innerText = dict.headerSubtitle;
+      document.getElementById('topBannerText').innerText = dict.topBannerText;
+      document.getElementById('topBannerCta').innerText = dict.topBannerCta;
+      document.getElementById('secTitleParameters').innerText = dict.secTitleParameters;
+      document.getElementById('secDescParameters').innerText = dict.secDescParameters;
+      document.getElementById('lblLicenseType').innerText = dict.lblLicenseType;
+      document.getElementById('lblDuration').innerText = dict.lblDuration;
+      document.getElementById('lblEntity').innerText = dict.lblEntity;
+      document.getElementById('lblForeignOwnership').innerText = dict.lblForeignOwnership;
+      document.getElementById('lblCapital').innerText = dict.lblCapital;
+      document.getElementById('lblInvestorVisas').innerText = dict.lblInvestorVisas;
+      document.getElementById('lblInvestorVisasHelp').innerText = dict.lblInvestorVisasHelp;
+      document.getElementById('lblBranches').innerText = dict.lblBranches;
+      document.getElementById('lblBranchesHelp').innerText = dict.lblBranchesHelp;
+      document.getElementById('lblChamberCat').innerText = dict.lblChamberCat;
+      document.getElementById('lblProfessionalServices').innerText = dict.lblProfessionalServices;
+      document.getElementById('lblExportCsv').innerText = dict.lblExportCsv;
+      document.getElementById('lblPrintSummary').innerText = dict.lblPrintSummary;
+      document.getElementById('guidanceTitle').innerText = dict.guidanceTitle;
+      document.getElementById('resOverviewTitle').innerText = dict.resOverviewTitle;
+      document.getElementById('lblResMisaService').innerText = dict.lblResMisaService;
+      document.getElementById('lblResMisaAnnual').innerText = dict.lblResMisaAnnual;
+      document.getElementById('lblResCrFee').innerText = dict.lblResCrFee;
+      document.getElementById('lblResChamber').innerText = dict.lblResChamber;
+      document.getElementById('lblResVisas').innerText = dict.lblResVisas;
+      document.getElementById('lblResBranches').innerText = dict.lblResBranches;
+      document.getElementById('lblResLegal').innerText = dict.lblResLegal;
+      document.getElementById('lblGrandTotal').innerText = dict.lblGrandTotal;
+      document.getElementById('lblExcludingCapital').innerText = dict.lblExcludingCapital;
+      document.getElementById('lblFullTermCost').innerText = dict.lblFullTermCost;
+      document.getElementById('lblSubsequentAnnualCost').innerText = dict.lblSubsequentAnnualCost;
+      document.getElementById('upsellCardTitle').innerText = dict.upsellCardTitle;
+      document.getElementById('upsellCardDesc').innerText = dict.upsellCardDesc;
+      document.getElementById('upsellCardCta').innerText = dict.upsellCardCta;
+      document.getElementById('disclaimerText').innerText = dict.disclaimerText;
+      document.getElementById('guideTitle').innerText = dict.guideTitle;
+      document.getElementById('guideIntro').innerText = dict.guideIntro;
+      document.getElementById('box1Title').innerText = dict.box1Title;
+      document.getElementById('box1Text').innerText = dict.box1Text;
+      document.getElementById('box2Title').innerText = dict.box2Title;
+      document.getElementById('box2Text').innerText = dict.box2Text;
+      document.getElementById('box3Title').innerText = dict.box3Title;
+      document.getElementById('box3Text').innerText = dict.box3Text;
+      document.getElementById('formulaTitle').innerText = dict.formulaTitle;
+      document.getElementById('faqSectionTitle').innerText = dict.faqSectionTitle;
+      document.getElementById('faq1Q').innerText = dict.faq1Q;
+      document.getElementById('faq1A').innerText = dict.faq1A;
+      document.getElementById('faq2Q').innerText = dict.faq2Q;
+      document.getElementById('faq2A').innerText = dict.faq2A;
+      document.getElementById('faq3Q').innerText = dict.faq3Q;
+      document.getElementById('faq3A').innerText = dict.faq3A;
+      document.getElementById('faq4Q').innerText = dict.faq4Q;
+      document.getElementById('faq4A').innerText = dict.faq4A;
+
+      document.getElementById('langToggleLabel').innerText = isAr ? 'English' : 'العربية';
+
+      calculate();
+    }
+
+    // CSV Export functionality
+    function exportCSV() {
+      const license = document.getElementById('licenseType').value;
+      const duration = document.getElementById('licenseDuration').value;
+      const misaServ = document.getElementById('valMisaService').innerText;
+      const misaAnn = document.getElementById('valMisaAnnual').innerText;
+      const cr = document.getElementById('valCrFee').innerText;
+      const chamber = document.getElementById('valChamber').innerText;
+      const visas = document.getElementById('valVisas').innerText;
+      const branches = document.getElementById('valBranches').innerText;
+      const legal = document.getElementById('valLegal').innerText;
+      const totalY1 = document.getElementById('valGrandTotal').innerText;
+      const totalTerm = document.getElementById('valFullTermCost').innerText;
+
+      const csvContent = "data:text/csv;charset=utf-8,"
+        + "MISA Setup Item,Amount\n"
+        + `"Activity Type","${license}"\n`
+        + `"Term Selected","${duration} Years"\n`
+        + `"MISA Initial Service Fee","${misaServ}"\n`
+        + `"MISA Annual Subscription (Yr 1)","${misaAnn}"\n`
+        + `"Commercial Registration (MoC)","${cr}"\n`
+        + `"Chamber of Commerce","${chamber}"\n`
+        + `"Investor/GM Visas Cost","${visas}"\n`
+        + `"Branch CR Fees","${branches}"\n`
+        + `"Legal / Translation Retainer","${legal}"\n`
+        + `"Total Year 1 Outlay","${totalY1}"\n`
+        + `"Total Full Term Outlay","${totalTerm}"\n`;
+
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", `saudi_misa_cost_budget_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Event Listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      calculate();
+
+      const inputs = ['licenseType', 'licenseDuration', 'legalEntity', 'foreignOwnership', 'shareCapital', 'investorVisas', 'numBranches', 'chamberTier', 'professionalServices'];
+      inputs.forEach(id => {
+        const elem = document.getElementById(id);
+        if (elem) {
+          elem.addEventListener('input', calculate);
+          elem.addEventListener('change', calculate);
+        }
+      });
+
+      document.getElementById('langToggleBtn').addEventListener('click', () => {
+        updateLanguage(currentLang === 'en' ? 'ar' : 'en');
+      });
+
+      document.getElementById('btnPrintPdf').addEventListener('click', () => {
+        window.print();
+      });
+
+      document.getElementById('btnExportCsv').addEventListener('click', exportCSV);
+    });
+  </script>
+</body>
+</html>

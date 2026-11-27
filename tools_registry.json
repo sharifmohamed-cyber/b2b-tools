@@ -369,5 +369,12 @@
     "title_ar": "حاسبة عمولة الوساطة العقارية وضريبة التصرفات والقيمة المضافة - الهيئة العامة للعقار",
     "description_en": "Calculate Saudi REGA real estate brokerage commissions, 15% VAT, 5% RETT property tax, and buyer-seller splits compliant with Real Estate Brokerage Law.",
     "date": "2026-11-26"
+  },
+  {
+    "slug": "saudi-foreign-investment-misa-license-cost-calculator",
+    "title_en": "Saudi MISA Foreign Investment License & Investor Visa Cost Calculator",
+    "title_ar": "حاسبة تكاليف ترخيص الاستثمار الأجنبي (ميزا) وتأشيرة المستثمر السعودية",
+    "description_en": "Calculate complete Saudi MISA foreign investment licensing costs, ministry fees, chamber subscriptions, capital requirements, and investor visa fees.",
+    "date": "2026-11-27"
   }
 ]
