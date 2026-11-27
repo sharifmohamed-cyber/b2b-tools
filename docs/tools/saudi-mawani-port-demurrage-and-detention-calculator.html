@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saudi Mawani Port Storage, Demurrage & Detention Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            marine: {
+              50: '#f0f7ff',
+              100: '#e0effe',
+              500: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            },
+            amberGold: {
+              500: '#d97706',
+              600: '#b45309',
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body { font-family: 'Inter', 'Cairo', sans-serif; }
+    [dir="rtl"] body { font-family: 'Cairo', 'Inter', sans-serif; }
+    .tab-active { border-bottom: 3px solid #0284c7; color: #0284c7; font-weight: 700; }
+    @media print {
+      .no-print { display: none !important; }
+      .print-shadow-none { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+  <!-- Sticky Notification Banner -->
+  <aside aria-label="Promotion banner" class="no-print sticky top-0 z-50 bg-gradient-to-r from-marine-900 via-marine-800 to-slate-900 text-white shadow-md border-b border-marine-700/50">
+    <div class="max-w-7xl mx-auto px-4 py-2.5 sm:px-6 lg:px-8 flex flex-wrap items-center justify-between gap-3 text-sm">
+      <div class="flex items-center space-x-2 rtl:space-x-reverse font-medium">
+        <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span id="banner-text-en">⚡ 2025 Saudi Port Tariff & Demurrage Ready: Automate Container Logistics Costs in Excel!</span>
+        <span id="banner-text-ar" class="hidden">⚡ محدث وفق تعرفة موانئ 2025: نموذج إكسل الشامل لأتمتة غرامات التأخير والأرضيات!</span>
+      </div>
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="bg-amberGold-500 hover:bg-amberGold-600 text-slate-950 font-bold px-3.5 py-1 rounded-md text-xs transition-colors shadow-sm">
+          <span id="banner-cta-en">Get Excel Model ($29)</span>
+          <span id="banner-cta-ar" class="hidden">حمّل نموذج الإكسل ($29)</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Header Navigation -->
+  <header class="bg-white border-b border-slate-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <div class="h-10 w-10 rounded-xl bg-marine-700 text-white flex items-center justify-center font-black text-xl shadow-inner">
+          ⚓
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight" id="nav-title-en">Saudi Mawani Port Storage & Demurrage Calculator</h1>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight hidden" id="nav-title-ar">حاسبة أرضيات الموانئ السعودية وغرامات تأخير الحاويات (موانئ)</h1>
+          <p class="text-xs text-slate-500" id="nav-sub-en">KSA Port Terminals (JIP, KAPD, KAP) & Carrier Free Time Audit</p>
+          <p class="text-xs text-slate-500 hidden" id="nav-sub-ar">حساب فترات السماح ورسوم التأخير لموانئ جدة، الملك عبدالعزيز، والملك عبدالله</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3 rtl:space-x-reverse">
+        <button id="langToggleBtn" onclick="toggleLanguage()" class="border border-slate-300 hover:bg-slate-100 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-700 flex items-center gap-1.5 transition">
+          <span id="lang-flag">🇸🇦</span>
+          <span id="lang-label">العربية</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Layout -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+    <!-- Intro & Quick Guide -->
+    <div class="mb-6">
+      <h2 class="text-2xl font-black text-slate-900" id="hero-title-en">Port Storage, Liner Demurrage & Detention Estimator</h2>
+      <h2 class="text-2xl font-black text-slate-900 hidden" id="hero-title-ar">حاسبة تقدير رسوم الأرضيات وتأخير وتخزين الحاويات</h2>
+      <p class="text-sm text-slate-600 mt-1 max-w-4xl" id="hero-desc-en">
+        Calculate combined operational delay charges across Saudi Seaports Authority (Mawani) terminals and major shipping lines (Maersk, MSC, Hapag-Lloyd, CMA CGM) with mandatory 15% ZATCA VAT.
+      </p>
+      <p class="text-sm text-slate-600 mt-1 max-w-4xl hidden" id="hero-desc-ar">
+        احسب إجمالي غرامات التأخير المجمعة بين محطات الهيئة العامة للموانئ (موانئ) والخطوط الملاحية العالمية، شاملة ضريبة القيمة المضافة 15% لجميع مقاسات وأنواع الحاويات.
+      </p>
+    </div>
+
+    <!-- Main Grid: Calculator Inputs & Instant Summary -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      
+      <!-- Form Inputs: 7 Columns -->
+      <div class="lg:col-span-7 bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-5">
+          <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+            <span>📦</span>
+            <span id="section-shipment-en">Shipment & Port Parameters</span>
+            <span id="section-shipment-ar" class="hidden">بيانات الشحنة والميناء والخط الملاحي</span>
+          </h3>
+          <button onclick="resetFormDefaults()" class="text-xs text-marine-700 hover:underline font-medium">
+            <span id="btn-reset-en">Reset Defaults</span>
+            <span id="btn-reset-ar" class="hidden">استعادة الافتراضي</span>
+          </button>
+        </div>
+
+        <div class="space-y-4">
+          <!-- Port & Container Type -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                <span id="lbl-port-en">Saudi Port of Discharge</span>
+                <span id="lbl-port-ar" class="hidden">ميناء الوصول السعودي</span>
+              </label>
+              <select id="portSelect" onchange="updatePortDefaults(); calculateCharges();" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-marine-500">
+                <option value="JIP">Jeddah Islamic Port (JIP / ميناء جدة الإسلامي)</option>
+                <option value="KAPD">King Abdulaziz Port Dammam (KAPD / ميناء الملك عبدالعزيز)</option>
+                <option value="KAP">King Abdullah Port Rabigh (KAP / ميناء الملك عبدالله)</option>
+                <option value="RDP">Riyadh Dry Port (RDP / ميناء الرياض الجاف)</option>
+                <option value="JCP">Jubail Commercial Port (JCP / ميناء الجبيل التجاري)</option>
+              </select>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                <span id="lbl-container-en">Container Size & Type</span>
+                <span id="lbl-container-ar" class="hidden">مقاس ونوع الحاوية</span>
+              </label>
+              <select id="containerType" onchange="updateContainerDefaults(); calculateCharges();" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-marine-500">
+                <option value="20GP">20' Standard Dry (20ft GP)</option>
+                <option value="40GP" selected>40' High Cube / Standard Dry (40ft HQ/GP)</option>
+                <option value="20RF">20' Reefer Temperature-Controlled</option>
+                <option value="40RF">40' Reefer Temperature-Controlled</option>
+                <option value="SPECIAL">Special Equipment (Open Top / Flat Rack)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Number of Containers & Currency -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                <span id="lbl-count-en">Number of Containers (Units)</span>
+                <span id="lbl-count-ar" class="hidden">عدد الحاويات (بالشحنة)</span>
+              </label>
+              <input type="number" id="containerCount" min="1" max="200" value="2" oninput="calculateCharges()" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-marine-500 font-semibold" />
+            </div>
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 mb-1">
+                <span id="lbl-carrier-en">Shipping Line Name</span>
+                <span id="lbl-carrier-ar" class="hidden">الخط الملاحي الناقل</span>
+              </label>
+              <input type="text" id="carrierName" value="Maersk / MSC / Hapag" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-marine-500" />
+            </div>
+          </div>
+
+          <!-- Milestone Dates -->
+          <div class="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-3">
+            <p class="text-xs font-bold uppercase tracking-wider text-marine-800" id="lbl-dates-sec-en">Milestone Dates (Timeline)</p>
+            <p class="text-xs font-bold uppercase tracking-wider text-marine-800 hidden" id="lbl-dates-sec-ar">المحطات الزمنية للشحنة</p>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-1">
+                  <span id="lbl-d1-en">1. Vessel Discharge Date</span>
+                  <span id="lbl-d1-ar" class="hidden">١. تاريخ تفريغ السفينة</span>
+                </label>
+                <input type="date" id="dateDischarge" onchange="calculateCharges()" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-marine-500" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-1">
+                  <span id="lbl-d2-en">2. Customs Gate-Out Date</span>
+                  <span id="lbl-d2-ar" class="hidden">٢. خروج الحاوية من بوابة الميناء</span>
+                </label>
+                <input type="date" id="dateGateOut" onchange="calculateCharges()" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-marine-500" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-medium text-slate-600 mb-1">
+                  <span id="lbl-d3-en">3. Empty Depot Return Date</span>
+                  <span id="lbl-d3-ar" class="hidden">٣. إعادة الحاوية الفارغة للمستودع</span>
+                </label>
+                <input type="date" id="dateReturn" onchange="calculateCharges()" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-marine-500" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Free Days Allowances -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="p-3 bg-blue-50/50 rounded-xl border border-blue-100">
+              <label class="block text-xs font-semibold text-slate-800 mb-1">
+                <span id="lbl-fd-port-en">Mawani Storage Free Days</span>
+                <span id="lbl-fd-port-ar" class="hidden">سماح الميناء (أرضيات)</span>
+              </label>
+              <input type="number" id="freeDaysPort" min="0" max="30" value="4" oninput="calculateCharges()" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-slate-800" />
+              <span class="text-[10px] text-slate-500" id="sub-fd-port-en">Standard: 4 days dry, 2 days reefer</span>
+              <span class="text-[10px] text-slate-500 hidden" id="sub-fd-port-ar">المعتاد: ٤ أيام جاف، يومان مبرد</span>
+            </div>
+
+            <div class="p-3 bg-amber-50/40 rounded-xl border border-amber-100">
+              <label class="block text-xs font-semibold text-slate-800 mb-1">
+                <span id="lbl-fd-dem-en">Carrier Demurrage Free Days</span>
+                <span id="lbl-fd-dem-ar" class="hidden">سماح تأخير المرفأ (Demurrage)</span>
+              </label>
+              <input type="number" id="freeDaysDemurrage" min="0" max="30" value="10" oninput="calculateCharges()" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-slate-800" />
+              <span class="text-[10px] text-slate-500" id="sub-fd-dem-en">Standard agreed: 7 to 14 days</span>
+              <span class="text-[10px] text-slate-500 hidden" id="sub-fd-dem-ar">المتفق عليه: ٧ إلى ١٤ يوماً</span>
+            </div>
+
+            <div class="p-3 bg-emerald-50/40 rounded-xl border border-emerald-100">
+              <label class="block text-xs font-semibold text-slate-800 mb-1">
+                <span id="lbl-fd-det-en">Carrier Detention Free Days</span>
+                <span id="lbl-fd-det-ar" class="hidden">سماح تأخير خارج الميناء (Detention)</span>
+              </label>
+              <input type="number" id="freeDaysDetention" min="0" max="30" value="5" oninput="calculateCharges()" class="w-full bg-white border border-slate-300 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-slate-800" />
+              <span class="text-[10px] text-slate-500" id="sub-fd-det-en">Gate-out to return allowance</span>
+              <span class="text-[10px] text-slate-500 hidden" id="sub-fd-det-ar">من خروج البوابة حتى الإرجاع</span>
+            </div>
+          </div>
+
+          <!-- Daily Charge Rates Customization (Collapsible / Customizable) -->
+          <div class="border border-slate-200 rounded-xl overflow-hidden">
+            <button type="button" onclick="toggleTariffDetails()" class="w-full px-4 py-2.5 bg-slate-100 text-left rtl:text-right text-xs font-bold text-slate-700 flex justify-between items-center">
+              <span id="lbl-tariff-custom-en">⚙️ View / Override Tariff Daily Rates (SAR/Day)</span>
+              <span id="lbl-tariff-custom-ar" class="hidden">⚙️ عرض وتعديل تعرفة الغرامات اليومية (ريال/يوم)</span>
+              <span id="toggleIcon" class="text-xs text-slate-500">▼</span>
+            </button>
+            <div id="tariffDetailsBody" class="p-4 bg-white grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div>
+                <label class="block font-medium text-slate-600 mb-1" id="lbl-rate-port-en">Mawani Storage Avg Rate (SAR)</label>
+                <label class="block font-medium text-slate-600 mb-1 hidden" id="lbl-rate-port-ar">متوسط أرضيات الميناء (ريال)</label>
+                <input type="number" id="dailyRatePort" value="80" oninput="calculateCharges()" class="w-full border border-slate-300 rounded px-2 py-1" />
+              </div>
+              <div>
+                <label class="block font-medium text-slate-600 mb-1" id="lbl-rate-dem-en">Carrier Demurrage Rate (SAR)</label>
+                <label class="block font-medium text-slate-600 mb-1 hidden" id="lbl-rate-dem-ar">غرامة تأخير داخل الميناء (ريال)</label>
+                <input type="number" id="dailyRateDemurrage" value="160" oninput="calculateCharges()" class="w-full border border-slate-300 rounded px-2 py-1" />
+              </div>
+              <div>
+                <label class="block font-medium text-slate-600 mb-1" id="lbl-rate-det-en">Carrier Detention Rate (SAR)</label>
+                <label class="block font-medium text-slate-600 mb-1 hidden" id="lbl-rate-det-ar">غرامة تأخير خارج الميناء (ريال)</label>
+                <input type="number" id="dailyRateDetention" value="190" oninput="calculateCharges()" class="w-full border border-slate-300 rounded px-2 py-1" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button onclick="window.print()" class="px-4 py-2 bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold rounded-lg flex items-center gap-1.5 transition">
+              <span>🖨️</span>
+              <span id="btn-print-en">Print Official Summary</span>
+              <span id="btn-print-ar" class="hidden">طباعة تقرير المطالبة</span>
+            </button>
+            <button onclick="exportCsvSummary()" class="px-4 py-2 border border-slate-300 hover:bg-slate-100 text-slate-800 text-xs font-semibold rounded-lg flex items-center gap-1.5 transition">
+              <span>📊</span>
+              <span id="btn-csv-en">Export Audit CSV</span>
+              <span id="btn-csv-ar" class="hidden">تصدير ملف CSV</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Summary Card: 5 Columns -->
+      <div class="lg:col-span-5 space-y-5">
+        <div class="bg-white rounded-2xl p-6 shadow-md border-2 border-marine-500 print-shadow-none relative overflow-hidden">
+          <div class="absolute top-0 right-0 left-0 h-1.5 bg-gradient-to-r from-marine-500 via-sky-400 to-amber-500"></div>
+          
+          <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-700" id="res-title-en">Total Delay Surcharges Due</h3>
+            <h3 class="text-sm font-bold uppercase tracking-wider text-slate-700 hidden" id="res-title-ar">إجمالي رسوم وغرامات التأخير المستحقة</h3>
+            <span class="text-[11px] bg-marine-50 text-marine-700 font-bold px-2 py-0.5 rounded-full border border-marine-200">SAR & USD</span>
+          </div>
+
+          <!-- Main Big Total -->
+          <div class="py-5 text-center bg-slate-50 rounded-xl my-4 border border-slate-200/80">
+            <span class="text-xs text-slate-500 block font-medium" id="res-net-lbl-en">Grand Total (Including 15% VAT)</span>
+            <span class="text-xs text-slate-500 block font-medium hidden" id="res-net-lbl-ar">الإجمالي الكلي شامل ضريبة القيمة المضافة 15%</span>
+            <div class="text-4xl font-black text-slate-900 tracking-tight mt-1" id="grandTotalSAR">0.00 SAR</div>
+            <div class="text-xs text-slate-500 font-semibold mt-1" id="grandTotalUSD">≈ $0.00 USD (Ex. 3.75)</div>
+            <div class="text-xs font-bold text-amberGold-600 mt-2" id="perContainerDisplay">Average 0.00 SAR per container</div>
+          </div>
+
+          <!-- Cost Breakdown List -->
+          <div class="space-y-3 text-xs">
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-blue-50/60 border border-blue-100">
+              <div>
+                <span class="font-bold text-slate-800 block" id="item-port-en">1. Mawani Terminal Storage</span>
+                <span class="font-bold text-slate-800 block hidden" id="item-port-ar">١. أرضيات محطة الميناء (موانئ)</span>
+                <span class="text-[11px] text-slate-500" id="detail-port-days">0 billable days × 0 containers</span>
+              </div>
+              <span class="font-black text-slate-900 text-sm" id="costPortVal">0.00 SAR</span>
+            </div>
+
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-amber-50/60 border border-amber-100">
+              <div>
+                <span class="font-bold text-slate-800 block" id="item-dem-en">2. Carrier Port Demurrage</span>
+                <span class="font-bold text-slate-800 block hidden" id="item-dem-ar">٢. غرامة تأخير داخل الميناء (Demurrage)</span>
+                <span class="text-[11px] text-slate-500" id="detail-dem-days">0 billable days × 0 containers</span>
+              </div>
+              <span class="font-black text-slate-900 text-sm" id="costDemVal">0.00 SAR</span>
+            </div>
+
+            <div class="flex items-center justify-between p-2.5 rounded-lg bg-emerald-50/60 border border-emerald-100">
+              <div>
+                <span class="font-bold text-slate-800 block" id="item-det-en">3. Carrier Outside Detention</span>
+                <span class="font-bold text-slate-800 block hidden" id="item-det-ar">٣. غرامة تأخير خارج الميناء (Detention)</span>
+                <span class="text-[11px] text-slate-500" id="detail-det-days">0 billable days × 0 containers</span>
+              </div>
+              <span class="font-black text-slate-900 text-sm" id="costDetVal">0.00 SAR</span>
+            </div>
+
+            <!-- Subtotal & VAT -->
+            <div class="pt-2 border-t border-slate-200 space-y-1.5 text-xs text-slate-600">
+              <div class="flex justify-between">
+                <span id="res-subtotal-en">Subtotal (Before VAT):</span>
+                <span id="res-subtotal-ar" class="hidden">المجموع الفرعي (قبل الضريبة):</span>
+                <span class="font-semibold text-slate-800" id="valSubtotal">0.00 SAR</span>
+              </div>
+              <div class="flex justify-between">
+                <span id="res-vat-en">ZATCA Standard VAT (15%):</span>
+                <span id="res-vat-ar" class="hidden">ضريبة القيمة المضافة (15%):</span>
+                <span class="font-semibold text-slate-800" id="valVAT">0.00 SAR</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Timeline Diagnostic Flag -->
+          <div id="timelineFlag" class="mt-4 p-3 rounded-lg text-xs font-medium bg-slate-100 text-slate-700 flex items-start gap-2">
+            <span>ℹ️</span>
+            <span id="timelineFlagText">Enter vessel discharge date, gate out date, and return date to calculate timeline penalties.</span>
+          </div>
+
+          <!-- Commercial Upsell CTA in Card -->
+          <div class="mt-5 pt-4 border-t border-slate-200">
+            <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="block w-full py-3 px-4 rounded-xl text-center bg-gradient-to-r from-marine-700 to-marine-900 hover:from-marine-800 hover:to-slate-900 text-white font-bold text-xs shadow-md transition-all transform hover:-translate-y-0.5">
+              <div class="flex items-center justify-center gap-1.5">
+                <span>📥</span>
+                <span id="card-cta-en">Download Offline KSA Logistics & Port Demurrage Master Template ($29)</span>
+                <span id="card-cta-ar" class="hidden">تحميل نموذج الإكسل الاحترافي لحساب أرضيات الموانئ ($29)</span>
+              </div>
+            </a>
+            <p class="text-[10px] text-center text-slate-400 mt-2" id="cta-subtext-en">Includes automated multi-BL container dispatch tracking, Mawani tiered formulas & shipping line claims reconciliation sheets.</p>
+            <p class="text-[10px] text-center text-slate-400 mt-2 hidden" id="cta-subtext-ar">يتضمن تتبع بوالص الشحن المتعددة، وتدرج شرائح موانئ، ومطابقة مطالبات الخطوط الملاحية آلياً.</p>
+          </div>
+        </div>
+
+        <!-- Bilingual Regulatory Disclaimer -->
+        <div class="p-4 rounded-xl bg-amber-50/80 border border-amber-200/80 text-[11px] text-amber-950 leading-relaxed">
+          <p class="font-bold flex items-center gap-1 mb-1">
+            <span>⚠️</span>
+            <span id="disc-head-en">Official Notice & Estimation Disclaimer</span>
+            <span id="disc-head-ar" class="hidden">إخلاء مسؤولية وتنويه نظامي</span>
+          </p>
+          <p id="disc-text-en">
+            This tool provides computational estimates based on standard Saudi Ports Authority (Mawani) general cargo tariffs and standard international carrier booking tariffs. Actual port invoices may vary depending on direct delivery status, hazardous cargo (IMO class) surcharges, specialized customs inspection yard moves (Tabadul / Fasah platform handling), and individual carrier negotiation contracts. Always verify official terminal gate invoices and shipping line arrival notices before authorizing clearance disbursements.
+          </p>
+          <p id="disc-text-ar" class="hidden">
+            هذه الحاسبة تقدم مبالغ تقديرية استرشادية بناءً على لائحة الأجور والتعرفات بالهيئة العامة للموانئ (موانئ) والخطوط الملاحية العالمية المعتادة. قد تختلف الفاتورة النهائية الفعلية بحسب طبيعة البضائع الخطرة (IMO)، رسوم منصة فسح وتبادل، رسوم الفحص بالأشعة الجمركية، وفترات السماح الخاصة المتفق عليها في عقد الشحن. يرجى دائماً مراجعة فاتورة المحطة وفاتورة وكيل الشحن المعتمدة قبل الصرف.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comprehensive In-Depth SEO Guide & Formulas (800+ Words) -->
+    <section class="mt-14 bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+      <div class="border-b border-slate-200 pb-4 mb-6">
+        <h2 class="text-xl font-black text-slate-900" id="seo-head-en">Comprehensive Guide: Saudi Port Storage, Carrier Demurrage & Detention in KSA</h2>
+        <h2 class="text-xl font-black text-slate-900 hidden" id="seo-head-ar">الدليل الشامل لرسوم أرضيات الموانئ السعودية وغرامات تأخير الحاويات (موانئ والخطوط الملاحية)</h2>
+        <p class="text-xs text-slate-500 mt-1" id="seo-sub-en">Operational breakdown under Saudi Ports Authority (Mawani), ZATCA Customs regulations, and international maritime logistics.</p>
+        <p class="text-xs text-slate-500 mt-1 hidden" id="seo-sub-ar">دليل تفصيلي لإدارة تكاليف سلاسل الإمداد، فترات السماح، والامتثال لضريبة القيمة المضافة لهيئة الزكاة والضريبة والجمارك.</p>
+      </div>
+
+      <div class="prose prose-slate max-w-none text-xs sm:text-sm leading-relaxed space-y-6 text-slate-700">
+        
+        <!-- Section 1: Demurrage vs Detention vs Port Storage -->
+        <div>
+          <h3 class="text-base font-bold text-slate-900 mb-2" id="sec1-h-en">1. The Three Layers of Container Delay Charges in Saudi Arabia</h3>
+          <h3 class="text-base font-bold text-slate-900 mb-2 hidden" id="sec1-h-ar">١. الطبقات الثلاث لغرامات تأخير الحاويات في المملكة العربية السعودية</h3>
+          <p id="sec1-p-en">
+            One of the most frequent accounting and supply chain mistakes made by Saudi importers, customs brokers, and procurement managers is conflating <strong>Port Terminal Storage</strong>, <strong>Shipping Line Demurrage</strong>, and <strong>Shipping Line Detention</strong>. While they all penalize delays, they are billed by different legal entities under entirely separate contractual regimes:
+          </p>
+          <p id="sec1-p-ar" class="hidden">
+            يقع الكثير من المستوردين والمخلصين الجمركيين وفرق المحاسبة في خطأ شائع بخلط مفهوم <strong>أرضيات الميناء (Storage)</strong> مع <strong>غرامة التأخير داخل الميناء (Demurrage)</strong> و<strong>غرامة التأخير خارج الميناء (Detention)</strong>. على الرغم من أن جميعها تكاليف ناتجة عن التأخير، إلا أنها تصدر من جهات مختلفة وبأطر تعاقدية مستقلة:
+          </p>
+          
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-marine-900 text-xs mb-1" id="card1-t-en">A. Mawani Terminal Storage (الأرضيات)</h4>
+              <h4 class="font-bold text-marine-900 text-xs mb-1 hidden" id="card1-t-ar">أ. أرضيات محطة الحاويات بالميناء (موانئ)</h4>
+              <p class="text-[11px] text-slate-600" id="card1-d-en">Billed directly by the port terminal operating company (e.g., DP World or RSGT at Jeddah Islamic Port, Saudi Global Ports at Dammam). It covers the physical square meters occupied by the loaded container inside the container yard after the regulatory terminal free days elapse.</p>
+              <p class="text-[11px] text-slate-600 hidden" id="card1-d-ar">تُفوتر مباشرة من مشغل المحطة (مثل شركة محطة بوابة البحر الأحمر أو موانئ دبي العالمية بجدة، والشركة السعودية العالمية للموانئ بالدمام). تغطي إشغال الحاوية للمساحة داخل ساحات الميناء بعد انتهاء مهلة السماح النظامية.</p>
+            </div>
+
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-amberGold-600 text-xs mb-1" id="card2-t-en">B. Carrier Demurrage (غرامة تأخير داخل الميناء)</h4>
+              <h4 class="font-bold text-amberGold-600 text-xs mb-1 hidden" id="card2-t-ar">ب. غرامة تأخير الخط الملاحي داخل الميناء</h4>
+              <p class="text-[11px] text-slate-600" id="card2-d-en">Billed by the ocean carrier (Maersk, MSC, COSCO, etc.) for holding their equipment (the container box) full inside the marine terminal beyond the contractually agreed free days. Clock starts upon vessel discharge and stops when gate-out occurs.</p>
+              <p class="text-[11px] text-slate-600 hidden" id="card2-d-ar">يفرضها الخط الملاحي أو وكيله البحري لاحتجاز الحاوية الممتلئة داخل حرم الميناء بعد انقضاء أيام السماح المتفق عليها في بوليصة الشحن. تبدأ من تاريخ تفريغ الحاوية وتنتهي عند خروجها من بوابة الميناء.</p>
+            </div>
+
+            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-emerald-700 text-xs mb-1" id="card3-t-en">C. Carrier Detention (غرامة تأخير خارج الميناء)</h4>
+              <h4 class="font-bold text-emerald-700 text-xs mb-1 hidden" id="card3-t-ar">ج. غرامة تأخير الخط الملاحي خارج الميناء</h4>
+              <p class="text-[11px] text-slate-600" id="card3-d-en">Billed by the ocean shipping line for holding the container outside the seaport after gate-out. Clock starts at terminal gate-out and continues until the empty box is safely returned and accepted at the carrier’s designated off-dock depot.</p>
+              <p class="text-[11px] text-slate-600 hidden" id="card3-d-ar">يفرضها الخط الملاحي لاحتجاز الحاوية خارج الميناء بعد الفسح وخروجها من البوابة، وتبدأ من لحظة الخروج وتستمر حتى تسليم الحاوية فارغة وسليمة لمستودع الخط الملاحي المحدد.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 2: Mathematical Formulations -->
+        <div>
+          <h3 class="text-base font-bold text-slate-900 mb-2" id="sec2-h-en">2. Calculation Formulas & Tier Schedules</h3>
+          <h3 class="text-base font-bold text-slate-900 mb-2 hidden" id="sec2-h-ar">٢. المعادلات الرياضية وهيكل الشرائح التصاعدية</h3>
+          <p id="sec2-p1-en">
+            Saudi ports utilize progressive tiered storage rates to discourage container dwell time and alleviate port congestion. The core mathematical model implemented in this calculator works as follows:
+          </p>
+          <p id="sec2-p1-ar" class="hidden">
+            تطبق الموانئ السعودية نظام الشرائح التصاعدية لتشجيع المستوردين على سرعة فسح البضائع ومنع تكدس الأرصفة. يعتمد المحرك الحسابي على المعادلات التالية:
+          </p>
+
+          <div class="bg-slate-900 text-slate-100 p-4 rounded-xl font-mono text-xs overflow-x-auto space-y-2 mt-2">
+            <div><strong>Port Storage Days</strong> = MAX(0, (Date Gate Out - Date Vessel Discharge) - Port Free Days)</div>
+            <div><strong>Carrier Demurrage Days</strong> = MAX(0, (Date Gate Out - Date Vessel Discharge) - Demurrage Free Days)</div>
+            <div><strong>Carrier Detention Days</strong> = MAX(0, (Date Empty Return - Date Gate Out) - Detention Free Days)</div>
+            <div><strong>Subtotal (SAR)</strong> = [Containers Count] × [(Storage Days × Storage Rate) + (Demurrage Days × Demurrage Rate) + (Detention Days × Detention Rate)]</div>
+            <div><strong>ZATCA VAT (15%)</strong> = Subtotal × 0.15</div>
+            <div><strong>Grand Total Payable</strong> = Subtotal + ZATCA VAT</div>
+          </div>
+
+          <p class="mt-3 text-[11px] text-slate-600" id="sec2-note-en">
+            <em>Note on Combined Demurrage & Detention (D&D):</em> When shipping lines negotiate a "Combined Free Time" agreement (e.g., 21 days combined), the days from discharge to empty return are aggregated under a single continuous counter instead of split checkpoints.
+          </p>
+          <p class="mt-3 text-[11px] text-slate-600 hidden" id="sec2-note-ar">
+            <em>ملاحظة حول فترات السماح المدمجة (Combined D&D):</em> عندما يمنح الخط الملاحي فترة سماح مدمجة (مثلاً 21 يوماً مدمجة)، يتم احتساب إجمالي الأيام من التفريغ حتى إعادة الحاوية الفارغة كعداد موحد.
+          </p>
+        </div>
+
+        <!-- Section 3: VAT Applicability -->
+        <div>
+          <h3 class="text-base font-bold text-slate-900 mb-2" id="sec3-h-en">3. ZATCA Value-Added Tax (VAT) Rules on Demurrage & Storage</h3>
+          <h3 class="text-base font-bold text-slate-900 mb-2 hidden" id="sec3-h-ar">٣. أحكام ضريبة القيمة المضافة (ZATCA) على رسوم الأرضيات والغرامات</h3>
+          <p id="sec3-p-en">
+            Under the regulations of the Zakat, Tax and Customs Authority (ZATCA), port terminal handling and storage services rendered on mainland Saudi seaports are taxable supplies subject to the standard <strong>15% VAT rate</strong>. Similarly, local demurrage and detention invoices issued by locally registered maritime shipping agencies (such as Maersk Saudi Arabia, MSC Mediterranean Shipping Company Saudi Arabia Ltd, etc.) are standard rated supplies. Importers registered for VAT can reclaim this input VAT on their periodic ZATCA VAT returns provided they obtain compliant electronic tax invoices featuring a valid QR code and registered Saudi Tax Identification Number (TIN).
+          </p>
+          <p id="sec3-p-ar" class="hidden">
+            وفقاً للائحة التنفيذية لضريبة القيمة المضافة الصادرة عن هيئة الزكاة والضريبة والجمارك (ZATCA)، فإن خدمات التخزين ومناولة الموانئ المقدمة داخل الأراضي السعودية تخضع للنسبة الأساسية <strong>15%</strong>. وبالمثل، فإن فواتير غرامات التأخير الصادرة من الوكلاء الملاحيين المسجلين ضريبياً في المملكة تخضع لضريبة القيمة المضافة. يحق للمنشآت المستوردة المسجلة في الضريبة خصم ضريبة المدخلات هذه في إقراراتها الضريبية الدورية شريطة توفر فاتورة ضريبية إلكترونية نظامية تحتوي على رمز الاستجابة السريعة (QR) والرقم الضريبي للوكيل.
+          </p>
+        </div>
+
+        <!-- Section 4: Practical Operational Strategies -->
+        <div>
+          <h3 class="text-base font-bold text-slate-900 mb-2" id="sec4-h-en">4. Best Practices to Mitigate Port Delay Penalties in Saudi Arabia</h3>
+          <h3 class="text-base font-bold text-slate-900 mb-2 hidden" id="sec4-h-ar">٤. أفضل الممارسات لتجنب غرامات تأخير الحاويات في الموانئ السعودية</h3>
+          <ul class="list-disc list-inside space-y-1.5 text-xs text-slate-600 marker:text-marine-700">
+            <li id="strat-1-en"><strong>Pre-Clearance via Fasah Platform (التخليص المسبق عبر منصة فسح):</strong> Upload the Manifest and complete pre-arrival customs declaration up to 48 hours before vessel berthing to trigger immediate release upon quay discharge.</li>
+            <li id="strat-2-en"><strong>SABER Certificate Harmonization:</strong> Ensure Product Conformity Certificates (PCoC) and Shipment Conformity Certificates (SCoC) on SASO SABER are fully verified and linked to HS codes prior to container arrival to eliminate laboratory hold delays.</li>
+            <li id="strat-3-en"><strong>Negotiate 14–21 Days Free Time at PO Stage:</strong> Direct procurement teams to request 14 to 21 free demurrage days on the Bill of Lading (BL) directly from origin during freight booking.</li>
+            <li id="strat-4-en"><strong>Direct-to-Truck Discharge (التسليم المباشر):</strong> For project cargo and high-volume dry bulk containers, arrange direct delivery from quay to transport chassis, skipping the terminal stacking yard.</li>
+            <li id="strat-5-en"><strong>EIR Depot Acceptance Auditing:</strong> Inspect container return Equipment Interchange Receipts (EIR) immediately upon empty turn-in to confirm return dates match the shipping line billing log.</li>
+          </ul>
+        </div>
+
+        <!-- FAQ Section -->
+        <div>
+          <h3 class="text-base font-bold text-slate-900 mb-3" id="faq-head-en">Frequently Asked Questions (FAQ)</h3>
+          <h3 class="text-base font-bold text-slate-900 mb-3 hidden" id="faq-head-ar">الأسئلة الشائعة حول أرضيات وغرامات الحاويات</h3>
+          
+          <div class="space-y-3">
+            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-slate-800 text-xs" id="faq1-q-en">Q: Do Saudi statutory public holidays (Eid, National Day, Founding Day) pause Mawani storage days?</h4>
+              <h4 class="font-bold text-slate-800 text-xs hidden" id="faq1-q-ar">س: هل تتوقف أيام احتساب أرضيات موانئ وغرامات التأخير أثناء العطلات الرسمية (الأعياد واليوم الوطني)؟</h4>
+              <p class="mt-1 text-slate-600 text-xs leading-normal" id="faq1-a-en">
+                Generally, Mawani terminal free days refer to consecutive calendar days. Once the statutory free days expire, daily storage accumulates continuously, including weekends (Friday/Saturday) and public holidays. However, during official Royal decrees or exceptional terminal operational halts, Mawani periodically issues formal circulars granting holiday grace adjustments. Demurrage charged by international carriers runs on continuous calendar days unless explicitly waived in your contract.
+              </p>
+              <p class="mt-1 text-slate-600 text-xs leading-normal hidden" id="faq1-a-ar">
+                كقاعدة عامة، تُحسب فترات سماح موانئ والخطوط الملاحية بالأيام التقويمية المتتالية (Calendar Days). بمجرد انتهاء فترة السماح، تستمر الغرامات اليومية دون توقف شاملة عطلات نهاية الأسبوع والأعياد، ما لم تصدر الهيئة العامة للموانئ تعميماً استثنائياً رسمياً بإعفاء محدد.
+              </p>
+            </div>
+
+            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-slate-800 text-xs" id="faq2-q-en">Q: Can I dispute incorrect demurrage charges billed by the shipping line?</h4>
+              <h4 class="font-bold text-slate-800 text-xs hidden" id="faq2-q-ar">س: هل يمكن الاعتراض على فواتير غرامات التأخير الصادرة من وكلاء الشحن البحري؟</h4>
+              <p class="mt-1 text-slate-600 text-xs leading-normal" id="faq2-a-en">
+                Yes. In Saudi Arabia, commercial maritime grievances can be submitted directly through the Transport General Authority (TGA / الهيئة العامة للنقل) portal, which oversees licensed maritime agents. To succeed, you must present the EIR (Equipment Interchange Receipt) showing date and time stamped at the gate, the Delivery Order (اذن التسليم), and proof of any depot congestion rejection.
+              </p>
+              <p class="mt-1 text-slate-600 text-xs leading-normal hidden" id="faq2-a-ar">
+                نعم، يمكن للمستورد أو المخلص رفع شكوى رسمية عبر بوابة الهيئة العامة للنقل (TGA) المشرفة على الوكلاء البحريين في المملكة، شريطة إرفاق مذكرة تبادل المعدات (EIR) المؤرخة ومختومة، وإذن التسليم، وإثباتات مواعيد الحجز في مستودعات الإرجاع.
+              </p>
+            </div>
+
+            <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+              <h4 class="font-bold text-slate-800 text-xs" id="faq3-q-en">Q: What happens if a container is abandoned or delayed beyond 90 days in a Saudi port?</h4>
+              <h4 class="font-bold text-slate-800 text-xs hidden" id="faq3-q-ar">س: ماذا يحدث في حال بقاء الحاوية في الميناء السعودي وتأخر استلامها لأكثر من 90 يوماً؟</h4>
+              <p class="mt-1 text-slate-600 text-xs leading-normal" id="faq3-a-en">
+                Under the Common Customs Law of the GCC and Saudi Customs instructions, cargo abandoned in port customs yards for over 90 days without clearance is legally transferred to the Customs Public Auction committee (المزاد العلني الجمركي). The proceeds are used to settle customs duties, terminal handling fees, and storage costs, with residual demurrage debts pursued against the registered importer.
+              </p>
+              <p class="mt-1 text-slate-600 text-xs leading-normal hidden" id="faq3-a-ar">
+                وفق نظام الجمارك الموحد لدول مجلس التعاون الخليجي، يحق للجمارك السعودية إحالة البضائع التي مضى عليها أكثر من 90 يوماً في ساحات الميناء دون فسح إلى المزاد العلني الجمركي، لاستيفاء الرسوم الجمركية ورسوم الأرضيات وأجور الموانئ المتراكمة.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <span>⚓ Saudi Mawani Logistics Tools</span>
+        <span>•</span>
+        <span id="footer-cr-en">Built for Saudi Supply Chain & Accounting Teams</span>
+        <span id="footer-cr-ar" class="hidden">مخصص لفرق سلاسل الإمداد والمحاسبة في المملكة</span>
+      </div>
+      <div>
+        <a href="https://gumroad.com" target="_blank" rel="noopener noreferrer" class="text-marine-700 font-bold hover:underline">
+          <span id="footer-cta-en">Get Master Excel Engine ($29)</span>
+          <span id="footer-cta-ar" class="hidden">احصل على ملف الإكسل المتقدم ($29)</span>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Calculation Engine and Logic Script -->
+  <script>
+    let currentLang = 'en';
+
+    // Standard baseline port tariff constants (Approximate Mawani Standard Guidelines)
+    const PORT_PRESETS = {
+      'JIP': { name: 'Jeddah Islamic Port', freeDry: 4, freeReefer: 2, dryRate: 80, reeferRate: 150 },
+      'KAPD': { name: 'King Abdulaziz Port Dammam', freeDry: 4, freeReefer: 2, dryRate: 75, reeferRate: 140 },
+      'KAP': { name: 'King Abdullah Port', freeDry: 5, freeReefer: 2, dryRate: 70, reeferRate: 135 },
+      'RDP': { name: 'Riyadh Dry Port', freeDry: 5, freeReefer: 3, dryRate: 65, reeferRate: 120 },
+      'JCP': { name: 'Jubail Commercial Port', freeDry: 4, freeReefer: 2, dryRate: 70, reeferRate: 130 }
+    };
+
+    const CONTAINER_PRESETS = {
+      '20GP': { mult: 1.0, demRate: 120, detRate: 140 },
+      '40GP': { mult: 1.8, demRate: 160, detRate: 190 },
+      '20RF': { mult: 2.0, demRate: 240, detRate: 280 },
+      '40RF': { mult: 2.6, demRate: 320, detRate: 380 },
+      'SPECIAL': { mult: 2.2, demRate: 250, detRate: 300 }
+    };
+
+    // Initialize with practical sample dates (12 days total cycle)
+    function initDates() {
+      const today = new Date();
+      const discharge = new Date(today);
+      discharge.setDate(discharge.getDate() - 14);
+
+      const gateOut = new Date(discharge);
+      gateOut.setDate(gateOut.getDate() + 9);
+
+      const retDate = new Date(gateOut);
+      retDate.setDate(retDate.getDate() + 5);
+
+      document.getElementById('dateDischarge').value = formatDateISO(discharge);
+      document.getElementById('dateGateOut').value = formatDateISO(gateOut);
+      document.getElementById('dateReturn').value = formatDateISO(retDate);
+    }
+
+    function formatDateISO(d) {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function updatePortDefaults() {
+      const portKey = document.getElementById('portSelect').value;
+      const contType = document.getElementById('containerType').value;
+      const portData = PORT_PRESETS[portKey] || PORT_PRESETS['JIP'];
+      
+      const isReefer = contType.includes('RF');
+      document.getElementById('freeDaysPort').value = isReefer ? portData.freeReefer : portData.freeDry;
+      document.getElementById('dailyRatePort').value = isReefer ? portData.reeferRate : portData.dryRate;
+    }
+
+    function updateContainerDefaults() {
+      const contKey = document.getElementById('containerType').value;
+      const portKey = document.getElementById('portSelect').value;
+      const contData = CONTAINER_PRESETS[contKey] || CONTAINER_PRESETS['40GP'];
+      const portData = PORT_PRESETS[portKey] || PORT_PRESETS['JIP'];
+
+      const isReefer = contKey.includes('RF');
+      document.getElementById('freeDaysPort').value = isReefer ? portData.freeReefer : portData.freeDry;
+      document.getElementById('dailyRatePort').value = isReefer ? portData.reeferRate : portData.dryRate;
+
+      document.getElementById('dailyRateDemurrage').value = contData.demRate;
+      document.getElementById('dailyRateDetention').value = contData.detRate;
+    }
+
+    function resetFormDefaults() {
+      document.getElementById('portSelect').value = 'JIP';
+      document.getElementById('containerType').value = '40GP';
+      document.getElementById('containerCount').value = 2;
+      document.getElementById('freeDaysDemurrage').value = 10;
+      document.getElementById('freeDaysDetention').value = 5;
+      initDates();
+      updatePortDefaults();
+      updateContainerDefaults();
+      calculateCharges();
+    }
+
+    function toggleTariffDetails() {
+      const body = document.getElementById('tariffDetailsBody');
+      const icon = document.getElementById('toggleIcon');
+      if (body.classList.contains('hidden')) {
+        body.classList.remove('hidden');
+        icon.textContent = '▲';
+      } else {
+        body.classList.add('hidden');
+        icon.textContent = '▼';
+      }
+    }
+
+    function calculateCharges() {
+      const dDischarge = new Date(document.getElementById('dateDischarge').value);
+      const dGateOut = new Date(document.getElementById('dateGateOut').value);
+      const dReturn = new Date(document.getElementById('dateReturn').value);
+
+      const count = Math.max(1, parseInt(document.getElementById('containerCount').value) || 1);
+      const fdPort = Math.max(0, parseInt(document.getElementById('freeDaysPort').value) || 0);
+      const fdDem = Math.max(0, parseInt(document.getElementById('freeDaysDemurrage').value) || 0);
+      const fdDet = Math.max(0, parseInt(document.getElementById('freeDaysDetention').value) || 0);
+
+      const ratePort = Math.max(0, parseFloat(document.getElementById('dailyRatePort').value) || 0);
+      const rateDem = Math.max(0, parseFloat(document.getElementById('dailyRateDemurrage').value) || 0);
+      const rateDet = Math.max(0, parseFloat(document.getElementById('dailyRateDetention').value) || 0);
+
+      const flagEl = document.getElementById('timelineFlag');
+      const flagText = document.getElementById('timelineFlagText');
+
+      // Basic chronological validation
+      if (isNaN(dDischarge.getTime()) || isNaN(dGateOut.getTime()) || isNaN(dReturn.getTime())) {
+        flagEl.className = 'mt-4 p-3 rounded-lg text-xs font-medium bg-red-50 text-red-700 flex items-start gap-2';
+        flagText.textContent = currentLang === 'en' ? 'Please specify all three dates accurately.' : 'يرجى تحديد تواريخ المحطات الثلاث بشكل صحيح.';
+        return;
+      }
+
+      if (dGateOut < dDischarge) {
+        flagEl.className = 'mt-4 p-3 rounded-lg text-xs font-medium bg-red-50 text-red-700 flex items-start gap-2';
+        flagText.textContent = currentLang === 'en' ? 'Error: Gate Out date cannot be earlier than Vessel Discharge date.' : 'خطأ: تاريخ الخروج من البوابة لا يمكن أن يسبق تاريخ التفريغ من السفينة.';
+        return;
+      }
+
+      if (dReturn < dGateOut) {
+        flagEl.className = 'mt-4 p-3 rounded-lg text-xs font-medium bg-red-50 text-red-700 flex items-start gap-2';
+        flagText.textContent = currentLang === 'en' ? 'Error: Empty Return date cannot be earlier than Gate Out date.' : 'خطأ: تاريخ إعادة الحاوية الفارغة لا يمكن أن يسبق تاريخ الخروج من الميناء.';
+        return;
+      }
+
+      // Elapsed days
+      const msPerDay = 1000 * 60 * 60 * 24;
+      const yardDays = Math.round((dGateOut - dDischarge) / msPerDay);
+      const streetDays = Math.round((dReturn - dGateOut) / msPerDay);
+
+      // Billable days
+      const portBillableDays = Math.max(0, yardDays - fdPort);
+      const demBillableDays = Math.max(0, yardDays - fdDem);
+      const detBillableDays = Math.max(0, streetDays - fdDet);
+
+      // Calculations
+      const totalPortCost = count * portBillableDays * ratePort;
+      const totalDemCost = count * demBillableDays * rateDem;
+      const totalDetCost = count * detBillableDays * rateDet;
+
+      const subtotal = totalPortCost + totalDemCost + totalDetCost;
+      const vat15 = subtotal * 0.15;
+      const grandTotal = subtotal + vat15;
+      const grandUSD = grandTotal / 3.75;
+      const perContainer = count > 0 ? (grandTotal / count) : 0;
+
+      // Update DOM values
+      document.getElementById('grandTotalSAR').textContent = formatSAR(grandTotal);
+      document.getElementById('grandTotalUSD').textContent = `≈ $${formatNumber(grandUSD)} USD (Ex. 3.75)`;
+      document.getElementById('perContainerDisplay').textContent = currentLang === 'en' 
+        ? `Average ${formatSAR(perContainer)} per container across ${count} unit(s)` 
+        : `متوسط ${formatSAR(perContainer)} للحاوية الواحدة عبر ${count} حاوية`;
+
+      document.getElementById('costPortVal').textContent = formatSAR(totalPortCost);
+      document.getElementById('costDemVal').textContent = formatSAR(totalDemCost);
+      document.getElementById('costDetVal').textContent = formatSAR(totalDetCost);
+
+      document.getElementById('valSubtotal').textContent = formatSAR(subtotal);
+      document.getElementById('valVAT').textContent = formatSAR(vat15);
+
+      // Update detail notes
+      if (currentLang === 'en') {
+        document.getElementById('detail-port-days').textContent = `${yardDays} days in yard - ${fdPort} free = ${portBillableDays} billable day(s) × ${count} cont.`;
+        document.getElementById('detail-dem-days').textContent = `${yardDays} days in yard - ${fdDem} free = ${demBillableDays} billable day(s) × ${count} cont.`;
+        document.getElementById('detail-det-days').textContent = `${streetDays} days outside - ${fdDet} free = ${detBillableDays} billable day(s) × ${count} cont.`;
+      } else {
+        document.getElementById('detail-port-days').textContent = `${yardDays} يوم ساحة - ${fdPort} سماح = ${portBillableDays} يوم مستحق × ${count} حاوية`;
+        document.getElementById('detail-dem-days').textContent = `${yardDays} يوم ساحة - ${fdDem} سماح = ${demBillableDays} يوم مستحق × ${count} حاوية`;
+        document.getElementById('detail-det-days').textContent = `${streetDays} يوم خارج الميناء - ${fdDet} سماح = ${detBillableDays} يوم مستحق × ${count} حاوية`;
+      }
+
+      // Diagnostic message
+      if (grandTotal === 0) {
+        flagEl.className = 'mt-4 p-3 rounded-lg text-xs font-medium bg-emerald-50 text-emerald-800 flex items-start gap-2';
+        flagText.textContent = currentLang === 'en' 
+          ? '✅ Perfect Logistics Execution! All milestones cleared within terminal and carrier free days.' 
+          : '✅ إدارة لوجستية ممتازة! تم تخليص وإرجاع جميع الحاويات ضمن فترات السماح الممنوحة دون غرامات.';
+      } else {
+        flagEl.className = 'mt-4 p-3 rounded-lg text-xs font-medium bg-amber-50 text-amber-900 flex items-start gap-2';
+        flagText.textContent = currentLang === 'en'
+          ? `⚠️ Delay Detected: Total of ${portBillableDays + demBillableDays + detBillableDays} combined penalty day(s) incurred across the shipment.`
+          : `⚠️ تم تسجيل تأخير: إجمالي ${portBillableDays + demBillableDays + detBillableDays} يوم غرامة مستحقة على الشحنة.`;
+      }
+    }
+
+    function formatSAR(val) {
+      return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val) + ' SAR';
+    }
+
+    function formatNumber(val) {
+      return new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
+    }
+
+    function exportCsvSummary() {
+      const port = document.getElementById('portSelect').value;
+      const contType = document.getElementById('containerType').value;
+      const count = document.getElementById('containerCount').value;
+      const dDis = document.getElementById('dateDischarge').value;
+      const dGate = document.getElementById('dateGateOut').value;
+      const dRet = document.getElementById('dateReturn').value;
+      const grandSAR = document.getElementById('grandTotalSAR').textContent;
+
+      const rows = [
+        ['KSA Mawani & Shipping Line Delay Cost Audit'],
+        ['Date Exported', new Date().toISOString()],
+        ['Port of Discharge', port],
+        ['Container Type', contType],
+        ['Number of Containers', count],
+        ['Discharge Date', dDis],
+        ['Customs Gate Out Date', dGate],
+        ['Empty Return Date', dRet],
+        ['Mawani Terminal Storage', document.getElementById('costPortVal').textContent],
+        ['Carrier Demurrage', document.getElementById('costDemVal').textContent],
+        ['Carrier Detention', document.getElementById('costDetVal').textContent],
+        ['Subtotal (SAR)', document.getElementById('valSubtotal').textContent],
+        ['VAT 15% (SAR)', document.getElementById('valVAT').textContent],
+        ['Grand Total Payable', grandSAR]
+      ];
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.map(i => `"${i}"`).join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `saudi_port_demurrage_audit_${dDis}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    // Bilingual Toggle Switch
+    function toggleLanguage() {
+      currentLang = currentLang === 'en' ? 'ar' : 'en';
+      const htmlEl = document.documentElement;
+
+      if (currentLang === 'ar') {
+        htmlEl.setAttribute('lang', 'ar');
+        htmlEl.setAttribute('dir', 'rtl');
+        document.getElementById('lang-flag').textContent = '🇬🇧';
+        document.getElementById('lang-label').textContent = 'English';
+        switchElementsVisibility('ar');
+      } else {
+        htmlEl.setAttribute('lang', 'en');
+        htmlEl.setAttribute('dir', 'ltr');
+        document.getElementById('lang-flag').textContent = '🇸🇦';
+        document.getElementById('lang-label').textContent = 'العربية';
+        switchElementsVisibility('en');
+      }
+      calculateCharges();
+    }
+
+    function switchElementsVisibility(showLang) {
+      const isAr = showLang === 'ar';
+      const arElements = document.querySelectorAll('[id$="-ar"]');
+      const enElements = document.querySelectorAll('[id$="-en"]');
+
+      arElements.forEach(el => {
+        if (isAr) el.classList.remove('hidden');
+        else el.classList.add('hidden');
+      });
+
+      enElements.forEach(el => {
+        if (isAr) el.classList.add('hidden');
+        else el.classList.remove('hidden');
+      });
+    }
+
+    // Window load boot
+    window.addEventListener('DOMContentLoaded', () => {
+      initDates();
+      updatePortDefaults();
+      updateContainerDefaults();
+      calculateCharges();
+    });
+  </script>
+</body>
+</html>
