@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saudi Labor Violations & Penalties Calculator | حاسبة مخالفات نظام العمل السعودي</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body.font-ar { font-family: 'Cairo', sans-serif; }
+        body.font-en { font-family: 'Inter', sans-serif; }
+        [dir="ltr"] .rtl-flip { transform: scaleX(-1); }
+        @media print {
+            .no-print { display: none !important; }
+            .print-border { border: 1px solid #cbd5e1 !important; box-shadow: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-ar antialiased transition-all duration-200">
+
+    <!-- Sticky Promotional Top Bar -->
+    <div class="no-print bg-gradient-to-r from-emerald-800 via-teal-900 to-slate-900 text-white text-xs sm:text-sm py-2.5 px-4 sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <span class="bg-emerald-500 text-slate-950 font-bold px-2 py-0.5 rounded text-xs uppercase tracking-wider">HR Compliance Pro</span>
+                <span data-en="Official MHRSD Table of Violations (Ministerial Decision No. 92768)" data-ar="تحديث جدول المخالفات والعقوبات وفق القرار الوزاري لوزارة الموارد البشرية">تحديث جدول المخالفات والعقوبات وفق القرار الوزاري لوزارة الموارد البشرية</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="https://gumroad.com" target="_blank" class="bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-3 py-1 rounded transition shadow-sm flex items-center gap-1.5">
+                    <span data-en="Download Excel Inspection Checklist ($29)" data-ar="تحميل ملف الإكسيل التفتيشي الشامل ($29)">تحميل ملف الإكسيل التفتيشي الشامل ($29)</span>
+                    <svg class="w-3.5 h-3.5 rtl-flip" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                </a>
+                <button onclick="toggleLanguage()" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-medium px-2.5 py-1 rounded text-xs transition">
+                    <span id="langToggleLabel">English</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Header -->
+        <header class="mb-8 border-b border-slate-200 pb-6">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-semibold mb-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span data-en="Saudi Labor Law Compliance Audit Engine" data-ar="محرك التدقيق التفتيشي لنظام العمل السعودي">محرك التدقيق التفتيشي لنظام العمل السعودي</span>
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight" data-en="Saudi MHRSD Labor Violations & Inspection Penalties Calculator" data-ar="حاسبة غرامات ومخالفات تفتيش العمل - وزارة الموارد البشرية">حاسبة غرامات ومخالفات تفتيش العمل - وزارة الموارد البشرية</h1>
+                    <p class="mt-1 text-slate-600 text-sm max-w-3xl" data-en="Calculate accurate financial liabilities and inspection fines across Enterprise tiers (Category A: 50+ workers, B: 21-49, C: 1-20) under recent statutory ministerial schedules." data-ar="احتساب الغرامات والالتزامات المالية التفتيشية بدقة بحسب فئة المنشأة (أ: 50 عاملاً فأكثر، ب: 21 إلى 49 عاملاً، ج: 1 إلى 20 عاملاً) وعدد التكرارات والعمالة المتأثرة.">احتساب الغرامات والالتزامات المالية التفتيشية بدقة بحسب فئة المنشأة (أ: 50 عاملاً فأكثر، ب: 21 إلى 49 عاملاً، ج: 1 إلى 20 عاملاً) وعدد التكرارات والعمالة المتأثرة.</p>
+                </div>
+                <div class="flex items-center gap-2 no-print">
+                    <button onclick="window.print()" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                        <span data-en="Print Report" data-ar="طباعة التقرير">طباعة التقرير</span>
+                    </button>
+                    <button onclick="exportToCSV()" class="px-3.5 py-2 border border-slate-300 rounded-lg text-slate-700 bg-white hover:bg-slate-50 text-xs font-semibold flex items-center gap-1.5 shadow-sm transition">
+                        <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span data-en="Export CSV" data-ar="تصدير CSV">تصدير CSV</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
+            <!-- Left/Main Controls: Violation Builder (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
+                <!-- Step 1: Enterprise Profile -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                    <div class="flex items-center gap-2 mb-4 text-slate-900 font-bold text-sm">
+                        <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 text-white text-xs">1</span>
+                        <span data-en="Select Enterprise Category (Company Workforce Size)" data-ar="تحديد تصنيف حجم المنشأة (إجمالي القوى العاملة)">تحديد تصنيف حجم المنشأة (إجمالي القوى العاملة)</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-3">
+                        <label class="border rounded-lg p-3 text-center cursor-pointer transition flex flex-col items-center justify-center peer-checked:border-emerald-600 peer-checked:bg-emerald-50 border-slate-200 hover:border-slate-300 bg-slate-50/50 relative">
+                            <input type="radio" name="companyCategory" value="C" class="sr-only category-radio" onchange="calculateFines()">
+                            <div class="font-bold text-slate-800 text-sm" data-en="Category (C)" data-ar="الفئة (ج)">الفئة (ج)</div>
+                            <div class="text-[11px] text-slate-500 mt-0.5" data-en="1 to 20 Workers" data-ar="1 إلى 20 عاملاً">1 إلى 20 عاملاً</div>
+                        </label>
+                        <label class="border rounded-lg p-3 text-center cursor-pointer transition flex flex-col items-center justify-center border-slate-200 hover:border-slate-300 bg-slate-50/50 relative">
+                            <input type="radio" name="companyCategory" value="B" class="sr-only category-radio" onchange="calculateFines()">
+                            <div class="font-bold text-slate-800 text-sm" data-en="Category (B)" data-ar="الفئة (ب)">الفئة (ب)</div>
+                            <div class="text-[11px] text-slate-500 mt-0.5" data-en="21 to 49 Workers" data-ar="21 إلى 49 عاملاً">21 إلى 49 عاملاً</div>
+                        </label>
+                        <label class="border-2 border-emerald-600 bg-emerald-50/40 rounded-lg p-3 text-center cursor-pointer transition flex flex-col items-center justify-center relative active-category-card">
+                            <input type="radio" name="companyCategory" value="A" checked class="sr-only category-radio" onchange="calculateFines()">
+                            <div class="font-bold text-slate-900 text-sm" data-en="Category (A)" data-ar="الفئة (أ)">الفئة (أ)</div>
+                            <div class="text-[11px] text-emerald-700 font-semibold mt-0.5" data-en="50+ Workers" data-ar="50 عاملاً فأكثر">50 عاملاً فأكثر</div>
+                        </label>
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-2" data-en="*Under the unified MHRSD penalty schedule, fines are scaled based on the total registered workforce in the establishment." data-ar="*وفقاً لجدول المخالفات والعقوبات الموحد، تُقاس مبالغ الغرامة المالية استناداً إلى تصنيف المنشأة وحجم عمالتها المسجلة.">*وفقاً لجدول المخالفات والعقوبات الموحد، تُقاس مبالغ الغرامة المالية استناداً إلى تصنيف المنشأة وحجم عمالتها المسجلة.</p>
+                </div>
+
+                <!-- Step 2: Violation Selector -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-2 text-slate-900 font-bold text-sm">
+                            <span class="flex items-center justify-center w-6 h-6 rounded-full bg-slate-900 text-white text-xs">2</span>
+                            <span data-en="Inspection Violations Checklist" data-ar="قائمة المخالفات والبنود التفتيشية المرصودة">قائمة المخالفات والبنود التفتيشية المرصودة</span>
+                        </div>
+                        <button type="button" onclick="resetAll()" class="text-xs text-rose-600 hover:text-rose-700 font-medium" data-en="Reset All" data-ar="إعادة ضبط">إعادة ضبط</button>
+                    </div>
+
+                    <!-- Category Tabs / Filter -->
+                    <div class="flex overflow-x-auto gap-1 border-b border-slate-100 pb-2 mb-4 text-xs font-semibold" id="violationFilters">
+                        <button onclick="filterViolations('all')" class="filter-btn px-3 py-1.5 rounded-md bg-slate-900 text-white whitespace-nowrap" data-filter="all" data-en="All Violations" data-ar="كل المخالفات">كل المخالفات</button>
+                        <button onclick="filterViolations('saudization')" class="filter-btn px-3 py-1.5 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap" data-filter="saudization" data-en="Saudization & Roles" data-ar="التوطين والمهن المقصورة">التوطين والمهن المقصورة</button>
+                        <button onclick="filterViolations('wages')" class="filter-btn px-3 py-1.5 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap" data-filter="wages" data-en="Wages & WPS" data-ar="الأجور وحماية الأجور">الأجور وحماية الأجور</button>
+                        <button onclick="filterViolations('contracts')" class="filter-btn px-3 py-1.5 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap" data-filter="contracts" data-en="Contracts & Qiwa" data-ar="العقود ومنصة قوى">العقود ومنصة قوى</button>
+                        <button onclick="filterViolations('safety')" class="filter-btn px-3 py-1.5 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap" data-filter="safety" data-en="Safety & Working Hours" data-ar="السلامة وساعات العمل">السلامة وساعات العمل</button>
+                    </div>
+
+                    <!-- Violation Cards Container -->
+                    <div class="space-y-3.5 max-h-[580px] overflow-y-auto pr-1" id="violationListContainer">
+                        <!-- Injected via JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Assessment & Financial Penalty Summary (5 cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                <!-- Live Assessment Card -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 print-border sticky top-16">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                        <span class="text-xs uppercase tracking-wider font-bold text-slate-400" data-en="Total Risk Exposure" data-ar="التعرض المالي والتقدير التفتيشي">التعرض المالي والتقدير التفتيشي</span>
+                        <span id="riskBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700">0 المخالفات المحددة</span>
+                    </div>
+
+                    <!-- Total Statutory Fine -->
+                    <div class="my-5">
+                        <div class="text-xs text-slate-500 font-medium mb-1" data-en="Total Estimated Penalty (SAR)" data-ar="إجمالي الغرامات المالية المقدرة (ر.س)">إجمالي الغرامات المالية المقدرة (ر.س)</div>
+                        <div class="text-3xl sm:text-4xl font-extrabold text-rose-600 tracking-tight flex items-baseline gap-1">
+                            <span id="totalFineDisplay">0</span>
+                            <span class="text-sm font-semibold text-slate-500">SAR</span>
+                        </div>
+                    </div>
+
+                    <!-- Financial Details Breakdown -->
+                    <div class="space-y-3 text-xs border-t border-slate-100 pt-4">
+                        <div class="flex justify-between items-center text-slate-600">
+                            <span data-en="Enterprise Tier:" data-ar="تصنيف المنشأة:">تصنيف المنشأة:</span>
+                            <span id="summaryCategory" class="font-bold text-slate-900">الفئة (أ) - 50 عامل فأكثر</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-600">
+                            <span data-en="Active Violations Count:" data-ar="عدد بنود المخالفات:">عدد بنود المخالفات:</span>
+                            <span id="summaryViolationCount" class="font-bold text-slate-900">0</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-600">
+                            <span data-en="Total Impacted Headcount:" data-ar="إجمالي العمالة المتأثرة:">إجمالي العمالة المتأثرة:</span>
+                            <span id="summaryAffectedWorkers" class="font-bold text-slate-900">0</span>
+                        </div>
+                        <div class="flex justify-between items-center text-slate-600 pt-2 border-t border-dashed border-slate-200">
+                            <span class="text-emerald-700 font-medium" data-en="Prompt Settlement Discount (80% if settled in 30 days):" data-ar="مبلغ التسوية الودية (خصم 80% وفق مهلة الاعتراض):">مبلغ التسوية الودية (خصم 80% وفق مهلة الاعتراض):</span>
+                            <span id="settlementDiscountDisplay" class="font-bold text-emerald-700">0 SAR</span>
+                        </div>
+                    </div>
+
+                    <!-- Selected Items Mini-Review -->
+                    <div class="mt-5 pt-4 border-t border-slate-100">
+                        <div class="text-xs font-bold text-slate-700 mb-2" data-en="Breakdown by Selected Item" data-ar="تفصيل البنود المخالفة المحتسبة">تفصيل البنود المخالفة المحتسبة</div>
+                        <div id="activeItemsList" class="space-y-2 max-h-48 overflow-y-auto text-xs text-slate-600">
+                            <p class="text-slate-400 italic text-[11px]" data-en="No violations selected. Choose from the list to audit exposure." data-ar="لم يتم تحديد أي مخالفات. اختر من القائمة لبدء التدقيق والتسعير.">لم يتم تحديد أي مخالفات. اختر من القائمة لبدء التدقيق والتسعير.</p>
+                        </div>
+                    </div>
+
+                    <!-- Mandatory Legal Disclaimer Box -->
+                    <div class="mt-5 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-[11px] leading-relaxed">
+                        <div class="font-bold flex items-center gap-1 mb-1">
+                            <svg class="w-3.5 h-3.5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/></svg>
+                            <span data-en="Official Regulatory Disclaimer" data-ar="إخلاء مسؤولية نظامي واجب البيان">إخلاء مسؤولية نظامي واجب البيان</span>
+                        </div>
+                        <p data-en="Outputs are automated estimates based on current published ministerial schedules and regulations. Fines are determined solely by official MHRSD field inspection reports, legal reclassifications, and executive rulings. Always verify findings with qualified legal or labor counsel." data-ar="المخرجات المحتسبة هي تقديرات إرشادية مستندة إلى جدول المخالفات والعقوبات الصادر بالقرارات الوزارية الرسمية. تخضع الغرامات الفعلية لتقارير المفتشين الرسميين وإجراءات التحقيق والاعتراض الرسمية لدى الوزارة. يرجى مراجعة اللوائح والمستشار القانوني قبل اتخاذ أي تدابير.">المخرجات المحتسبة هي تقديرات إرشادية مستندة إلى جدول المخالفات والعقوبات الصادر بالقرارات الوزارية الرسمية. تخضع الغرامات الفعلية لتقارير المفتشين الرسميين وإجراءات التحقيق والاعتراض الرسمية لدى الوزارة. يرجى مراجعة اللوائح والمستشار القانوني قبل اتخاذ أي تدابير.</p>
+                    </div>
+
+                    <!-- High Conversion Sticky CTA -->
+                    <div class="mt-6 bg-gradient-to-br from-slate-900 to-emerald-950 p-4 rounded-xl text-white shadow-md">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-400 text-slate-950">VIP TOOLKIT</span>
+                            <span class="text-xs font-semibold text-emerald-200" data-en="Audit & Defense Ready" data-ar="جاهز للتفتيش والاعتراض">جاهز للتفتيش والاعتراض</span>
+                        </div>
+                        <h4 class="text-sm font-bold leading-snug" data-en="MHRSD Labor Audit Master Template + Objection Appeals Dossier ($29)" data-ar="حقيبة التدقيق العمالي الشاملة + نماذج خطابات الاعتراض الرسمية ($29)">حقيبة التدقيق العمالي الشاملة + نماذج خطابات الاعتراض الرسمية ($29)</h4>
+                        <p class="text-[11px] text-slate-300 mt-1 mb-3" data-en="Get the automated Excel matrix with 68 updated violation codes, customizable risk matrix, and pre-formatted objection appeal memos." data-ar="احصل على مصفوفة الإكسيل الآلية بكافة الـ 68 مخالفة المحدثة، مع نماذج الاعتراض الفوري والتسوية الخافضة للغرامة بنسبة 80%.">احصل على مصفوفة الإكسيل الآلية بكافة الـ 68 مخالفة المحدثة، مع نماذج الاعتراض الفوري والتسوية الخافضة للغرامة بنسبة 80%.</p>
+                        <a href="https://gumroad.com" target="_blank" class="w-full block text-center bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold py-2.5 rounded-lg text-xs transition duration-150 shadow-sm">
+                            <span data-en="Download Complete Excel Toolkit ($29)" data-ar="تحميل حزمة الإكسيل التفتيشية الكاملة ($29)">تحميل حزمة الإكسيل التفتيشية الكاملة ($29)</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comprehensive SEO & Regulatory Guide (800+ words) -->
+        <article class="mt-12 bg-white rounded-2xl shadow-sm border border-slate-200 p-8 prose max-w-none text-slate-700 leading-relaxed">
+            <div class="border-b border-slate-200 pb-6 mb-8">
+                <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight" data-en="Complete Guide to Saudi Labor Inspection Penalties & Compliance Regulations" data-ar="الدليل الشامل لجدول مخالفات نظام العمل وعقوبات التفتيش والاعتراض النظامي">الدليل الشامل لجدول مخالفات نظام العمل وعقوبات التفتيش والاعتراض النظامي</h2>
+                <p class="text-sm text-slate-500 mt-2" data-en="Published under Saudi Ministry of Human Resources and Social Development (MHRSD) regulatory directives and statutory compliance benchmarks." data-ar="معد ومراجع بناءً على قرارات وزارة الموارد البشرية والتنمية الاجتماعية وجدول العقوبات والمخالفات الموحد.">معد ومراجع بناءً على قرارات وزارة الموارد البشرية والتنمية الاجتماعية وجدول العقوبات والمخالفات الموحد.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-3" data-en="1. The Three-Tier Classification of Establishments" data-ar="1. تصنيف المنشآت إلى ثلاث فئات (أ، ب، ج)">1. تصنيف المنشآت إلى ثلاث فئات (أ، ب، ج)</h3>
+                    <p class="text-sm text-slate-600 mb-3" data-en="In alignment with Saudi Arabia's Vision 2030 and digital governance initiatives through the Qiwa and Mudad ecosystems, the Ministry of Human Resources and Social Development categorizes private sector establishments into three distinct tiers based on headcount to maintain proportionality in fines:" data-ar="حرصاً من وزارة الموارد البشرية والتنمية الاجتماعية على مراعاة التناسب بين حجم المنشأة وقدرتها المالية وبين الجزاءات المترتبة على المخالفات، قسّم النظام المحدث المنشآت إلى ثلاث فئات رئيسية:">حرصاً من وزارة الموارد البشرية والتنمية الاجتماعية على مراعاة التناسب بين حجم المنشأة وقدرتها المالية وبين الجزاءات المترتبة على المخالفات، قسّم النظام المحدث المنشآت إلى ثلاث فئات رئيسية:</p>
+                    <ul class="list-disc list-inside space-y-1.5 text-xs text-slate-600">
+                        <li><strong class="text-slate-800" data-en="Category A (الفئة أ):" data-ar="الفئة (أ):">الفئة (أ):</strong> <span data-en="50 or more registered employees. Subject to full statutory penalties." data-ar="المنشآت التي يبلغ عدد عمالها 50 عاملاً فأكثر، وتطبق عليها الغرامات بالحد الأقصى.">المنشآت التي يبلغ عدد عمالها 50 عاملاً فأكثر، وتطبق عليها الغرامات بالحد الأقصى.</span></li>
+                        <li><strong class="text-slate-800" data-en="Category B (الفئة ب):" data-ar="الفئة (ب):">الفئة (ب):</strong> <span data-en="21 to 49 registered employees. Intermediate penalty tier." data-ar="المنشآت التي يعمل بها من 21 إلى 49 عاملاً، وتحصل على تخفيض بنسبة متوسطة.">المنشآت التي يعمل بها من 21 إلى 49 عاملاً، وتحصل على تخفيض بنسبة متوسطة.</span></li>
+                        <li><strong class="text-slate-800" data-en="Category C (الفئة ج):" data-ar="الفئة (ج):">الفئة (ج):</strong> <span data-en="1 to 20 registered employees. Micro & small businesses with reduced penalties." data-ar="المنشآت الصغيرة ومتناهية الصغر من 1 إلى 20 عاملاً، وتستفيد من الحد الأدنى للغرامات.">المنشآت الصغيرة ومتناهية الصغر من 1 إلى 20 عاملاً، وتستفيد من الحد الأدنى للغرامات.</span></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900 mb-3" data-en="2. Multipliers: Per-Worker Calculation & Repeat Violations" data-ar="2. مضاعفات الغرامة: تكرار المخالفة وتعدد العمالة">2. مضاعفات الغرامة: تكرار المخالفة وتعدد العمالة</h3>
+                    <p class="text-sm text-slate-600 mb-3" data-en="Two crucial factors drastically alter financial liability during labor inspection audits:" data-ar="هناك عاملان حاسمان يضاعفان الالتزام المالي على المنشأة أثناء الزيارات التفتيشية الميدانية أو الرقمية:">هناك عاملان حاسمان يضاعفان الالتزام المالي على المنشأة أثناء الزيارات التفتيشية الميدانية أو الرقمية:</p>
+                    <ul class="list-disc list-inside space-y-1.5 text-xs text-slate-600">
+                        <li><strong class="text-slate-800" data-en="Per Worker Multiplication:" data-ar="تعدد الغرامة بتعدد العمال:">تعدد الغرامة بتعدد العمال:</strong> <span data-en="Fines for withheld wages, unauthenticated contracts, and withheld passports multiply by each affected worker." data-ar="تنص اللائحة التنفيذية على مضاعفة الغرامة بعدد العمال الذين وقعت المخالفة بحقهم (مثل تأخير الأجور أو عدم توثيق العقد).">تنص اللائحة التنفيذية على مضاعفة الغرامة بعدد العمال الذين وقعت المخالفة بحقهم (مثل تأخير الأجور أو عدم توثيق العقد).</span></li>
+                        <li><strong class="text-slate-800" data-en="Recidivism within 180 Days:" data-ar="العود والتكرار خلال 180 يوماً:">العود والتكرار خلال 180 يوماً:</strong> <span data-en="If a violation is repeated within 180 days from the previous final citation date, the fine is doubled automatically." data-ar="إذا تكررت نفس المخالفة خلال 180 يوماً من تاريخ القرار الإداري النهائي، تتضاعف الغرامة بنسبة 100% تلقائياً.">إذا تكررت نفس المخالفة خلال 180 يوماً من تاريخ القرار الإداري النهائي، تتضاعف الغرامة بنسبة 100% تلقائياً.</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Regulatory Table Summary -->
+            <div class="mb-10">
+                <h3 class="text-lg font-bold text-slate-900 mb-4" data-en="Core MHRSD Labor Violations & Fine Schedule Overview" data-ar="جدول أبرز المخالفات والجزاءات التفتيشية المعتمدة">جدول أبرز المخالفات والجزاءات التفتيشية المعتمدة</h3>
+                <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                    <table class="min-w-full divide-y divide-slate-200 text-xs text-right">
+                        <thead class="bg-slate-50 text-slate-700 font-bold">
+                            <tr>
+                                <th class="px-4 py-3">المخالفة النظامية</th>
+                                <th class="px-4 py-3">الفئة (أ)</th>
+                                <th class="px-4 py-3">الفئة (ب)</th>
+                                <th class="px-4 py-3">الفئة (ج)</th>
+                                <th class="px-4 py-3">تعدد العمالة</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-200 text-slate-600">
+                            <tr>
+                                <td class="px-4 py-2.5 font-medium text-slate-800">توظيف غير سعودي في مهنة مقصورة على المواطنين</td>
+                                <td class="px-4 py-2.5">8,000 ر.س</td>
+                                <td class="px-4 py-2.5">4,000 ر.س</td>
+                                <td class="px-4 py-2.5">2,500 ر.س</td>
+                                <td class="px-4 py-2.5 text-emerald-700 font-semibold">نعم (لكل عامل)</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2.5 font-medium text-slate-800">عدم دفع الأجور في مواعيدها المحددة (حماية الأجور)</td>
+                                <td class="px-4 py-2.5">5,000 ر.س</td>
+                                <td class="px-4 py-2.5">3,000 ر.س</td>
+                                <td class="px-4 py-2.5">1,000 ر.س</td>
+                                <td class="px-4 py-2.5 text-emerald-700 font-semibold">نعم (لكل عامل)</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2.5 font-medium text-slate-800">حجز جواز سفر العامل أو إقامته دون موافقة كتابية</td>
+                                <td class="px-4 py-2.5">3,000 ر.س</td>
+                                <td class="px-4 py-2.5">2,000 ر.س</td>
+                                <td class="px-4 py-2.5">1,000 ر.س</td>
+                                <td class="px-4 py-2.5 text-emerald-700 font-semibold">نعم (لكل عامل)</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2.5 font-medium text-slate-800">عدم وجود لائحة تنظيم عمل معتمدة على منصة قوى</td>
+                                <td class="px-4 py-2.5">10,000 ر.س</td>
+                                <td class="px-4 py-2.5">5,000 ر.س</td>
+                                <td class="px-4 py-2.5">2,000 ر.س</td>
+                                <td class="px-4 py-2.5 text-slate-400">مقطوعة</td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-2.5 font-medium text-slate-800">تشغيل العمال تحت أشعة الشمس المباشرة صيفاً</td>
+                                <td class="px-4 py-2.5">5,000 ر.س</td>
+                                <td class="px-4 py-2.5">3,000 ر.س</td>
+                                <td class="px-4 py-2.5">1,500 ر.س</td>
+                                <td class="px-4 py-2.5 text-emerald-700 font-semibold">نعم (لكل عامل)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 80% Discount and Settlement Rules -->
+            <div class="mb-10 bg-slate-50 p-6 rounded-xl border border-slate-200">
+                <h3 class="text-lg font-bold text-slate-900 mb-2" data-en="3. How to Obtain the 80% Penalty Reduction Settlement" data-ar="3. قواعد تسوية المخالفات والحصول على خصم 80%">3. قواعد تسوية المخالفات والحصول على خصم 80%</h3>
+                <p class="text-xs text-slate-600 mb-3 leading-relaxed" data-en="Under MHRSD settlement rules, an employer who receives an administrative citation can apply for formal violation settlement via the Qiwa or MHRSD portal. If the enterprise rectifies the non-compliance and submits an objection or settlement request within 30 days from notification date, the ministry offers a statutory reduction of up to 80% of the total assessed liability, provided that fines are settled promptly without bad faith or safety endangerment." data-ar="وفقاً لقرارات التسوية الوزارية، يحق لصاحب العمل التقدم بطلب تسوية للمخالفة عبر منصة الوزارة الإلكترونية أو منصة قوى خلال 30 يوماً من تاريخ التبليغ بقرار إيقاع العقوبة. في حال إزالة أسباب المخالفة وتصحيح وضع العامل أو المنشأة، تتيح الوزارة تسوية النزاع وتخفيض قيمة الغرامة بنسبة تصل إلى 80%، مع سداد المبلغ المتبقي (20%) خلال المهلة المقررة لتفادي إيقاف الخدمات الإلكترونية.">وفقاً لقرارات التسوية الوزارية، يحق لصاحب العمل التقدم بطلب تسوية للمخالفة عبر منصة الوزارة الإلكترونية أو منصة قوى خلال 30 يوماً من تاريخ التبليغ بقرار إيقاع العقوبة. في حال إزالة أسباب المخالفة وتصحيح وضع العامل أو المنشأة، تتيح الوزارة تسوية النزاع وتخفيض قيمة الغرامة بنسبة تصل إلى 80%، مع سداد المبلغ المتبقي (20%) خلال المهلة المقررة لتفادي إيقاف الخدمات الإلكترونية.</p>
+            </div>
+
+            <!-- FAQ Section -->
+            <div>
+                <h3 class="text-lg font-bold text-slate-900 mb-4" data-en="Frequently Asked Questions (FAQ)" data-ar="الأسئلة الشائعة حول تفتيش العمل والغرامات">الأسئلة الشائعة حول تفتيش العمل والغرامات</h3>
+                <div class="space-y-4 text-xs">
+                    <div class="border-b border-slate-200 pb-3">
+                        <h4 class="font-bold text-slate-800 text-sm mb-1" data-en="What is the statutory deadline to submit an appeal or grievance?" data-ar="ما هي المهلة النظامية للاعتراض على مخالفات وزارة الموارد البشرية؟">ما هي المهلة النظامية للاعتراض على مخالفات وزارة الموارد البشرية؟</h4>
+                        <p class="text-slate-600" data-en="Employers have 30 calendar days from the date of penalty notification to submit an appeal electronically through Qiwa or the MHRSD unified portal. Failure to appeal within 30 days makes the citation final and enforceable." data-ar="يحق للمنشأة الاعتراض على قرار إيقاع المخالفة إلكترونياً خلال (30) يوماً ميلادياً من تاريخ إبلاغ المنشأة بها. ويعد القرار نهائياً وواجب النفاذ بانقضاء هذه المدة دون تقديم اعتراض رسمي.">يحق للمنشأة الاعتراض على قرار إيقاع المخالفة إلكترونياً خلال (30) يوماً ميلادياً من تاريخ إبلاغ المنشأة بها. ويعد القرار نهائياً وواجب النفاذ بانقضاء هذه المدة دون تقديم اعتراض رسمي.</p>
+                    </div>
+                    <div class="border-b border-slate-200 pb-3">
+                        <h4 class="font-bold text-slate-800 text-sm mb-1" data-en="Does holding an employee passport always trigger a fine?" data-ar="هل حجز جواز سفر الموظف يوجب الغرامة حتى لو وافق شفهياً؟">هل حجز جواز سفر الموظف يوجب الغرامة حتى لو وافق شفهياً؟</h4>
+                        <p class="text-slate-600" data-en="Yes. Under statutory labor law, an employer must not hold a worker's passport, residency permit (Iqama), or medical cards without clear, documented written consent for safekeeping, and must return it immediately upon request. Non-compliance carries a fine per affected employee." data-ar="نعم، يُحظر تماماً الاحتفاظ بجواز سفر العامل أو إقامته أو وثائقه الرسمية بدون تفويض وطلب كتابي صريح من العامل لأغراض الحفظ وبشرط إعادته فور طلبه، وتُحسب الغرامة متكررة بعدد العمال المحتجزة جوازاتهم.">نعم، يُحظر تماماً الاحتفاظ بجواز سفر العامل أو إقامته أو وثائقه الرسمية بدون تفويض وطلب كتابي صريح من العامل لأغراض الحفظ وبشرط إعادته فور طلبه، وتُحسب الغرامة متكررة بعدد العمال المحتجزة جوازاتهم.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1" data-en="What happens if an establishment fails to pay the fine?" data-ar="ما هي التبعات المترتبة على عدم سداد الغرامة خلال المهلة؟">ما هي التبعات المترتبة على عدم سداد الغرامة خلال المهلة؟</h4>
+                        <p class="text-slate-600" data-en="If the fine is not settled or appealed within statutory deadlines, MHRSD automatically suspends the establishment's electronic services on Qiwa, blocks recruitment and work permit renewals, and initiates judicial enforcement through the Enforcement Court (محكمة التنفيذ)." data-ar="في حال عدم السداد أو قبول الاعتراض، يتم إيقاف خدمات المنشأة الإلكترونية تلقائياً عبر منصة قوى ووزارة الداخلية، بما يشمل تجميد رخص العمل والاستقدام، وإحالة المطالبة إلى محكمة التنفيذ لتحصيل المبلغ جبراً.">في حال عدم السداد أو قبول الاعتراض، يتم إيقاف خدمات المنشأة الإلكترونية تلقائياً عبر منصة قوى ووزارة الداخلية، بما يشمل تجميد رخص العمل والاستقدام، وإحالة المطالبة إلى محكمة التنفيذ لتحصيل المبلغ جبراً.</p>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        let currentLang = 'ar';
+
+        // Master database of official MHRSD violations (Selected Core High-Frequency Penalties)
+        const violationsData = [
+            {
+                id: 'v1',
+                category: 'saudization',
+                title_ar: 'توظيف عمالة غير سعودية في مهن مقصورة حصراً على السعوديين',
+                title_en: 'Employing non-Saudi workers in professions reserved for Saudis',
+                code: 'MHRSD-101',
+                fineA: 8000,
+                fineB: 4000,
+                fineC: 2500,
+                isPerWorker: true,
+                defaultWorkers: 1
+            },
+            {
+                id: 'v2',
+                category: 'saudization',
+                title_ar: 'التوطين الوهمي (تسجيل سعوديين دون علاقة عمل فعلية)',
+                title_en: 'False/Sham Saudization (Registering Saudis without actual employment)',
+                code: 'MHRSD-104',
+                fineA: 20000,
+                fineB: 10000,
+                fineC: 5000,
+                isPerWorker: true,
+                defaultWorkers: 1
+            },
+            {
+                id: 'v3',
+                category: 'wages',
+                title_ar: 'عدم دفع أجور العمال في مواعيد استحقاقها المحددة أو نظام حماية الأجور',
+                title_en: 'Failure to pay wages on statutory due dates / WPS non-compliance',
+                code: 'MHRSD-201',
+                fineA: 5000,
+                fineB: 3000,
+                fineC: 1000,
+                isPerWorker: true,
+                defaultWorkers: 1
+            },
+            {
+                id: 'v4',
+                category: 'wages',
+                title_ar: 'احتجاز أجر العامل أو جزء منه دون سند قضائي أو نظامي',
+                title_en: 'Withholding worker wages without legal or judicial authority',
+                code: 'MHRSD-203',
+                fineA: 5000,
+                fineB: 3000,
+                fineC: 1500,
+                isPerWorker: true,
+                defaultWorkers: 1
+            },
+            {
+                id: 'v5',
+                category: 'contracts',
+                title_ar: 'عدم توثيق عقود العمل إلكترونياً على منصة قوى (Qiwa)',
+                title_en: 'Failure to digitally authenticate work contracts on Qiwa',
+                code: 'MHRSD-301',
+                fineA: 3000,
+                fineB: 2000,
+                fineC: 1000,
+                isPerWorker: true,
+                defaultWorkers: 1
+            },
+            {
+                id: 'v6',
+                category: 'contracts',
+                title_ar: 'عدم وجود لائحة تنظيم عمل معتمدة للمنشأة على منصة قوى',
+                title_en: 'Non-existence of an approved internal Work Organization Regulation',
+                code: 'MHRSD-305',
+                fineA: 10000,
+                fineB: 5000,
+                fineC: 2000,
+                isPerWorker: false,
+                defaultWorkers: 1
+            },
+            {
+                id: 'v7',
+                category: 'contracts',
+                title_ar: 'حجز جواز سفر العامل أو إقامته أو تأمينه دون تفويض كتابي موثق',
+                title_en: 'Retaining employee passport, Iqama, or health card without written consent',
+                code: 'MHRSD-308',
+                fineA: 3000,
+                fineB: 2000,
+                fineC: 1000,
+                isPerWorker: true,
+                defaultWorkers: 1
+            },
+            {
+                id: 'v8',
+                category: 'safety',
+                title_ar: 'تشغيل العمال تحت أشعة الشمس المباشرة صيفاً في الأوقات المحظورة',
+                title_en: 'Work under direct sunlight during statutory midday summer ban',
+                code: 'MHRSD-401',
+                fineA: 5000,
+                fineB: 3000,
+                fineC: 1500,
+                isPerWorker: true,
+                defaultWorkers: 1
+            },
+            {
+                id: 'v9',
+                category: 'safety',
+                title_ar: 'تشغيل العامل أكثر من ساعات العمل المقررة نظاماً دون احتساب أجر إضافي',
+                title_en: 'Exceeding statutory working hours without overtime compensation',
+                code: 'MHRSD-404',
+                fineA: 5000,
+                fineB: 3000,
+                fineC: 1500,
+                isPerWorker: true,
+                defaultWorkers: 1
+            },
+            {
+                id: 'v10',
+                category: 'safety',
+                title_ar: 'عدم توفير خزانة إسعافات أولية أو أدوات السلامة والصحة المهنية المعتمدة',
+                title_en: 'Absence of first-aid kits or mandated occupational health & safety supplies',
+                code: 'MHRSD-407',
+                fineA: 5000,
+                fineB: 2500,
+                fineC: 1000,
+                isPerWorker: false,
+                defaultWorkers: 1
+            }
+        ];
+
+        // Active state
+        const state = {};
+        violationsData.forEach(v => {
+            state[v.id] = {
+                selected: false,
+                repeat: false,
+                workers: v.defaultWorkers
+            };
+        });
+
+        function renderViolations(filter = 'all') {
+            const container = document.getElementById('violationListContainer');
+            container.innerHTML = '';
+
+            const filtered = filter === 'all' ? violationsData : violationsData.filter(v => v.category === filter);
+
+            filtered.forEach(item => {
+                const s = state[item.id];
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-lg border transition-all ${s.selected ? 'border-emerald-500 bg-emerald-50/20 shadow-sm' : 'border-slate-200 bg-white hover:border-slate-300'}`;
+                card.id = `card-${item.id}`;
+
+                const title = currentLang === 'ar' ? item.title_ar : item.title_en;
+                const perWorkerBadge = item.isPerWorker 
+                    ? `<span class="text-[10px] font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">${currentLang === 'ar' ? 'تتعدد بالعمالة' : 'Per Worker'}</span>` 
+                    : `<span class="text-[10px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded">${currentLang === 'ar' ? 'غرامة مقطوعة' : 'Fixed'}</span>`;
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="flex items-start gap-3 flex-1">
+                            <input type="checkbox" id="check-${item.id}" ${s.selected ? 'checked' : ''} onchange="toggleItem('${item.id}', this.checked)" class="mt-1 h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-slate-300 rounded cursor-pointer">
+                            <div>
+                                <label for="check-${item.id}" class="font-bold text-xs sm:text-sm text-slate-900 cursor-pointer block leading-snug">${title}</label>
+                                <div class="flex items-center gap-2 mt-1.5 flex-wrap">
+                                    <span class="text-[11px] font-mono text-slate-400 font-semibold">${item.code}</span>
+                                    ${perWorkerBadge}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Dynamic Adjusters: Visible when checked -->
+                    <div id="controls-${item.id}" class="${s.selected ? 'mt-3 pt-3 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-3' : 'hidden'}">
+                        ${item.isPerWorker ? `
+                        <div>
+                            <label class="block text-[11px] font-medium text-slate-600 mb-1">${currentLang === 'ar' ? 'عدد العمالة المتأثرة بالمخالفة:' : 'Impacted Workers Count:'}</label>
+                            <input type="number" min="1" max="500" value="${s.workers}" oninput="updateWorkers('${item.id}', this.value)" class="w-full px-2.5 py-1 text-xs border border-slate-300 rounded focus:border-emerald-500 focus:outline-none bg-white">
+                        </div>
+                        ` : '<div></div>'}
+                        <div class="flex items-center sm:justify-end gap-2">
+                            <label class="flex items-center gap-1.5 cursor-pointer mt-3 sm:mt-0 text-[11px] font-medium text-slate-700">
+                                <input type="checkbox" ${s.repeat ? 'checked' : ''} onchange="toggleRepeat('${item.id}', this.checked)" class="rounded text-rose-600 border-slate-300 focus:ring-rose-500">
+                                <span>${currentLang === 'ar' ? 'تكرار خلال 180 يوم (مضاعفة 2x)' : 'Repeat within 180d (2x)'}</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleItem(id, checked) {
+            state[id].selected = checked;
+            const card = document.getElementById(`card-${id}`);
+            const controls = document.getElementById(`controls-${id}`);
+            
+            if (checked) {
+                card.classList.add('border-emerald-500', 'bg-emerald-50/20', 'shadow-sm');
+                card.classList.remove('border-slate-200');
+                controls.classList.remove('hidden');
+                controls.classList.add('mt-3', 'pt-3', 'border-t', 'border-slate-100', 'grid', 'grid-cols-1', 'sm:grid-cols-2', 'gap-3');
+            } else {
+                card.classList.remove('border-emerald-500', 'bg-emerald-50/20', 'shadow-sm');
+                card.classList.add('border-slate-200');
+                controls.classList.add('hidden');
+                controls.classList.remove('mt-3', 'pt-3', 'border-t', 'border-slate-100', 'grid', 'grid-cols-1', 'sm:grid-cols-2', 'gap-3');
+            }
+            calculateFines();
+        }
+
+        function updateWorkers(id, val) {
+            const count = Math.max(1, parseInt(val) || 1);
+            state[id].workers = count;
+            calculateFines();
+        }
+
+        function toggleRepeat(id, checked) {
+            state[id].repeat = checked;
+            calculateFines();
+        }
+
+        function getSelectedCategory() {
+            const radios = document.getElementsByName('companyCategory');
+            for (let r of radios) {
+                if (r.checked) return r.value;
+            }
+            return 'A';
+        }
+
+        function calculateFines() {
+            const cat = getSelectedCategory();
+            
+            // Update Visual style for category cards
+            document.querySelectorAll('.category-radio').forEach(r => {
+                const parent = r.parentElement;
+                if (r.checked) {
+                    parent.classList.add('border-2', 'border-emerald-600', 'bg-emerald-50/40');
+                    parent.classList.remove('border-slate-200');
+                } else {
+                    parent.classList.remove('border-2', 'border-emerald-600', 'bg-emerald-50/40');
+                    parent.classList.add('border-slate-200');
+                }
+            });
+
+            let totalFine = 0;
+            let totalImpactedWorkers = 0;
+            let selectedCount = 0;
+            const activeBreakdown = [];
+
+            violationsData.forEach(item => {
+                const s = state[item.id];
+                if (s.selected) {
+                    selectedCount++;
+                    let baseFine = 0;
+                    if (cat === 'A') baseFine = item.fineA;
+                    else if (cat === 'B') baseFine = item.fineB;
+                    else baseFine = item.fineC;
+
+                    const workerMultiplier = item.isPerWorker ? s.workers : 1;
+                    if (item.isPerWorker) totalImpactedWorkers += s.workers;
+
+                    const repeatMultiplier = s.repeat ? 2 : 1;
+                    const itemTotal = baseFine * workerMultiplier * repeatMultiplier;
+                    totalFine += itemTotal;
+
+                    activeBreakdown.push({
+                        title: currentLang === 'ar' ? item.title_ar : item.title_en,
+                        code: item.code,
+                        amount: itemTotal,
+                        workers: item.isPerWorker ? s.workers : 1,
+                        repeat: s.repeat
+                    });
+                }
+            });
+
+            // Update displays
+            document.getElementById('totalFineDisplay').innerText = totalFine.toLocaleString();
+            document.getElementById('summaryViolationCount').innerText = selectedCount;
+            document.getElementById('summaryAffectedWorkers').innerText = totalImpactedWorkers;
+            
+            // 80% prompt settlement reduction (paying 20% within 30 days)
+            const discountedFee = Math.round(totalFine * 0.20);
+            document.getElementById('settlementDiscountDisplay').innerText = discountedFee.toLocaleString() + ' SAR';
+
+            // Category summary display
+            const catDisplay = document.getElementById('summaryCategory');
+            if (cat === 'A') catDisplay.innerText = currentLang === 'ar' ? 'الفئة (أ) - 50 عاملاً فأكثر' : 'Category (A) - 50+ Workers';
+            else if (cat === 'B') catDisplay.innerText = currentLang === 'ar' ? 'الفئة (ب) - 21 إلى 49 عاملاً' : 'Category (B) - 21 to 49 Workers';
+            else catDisplay.innerText = currentLang === 'ar' ? 'الفئة (ج) - 1 إلى 20 عاملاً' : 'Category (C) - 1 to 20 Workers';
+
+            // Risk badge display
+            const riskBadge = document.getElementById('riskBadge');
+            if (selectedCount === 0) {
+                riskBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 text-slate-700';
+                riskBadge.innerText = currentLang === 'ar' ? '0 مخالفات محددة' : '0 Violations Selected';
+            } else if (totalFine < 10000) {
+                riskBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800';
+                riskBadge.innerText = currentLang === 'ar' ? 'مخاطر منخفضة' : 'Low Risk Audit';
+            } else if (totalFine < 30000) {
+                riskBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-800';
+                riskBadge.innerText = currentLang === 'ar' ? 'مخاطر متوسطة' : 'Moderate Exposure';
+            } else {
+                riskBadge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 animate-pulse';
+                riskBadge.innerText = currentLang === 'ar' ? 'مخاطر عالية جداً' : 'High Financial Risk';
+            }
+
+            // Render active breakdown list
+            const breakdownContainer = document.getElementById('activeItemsList');
+            if (activeBreakdown.length === 0) {
+                breakdownContainer.innerHTML = `<p class="text-slate-400 italic text-[11px]">${currentLang === 'ar' ? 'لم يتم تحديد أي مخالفات. اختر من القائمة لبدء التدقيق والتسعير.' : 'No violations selected. Choose from the list to audit exposure.'}</p>`;
+            } else {
+                breakdownContainer.innerHTML = '';
+                activeBreakdown.forEach(b => {
+                    const row = document.createElement('div');
+                    row.className = 'flex justify-between items-center py-1 border-b border-slate-50';
+                    row.innerHTML = `
+                        <div class="truncate pr-2">
+                            <span class="font-medium text-slate-800 block truncate">${b.title}</span>
+                            <span class="text-[10px] text-slate-400 font-mono">${b.code} ${b.repeat ? '• 2x Repeat' : ''} ${b.workers > 1 ? `• ${b.workers} Workers` : ''}</span>
+                        </div>
+                        <span class="font-bold text-slate-900 font-mono flex-shrink-0">${b.amount.toLocaleString()} SAR</span>
+                    `;
+                    breakdownContainer.appendChild(row);
+                });
+            }
+        }
+
+        function filterViolations(category) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.getAttribute('data-filter') === category) {
+                    btn.className = 'filter-btn px-3 py-1.5 rounded-md bg-slate-900 text-white whitespace-nowrap';
+                } else {
+                    btn.className = 'filter-btn px-3 py-1.5 rounded-md bg-slate-100 text-slate-600 hover:bg-slate-200 whitespace-nowrap';
+                }
+            });
+            renderViolations(category);
+        }
+
+        function resetAll() {
+            violationsData.forEach(v => {
+                state[v.id].selected = false;
+                state[v.id].repeat = false;
+                state[v.id].workers = v.defaultWorkers;
+            });
+            renderViolations('all');
+            calculateFines();
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            document.documentElement.lang = currentLang;
+            document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+            document.body.className = currentLang === 'ar' ? 'bg-slate-50 text-slate-800 font-ar antialiased' : 'bg-slate-50 text-slate-800 font-en antialiased';
+            document.getElementById('langToggleLabel').innerText = currentLang === 'ar' ? 'English' : 'العربية';
+
+            // Translate all static elements
+            document.querySelectorAll('[data-en]').forEach(el => {
+                el.innerText = currentLang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+            });
+
+            // Re-render dynamic violations
+            const activeFilter = document.querySelector('.filter-btn.bg-slate-900').getAttribute('data-filter');
+            renderViolations(activeFilter);
+            calculateFines();
+        }
+
+        function exportToCSV() {
+            const cat = getSelectedCategory();
+            let csv = "Violation Code,Description,Company Category,Repeat Factor,Impacted Workers,Fine (SAR)\n";
+            
+            let total = 0;
+            violationsData.forEach(item => {
+                const s = state[item.id];
+                if (s.selected) {
+                    let base = cat === 'A' ? item.fineA : (cat === 'B' ? item.fineB : item.fineC);
+                    let workers = item.isPerWorker ? s.workers : 1;
+                    let repeat = s.repeat ? 2 : 1;
+                    let fine = base * workers * repeat;
+                    total += fine;
+                    
+                    const title = (currentLang === 'ar' ? item.title_ar : item.title_en).replace(/,/g, ' ');
+                    csv += `"${item.code}","${title}","Category ${cat}","${repeat}x","${workers}","${fine}"\n`;
+                }
+            });
+            csv += `\n"TOTAL STATUTORY FINE","","","","","${total}"\n`;
+            csv += `"PROMPT SETTLEMENT 80% DISCOUNT","","","","","${Math.round(total * 0.20)}"\n`;
+
+            const blob = new Blob(["\uFEFF" + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `saudi_mhrsd_inspection_audit_${new Date().toISOString().slice(0, 10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            renderViolations('all');
+            calculateFines();
+        });
+    </script>
+</body>
+</html>

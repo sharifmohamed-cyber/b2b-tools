@@ -383,5 +383,12 @@
     "title_ar": "حاسبة رسوم أرضيات الموانئ وغرامات تأخير الحاويات (موانئ والخطوط الملاحية)",
     "description_en": "Calculate Saudi Mawani port terminal storage fees, shipping line demurrage, and detention penalties with 15% VAT for 20ft, 40ft, and reefer containers.",
     "date": "2026-11-27"
+  },
+  {
+    "slug": "saudi-labor-inspection-fines-and-compliance-audit-calculator",
+    "title_en": "Saudi MHRSD Labor Violations & Inspection Penalties Calculator",
+    "title_ar": "حاسبة غرامات ومخالفات تفتيش العمل المحدثة - وزارة الموارد البشرية",
+    "description_en": "Calculate official MHRSD labor inspection penalties and compliance violation fines across company tiers (A, B, C) under Saudi Labor Law updates.",
+    "date": "2026-11-28"
   }
 ]
